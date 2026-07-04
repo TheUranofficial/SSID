@@ -1,33 +1,15 @@
-apply plugin: 'java'
+version = ""
 
-group = 'mchorse'
-
-repositories {
-    mavenCentral()
-    maven {
-        url "https://jitpack.io/"
-    }
-}
-
-task processSource(type: Sync) {
-    from sourceSets.main.java
-    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [GIT_HASH: gitHash])
-    into "$buildDir/src"
+base {
+    archivesName = "launcher"
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'mchorse.Launcher', 'Class-Path': 'dependencies/bbs-engine-0.1.jar'
+        attributes "Main-Class": "mchorse.Launcher", "Class-Path": "dependencies/bbs-engine-0.1.jar"
     }
-}
-
-compileJava {
-    archivesBaseName = "launcher"
-    version = ""
-    source = processSource.outputs
 }
 
 dependencies {
     implementation project(":engine")
-    implementation commonDependencies
 }

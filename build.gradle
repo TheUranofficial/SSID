@@ -1,56 +1,28 @@
-import org.gradle.internal.os.OperatingSystem
+subprojects {
+    apply plugin: "java"
 
-apply plugin: 'java'
+    group = "mchorse"
 
-/* Common dependencies */
-ext.lwjglVersion = "3.3.0"
-ext.commonDependencies = []
-ext.gitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://jitpack.io/"
+        }
     }
 
-    return stdout.toString().trim()
-}.call()
-
-switch (OperatingSystem.current()) {
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
-
-        break
-    case OperatingSystem.MAC_OS:
-        def isArm = System.getProperty("os.arch").startsWith("aarch64")
-
-        project.ext.lwjglNatives = isArm ? "natives-macos-arm64" : "natives-macos"
-
-        break
-    case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
-
-        break
+    dependencies {
+        implementation "org.lwjgl:lwjgl:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-openal:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-stb:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
+        implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
+        implementation "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
+        implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
+        implementation "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
+        implementation "org.greenrobot:eventbus-java:3.3.1"
+        implementation "org.joml:joml:1.9.2"
+        implementation "com.github.Querz:NBT:6.1"
+    }
 }
-
-if (project.hasProperty("os")) {
-    def os = project.getProperties().get("os")
-
-    ext.lwjglNatives = "natives-" + os
-}
-
-ext.commonDependencies.addAll([
-    "org.lwjgl:lwjgl:$lwjglVersion",
-    "org.lwjgl:lwjgl-glfw:$lwjglVersion",
-    "org.lwjgl:lwjgl-openal:$lwjglVersion",
-    "org.lwjgl:lwjgl-opengl:$lwjglVersion",
-    "org.lwjgl:lwjgl-stb:$lwjglVersion",
-    "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives",
-    "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives",
-    "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives",
-    "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives",
-    "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives",
-    "org.greenrobot:eventbus-java:3.3.1",
-    "org.joml:joml:1.9.2",
-    "com.github.Querz:NBT:6.1"
-])

@@ -1,19 +1,10 @@
-apply plugin: 'java'
+version = "0.1"
 
-group = 'mchorse'
-archivesBaseName = 'bbs-engine'
-version = '0.1'
-
-repositories {
-    mavenCentral()
-    maven {
-        url "https://jitpack.io/"
-    }
+base {
+    archivesName = "bbs-engine"
 }
 
 dependencies {
-    implementation commonDependencies
-
     /* Unit testing */
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
@@ -21,9 +12,9 @@ dependencies {
 
 /* Utility tasks */
 
-task copyRuntimeLibs(type: Copy) {
+tasks.register("copyRuntimeLibs", Copy) {
     from sourceSets.main.compileClasspath
     into "build/dependencies/"
 }
 
-tasks.build.dependsOn.add(copyRuntimeLibs)
+tasks.build.dependsOn.add(tasks.named("copyRuntimeLibs"))
