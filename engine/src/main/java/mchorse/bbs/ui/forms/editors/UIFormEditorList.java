@@ -7,10 +7,8 @@ import mchorse.bbs.ui.framework.elements.utils.EventPropagation;
 import mchorse.bbs.utils.colors.Colors;
 import org.lwjgl.glfw.GLFW;
 
-public class UIFormEditorList extends UIFormList
-{
-    public UIFormEditorList(IUIFormList palette)
-    {
+public class UIFormEditorList extends UIFormList {
+    public UIFormEditorList(IUIFormList palette) {
         super(palette);
 
         this.edit.removeFromParent();
@@ -18,10 +16,8 @@ public class UIFormEditorList extends UIFormList
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.palette.exit();
         }
 
@@ -29,8 +25,7 @@ public class UIFormEditorList extends UIFormList
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.area.render(context.batcher, Colors.A50);
 
         super.render(context);

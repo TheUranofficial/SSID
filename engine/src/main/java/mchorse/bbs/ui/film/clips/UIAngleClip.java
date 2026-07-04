@@ -5,19 +5,16 @@ import mchorse.bbs.ui.film.IUIClipsDelegate;
 import mchorse.bbs.ui.film.clips.modules.UIAngleModule;
 import mchorse.bbs.ui.film.clips.widgets.UIBitToggle;
 
-public class UIAngleClip extends UIClip<AngleClip>
-{
+public class UIAngleClip extends UIClip<AngleClip> {
     public UIAngleModule angle;
     public UIBitToggle active;
 
-    public UIAngleClip(AngleClip clip, IUIClipsDelegate editor)
-    {
+    public UIAngleClip(AngleClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.angle = new UIAngleModule(this.editor).contextMenu();
@@ -25,16 +22,14 @@ public class UIAngleClip extends UIClip<AngleClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(this.angle.marginTop(12), this.active);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.angle.fill(this.clip.angle);

@@ -16,15 +16,13 @@ import mchorse.bbs.utils.math.Interpolation;
 
 import java.util.List;
 
-public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUDDashboardPanel
-{
+public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDDashboardPanel {
     public UIIcon saveIcon;
 
     protected T data;
     protected boolean save;
 
-    public UIDataDashboardPanel(UIDashboard dashboard)
-    {
+    public UIDataDashboardPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.saveIcon = new UIIcon(Icons.SAVED, (b) -> this.save());
@@ -34,8 +32,7 @@ public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUD
         this.keys().register(Keys.SAVE, this.saveIcon::clickItself).active(() -> this.data != null);
     }
 
-    public T getData()
-    {
+    public T getData() {
         return this.data;
     }
 
@@ -45,27 +42,23 @@ public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUD
     public abstract ContentType getType();
 
     @Override
-    protected UICRUDOverlayPanel createOverlayPanel()
-    {
+    protected UICRUDOverlayPanel createOverlayPanel() {
         return new UIDataOverlayPanel<>(this.getTitle(), this, this::pickData);
     }
 
     @Override
-    public void pickData(String id)
-    {
+    public void pickData(String id) {
         this.save();
         this.requestData(id);
     }
 
-    public void requestData(String id)
-    {
+    public void requestData(String id) {
         this.fill((T) this.getType().getManager().load(id));
     }
 
     /* Data population */
 
-    public void fill(T data)
-    {
+    public void fill(T data) {
         this.data = data;
 
         this.saveIcon.setEnabled(data != null);
@@ -75,19 +68,17 @@ public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUD
         this.overlay.remove.setEnabled(data != null);
     }
 
-    public void fillDefaultData(T data)
-    {}
+    public void fillDefaultData(T data) {
+    }
 
-    public void fillNames(List<String> names)
-    {
+    public void fillNames(List<String> names) {
         String value = this.data == null ? null : this.data.getId();
 
         this.overlay.namesList.fill(names);
         this.overlay.namesList.setCurrentFile(value);
     }
 
-    protected UIScrollView createScrollEditor()
-    {
+    protected UIScrollView createScrollEditor() {
         UIScrollView scrollEditor = UI.scrollView(5, 10);
 
         scrollEditor.relative(this.editor).full();
@@ -96,74 +87,61 @@ public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUD
     }
 
     @Override
-    public void open()
-    {
+    public void open() {
         super.open();
 
         this.save = true;
     }
 
     @Override
-    public void appear()
-    {
+    public void appear() {
         super.appear();
 
-        if (this.data != null)
-        {
+        if (this.data != null) {
             this.requestData(this.data.getId());
         }
     }
 
     @Override
-    public void requestNames()
-    {
+    public void requestNames() {
         UIDataUtils.requestNames(this.getType(), this::fillNames);
     }
 
     @Override
-    public void disappear()
-    {
+    public void disappear() {
         super.disappear();
 
-        if (this.save)
-        {
+        if (this.save) {
             this.save();
         }
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         super.close();
 
-        if (this.save)
-        {
+        if (this.save) {
             this.save();
         }
     }
 
-    public void save()
-    {
-        if (!this.update && this.data != null && this.editor.isEnabled())
-        {
+    public void save() {
+        if (!this.update && this.data != null && this.editor.isEnabled()) {
             this.forceSave();
         }
     }
 
-    public void forceSave()
-    {
+    public void forceSave() {
         this.preSave();
         this.getType().getManager().save(this.data.getId(), this.data.toData().asMap());
     }
 
-    protected void preSave()
-    {}
+    protected void preSave() {
+    }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.data == null)
-        {
+    public void render(UIContext context) {
+        if (this.data == null) {
             double ticks = context.getTickTransition() % 15D;
             double factor = Math.abs(ticks / 15D * 2 - 1F);
 
@@ -175,8 +153,7 @@ public abstract class UIDataDashboardPanel <T extends ValueGroup> extends UICRUD
 
         super.render(context);
 
-        if (!this.editor.isEnabled() && this.data != null)
-        {
+        if (!this.editor.isEnabled() && this.data != null) {
             this.renderLockedArea(context);
         }
     }

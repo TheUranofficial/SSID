@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-public interface ISourcePack
-{
+public interface ISourcePack {
     public String getPrefix();
 
     public boolean hasAsset(Link link);

@@ -5,22 +5,18 @@ import mchorse.bbs.data.types.StringType;
 import mchorse.bbs.particles.emitter.Particle;
 import org.joml.Vector3d;
 
-public class ShapeDirectionInwards extends ShapeDirection
-{
+public class ShapeDirectionInwards extends ShapeDirection {
     public static final ShapeDirection INWARDS = new ShapeDirectionInwards(-1);
     public static final ShapeDirection OUTWARDS = new ShapeDirectionInwards(1);
 
     private float factor;
 
-    public ShapeDirectionInwards(float factor)
-    {
+    public ShapeDirectionInwards(float factor) {
         this.factor = factor;
     }
 
-    public static ShapeDirection fromString(String value)
-    {
-        if (value.equals("inwards"))
-        {
+    public static ShapeDirection fromString(String value) {
+        if (value.equals("inwards")) {
             return INWARDS;
         }
 
@@ -28,18 +24,14 @@ public class ShapeDirectionInwards extends ShapeDirection
     }
 
     @Override
-    public void applyDirection(Particle particle, double x, double y, double z)
-    {
+    public void applyDirection(Particle particle, double x, double y, double z) {
         Vector3d vector = new Vector3d(particle.position);
 
         vector.sub(new Vector3d(x, y, z));
 
-        if (vector.length() <= 0)
-        {
+        if (vector.length() <= 0) {
             vector.set(0, 0, 0);
-        }
-        else
-        {
+        } else {
             vector.normalize();
             vector.mul(this.factor);
         }
@@ -48,8 +40,7 @@ public class ShapeDirectionInwards extends ShapeDirection
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new StringType(this.factor < 0 ? "inwards" : "outwards");
     }
 }

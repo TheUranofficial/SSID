@@ -24,26 +24,20 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
-public class UICameraUtils
-{
+public class UICameraUtils {
     public static final IKey KEYS_CATEGORY = UIKeys.INTERPOLATIONS_KEY_CATEGORY;
 
     /* Interpolations context menu */
 
-    public static void interps(UIContext context, Interpolation current, Consumer<Interpolation> consumer)
-    {
+    public static void interps(UIContext context, Interpolation current, Consumer<Interpolation> consumer) {
         context.replaceContextMenu((menu) ->
         {
-            for (Interpolation interpolation : Interpolation.values())
-            {
+            for (Interpolation interpolation : Interpolation.values()) {
                 ContextAction action;
 
-                if (interpolation == current)
-                {
+                if (interpolation == current) {
                     action = menu.action(Icons.ADD, interpolation.getName(), BBSSettings.primaryColor.get(), () -> consumer.accept(interpolation));
-                }
-                else
-                {
+                } else {
                     action = menu.action(Icons.ADD, interpolation.getName(), () -> consumer.accept(interpolation));
                 }
 
@@ -52,22 +46,17 @@ public class UICameraUtils
         });
     }
 
-    public static void interpTypes(UIContext context, InterpolationType current, Consumer<InterpolationType> consumer)
-    {
+    public static void interpTypes(UIContext context, InterpolationType current, Consumer<InterpolationType> consumer) {
         context.replaceContextMenu((menu) ->
         {
             int i = 0;
 
-            for (InterpolationType interpolation : InterpolationType.values())
-            {
+            for (InterpolationType interpolation : InterpolationType.values()) {
                 ContextAction action;
 
-                if (interpolation == current)
-                {
+                if (interpolation == current) {
                     action = menu.action(Icons.ADD, interpolation.getName(), BBSSettings.primaryColor.get(), () -> consumer.accept(interpolation));
-                }
-                else
-                {
+                } else {
                     action = menu.action(Icons.ADD, interpolation.getName(), () -> consumer.accept(interpolation));
                 }
 
@@ -78,8 +67,7 @@ public class UICameraUtils
 
     /* Position UX context menu */
 
-    public static void positionContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValuePosition value)
-    {
+    public static void positionContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValuePosition value) {
         menu.action(Icons.COPY, UIKeys.CAMERA_PANELS_CONTEXT_COPY_POSITION, Colors.NEGATIVE, () ->
         {
             Map<String, Double> map = new LinkedHashMap<>();
@@ -97,8 +85,7 @@ public class UICameraUtils
             Point point = createPoint(map);
             Angle angle = createAngle(map);
 
-            if (point != null && angle != null)
-            {
+            if (point != null && angle != null) {
                 position.point.set(point);
                 position.angle.set(angle);
 
@@ -111,8 +98,7 @@ public class UICameraUtils
         angleContextMenu(menu, editor, value.getAngle());
     }
 
-    public static void pointContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValuePoint value)
-    {
+    public static void pointContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValuePoint value) {
         menu.action(Icons.COPY, UIKeys.CAMERA_PANELS_CONTEXT_COPY_POINT, Colors.POSITIVE, () ->
         {
             Map<String, Double> map = new LinkedHashMap<>();
@@ -125,25 +111,21 @@ public class UICameraUtils
         {
             Point point = createPoint(stringToMap(Window.getClipboard()));
 
-            if (point != null)
-            {
+            if (point != null) {
                 value.set(point);
                 editor.fillData();
             }
         });
     }
 
-    private static void copyPoint(Map<String, Double> map, Point point)
-    {
+    private static void copyPoint(Map<String, Double> map, Point point) {
         map.put("X", point.x);
         map.put("Y", point.y);
         map.put("Z", point.z);
     }
 
-    private static Point createPoint(Map<String, Double> map)
-    {
-        if (map.containsKey("x") && map.containsKey("y") && map.containsKey("z"))
-        {
+    private static Point createPoint(Map<String, Double> map) {
+        if (map.containsKey("x") && map.containsKey("y") && map.containsKey("z")) {
             Point newPoint = new Point(0, 0, 0);
 
             if (map.containsKey("x")) newPoint.x = map.get("x");
@@ -156,8 +138,7 @@ public class UICameraUtils
         return null;
     }
 
-    public static void angleContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValueAngle value)
-    {
+    public static void angleContextMenu(ContextMenuManager menu, IUIClipsDelegate editor, ValueAngle value) {
         menu.action(Icons.COPY, UIKeys.CAMERA_PANELS_CONTEXT_COPY_ANGLE, Colors.INACTIVE, () ->
         {
             Map<String, Double> map = new LinkedHashMap<>();
@@ -170,26 +151,22 @@ public class UICameraUtils
         {
             Angle angle = createAngle(stringToMap(Window.getClipboard()));
 
-            if (angle != null)
-            {
+            if (angle != null) {
                 value.set(angle);
                 editor.fillData();
             }
         });
     }
 
-    private static void copyAngle(Map<String, Double> map, Angle angle)
-    {
+    private static void copyAngle(Map<String, Double> map, Angle angle) {
         map.put("Yaw", (double) angle.yaw);
         map.put("Pitch", (double) angle.pitch);
         map.put("Roll", (double) angle.roll);
         map.put("FOV", (double) angle.fov);
     }
 
-    private static Angle createAngle(Map<String, Double> map)
-    {
-        if (map.containsKey("yaw") && map.containsKey("pitch"))
-        {
+    private static Angle createAngle(Map<String, Double> map) {
+        if (map.containsKey("yaw") && map.containsKey("pitch")) {
             Angle newAngle = new Angle(0, 0);
 
             if (map.containsKey("yaw")) newAngle.yaw = map.get("yaw").floatValue();
@@ -203,34 +180,27 @@ public class UICameraUtils
         return null;
     }
 
-    private static String mapToString(Map<String, Double> data)
-    {
+    private static String mapToString(Map<String, Double> data) {
         StringJoiner joiner = new StringJoiner("\n");
 
-        for (String key : data.keySet())
-        {
+        for (String key : data.keySet()) {
             joiner.add(key + ": " + data.get(key));
         }
 
         return joiner.toString();
     }
 
-    private static Map<String, Double> stringToMap(String string)
-    {
+    private static Map<String, Double> stringToMap(String string) {
         Map<String, Double> map = new LinkedHashMap<>();
 
-        for (String line : string.split("\n"))
-        {
+        for (String line : string.split("\n")) {
             String[] splits = line.split(":");
 
-            if (splits.length == 2)
-            {
-                try
-                {
+            if (splits.length == 2) {
+                try {
                     map.put(splits[0].trim().toLowerCase(), Double.parseDouble(splits[1].trim()));
+                } catch (Exception e) {
                 }
-                catch (Exception e)
-                {}
             }
         }
 

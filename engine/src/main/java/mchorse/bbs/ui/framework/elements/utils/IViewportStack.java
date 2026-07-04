@@ -5,8 +5,7 @@ import mchorse.bbs.ui.utils.Area;
 /**
  * General interface for viewport stack
  */
-public interface IViewportStack
-{
+public interface IViewportStack {
     public void reset();
 
     public Area getViewport();

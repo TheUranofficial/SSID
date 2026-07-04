@@ -22,24 +22,19 @@ import org.joml.Vector3i;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIToolSelectionBase extends UITool
-{
-    public UIToolSelectionBase(UIWorldEditorPanel editor)
-    {
+public abstract class UIToolSelectionBase extends UITool {
+    public UIToolSelectionBase(UIWorldEditorPanel editor) {
         super(editor);
     }
 
-    protected PlaneSelection getSelection()
-    {
+    protected PlaneSelection getSelection() {
         return this.getSelection(Window.isShiftPressed());
     }
 
-    protected PlaneSelection getSelection(boolean furthest)
-    {
+    protected PlaneSelection getSelection(boolean furthest) {
         BlockSelection selection = this.editor.getSelection();
 
-        if (selection.isEmpty())
-        {
+        if (selection.isEmpty()) {
             return null;
         }
 
@@ -51,18 +46,15 @@ public abstract class UIToolSelectionBase extends UITool
         /* This needed to solve issues with intersection impression */
         aabb.expand(0.1D, 0.1D, 0.1D);
 
-        for (PlaneSelection plane : planes)
-        {
+        for (PlaneSelection plane : planes) {
             Vector3d intersection = Vectors.intersectPlane(plane.axis, camera.position, camera.getMouseDirection(), plane.block);
 
-            if (intersection != null && aabb.contains(intersection))
-            {
+            if (intersection != null && aabb.contains(intersection)) {
                 planeSelections.add(new PlaneSelection(plane.axis, plane.side, intersection));
             }
         }
 
-        if (!planeSelections.isEmpty())
-        {
+        if (!planeSelections.isEmpty()) {
             planeSelections.sort((a, b) ->
             {
                 PlaneSelection aa = furthest ? b : a;
@@ -81,25 +73,22 @@ public abstract class UIToolSelectionBase extends UITool
         return null;
     }
 
-    protected List<PlaneSelection> getSelectionBoxPlanes(BlockSelection block)
-    {
+    protected List<PlaneSelection> getSelectionBoxPlanes(BlockSelection block) {
         List<PlaneSelection> planes = new ArrayList<>();
         Vector3d center = block.getCenter();
 
         planes.add(new PlaneSelection(Axis.X, -1, new Vector3d(block.getMin().x, center.y, center.z)));
-        planes.add(new PlaneSelection(Axis.X,  1, new Vector3d(block.getMax().x, center.y, center.z)));
+        planes.add(new PlaneSelection(Axis.X, 1, new Vector3d(block.getMax().x, center.y, center.z)));
         planes.add(new PlaneSelection(Axis.Y, -1, new Vector3d(center.x, block.getMin().y, center.z)));
-        planes.add(new PlaneSelection(Axis.Y,  1, new Vector3d(center.x, block.getMax().y, center.z)));
+        planes.add(new PlaneSelection(Axis.Y, 1, new Vector3d(center.x, block.getMax().y, center.z)));
         planes.add(new PlaneSelection(Axis.Z, -1, new Vector3d(center.x, center.y, block.getMin().z)));
-        planes.add(new PlaneSelection(Axis.Z,  1, new Vector3d(center.x, center.y, block.getMax().z)));
+        planes.add(new PlaneSelection(Axis.Z, 1, new Vector3d(center.x, center.y, block.getMax().z)));
 
         return planes;
     }
 
-    protected void renderPlaneSelection(RenderingContext context, PlaneSelection plane)
-    {
-        if (plane == null)
-        {
+    protected void renderPlaneSelection(RenderingContext context, PlaneSelection plane) {
+        if (plane == null) {
             return;
         }
 
@@ -130,20 +119,15 @@ public abstract class UIToolSelectionBase extends UITool
 
         builder.begin();
 
-        if (plane.axis == Axis.X)
-        {
+        if (plane.axis == Axis.X) {
             int axis = plane.side < 0 ? 0 : size.x;
 
             Draw.fillBox(builder, axis, 0, 0, axis, size.y, size.z, color.r, color.g, color.b);
-        }
-        else if (plane.axis == Axis.Y)
-        {
+        } else if (plane.axis == Axis.Y) {
             int axis = plane.side < 0 ? 0 : size.y;
 
             Draw.fillBox(builder, 0, axis, 0, size.x, axis, size.z, color.r, color.g, color.b);
-        }
-        else if (plane.axis == Axis.Z)
-        {
+        } else if (plane.axis == Axis.Z) {
             int axis = plane.side < 0 ? 0 : size.z;
 
             Draw.fillBox(builder, 0, 0, axis, size.x, size.y, axis, color.r, color.g, color.b);
@@ -155,14 +139,12 @@ public abstract class UIToolSelectionBase extends UITool
         GLStates.depthTest(true);
     }
 
-    public static class PlaneSelection
-    {
+    public static class PlaneSelection {
         public Axis axis;
         public int side;
         public Vector3d block;
 
-        public PlaneSelection(Axis axis, int side, Vector3d block)
-        {
+        public PlaneSelection(Axis axis, int side, Vector3d block) {
             this.axis = axis;
             this.side = side;
             this.block = block;

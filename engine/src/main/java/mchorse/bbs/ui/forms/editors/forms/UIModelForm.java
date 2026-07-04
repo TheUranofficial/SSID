@@ -9,12 +9,10 @@ import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.StringUtils;
 import org.joml.Matrix4f;
 
-public class UIModelForm extends UIForm<ModelForm>
-{
+public class UIModelForm extends UIForm<ModelForm> {
     public UIModelFormPanel modelPanel;
 
-    public UIModelForm()
-    {
+    public UIModelForm() {
         this.modelPanel = new UIModelFormPanel(this);
         this.defaultPanel = this.modelPanel;
 
@@ -24,16 +22,14 @@ public class UIModelForm extends UIForm<ModelForm>
     }
 
     @Override
-    public Matrix4f getOrigin(float transition)
-    {
+    public Matrix4f getOrigin(float transition) {
         String path = FormUtils.getPath(this.form);
 
         return this.getOrigin(transition, StringUtils.combinePaths(path, this.modelPanel.poseEditor.groups.getCurrentFirst()));
     }
 
     @Override
-    public void finishEdit()
-    {
+    public void finishEdit() {
         super.finishEdit();
 
         this.form.resetAnimator();

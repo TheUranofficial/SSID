@@ -53,23 +53,14 @@ import mchorse.bbs.world.World;
 import mchorse.bbs.world.entities.Entity;
 import mchorse.bbs.world.entities.components.BasicComponent;
 import mchorse.bbs.world.entities.components.FormComponent;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.Math;
+import java.util.*;
 import java.util.function.Supplier;
 
-public class UIFilmController extends UIElement
-{
+public class UIFilmController extends UIElement {
     public final UIFilmPanel panel;
 
     public final List<Entity> entities = new ArrayList<>();
@@ -98,8 +89,7 @@ public class UIFilmController extends UIElement
     private int pov;
     private RayTraceResult result = new RayTraceResult();
 
-    public UIFilmController(UIFilmPanel panel)
-    {
+    public UIFilmController(UIFilmPanel panel) {
         this.panel = panel;
 
         IKey category = UIKeys.FILM_CONTROLLER_KEYS_CATEGORY;
@@ -121,8 +111,7 @@ public class UIFilmController extends UIElement
 
             RayTracer.trace(traceResult, world.chunks, camera.position, camera.getMouseDirection(context.mouseX, context.mouseY, area), 64F);
 
-            if (traceResult.type == RayTraceType.BLOCK)
-            {
+            if (traceResult.type == RayTraceType.BLOCK) {
                 this.panel.replays.moveReplay(traceResult.hit.x, traceResult.hit.y, traceResult.hit.z);
             }
         }).active(hasActor).category(category);
@@ -130,59 +119,48 @@ public class UIFilmController extends UIElement
         this.noCulling();
     }
 
-    private int getTick()
-    {
+    private int getTick() {
         return this.panel.getRunner().ticks;
     }
 
-    private Replay getReplay()
-    {
+    private Replay getReplay() {
         return this.panel.replays.replays.getCurrentFirst();
     }
 
-    public StencilFormFramebuffer getStencil()
-    {
+    public StencilFormFramebuffer getStencil() {
         return this.stencil;
     }
 
-    public Entity getCurrentEntity()
-    {
+    public Entity getCurrentEntity() {
         int index = this.panel.replays.replays.getIndex();
 
-        if (CollectionUtils.inRange(this.entities, index))
-        {
+        if (CollectionUtils.inRange(this.entities, index)) {
             return this.entities.get(index);
         }
 
         return null;
     }
 
-    private int getPovMode()
-    {
+    private int getPovMode() {
         return this.pov % 4;
     }
 
-    public void setPov(int pov)
-    {
+    public void setPov(int pov) {
         this.pov = pov;
     }
 
-    private int getMouseMode()
-    {
+    private int getMouseMode() {
         return this.mouseMode % 6;
     }
 
-    private void setMouseMode(int mode)
-    {
+    private void setMouseMode(int mode) {
         this.mouseMode = mode;
 
-        if (this.controlled != null)
-        {
+        if (this.controlled != null) {
             /* Restore value of the mouse stick */
             int index = this.getMouseMode() - 1;
 
-            if (index >= 0)
-            {
+            if (index >= 0) {
                 PlayerComponent component = this.controlled.get(PlayerComponent.class);
 
                 this.mouseStick.set(component.sticks[index * 2 + 1], component.sticks[index * 2]);
@@ -190,17 +168,14 @@ public class UIFilmController extends UIElement
         }
     }
 
-    private boolean isMouseLookMode()
-    {
+    private boolean isMouseLookMode() {
         return this.getMouseMode() == 0;
     }
 
-    public void createEntities()
-    {
+    public void createEntities() {
         this.stopRecording();
 
-        if (this.controlled != null)
-        {
+        if (this.controlled != null) {
             this.toggleControl();
         }
 
@@ -210,10 +185,8 @@ public class UIFilmController extends UIElement
 
         Film film = this.panel.getData();
 
-        if (context != null && film != null)
-        {
-            for (Replay replay : film.replays.getList())
-            {
+        if (context != null && film != null) {
+            for (Replay replay : film.replays.getList()) {
                 World world = context.menu.bridge.get(IBridgeWorld.class).getWorld();
                 Entity entity = world.architect.create(Link.bbs("player"));
 
@@ -230,14 +203,10 @@ public class UIFilmController extends UIElement
 
     /* Character control state */
 
-    public void toggleControl()
-    {
-        if (this.controlled != null)
-        {
+    public void toggleControl() {
+        if (this.controlled != null) {
             this.controlled = null;
-        }
-        else if (this.panel.replays.replays.isSelected())
-        {
+        } else if (this.panel.replays.replays.isSelected()) {
             this.controlled = this.getCurrentEntity();
         }
 
@@ -245,14 +214,12 @@ public class UIFilmController extends UIElement
 
         Window.toggleMousePointer(this.controlled != null);
 
-        if (this.controlled == null && this.recording)
-        {
+        if (this.controlled == null && this.recording) {
             this.stopRecording();
         }
     }
 
-    private boolean canControl()
-    {
+    private boolean canControl() {
         UIContext context = this.getContext();
 
         return this.controlled != null && context != null && !UIOverlay.has(context);
@@ -260,13 +227,11 @@ public class UIFilmController extends UIElement
 
     /* Recording */
 
-    public boolean isRecording()
-    {
+    public boolean isRecording() {
         return this.recording;
     }
 
-    public void startRecording(List<String> groups)
-    {
+    public void startRecording(List<String> groups) {
         this.recordingTick = this.getTick();
         this.recording = true;
         this.recordingCountdown = 30;
@@ -274,65 +239,50 @@ public class UIFilmController extends UIElement
 
         this.recordingOld = this.getReplay().keyframes.toData();
 
-        if (groups != null)
-        {
-            if (groups.contains(ReplayKeyframes.GROUP_LEFT_STICK))
-            {
+        if (groups != null) {
+            if (groups.contains(ReplayKeyframes.GROUP_LEFT_STICK)) {
                 this.setMouseMode(1);
-            }
-            else if (groups.contains(ReplayKeyframes.GROUP_RIGHT_STICK))
-            {
+            } else if (groups.contains(ReplayKeyframes.GROUP_RIGHT_STICK)) {
                 this.setMouseMode(2);
-            }
-            else if (groups.contains(ReplayKeyframes.GROUP_TRIGGERS))
-            {
+            } else if (groups.contains(ReplayKeyframes.GROUP_TRIGGERS)) {
                 this.setMouseMode(3);
             }
         }
 
-        if (this.controlled == null)
-        {
+        if (this.controlled == null) {
             this.toggleControl();
         }
 
         Window.toggleMousePointer(this.controlled != null);
     }
 
-    public void stopRecording()
-    {
-        if (!this.recording)
-        {
+    public void stopRecording() {
+        if (!this.recording) {
             return;
         }
 
         this.recording = false;
         this.recordingGroups = null;
 
-        if (this.controlled != null)
-        {
+        if (this.controlled != null) {
             this.toggleControl();
         }
 
         this.panel.setCursor(this.recordingTick);
 
-        if (this.panel.getRunner().isRunning())
-        {
+        if (this.panel.getRunner().isRunning()) {
             this.panel.togglePlayback();
         }
 
-        if (this.recordingCountdown > 0)
-        {
+        if (this.recordingCountdown > 0) {
             return;
         }
 
         Replay replay = this.getReplay();
 
-        if (replay != null && this.recordingOld != null)
-        {
-            for (BaseValue value : replay.keyframes.getAll())
-            {
-                if (value instanceof KeyframeChannel)
-                {
+        if (replay != null && this.recordingOld != null) {
+            for (BaseValue value : replay.keyframes.getAll()) {
+                if (value instanceof KeyframeChannel) {
                     ((KeyframeChannel) value).simplify();
                 }
             }
@@ -353,30 +303,23 @@ public class UIFilmController extends UIElement
     /* Input handling */
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
-        if (context.mouseButton == 0)
-        {
-            if (this.hoveredEntity != null)
-            {
+    protected boolean subMouseClicked(UIContext context) {
+        if (context.mouseButton == 0) {
+            if (this.hoveredEntity != null) {
                 int index = this.entities.indexOf(this.hoveredEntity);
 
                 this.panel.replays.setReplay(this.panel.getData().replays.getList().get(index));
 
-                if (!this.panel.replays.isVisible())
-                {
+                if (!this.panel.replays.isVisible()) {
                     this.panel.showPanel(this.panel.replays);
                 }
 
                 return true;
             }
-        }
-        else if (context.mouseButton == 2)
-        {
+        } else if (context.mouseButton == 2) {
             Area area = this.panel.getFramebufferViewport();
 
-            if (area.isInside(context) && this.orbit.enabled)
-            {
+            if (area.isInside(context) && this.orbit.enabled) {
                 this.orbit.start(context);
 
                 return true;
@@ -387,12 +330,10 @@ public class UIFilmController extends UIElement
     }
 
     @Override
-    protected boolean subMouseScrolled(UIContext context)
-    {
+    protected boolean subMouseScrolled(UIContext context) {
         Area area = this.panel.getFramebufferViewport();
 
-        if (area.isInside(context) && this.orbit.enabled)
-        {
+        if (area.isInside(context) && this.orbit.enabled) {
             this.orbit.handleDistance(context);
 
             return true;
@@ -402,43 +343,33 @@ public class UIFilmController extends UIElement
     }
 
     @Override
-    protected boolean subMouseReleased(UIContext context)
-    {
+    protected boolean subMouseReleased(UIContext context) {
         this.orbit.stop();
 
         return super.subMouseReleased(context);
     }
 
     @Override
-    protected boolean subKeyPressed(UIContext context)
-    {
-        if (this.canControl())
-        {
+    protected boolean subKeyPressed(UIContext context) {
+        if (this.canControl()) {
             int key = context.getKeyCode();
 
-            if (key == GLFW.GLFW_KEY_A || key == GLFW.GLFW_KEY_S || key == GLFW.GLFW_KEY_D || key == GLFW.GLFW_KEY_W)
-            {
+            if (key == GLFW.GLFW_KEY_A || key == GLFW.GLFW_KEY_S || key == GLFW.GLFW_KEY_D || key == GLFW.GLFW_KEY_W) {
                 this.walkDirection.set(
                     Window.isKeyPressed(GLFW.GLFW_KEY_A) ? -1 : (Window.isKeyPressed(GLFW.GLFW_KEY_D) ? 1 : 0),
                     Window.isKeyPressed(GLFW.GLFW_KEY_W) ? -1 : (Window.isKeyPressed(GLFW.GLFW_KEY_S) ? 1 : 0)
                 );
 
                 return true;
-            }
-            else if (key == GLFW.GLFW_KEY_LEFT_SHIFT)
-            {
+            } else if (key == GLFW.GLFW_KEY_LEFT_SHIFT) {
                 this.controlled.basic.sneak = Window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT);
 
                 return true;
-            }
-            else if (context.isPressed(GLFW.GLFW_KEY_SPACE))
-            {
+            } else if (context.isPressed(GLFW.GLFW_KEY_SPACE)) {
                 this.jump();
 
                 return true;
-            }
-            else if (context.getKeyAction() == KeyAction.PRESSED && context.getKeyCode() >= GLFW.GLFW_KEY_1 && context.getKeyCode() <= GLFW.GLFW_KEY_6)
-            {
+            } else if (context.getKeyAction() == KeyAction.PRESSED && context.getKeyCode() >= GLFW.GLFW_KEY_1 && context.getKeyCode() <= GLFW.GLFW_KEY_6) {
                 /* Switch mouse input mode */
                 this.setMouseMode(context.getKeyCode() - GLFW.GLFW_KEY_1);
 
@@ -449,10 +380,8 @@ public class UIFilmController extends UIElement
         return super.subKeyPressed(context);
     }
 
-    public void pickRecording()
-    {
-        if (this.recording)
-        {
+    public void pickRecording() {
+        if (this.recording) {
             this.stopRecording();
 
             return;
@@ -467,34 +396,26 @@ public class UIFilmController extends UIElement
         ));
     }
 
-    private void toggleOrbit()
-    {
+    private void toggleOrbit() {
         this.orbit.enabled = !this.orbit.enabled;
     }
 
-    public void handleCamera(Camera camera, float transition)
-    {
-        if (this.orbit.enabled)
-        {
+    public void handleCamera(Camera camera, float transition) {
+        if (this.orbit.enabled) {
             int mode = this.getPovMode();
 
-            if (mode == 0)
-            {
+            if (mode == 0) {
                 this.orbit.setup(camera, transition);
-            }
-            else
-            {
+            } else {
                 this.handleFirstThirdPerson(camera, transition, mode);
             }
         }
     }
 
-    private void handleFirstThirdPerson(Camera camera, float transition, int mode)
-    {
+    private void handleFirstThirdPerson(Camera camera, float transition, int mode) {
         Entity controller = this.getCurrentEntity();
 
-        if (controller == null)
-        {
+        if (controller == null) {
             return;
         }
 
@@ -514,8 +435,7 @@ public class UIFilmController extends UIElement
 
         camera.fov = BBSSettings.getFov();
 
-        if (mode == 1)
-        {
+        if (mode == 1) {
             camera.position.set(position);
             camera.rotation.set(rotation.x, rotation.y, 0F);
 
@@ -532,8 +452,7 @@ public class UIFilmController extends UIElement
             return block.getModel().opaque;
         });
 
-        if (this.result.type == RayTraceType.BLOCK)
-        {
+        if (this.result.type == RayTraceType.BLOCK) {
             distance = (float) position.distance(this.result.hit) - 0.1F;
         }
 
@@ -544,25 +463,21 @@ public class UIFilmController extends UIElement
         camera.rotation.set(rotation.x * (back ? 1 : -1), rotation.y + (back ? 0 : MathUtils.PI), 0);
     }
 
-    private void jump()
-    {
+    private void jump() {
         this.controlled.basic.velocity.y = this.controlled.basic.sneak ? 0.4F : 0.5F;
         this.controlled.basic.velocity.x *= 1.2F;
         this.controlled.basic.velocity.z *= 1.2F;
         this.controlled.basic.grounded = false;
     }
 
-    public void insertFrame()
-    {
+    public void insertFrame() {
         Replay replay = this.getReplay();
 
-        if (replay == null)
-        {
+        if (replay == null) {
             return;
         }
 
-        if (Window.isCtrlPressed())
-        {
+        if (Window.isCtrlPressed()) {
             Window.toggleMousePointer(false);
 
             UIRecordOverlayPanel panel = new UIRecordOverlayPanel(
@@ -582,9 +497,7 @@ public class UIFilmController extends UIElement
             panel.onClose((event) -> Window.toggleMousePointer(this.controlled != null));
 
             UIOverlay.addOverlay(this.getContext(), panel);
-        }
-        else
-        {
+        } else {
             List<String> chosenGroups = Arrays.asList(ReplayKeyframes.GROUP_POSITION, ReplayKeyframes.GROUP_ROTATION);
 
             if (this.mouseMode == 1) chosenGroups = Collections.singletonList(ReplayKeyframes.GROUP_LEFT_STICK);
@@ -608,12 +521,10 @@ public class UIFilmController extends UIElement
 
     /* Update */
 
-    public void update()
-    {
+    public void update() {
         Film film = this.panel.getData();
 
-        if (film == null)
-        {
+        if (film == null) {
             return;
         }
 
@@ -623,58 +534,46 @@ public class UIFilmController extends UIElement
         this.handleRecording(runner);
         this.updateEntities(film, runner, context);
 
-        if (this.canControl())
-        {
+        if (this.canControl()) {
             this.updateControls();
         }
     }
 
-    private void handleRecording(RunnerCameraController runner)
-    {
-        if (this.recording)
-        {
-            if (this.recordingCountdown > 0)
-            {
+    private void handleRecording(RunnerCameraController runner) {
+        if (this.recording) {
+            if (this.recordingCountdown > 0) {
                 this.recordingCountdown -= 1;
 
-                if (this.recordingCountdown <= 0)
-                {
+                if (this.recordingCountdown <= 0) {
                     this.panel.togglePlayback();
                 }
             }
 
-            if (this.recordingCountdown <= 0 && !runner.isRunning())
-            {
+            if (this.recordingCountdown <= 0 && !runner.isRunning()) {
                 this.stopRecording();
             }
         }
     }
 
-    private void updateEntities(Film film, RunnerCameraController runner, UIContext context)
-    {
-        for (int i = 0; i < this.entities.size(); i++)
-        {
+    private void updateEntities(Film film, RunnerCameraController runner, UIContext context) {
+        for (int i = 0; i < this.entities.size(); i++) {
             Entity entity = this.entities.get(i);
 
-            if (context == null || !UIOverlay.has(context))
-            {
+            if (context == null || !UIOverlay.has(context)) {
                 entity.update();
             }
 
             List<Replay> replays = film.replays.getList();
 
-            if (CollectionUtils.inRange(replays, i))
-            {
+            if (CollectionUtils.inRange(replays, i)) {
                 Replay replay = replays.get(i);
                 int ticks = runner.ticks;
 
-                if (entity != this.controlled || (this.recording && this.recordingCountdown <= 0 && this.recordingGroups != null))
-                {
+                if (entity != this.controlled || (this.recording && this.recordingCountdown <= 0 && this.recordingGroups != null)) {
                     replay.applyFrame(ticks, entity, entity == this.controlled ? this.recordingGroups : null);
                 }
 
-                if (entity == this.controlled && this.recording && runner.isRunning())
-                {
+                if (entity == this.controlled && this.recording && runner.isRunning()) {
                     replay.keyframes.record(ticks, entity, this.recordingGroups);
                 }
 
@@ -683,14 +582,12 @@ public class UIFilmController extends UIElement
         }
     }
 
-    private void updateControls()
-    {
+    private void updateControls() {
         Entity controller = this.controlled;
         float moveX = this.walkDirection.x;
         float moveZ = this.walkDirection.y;
 
-        if (moveZ != 0 || moveX != 0)
-        {
+        if (moveZ != 0 || moveX != 0) {
             this.direction.set(moveX, 0, moveZ).normalize().mul(0.25F);
 
             BasicComponent basic = controller.basic;
@@ -703,12 +600,10 @@ public class UIFilmController extends UIElement
             basic.velocity.z += this.direction.z;
         }
 
-        if (!this.isMouseLookMode())
-        {
+        if (!this.isMouseLookMode()) {
             PlayerComponent component = controller.get(PlayerComponent.class);
 
-            if (component != null)
-            {
+            if (component != null) {
                 int index = this.getMouseMode() - 1;
 
                 component.sticks[index * 2] = this.mouseStick.y;
@@ -719,31 +614,21 @@ public class UIFilmController extends UIElement
 
     /* Render */
 
-    public void renderHUD(UIContext context, Area area)
-    {
+    public void renderHUD(UIContext context, Area area) {
         int mode = this.getMouseMode();
 
-        if (this.controlled != null)
-        {
+        if (this.controlled != null) {
             /* Render helpful guides for sticks and triggers controls */
-            if (mode > 0)
-            {
+            if (mode > 0) {
                 String label = "Left stick";
 
-                if (mode == 2)
-                {
+                if (mode == 2) {
                     label = "Right stick";
-                }
-                else if (mode == 3)
-                {
+                } else if (mode == 3) {
                     label = "Triggers";
-                }
-                else if (mode == 4)
-                {
+                } else if (mode == 4) {
                     label = "Extra 1";
-                }
-                else if (mode == 5)
-                {
+                } else if (mode == 5) {
                     label = "Extra 2";
                 }
 
@@ -764,19 +649,15 @@ public class UIFilmController extends UIElement
             }
 
             /* Render reording overlay */
-            if (this.recording)
-            {
+            if (this.recording) {
                 int x = area.x + 5 + 16;
                 int y = area.y + 5;
 
                 context.batcher.icon(Icons.SPHERE, Colors.RED | Colors.A100, x, y, 1F, 0F);
 
-                if (this.recordingCountdown <= 0)
-                {
+                if (this.recordingCountdown <= 0) {
                     context.batcher.textCard(context.font, this.getTick() + " ticks", x + 3, y + 4, Colors.WHITE, Colors.A50);
-                }
-                else
-                {
+                } else {
                     context.batcher.textCard(context.font, String.valueOf(this.recordingCountdown / 20F), x + 3, y + 4, Colors.WHITE, Colors.A50);
                 }
             }
@@ -789,10 +670,8 @@ public class UIFilmController extends UIElement
         this.orbit.handleOrbiting(context);
     }
 
-    private void renderPickingPreview(UIContext context, Area area)
-    {
-        if (!this.stencil.hasPicked())
-        {
+    private void renderPickingPreview(UIContext context, Area area) {
+        if (!this.stencil.hasPicked()) {
             return;
         }
 
@@ -807,12 +686,10 @@ public class UIFilmController extends UIElement
         CommonShaderAccess.setTarget(shader, index);
         context.batcher.texturedBox(shader, texture, Colors.WHITE, area.x, area.y, area.w, area.h, 0, h, w, 0, w, h);
 
-        if (pair != null)
-        {
+        if (pair != null) {
             String label = pair.a.getIdOrName();
 
-            if (!pair.b.isEmpty())
-            {
+            if (!pair.b.isEmpty()) {
                 label += " - " + pair.b;
             }
 
@@ -820,12 +697,9 @@ public class UIFilmController extends UIElement
         }
     }
 
-    public void renderFrame(RenderingContext context)
-    {
-        for (Entity entity : this.entities)
-        {
-            if (this.getPovMode() == 1 && entity == getCurrentEntity() && this.orbit.enabled)
-            {
+    public void renderFrame(RenderingContext context) {
+        for (Entity entity : this.entities) {
+            if (this.getPovMode() == 1 && entity == getCurrentEntity() && this.orbit.enabled) {
                 continue;
             }
 
@@ -839,30 +713,25 @@ public class UIFilmController extends UIElement
         int x = mouse.x;
         int y = mouse.y;
 
-        if (this.canControl())
-        {
+        if (this.canControl()) {
             float sensitivity = 400F;
             Entity controller = this.controlled;
 
-            if (this.isMouseLookMode())
-            {
+            if (this.isMouseLookMode()) {
                 /* Control head direction */
                 BasicComponent basic = controller.basic;
 
                 float xx = (y - this.lastMouse.y) / sensitivity;
                 float yy = (x - this.lastMouse.x) / sensitivity;
 
-                if (xx != 0 || yy != 0)
-                {
+                if (xx != 0 || yy != 0) {
                     basic.rotation.x += xx;
                     basic.rotation.y += yy;
                     basic.rotation.x = MathUtils.clamp(basic.rotation.x, -MathUtils.PI / 2, MathUtils.PI / 2);
                     basic.prevRotation.x = basic.rotation.x;
                     basic.prevRotation.y = basic.rotation.y;
                 }
-            }
-            else
-            {
+            } else {
                 /* Control sticks and triggers variables */
                 sensitivity = 50F;
 
@@ -878,23 +747,19 @@ public class UIFilmController extends UIElement
         this.lastMouse.set(x, y);
     }
 
-    private void renderEntity(RenderingContext context, Entity entity)
-    {
+    private void renderEntity(RenderingContext context, Entity entity) {
         FormComponent component = entity.get(FormComponent.class);
 
-        if (component != null && component.form != null)
-        {
+        if (component != null && component.form != null) {
             AnchorProperty.Anchor value = component.form.anchor.get();
             AnchorProperty.Anchor last = component.form.anchor.getLast();
 
-            if (value != null && last != null)
-            {
+            if (value != null && last != null) {
                 Matrix4f defaultMatrix = entity.getMatrixForRenderWithRotation(context.getCamera(), context.getTransition());
                 Matrix4f matrix = this.getEntityMatrix(context, value, defaultMatrix);
                 Matrix4f lastMatrix = this.getEntityMatrix(context, last, defaultMatrix);
 
-                if (matrix != null && lastMatrix != null && matrix != lastMatrix)
-                {
+                if (matrix != null && lastMatrix != null && matrix != lastMatrix) {
                     float factor = component.form.anchor.getTweenFactorInterpolated(context.getTransition());
 
                     context.stack.push();
@@ -903,8 +768,7 @@ public class UIFilmController extends UIElement
                     Vector3d position = Vectors.TEMP_3D.set(entity.basic.prevPosition).lerp(entity.basic.position, context.getTransition());
                     Vector2f lighting = entity.world.getLighting(position.x, position.y + entity.basic.hitbox.h / 2, position.z);
 
-                    for (Shader shader : context.getShaders().getAll())
-                    {
+                    for (Shader shader : context.getShaders().getAll()) {
                         CommonShaderAccess.setLightMapCoords(shader, lighting.x, lighting.y);
                     }
 
@@ -920,12 +784,10 @@ public class UIFilmController extends UIElement
         entity.render(context);
     }
 
-    private Matrix4f getEntityMatrix(RenderingContext context, AnchorProperty.Anchor selector, Matrix4f defaultMatrix)
-    {
+    private Matrix4f getEntityMatrix(RenderingContext context, AnchorProperty.Anchor selector, Matrix4f defaultMatrix) {
         int entityIndex = selector.actor;
 
-        if (CollectionUtils.inRange(this.entities, entityIndex))
-        {
+        if (CollectionUtils.inRange(this.entities, entityIndex)) {
             Entity entity = this.entities.get(entityIndex);
             Matrix4f basic = new Matrix4f(entity.getMatrixForRenderWithRotation(context.getCamera(), context.getTransition()));
 
@@ -934,14 +796,12 @@ public class UIFilmController extends UIElement
 
             FormComponent component = entity.get(FormComponent.class);
 
-            if (component.form != null)
-            {
+            if (component.form != null) {
                 component.form.getRenderer().collectMatrices(entity, stack, map, "", context.getTransition());
 
                 Matrix4f matrix = map.get(selector.attachment);
 
-                if (matrix != null)
-                {
+                if (matrix != null) {
                     basic.mul(matrix);
                 }
             }
@@ -952,20 +812,17 @@ public class UIFilmController extends UIElement
         return defaultMatrix;
     }
 
-    private void rayTraceEntity(RenderingContext context)
-    {
+    private void rayTraceEntity(RenderingContext context) {
         this.hoveredEntity = null;
 
-        if (!Window.isAltPressed() || this.panel.recorder.isRecording())
-        {
+        if (!Window.isAltPressed() || this.panel.recorder.isRecording()) {
             return;
         }
 
         UIContext c = this.getContext();
         Area area = this.panel.getFramebufferViewport();
 
-        if (!area.isInside(c))
-        {
+        if (!area.isInside(c)) {
             return;
         }
 
@@ -973,37 +830,31 @@ public class UIFilmController extends UIElement
         Camera camera = this.panel.getCamera();
         Vector3f mouseDirection = camera.getMouseDirection(c.mouseX, c.mouseY, area);
 
-        for (Entity entity : this.entities)
-        {
+        for (Entity entity : this.entities) {
             AABB aabb = entity.getPickingHitbox();
 
-            if (aabb.intersectsRay(camera.position, mouseDirection))
-            {
+            if (aabb.intersectsRay(camera.position, mouseDirection)) {
                 entities.add(entity);
             }
         }
 
-        if (!entities.isEmpty())
-        {
+        if (!entities.isEmpty()) {
             entities.sort((a, b) -> (int) (a.basic.position.distanceSquared(camera.position) - b.basic.position.distanceSquared(camera.position)));
 
             this.hoveredEntity = entities.get(0);
         }
 
-        if (this.hoveredEntity != null)
-        {
+        if (this.hoveredEntity != null) {
             AABB aabb = this.hoveredEntity.getPickingHitbox();
 
             Draw.renderBox(context, aabb.x, aabb.y, aabb.z, aabb.w, aabb.h, aabb.d, 0F, 0.5F, 1F);
         }
     }
 
-    private void renderStencil(UIContext context)
-    {
+    private void renderStencil(UIContext context) {
         Area viewport = this.panel.getFramebufferViewport();
 
-        if (!viewport.isInside(context) || this.controlled != null)
-        {
+        if (!viewport.isInside(context) || this.controlled != null) {
             this.stencil.clearPicking();
 
             return;
@@ -1011,8 +862,7 @@ public class UIFilmController extends UIElement
 
         Entity entity = this.getCurrentEntity();
 
-        if (entity == null)
-        {
+        if (entity == null) {
             return;
         }
 
@@ -1041,16 +891,14 @@ public class UIFilmController extends UIElement
         context.render.getUBO().update(context.render.projection, Matrices.EMPTY_4F);
     }
 
-    private void ensureStencilFramebuffer()
-    {
+    private void ensureStencilFramebuffer() {
         this.stencil.setup(Link.bbs("stencil_film"));
 
         Texture mainTexture = this.stencil.getFramebuffer().getMainTexture();
         int w = BBSSettings.videoWidth.get();
         int h = BBSSettings.videoHeight.get();
 
-        if (mainTexture.width != w || mainTexture.height != h)
-        {
+        if (mainTexture.width != w || mainTexture.height != h) {
             this.stencil.resizeGUI(w, h);
         }
     }

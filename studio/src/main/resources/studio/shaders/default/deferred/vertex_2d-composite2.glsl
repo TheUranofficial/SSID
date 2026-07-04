@@ -80,12 +80,12 @@ void main()
     vec4 color = texture(u_texture1, uv);
 
     out_color = color;
-    out_ao    = texture(u_texture2, uv);
+    out_ao = texture(u_texture2, uv);
 
     float VdotL = max0(dot(rotate(normalize(position), vec3(1.0, 0.0, 0.0), radians(u_day_yaw)), up));
     float depth = texture(u_depth, uv).r;
 
-    bool is_sky  = depth == 1.0;
+    bool is_sky = depth == 1.0;
     vec3 ambient = vec3(1.0);
 
     if (!is_sky)
@@ -112,7 +112,7 @@ void main()
         for (int i = 0; i < u_lights_count; i++)
         {
             Light light = u_lights[i];
-            vec3 diff =  light.position.xyz - position;
+            vec3 diff = light.position.xyz - position;
 
             float d = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
             float ld = light.distance * light.distance;

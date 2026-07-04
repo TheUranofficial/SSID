@@ -11,12 +11,10 @@ import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.pose.Pose;
 import mchorse.bbs.utils.pose.PoseTransform;
 
-public class UIPoseKeyframeFactory extends UIKeyframeFactory<Pose>
-{
+public class UIPoseKeyframeFactory extends UIKeyframeFactory<Pose> {
     public UIPoseFactoryEditor poseEditor;
 
-    public UIPoseKeyframeFactory(GenericKeyframe<Pose> keyframe, UIPropertyEditor editor)
-    {
+    public UIPoseKeyframeFactory(GenericKeyframe<Pose> keyframe, UIPropertyEditor editor) {
         super(keyframe, editor);
 
         this.poseEditor = new UIPoseFactoryEditor(keyframe);
@@ -25,8 +23,7 @@ public class UIPoseKeyframeFactory extends UIKeyframeFactory<Pose>
         ModelForm form = (ModelForm) property.property.getForm();
         CubicModel model = form.getModel();
 
-        if (model != null)
-        {
+        if (model != null) {
             this.poseEditor.setPose(keyframe.getValue(), model.poseGroup);
             this.poseEditor.fillGroups(model.model.getAllGroupKeys());
         }
@@ -34,12 +31,10 @@ public class UIPoseKeyframeFactory extends UIKeyframeFactory<Pose>
         this.add(this.poseEditor);
     }
 
-    public static class UIPoseFactoryEditor extends UIPoseEditor
-    {
+    public static class UIPoseFactoryEditor extends UIPoseEditor {
         private GenericKeyframe<Pose> keyframe;
 
-        public UIPoseFactoryEditor(GenericKeyframe<Pose> keyframe)
-        {
+        public UIPoseFactoryEditor(GenericKeyframe<Pose> keyframe) {
             super();
 
             this.keyframe = keyframe;
@@ -48,62 +43,53 @@ public class UIPoseKeyframeFactory extends UIKeyframeFactory<Pose>
         }
 
         @Override
-        protected UIPropTransform createTransformEditor()
-        {
+        protected UIPropTransform createTransformEditor() {
             return new UIPoseTransforms().enableHotkeys();
         }
 
         @Override
-        protected void changedPose(Runnable runnable)
-        {
+        protected void changedPose(Runnable runnable) {
             BaseValue.edit(this.keyframe, (kf) -> runnable.run());
         }
 
         @Override
-        protected void setFix(PoseTransform transform, float value)
-        {
+        protected void setFix(PoseTransform transform, float value) {
             this.keyframe.preNotifyParent();
             super.setFix(transform, value);
             this.keyframe.postNotifyParent();
         }
     }
 
-    public static class UIPoseTransforms extends UIPropTransform
-    {
+    public static class UIPoseTransforms extends UIPropTransform {
         private GenericKeyframe<Pose> keyframe;
 
-        public void setKeyframe(GenericKeyframe<Pose> keyframe)
-        {
+        public void setKeyframe(GenericKeyframe<Pose> keyframe) {
             this.keyframe = keyframe;
         }
 
         @Override
-        public void setT(double x, double y, double z)
-        {
+        public void setT(double x, double y, double z) {
             this.keyframe.preNotifyParent();
             super.setT(x, y, z);
             this.keyframe.postNotifyParent();
         }
 
         @Override
-        public void setS(double x, double y, double z)
-        {
+        public void setS(double x, double y, double z) {
             this.keyframe.preNotifyParent();
             super.setS(x, y, z);
             this.keyframe.postNotifyParent();
         }
 
         @Override
-        public void setR(double x, double y, double z)
-        {
+        public void setR(double x, double y, double z) {
             this.keyframe.preNotifyParent();
             super.setR(x, y, z);
             this.keyframe.postNotifyParent();
         }
 
         @Override
-        public void setR2(double x, double y, double z)
-        {
+        public void setR2(double x, double y, double z) {
             this.keyframe.preNotifyParent();
             super.setR2(x, y, z);
             this.keyframe.postNotifyParent();

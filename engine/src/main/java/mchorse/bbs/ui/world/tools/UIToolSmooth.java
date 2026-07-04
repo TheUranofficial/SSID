@@ -11,15 +11,13 @@ import mchorse.bbs.voxel.processor.Processor;
 import mchorse.bbs.voxel.processor.SmoothProcessor;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 
-public class UIToolSmooth extends UIToolProcessorPainter
-{
+public class UIToolSmooth extends UIToolProcessorPainter {
     public UITrackpad kernelRadius;
     public UITrackpad kernelSigma;
 
     private float[][] kernel;
 
-    public UIToolSmooth(UIWorldEditorPanel editor)
-    {
+    public UIToolSmooth(UIWorldEditorPanel editor) {
         super(editor);
 
         this.kernelRadius = new UITrackpad((v) -> this.recalculate());
@@ -36,8 +34,7 @@ public class UIToolSmooth extends UIToolProcessorPainter
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.GRAPH, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_SMOOTH, Direction.RIGHT);
@@ -45,14 +42,12 @@ public class UIToolSmooth extends UIToolProcessorPainter
         return icon;
     }
 
-    private void recalculate()
-    {
+    private void recalculate() {
         this.kernel = SmoothProcessor.generateBlurKernel((int) this.kernelRadius.getValue(), (float) this.kernelSigma.getValue());
     }
 
     @Override
-    protected Processor createProcessor(RayTraceResult result)
-    {
+    protected Processor createProcessor(RayTraceResult result) {
         return new SmoothProcessor(this.variantToPlace, this.kernel);
     }
 }

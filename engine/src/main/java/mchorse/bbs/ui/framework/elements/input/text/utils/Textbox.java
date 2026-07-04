@@ -15,8 +15,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Textbox
-{
+public class Textbox {
     private String text = "";
     private Consumer<String> callback;
 
@@ -46,39 +45,32 @@ public class Textbox
 
     private long lastClick;
 
-    public Textbox(Consumer<String> callback)
-    {
+    public Textbox(Consumer<String> callback) {
         this.callback = callback;
     }
 
-    public void setFont(FontRenderer font)
-    {
+    public void setFont(FontRenderer font) {
         this.font = font;
 
         this.updateBounds(false);
     }
 
-    public FontRenderer getFont()
-    {
+    public FontRenderer getFont() {
         return this.font;
     }
 
-    public void setPlaceholder(IKey placeholder)
-    {
+    public void setPlaceholder(IKey placeholder) {
         this.placeholder = placeholder;
     }
 
-    public void setBorder(boolean border)
-    {
+    public void setBorder(boolean border) {
         this.border = border;
     }
 
     /* Text */
 
-    public String getSelectedText()
-    {
-        if (this.isSelected())
-        {
+    public String getSelectedText() {
+        if (this.isSelected()) {
             int min = Math.min(this.cursor, this.selection);
             int max = Math.max(this.cursor, this.selection);
 
@@ -88,15 +80,12 @@ public class Textbox
         return "";
     }
 
-    public String getText()
-    {
+    public String getText() {
         return this.text;
     }
 
-    public void setText(String text)
-    {
-        if (text.length() > this.length)
-        {
+    public void setText(String text) {
+        if (text.length() > this.length) {
             text = text.substring(0, this.length);
         }
 
@@ -107,44 +96,34 @@ public class Textbox
         this.updateBounds(false);
     }
 
-    public void acceptText()
-    {
-        if (this.callback != null)
-        {
+    public void acceptText() {
+        if (this.callback != null) {
             this.callback.accept(this.text);
         }
     }
 
-    public void insert(String text)
-    {
+    public void insert(String text) {
         this.deleteSelection();
 
         text = text.replaceAll("\n", "");
 
         int i = this.text.length() + text.length();
 
-        if (i >= this.length)
-        {
+        if (i >= this.length) {
             text = text.substring(0, this.length - this.text.length());
         }
 
-        if (text.isEmpty())
-        {
+        if (text.isEmpty()) {
             return;
         }
 
         String newText = this.text;
 
-        if (this.cursor == 0)
-        {
+        if (this.cursor == 0) {
             newText = text + newText;
-        }
-        else if (this.cursor >= newText.length())
-        {
+        } else if (this.cursor >= newText.length()) {
             newText += text;
-        }
-        else
-        {
+        } else {
             newText = newText.substring(0, this.cursor) + text + newText.substring(this.cursor);
         }
 
@@ -154,29 +133,23 @@ public class Textbox
         this.updateBounds(false);
     }
 
-    public void deleteCharacter()
-    {
-        if (this.cursor > 0)
-        {
+    public void deleteCharacter() {
+        if (this.cursor > 0) {
             this.text = this.text.substring(0, this.cursor - 1) + this.text.substring(this.cursor);
             this.moveCursorBy(-1);
         }
     }
 
-    public void setValidator(Predicate<String> validator)
-    {
+    public void setValidator(Predicate<String> validator) {
         this.validator = validator;
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return this.length;
     }
 
-    public void setLength(int length)
-    {
-        if (this.text.length() > length)
-        {
+    public void setLength(int length) {
+        if (this.text.length() > length) {
             this.text = this.text.substring(0, length);
             this.updateBounds(false);
         }
@@ -186,37 +159,28 @@ public class Textbox
 
     /* Cursor, selection and offsets */
 
-    public boolean selectGroup(int direction, boolean select)
-    {
+    public boolean selectGroup(int direction, boolean select) {
         Pair<Integer, Integer> groups = this.findGroup(direction, this.cursor);
 
-        if (groups == null)
-        {
+        if (groups == null) {
             return false;
         }
 
         int min = groups.a;
         int max = groups.b;
 
-        if (select)
-        {
-            if (direction == 0)
-            {
+        if (select) {
+            if (direction == 0) {
                 this.cursor = max;
                 this.selection = min;
-            }
-            else
-            {
-                if (!this.isSelected())
-                {
+            } else {
+                if (!this.isSelected()) {
                     this.selection = this.cursor;
                 }
 
                 this.cursor = direction < 0 ? min : max;
             }
-        }
-        else
-        {
+        } else {
             this.deselect();
             this.cursor = direction < 0 ? min : max;
         }
@@ -229,64 +193,53 @@ public class Textbox
     /**
      * Find a group (two cursors) at given offset
      */
-    public Pair<Integer, Integer> findGroup(int direction, int offset)
-    {
+    public Pair<Integer, Integer> findGroup(int direction, int offset) {
         StringGroupMatcher matcher = new StringGroupMatcher();
 
         return matcher.findGroup(direction, this.text, offset);
     }
 
-    public void moveCursorTo(int cursor)
-    {
+    public void moveCursorTo(int cursor) {
         this.cursor = cursor;
 
         this.updateBounds(false);
     }
 
-    public void moveCursorToStart()
-    {
+    public void moveCursorToStart() {
         this.moveCursorTo(0);
     }
 
-    public void moveCursorToEnd()
-    {
+    public void moveCursorToEnd() {
         this.moveCursorTo(this.text.length());
     }
 
-    private void moveCursorBy(int i)
-    {
+    private void moveCursorBy(int i) {
         this.cursor += (int) Math.copySign(1, i);
         this.cursor = MathUtils.clamp(this.cursor, 0, this.text.length());
 
         this.updateBounds(false);
     }
 
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selection != this.cursor && this.selection >= 0;
     }
 
-    public void setSelection(int selection)
-    {
+    public void setSelection(int selection) {
         this.selection = selection;
 
         this.updateBounds(true);
     }
 
-    public void deselect()
-    {
+    public void deselect() {
         this.selection = -1;
     }
 
-    public void deleteSelection()
-    {
-        if (this.cursor == this.selection)
-        {
+    public void deleteSelection() {
+        if (this.cursor == this.selection) {
             this.deselect();
         }
 
-        if (!this.isSelected())
-        {
+        if (!this.isSelected()) {
             return;
         }
 
@@ -303,51 +256,40 @@ public class Textbox
         this.clamp();
     }
 
-    private void updateBounds(boolean selection)
-    {
+    private void updateBounds(boolean selection) {
         int cursor = selection ? this.selection : this.cursor;
         int length = this.text.length();
         int offset = this.background ? 10 : 0;
         int max = this.area.w - offset;
 
-        if (this.font.getWidth(this.text) < max)
-        {
+        if (this.font.getWidth(this.text) < max) {
             this.left = 0;
             this.right = length;
 
             return;
         }
 
-        if (cursor < this.left)
-        {
+        if (cursor < this.left) {
             int bound = this.getBound(max, cursor, 1);
 
-            if (bound == cursor)
-            {
+            if (bound == cursor) {
                 bound = this.getBound(max, length - 1, -1);
 
                 this.left = bound;
                 this.right = length;
-            }
-            else
-            {
+            } else {
                 this.left = cursor;
                 this.right = MathUtils.clamp(bound + 1, 0, length);
             }
-        }
-        else if (cursor >= this.right)
-        {
+        } else if (cursor >= this.right) {
             int bound = this.getBound(max, MathUtils.clamp(cursor, 0, length - 1), -1);
 
-            if (bound == cursor)
-            {
+            if (bound == cursor) {
                 bound = this.getBound(max, 0, 1);
 
                 this.left = 0;
                 this.right = bound;
-            }
-            else
-            {
+            } else {
                 this.left = bound;
                 this.right = cursor;
             }
@@ -357,16 +299,13 @@ public class Textbox
         this.right = MathUtils.clamp(this.right, 0, length);
     }
 
-    private int getBound(int max, int start, int direction)
-    {
+    private int getBound(int max, int start, int direction) {
         int w = 0;
 
-        for (int i = start; i >= 0 && i < this.text.length(); i += direction)
-        {
+        for (int i = start; i >= 0 && i < this.text.length(); i += direction) {
             int sw = this.font.getWidth(this.text.charAt(i));
 
-            if (w < max && w + sw >= max)
-            {
+            if (w < max && w + sw >= max) {
                 return i;
             }
 
@@ -376,14 +315,12 @@ public class Textbox
         return start;
     }
 
-    private void clamp()
-    {
+    private void clamp() {
         this.cursor = MathUtils.clamp(this.cursor, 0, this.text.length());
         this.selection = MathUtils.clamp(this.selection, -1, this.text.length());
     }
 
-    private String getWrappedText()
-    {
+    private String getWrappedText() {
         int length = this.text.length();
 
         return this.text.substring(
@@ -394,75 +331,59 @@ public class Textbox
 
     /* Visual */
 
-    public boolean hasBackground()
-    {
+    public boolean hasBackground() {
         return this.background;
     }
 
-    public void setBackground(boolean background)
-    {
+    public void setBackground(boolean background) {
         this.background = background;
     }
 
-    public int getColor()
-    {
+    public int getColor() {
         return this.color;
     }
 
-    public void setColor(int color)
-    {
+    public void setColor(int color) {
         this.color = color;
     }
 
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
 
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
     /* Input handling */
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return this.enabled;
     }
 
-    public void setEnabled(boolean enabled)
-    {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    public boolean isFocused()
-    {
+    public boolean isFocused() {
         return this.focused;
     }
 
-    public void setFocused(boolean focused)
-    {
+    public void setFocused(boolean focused) {
         this.focused = focused;
     }
 
-    public void mouseClicked(int x, int y, int button)
-    {
-        if (button == 0 && this.area.isInside(x, y))
-        {
-            if (System.currentTimeMillis() < this.lastClick)
-            {
+    public void mouseClicked(int x, int y, int button) {
+        if (button == 0 && this.area.isInside(x, y)) {
+            if (System.currentTimeMillis() < this.lastClick) {
                 this.selectGroup(0, true);
                 this.lastClick -= 500;
-            }
-            else
-            {
+            } else {
                 int lastSelection = this.selection;
 
                 this.deselect();
 
-                if (Window.isShiftPressed())
-                {
+                if (Window.isShiftPressed()) {
                     this.selection = lastSelection < 0 ? this.cursor : lastSelection;
                 }
 
@@ -473,49 +394,37 @@ public class Textbox
 
                 this.lastClick = System.currentTimeMillis() + 200;
             }
-        }
-        else
-        {
+        } else {
             this.focused = false;
         }
     }
 
-    public void mouseReleased(int x, int y, int button)
-    {
-        if (button == 0)
-        {
+    public void mouseReleased(int x, int y, int button) {
+        if (button == 0) {
             this.holding = false;
         }
     }
 
-    private int getIndexAt(int x)
-    {
+    private int getIndexAt(int x) {
         x -= this.area.x;
 
-        if (this.background)
-        {
+        if (this.background) {
             x -= 4;
         }
 
-        if (x >= 0)
-        {
+        if (x >= 0) {
             String wrappedText = this.getWrappedText();
             int w = this.font.getWidth(wrappedText);
 
-            if (x >= w)
-            {
+            if (x >= w) {
                 return this.right;
-            }
-            else
-            {
+            } else {
                 w = 0;
 
-                for (int i = 0, c = wrappedText.length(); i < c; i++)
-                {
+                for (int i = 0, c = wrappedText.length(); i < c; i++) {
                     int string = this.font.getWidth(wrappedText.charAt(i));
 
-                    if (x >= w && x < w + string)
-                    {
+                    if (x >= w && x < w + string) {
                         return this.left + i;
                     }
 
@@ -527,10 +436,8 @@ public class Textbox
         return this.left;
     }
 
-    public boolean keyPressed(UIContext context)
-    {
-        if (!this.focused || !this.enabled || !this.visible)
-        {
+    public boolean keyPressed(UIContext context) {
+        if (!this.focused || !this.enabled || !this.visible) {
             return false;
         }
 
@@ -538,87 +445,62 @@ public class Textbox
         boolean ctrl = Window.isCtrlPressed();
         boolean shift = Window.isShiftPressed();
 
-        if (ctrl && (context.isPressed(GLFW.GLFW_KEY_C) || context.isPressed(GLFW.GLFW_KEY_X)))
-        {
-            if (selecting)
-            {
+        if (ctrl && (context.isPressed(GLFW.GLFW_KEY_C) || context.isPressed(GLFW.GLFW_KEY_X))) {
+            if (selecting) {
                 Window.setClipboard(this.getSelectedText());
 
-                if (context.isPressed(GLFW.GLFW_KEY_X))
-                {
+                if (context.isPressed(GLFW.GLFW_KEY_X)) {
                     this.deleteSelection();
                 }
 
                 return true;
             }
-        }
-        else if (ctrl && context.isPressed(GLFW.GLFW_KEY_V))
-        {
+        } else if (ctrl && context.isPressed(GLFW.GLFW_KEY_V)) {
             String clipboard = Window.getClipboard();
 
-            if (!clipboard.isEmpty())
-            {
+            if (!clipboard.isEmpty()) {
                 this.insert(clipboard.replaceAll("\r", ""));
                 this.acceptText();
             }
 
             return true;
-        }
-        else if (ctrl && context.isPressed(GLFW.GLFW_KEY_A))
-        {
+        } else if (ctrl && context.isPressed(GLFW.GLFW_KEY_A)) {
             this.selection = 0;
             this.cursor = this.text.length();
             this.updateBounds(false);
 
             return true;
-        }
-        else if (context.isPressed(GLFW.GLFW_KEY_HOME))
-        {
+        } else if (context.isPressed(GLFW.GLFW_KEY_HOME)) {
             this.handleShift(shift);
             this.moveCursorToStart();
-        }
-        else if (context.isPressed(GLFW.GLFW_KEY_END))
-        {
+        } else if (context.isPressed(GLFW.GLFW_KEY_END)) {
             this.handleShift(shift);
             this.moveCursorToEnd();
-        }
-        else if (context.isHeld(GLFW.GLFW_KEY_LEFT) || context.isHeld(GLFW.GLFW_KEY_RIGHT))
-        {
+        } else if (context.isHeld(GLFW.GLFW_KEY_LEFT) || context.isHeld(GLFW.GLFW_KEY_RIGHT)) {
             int offset = context.isHeld(GLFW.GLFW_KEY_LEFT) ? -1 : 1;
 
-            if (ctrl)
-            {
-                if (!this.selectGroup(offset, shift))
-                {
+            if (ctrl) {
+                if (!this.selectGroup(offset, shift)) {
                     this.handleShift(shift);
                     this.moveCursorBy(offset);
                 }
-            }
-            else
-            {
+            } else {
                 this.handleShift(shift);
                 this.moveCursorBy(offset);
             }
-        }
-        else if (context.isHeld(GLFW.GLFW_KEY_BACKSPACE) || context.isHeld(GLFW.GLFW_KEY_DELETE))
-        {
-            if (this.isSelected())
-            {
+        } else if (context.isHeld(GLFW.GLFW_KEY_BACKSPACE) || context.isHeld(GLFW.GLFW_KEY_DELETE)) {
+            if (this.isSelected()) {
                 this.deleteSelection();
                 this.acceptText();
 
                 return true;
-            }
-            else if (context.isHeld(GLFW.GLFW_KEY_DELETE) && this.cursor < this.text.length())
-            {
+            } else if (context.isHeld(GLFW.GLFW_KEY_DELETE) && this.cursor < this.text.length()) {
                 this.moveCursorBy(1);
                 this.deleteCharacter();
                 this.acceptText();
 
                 return true;
-            }
-            else if (context.isHeld(GLFW.GLFW_KEY_BACKSPACE))
-            {
+            } else if (context.isHeld(GLFW.GLFW_KEY_BACKSPACE)) {
                 this.deleteCharacter();
                 this.acceptText();
 
@@ -629,19 +511,15 @@ public class Textbox
         return false;
     }
 
-    public boolean textInput(char character)
-    {
-        if (!this.focused || !this.enabled || !this.visible)
-        {
+    public boolean textInput(char character) {
+        if (!this.focused || !this.enabled || !this.visible) {
             return false;
         }
 
-        if (this.font.hasCharacter(character))
-        {
+        if (this.font.hasCharacter(character)) {
             String text = String.valueOf(character);
 
-            if (this.validator != null && !this.validator.test(text))
-            {
+            if (this.validator != null && !this.validator.test(text)) {
                 return false;
             }
 
@@ -654,53 +532,42 @@ public class Textbox
         return false;
     }
 
-    private void handleShift(boolean shift)
-    {
-        if (shift)
-        {
-            if (this.selection == -1)
-            {
+    private void handleShift(boolean shift) {
+        if (shift) {
+            if (this.selection == -1) {
                 this.selection = cursor;
             }
-        }
-        else
-        {
+        } else {
             this.deselect();
         }
     }
 
     /* Rendering */
 
-    public void render(UIContext context)
-    {
-        if (!this.visible)
-        {
+    public void render(UIContext context) {
+        if (!this.visible) {
             return;
         }
 
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
-        if (this.lastW != this.area.w)
-        {
+        if (this.lastW != this.area.w) {
             this.lastW = this.area.w;
             this.updateBounds(false);
         }
 
-        if (this.area.isInside(mouseX, mouseY) && this.holding && Math.abs(mouseX - this.lastX) > 2)
-        {
+        if (this.area.isInside(mouseX, mouseY) && this.holding && Math.abs(mouseX - this.lastX) > 2) {
             this.moveCursorTo(this.getIndexAt(mouseX));
         }
 
         int x = this.area.x;
         int y = this.area.y;
 
-        if (this.background)
-        {
+        if (this.background) {
             this.area.render(context.batcher, 0xff000000);
 
-            if (this.border)
-            {
+            if (this.border) {
                 int borderColor = this.focused ? 0xff000000 + BBSSettings.primaryColor.get() : 0xffaaaaaa;
 
                 context.batcher.outline(this.area.x, this.area.y, this.area.ex(), this.area.ey(), borderColor);
@@ -715,8 +582,7 @@ public class Textbox
         int length = text.length();
         int color = empty ? 0xaaaaaa : this.color;
 
-        if (!empty && this.isSelected())
-        {
+        if (!empty && this.isSelected()) {
             int min = MathUtils.clamp(Math.min(this.cursor, this.selection) - this.left, 0, length);
             int max = MathUtils.clamp(Math.max(this.cursor, this.selection) - this.left, 0, length);
 
@@ -729,12 +595,10 @@ public class Textbox
 
         context.batcher.textShadow(this.font, text, x, y, color);
 
-        if (this.focused)
-        {
+        if (this.focused) {
             int relativeIndex = this.cursor - this.left;
 
-            if (relativeIndex >= 0 && relativeIndex <= length)
-            {
+            if (relativeIndex >= 0 && relativeIndex <= length) {
                 x += this.font.getWidth(text.substring(0, relativeIndex));
 
                 float alpha = (float) Math.sin(context.getTickTransition() / 2D);

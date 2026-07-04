@@ -10,8 +10,7 @@ import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIOrbitClip extends UIClip<OrbitClip>
-{
+public class UIOrbitClip extends UIClip<OrbitClip> {
     public UITextboxHelp selector;
     public UIToggle copy;
     public UITrackpad yaw;
@@ -19,14 +18,12 @@ public class UIOrbitClip extends UIClip<OrbitClip>
     public UIPointModule offset;
     public UITrackpad distance;
 
-    public UIOrbitClip(OrbitClip clip, IUIClipsDelegate editor)
-    {
+    public UIOrbitClip(OrbitClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.selector = new UITextboxHelp(500, (str) ->
@@ -50,8 +47,7 @@ public class UIOrbitClip extends UIClip<OrbitClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_SELECTOR), this.selector);
@@ -63,8 +59,7 @@ public class UIOrbitClip extends UIClip<OrbitClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.selector.setText(this.clip.selector.get());

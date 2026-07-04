@@ -13,51 +13,43 @@ import mchorse.bbs.ui.forms.categories.UIFormCategory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FormCategory implements IMapSerializable
-{
+public class FormCategory implements IMapSerializable {
     public IKey title;
     public final List<Form> forms = new ArrayList<>();
     public boolean hidden;
 
-    public FormCategory(IKey title)
-    {
+    public FormCategory(IKey title) {
         this.title = title;
     }
 
-    public boolean canModify(Form form)
-    {
+    public boolean canModify(Form form) {
         return false;
     }
 
-    public void update()
-    {}
+    public void update() {
+    }
 
-    public UIFormCategory createUI(UIFormList list)
-    {
+    public UIFormCategory createUI(UIFormList list) {
         return new UIFormCategory(this, list);
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.hidden = data.getBool("hidden");
 
-        for (BaseType formData : data.getList("forms"))
-        {
+        for (BaseType formData : data.getList("forms")) {
             this.forms.add(FormUtils.fromData(formData.asMap()));
         }
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType forms = new ListType();
 
         data.putBool("hidden", this.hidden);
         data.put("forms", forms);
 
-        for (Form form : this.forms)
-        {
+        for (Form form : this.forms) {
             forms.add(FormUtils.toData(form));
         }
     }

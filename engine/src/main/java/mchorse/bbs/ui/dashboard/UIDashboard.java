@@ -63,8 +63,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
-public class UIDashboard extends UIBaseMenu
-{
+public class UIDashboard extends UIBaseMenu {
     private UIDashboardPanels panels;
 
     public UIIcon settings;
@@ -81,8 +80,7 @@ public class UIDashboard extends UIBaseMenu
 
     private UISettingsOverlayPanel settingsPanel;
 
-    public UIDashboard(IBridge bridge)
-    {
+    public UIDashboard(IBridge bridge) {
         super(bridge);
 
         World world = bridge.get(IBridgeWorld.class).getWorld();
@@ -97,8 +95,7 @@ public class UIDashboard extends UIBaseMenu
         {
             this.orbitUI.setControl(this.panels.isFlightSupported());
 
-            if (e.lastPanel instanceof UIFilmPanel)
-            {
+            if (e.lastPanel instanceof UIFilmPanel) {
                 this.orbit.setup(this.bridge.get(IBridgeCamera.class).getCamera());
             }
         });
@@ -151,21 +148,17 @@ public class UIDashboard extends UIBaseMenu
         this.getRoot().keys().register(Keys.CHALKBOARD_TOGGLE, chalkboard::toggleVisible);
     }
 
-    private void saveWorld()
-    {
+    private void saveWorld() {
         this.bridge.get(IBridgeWorld.class).getWorld().saveAll(false);
         UIUtils.playClick();
     }
 
-    public boolean isWalkMode()
-    {
+    public boolean isWalkMode() {
         return this.walker != null;
     }
 
-    public void toggleWalkMode()
-    {
-        if (this.walker == null)
-        {
+    public void toggleWalkMode() {
+        if (this.walker == null) {
             Vector3d finalPosition = this.orbit.getFinalPosition();
 
             this.walker = EntityArchitect.createDummy();
@@ -174,17 +167,14 @@ public class UIDashboard extends UIBaseMenu
             this.walker.basic.setPosition(finalPosition.x, finalPosition.y - this.walker.basic.getEyeHeight(), finalPosition.z);
             this.walker.basic.prevPosition.set(this.walker.basic.position);
             this.orbit.position.set(finalPosition);
-        }
-        else
-        {
+        } else {
             this.walker = null;
         }
 
         this.orbit.distance = 0F;
     }
 
-    private void cyclePanels()
-    {
+    private void cyclePanels() {
         List<UIDashboardPanel> panels = this.panels.panels;
 
         int direction = Window.isShiftPressed() ? -1 : 1;
@@ -195,15 +185,12 @@ public class UIDashboard extends UIBaseMenu
         UIUtils.playClick();
     }
 
-    public UIDashboardPanels getPanels()
-    {
+    public UIDashboardPanels getPanels() {
         return this.panels;
     }
 
-    public void reloadWorld(World world)
-    {
-        for (UIDashboardPanel panel : this.panels.panels)
-        {
+    public void reloadWorld(World world) {
+        for (UIDashboardPanel panel : this.panels.panels) {
             panel.reloadWorld();
         }
 
@@ -213,30 +200,25 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    public Link getMenuId()
-    {
+    public Link getMenuId() {
         return Link.bbs("dashboard");
     }
 
     @Override
-    public boolean canPause()
-    {
+    public boolean canPause() {
         return this.panels.panel != null && this.panels.panel.canPause();
     }
 
     @Override
-    public boolean canRefresh()
-    {
+    public boolean canRefresh() {
         return this.panels.panel != null && this.panels.panel.canRefresh();
     }
 
     @Override
-    public void onOpen(UIBaseMenu oldMenu)
-    {
+    public void onOpen(UIBaseMenu oldMenu) {
         super.onOpen(oldMenu);
 
-        if (oldMenu != this)
-        {
+        if (oldMenu != this) {
             this.panels.open();
             this.setPanel(this.panels.panel);
         }
@@ -245,12 +227,10 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    public void onClose(UIBaseMenu nextMenu)
-    {
+    public void onClose(UIBaseMenu nextMenu) {
         super.onClose(nextMenu);
 
-        if (nextMenu != this)
-        {
+        if (nextMenu != this) {
             this.panels.close();
         }
 
@@ -259,16 +239,13 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    protected void closeMenu()
-    {
-        if (!this.main.isVisible())
-        {
+    protected void closeMenu() {
+        if (!this.main.isVisible()) {
             this.main.setVisible(true);
         }
     }
 
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         this.panels.registerPanel(new UIFilmPanel(this), UIKeys.FILM_TITLE, Icons.FILM);
 
         this.panels.registerPanel(new UIWorldEditorPanel(this), UIKeys.WORLD_WORLD_EDITOR, Icons.BLOCK).marginLeft(10);
@@ -284,36 +261,26 @@ public class UIDashboard extends UIBaseMenu
         this.setPanel(this.getPanel(UIWorldEditorPanel.class));
     }
 
-    public <T> T getPanel(Class<T> clazz)
-    {
+    public <T> T getPanel(Class<T> clazz) {
         return this.panels.getPanel(clazz);
     }
 
-    public void setPanel(UIDashboardPanel panel)
-    {
+    public void setPanel(UIDashboardPanel panel) {
         this.panels.setPanel(panel);
     }
 
     @Override
-    public boolean handleKey(int key, int scanCode, int action, int mods)
-    {
-        if (this.panels.isFlightSupported() && this.walker != null)
-        {
-            if (key == GLFW.GLFW_KEY_SPACE && action == GLFW.GLFW_PRESS)
-            {
+    public boolean handleKey(int key, int scanCode, int action, int mods) {
+        if (this.panels.isFlightSupported() && this.walker != null) {
+            if (key == GLFW.GLFW_KEY_SPACE && action == GLFW.GLFW_PRESS) {
                 float factor = Window.isCtrlPressed() ? 1F : 0.4F;
 
                 this.walker.basic.velocity.y += factor;
                 this.walker.basic.grounded = false;
-            }
-            else if (key == GLFW.GLFW_KEY_LEFT_SHIFT)
-            {
-                if (action == GLFW.GLFW_PRESS)
-                {
+            } else if (key == GLFW.GLFW_KEY_LEFT_SHIFT) {
+                if (action == GLFW.GLFW_PRESS) {
                     this.walker.basic.sneak = true;
-                }
-                else if (action == GLFW.GLFW_RELEASE)
-                {
+                } else if (action == GLFW.GLFW_RELEASE) {
                     this.walker.basic.sneak = false;
                 }
             }
@@ -323,17 +290,14 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
 
-        if (this.panels.panel != null)
-        {
+        if (this.panels.panel != null) {
             this.panels.panel.update();
         }
 
-        if (this.panels.isFlightSupported() && this.walker != null)
-        {
+        if (this.panels.isFlightSupported() && this.walker != null) {
             this.walker.setWorld(this.bridge.get(IBridgeWorld.class).getWorld());
             this.walker.update();
 
@@ -356,46 +320,35 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    protected void preRenderMenu(UIRenderingContext context)
-    {
-        if (!this.main.isVisible())
-        {
+    protected void preRenderMenu(UIRenderingContext context) {
+        if (!this.main.isVisible()) {
             return;
         }
 
-        if (this.panels.panel != null && this.panels.panel.needsBackground())
-        {
+        if (this.panels.panel != null && this.panels.panel.needsBackground()) {
             this.background(context);
-        }
-        else
-        {
+        } else {
             context.batcher.gradientVBox(0, 0, this.width, this.height / 8, Colors.A25, 0);
             context.batcher.gradientVBox(0, this.height - this.height / 8, this.width, this.height, 0, Colors.A25);
         }
     }
 
-    private void background(UIRenderingContext context)
-    {
+    private void background(UIRenderingContext context) {
         Link background = BBSSettings.backgroundImage.get();
         int color = BBSSettings.backgroundColor.get();
 
-        if (background == null)
-        {
+        if (background == null) {
             context.batcher.box(0, 0, this.width, this.height, color);
-        }
-        else
-        {
+        } else {
             context.batcher.texturedBox(context.getTextures().getTexture(background), color, 0, 0, this.width, this.height, 0, 0, this.width, this.height, this.width, this.height);
         }
     }
 
     @Override
-    public void renderMenu(UIRenderingContext context, int mouseX, int mouseY)
-    {
+    public void renderMenu(UIRenderingContext context, int mouseX, int mouseY) {
         super.renderMenu(context, mouseX, mouseY);
 
-        if (this.orbitUI.canControl() && this.walker != null)
-        {
+        if (this.orbitUI.canControl() && this.walker != null) {
             BasicComponent basic = this.walker.basic;
             Vector3d position = new Vector3d(basic.prevPosition).lerp(basic.position, context.getTransition());
 
@@ -404,23 +357,19 @@ public class UIDashboard extends UIBaseMenu
     }
 
     @Override
-    public void renderInWorld(RenderingContext context)
-    {
+    public void renderInWorld(RenderingContext context) {
         super.renderInWorld(context);
 
-        if (this.panels.panel != null)
-        {
+        if (this.panels.panel != null) {
             this.panels.panel.renderInWorld(context);
         }
 
-        if (this.main.isVisible() && this.orbit.distance > 0.1F && this.displayAxes && this.panels.isFlightSupported())
-        {
+        if (this.main.isVisible() && this.orbit.distance > 0.1F && this.displayAxes && this.panels.isFlightSupported()) {
             this.renderWorldAxes(context);
         }
     }
 
-    public void renderWorldAxes(RenderingContext context)
-    {
+    public void renderWorldAxes(RenderingContext context) {
         Vector3f relative = context.getCamera().getRelative(this.orbit.position);
 
         final float axisSize = 0.75F;
@@ -467,8 +416,7 @@ public class UIDashboard extends UIBaseMenu
 
         builder.render();
 
-        if (this.orbit.distance < 8)
-        {
+        if (this.orbit.distance < 8) {
             GLStates.depthTest(false);
             GLStates.cullFaces(false);
 
@@ -484,8 +432,7 @@ public class UIDashboard extends UIBaseMenu
         }
     }
 
-    private void renderWorldAxisLabel(RenderingContext context, String label, float x, float y, float z, Vector3f relative)
-    {
+    private void renderWorldAxisLabel(RenderingContext context, String label, float x, float y, float z, Vector3f relative) {
         final float scale = 0.125F / 16F;
         MatrixStack stack = context.stack;
         ColoredTextBuilder3D textBuilder = ITextBuilder.colored3D;

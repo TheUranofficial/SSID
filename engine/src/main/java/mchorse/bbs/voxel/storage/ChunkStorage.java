@@ -14,18 +14,15 @@ import java.util.List;
 
 /**
  * Abstract chunk storage
- *
+ * <p>
  * Subclasses are responsible for saving and loading chunk data from a folder.
  */
-public abstract class ChunkStorage
-{
+public abstract class ChunkStorage {
     protected File folder;
     protected WorldMetadata metadata;
 
-    public ChunkStorage(File folder, WorldMetadata metadata)
-    {
-        if (folder != null)
-        {
+    public ChunkStorage(File folder, WorldMetadata metadata) {
+        if (folder != null) {
             this.folder = folder;
             this.folder.mkdirs();
         }
@@ -33,60 +30,47 @@ public abstract class ChunkStorage
         this.metadata = metadata;
     }
 
-    public File getFolder()
-    {
+    public File getFolder() {
         return this.folder;
     }
 
-    public void save(World world, ChunkCell cell)
-    {
+    public void save(World world, ChunkCell cell) {
         MapType map = cell.toData();
 
-        if (cell.removed)
-        {
-            for (Entity entity : cell.entities)
-            {
+        if (cell.removed) {
+            for (Entity entity : cell.entities) {
                 world.removeEntitySafe(entity);
             }
         }
 
-        try
-        {
+        try {
             this.createStorage(this.getFile(cell)).write(map);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean read(World world, ChunkCell cell)
-    {
-        try
-        {
+    public boolean read(World world, ChunkCell cell) {
+        try {
             File file = this.getFile(cell);
             MapType map = (MapType) this.createStorage(file).read();
 
-            if (map != null)
-            {
+            if (map != null) {
                 cell.fromData(world.architect, map);
 
-                for (Entity entity : cell.entities)
-                {
+                for (Entity entity : cell.entities) {
                     world.addEntitySafe(entity);
                 }
             }
 
             return true;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return false;
     }
 
-    protected DataStorage createStorage(File file)
-    {
+    protected DataStorage createStorage(File file) {
         DataStorage storage = new DataFileStorage(file);
 
         return this.metadata.compress ? new DataGzipStorage(storage) : storage;

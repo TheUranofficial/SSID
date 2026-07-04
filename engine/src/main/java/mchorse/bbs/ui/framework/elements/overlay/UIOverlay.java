@@ -11,14 +11,12 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UIOverlay extends UIElement
-{
+public class UIOverlay extends UIElement {
     private static final Map<String, Vector2i> offsets = new HashMap<>();
 
     private int background = Colors.A50;
 
-    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel)
-    {
+    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel) {
         UIOverlay overlay = new UIOverlay();
 
         panel.relative(overlay).xy(0.5F, 0.5F).wh(0.5F, 0.5F).anchor(0.5F).bounds(overlay, 0);
@@ -27,8 +25,7 @@ public class UIOverlay extends UIElement
         return overlay;
     }
 
-    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel, float w, float h)
-    {
+    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel, float w, float h) {
         UIOverlay overlay = new UIOverlay();
 
         panel.relative(overlay).xy(0.5F, 0.5F).wh(w, h).anchor(0.5F).bounds(overlay, 0);
@@ -37,8 +34,7 @@ public class UIOverlay extends UIElement
         return overlay;
     }
 
-    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel, int w, int h)
-    {
+    public static UIOverlay addOverlay(UIContext context, UIOverlayPanel panel, int w, int h) {
         UIOverlay overlay = new UIOverlay();
 
         panel.relative(overlay).xy(0.5F, 0.5F).wh(w, h).anchor(0.5F).bounds(overlay, 0);
@@ -47,13 +43,11 @@ public class UIOverlay extends UIElement
         return overlay;
     }
 
-    public static UIOverlay addOverlayRight(UIContext context, UIOverlayPanel panel, int w)
-    {
+    public static UIOverlay addOverlayRight(UIContext context, UIOverlayPanel panel, int w) {
         return addOverlayRight(context, panel, w, 10);
     }
 
-    public static UIOverlay addOverlayRight(UIContext context, UIOverlayPanel panel, int w, int padding)
-    {
+    public static UIOverlay addOverlayRight(UIContext context, UIOverlayPanel panel, int w, int padding) {
         UIOverlay overlay = new UIOverlay();
 
         panel.relative(overlay).x(1F, -padding).y(padding).w(w).h(1F, -padding * 2).anchor(1F, 0F).bounds(overlay, 0);
@@ -62,12 +56,10 @@ public class UIOverlay extends UIElement
         return overlay;
     }
 
-    public static void setupPanel(UIContext context, UIOverlay overlay, UIOverlayPanel panel)
-    {
+    public static void setupPanel(UIContext context, UIOverlay overlay, UIOverlayPanel panel) {
         Vector2i offset = offsets.get(panel.getClass().getSimpleName());
 
-        if (offset != null)
-        {
+        if (offset != null) {
             panel.getFlex().x.offset = offset.x;
             panel.getFlex().y.offset = offset.y;
         }
@@ -78,35 +70,29 @@ public class UIOverlay extends UIElement
         context.menu.overlay.resize();
     }
 
-    public static boolean has(UIContext context)
-    {
+    public static boolean has(UIContext context) {
         return !context.menu.getRoot().getChildren(UIOverlayPanel.class).isEmpty();
     }
 
-    public UIOverlay()
-    {
+    public UIOverlay() {
         this.eventPropagataion(EventPropagation.BLOCK).markContainer();
     }
 
-    public UIOverlay background(int background)
-    {
+    public UIOverlay background(int background) {
         this.background = background;
 
         return this;
     }
 
-    public UIOverlay noBackground()
-    {
+    public UIOverlay noBackground() {
         return this.background(0);
     }
 
-    public void closeItself()
-    {
+    public void closeItself() {
         this.removeFromParent();
         UIUtils.playClick();
 
-        for (UIOverlayPanel element : this.getChildren(UIOverlayPanel.class))
-        {
+        for (UIOverlayPanel element : this.getChildren(UIOverlayPanel.class)) {
             element.removeFromParent();
             element.onClose();
 
@@ -120,18 +106,15 @@ public class UIOverlay extends UIElement
     /* Don't pass user input down the line... */
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
+    protected boolean subMouseClicked(UIContext context) {
         this.closeItself();
 
         return super.subMouseClicked(context);
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.closeItself();
         }
 
@@ -139,10 +122,8 @@ public class UIOverlay extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (Colors.getAlpha(this.background) > 0F)
-        {
+    public void render(UIContext context) {
+        if (Colors.getAlpha(this.background) > 0F) {
             this.area.render(context.batcher, this.background);
         }
 

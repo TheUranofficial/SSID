@@ -7,8 +7,7 @@ import mchorse.bbs.utils.keyframes.generic.factories.IGenericKeyframeFactory;
 import mchorse.bbs.utils.math.IInterpolation;
 import mchorse.bbs.utils.math.Interpolation;
 
-public class GenericKeyframe <T> extends BaseValue
-{
+public class GenericKeyframe<T> extends BaseValue {
     private long tick;
 
     /**
@@ -23,88 +22,74 @@ public class GenericKeyframe <T> extends BaseValue
 
     private final IGenericKeyframeFactory<T> factory;
 
-    public GenericKeyframe(String id, IGenericKeyframeFactory<T> factory, long tick, T value)
-    {
+    public GenericKeyframe(String id, IGenericKeyframeFactory<T> factory, long tick, T value) {
         this(id, factory);
 
         this.tick = tick;
         this.value = value;
     }
 
-    public GenericKeyframe(String id, IGenericKeyframeFactory<T> factory)
-    {
+    public GenericKeyframe(String id, IGenericKeyframeFactory<T> factory) {
         super(id);
 
         this.factory = factory;
     }
 
-    public IGenericKeyframeFactory<T> getFactory()
-    {
+    public IGenericKeyframeFactory<T> getFactory() {
         return this.factory;
     }
 
-    public long getTick()
-    {
+    public long getTick() {
         return this.tick;
     }
 
-    public void setTick(long tick)
-    {
+    public void setTick(long tick) {
         this.preNotifyParent();
         this.tick = tick;
         this.postNotifyParent();
     }
 
-    public int getDuration()
-    {
+    public int getDuration() {
         return this.duration;
     }
 
-    public void setDuration(int duration)
-    {
+    public void setDuration(int duration) {
         this.preNotifyParent();
         this.duration = duration;
         this.postNotifyParent();
     }
 
-    public T getValue()
-    {
+    public T getValue() {
         return this.value;
     }
 
-    public void setValue(T value)
-    {
+    public void setValue(T value) {
         this.preNotifyParent();
         this.value = value;
         this.postNotifyParent();
     }
 
-    public IInterpolation getInterpolation()
-    {
+    public IInterpolation getInterpolation() {
         return this.interp;
     }
 
-    public void setInterpolation(IInterpolation interp)
-    {
+    public void setInterpolation(IInterpolation interp) {
         this.preNotifyParent();
         this.interp = interp;
         this.postNotifyParent();
     }
 
-    public boolean isInstant()
-    {
+    public boolean isInstant() {
         return this.instant;
     }
 
-    public void setInstant(boolean instant)
-    {
+    public void setInstant(boolean instant) {
         this.preNotifyParent();
         this.instant = instant;
         this.postNotifyParent();
     }
 
-    public void copy(GenericKeyframe<T> keyframe)
-    {
+    public void copy(GenericKeyframe<T> keyframe) {
         this.tick = keyframe.tick;
         this.duration = keyframe.duration;
         this.value = this.factory.copy(keyframe.value);
@@ -113,8 +98,7 @@ public class GenericKeyframe <T> extends BaseValue
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         MapType data = new MapType();
 
         data.putLong("tick", this.tick);
@@ -128,10 +112,8 @@ public class GenericKeyframe <T> extends BaseValue
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (!data.isMap())
-        {
+    public void fromData(BaseType data) {
+        if (!data.isMap()) {
             return;
         }
 

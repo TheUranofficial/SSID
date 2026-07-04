@@ -10,8 +10,7 @@ import org.lwjgl.opengl.GL13;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Waveform
-{
+public class Waveform {
     public float[] average;
     public float[] maximum;
 
@@ -20,10 +19,8 @@ public class Waveform
     private int h;
     private int pixelsPerSecond;
 
-    public void generate(Wave data, List<ColorCode> colorCodes, int pixelsPerSecond, int height)
-    {
-        if (data.getBytesPerSample() != 2)
-        {
+    public void generate(Wave data, List<ColorCode> colorCodes, int pixelsPerSecond, int height) {
+        if (data.getBytesPerSample() != 2) {
             throw new IllegalStateException("Waveform generation doesn't support non 16-bit audio data!");
         }
 
@@ -31,8 +28,7 @@ public class Waveform
         this.render(colorCodes);
     }
 
-    public void render(List<ColorCode> colorCodes)
-    {
+    public void render(List<ColorCode> colorCodes) {
         this.delete();
 
         int maxTextureSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE) / 2;
@@ -41,15 +37,13 @@ public class Waveform
         float time = 0;
         ColorCode code = this.getColorCode(colorCodes, time);
 
-        for (int t = 0; t < count; t++)
-        {
+        for (int t = 0; t < count; t++) {
             Texture texture = new Texture();
             int width = Math.min(this.w - offset, maxTextureSize);
 
             Pixels pixels = Pixels.fromSize(width, this.h);
 
-            for (int i = offset, j = 0, c = Math.min(offset + width, this.average.length); i < c; i++, j++)
-            {
+            for (int i = offset, j = 0, c = Math.min(offset + width, this.average.length); i < c; i++, j++) {
                 float average = this.average[i];
                 float maximum = this.maximum[i];
 
@@ -62,8 +56,7 @@ public class Waveform
                 if (code == null) code = this.getColorCode(colorCodes, time);
                 if (code != null) color = Colors.setA(code.color, 1F);
 
-                if (avgHeight > 0)
-                {
+                if (avgHeight > 0) {
                     pixels.drawRect(j, this.h / 2 - maxHeight / 2, 1, maxHeight, color);
                     pixels.drawRect(j, this.h / 2 - avgHeight / 2, 1, avgHeight, Colors.mulRGB(color, 0.8F));
                 }
@@ -85,17 +78,13 @@ public class Waveform
         }
     }
 
-    private ColorCode getColorCode(List<ColorCode> colorCodes, float time)
-    {
-        if (colorCodes == null)
-        {
+    private ColorCode getColorCode(List<ColorCode> colorCodes, float time) {
+        if (colorCodes == null) {
             return null;
         }
 
-        for (ColorCode colorCode : colorCodes)
-        {
-            if (colorCode.isInside(time))
-            {
+        for (ColorCode colorCode : colorCodes) {
+            if (colorCode.isInside(time)) {
                 return colorCode;
             }
         }
@@ -103,8 +92,7 @@ public class Waveform
         return null;
     }
 
-    public void populate(Wave data, int pixelsPerSecond, int height)
-    {
+    public void populate(Wave data, int pixelsPerSecond, int height) {
         this.pixelsPerSecond = pixelsPerSecond;
         this.w = (int) (data.getDuration() * pixelsPerSecond);
         this.h = height;
@@ -113,17 +101,14 @@ public class Waveform
 
         int region = data.getScanRegion(pixelsPerSecond);
 
-        for (int i = 0; i < this.w; i ++)
-        {
+        for (int i = 0; i < this.w; i++) {
             int offset = i * region;
             int count = 0;
             float average = 0;
             float maximum = 0;
 
-            for (int j = 0; j < region; j += 2 * data.numChannels)
-            {
-                if (offset + j + 1 >= data.data.length)
-                {
+            for (int j = 0; j < region; j += 2 * data.numChannels) {
+                if (offset + j + 1 >= data.data.length) {
                     break;
                 }
 
@@ -145,56 +130,46 @@ public class Waveform
         }
     }
 
-    public void delete()
-    {
-        for (Texture sprite : this.sprites)
-        {
+    public void delete() {
+        for (Texture sprite : this.sprites) {
             sprite.delete();
         }
 
         this.sprites.clear();
     }
 
-    public boolean isCreated()
-    {
+    public boolean isCreated() {
         return !this.sprites.isEmpty();
     }
 
-    public int getPixelsPerSecond()
-    {
+    public int getPixelsPerSecond() {
         return this.pixelsPerSecond;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return this.w;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return this.h;
     }
 
-    public List<Texture> getSprites()
-    {
+    public List<Texture> getSprites() {
         return this.sprites;
     }
 
     /**
      * Draw the waveform out of multiple sprites of desired cropped region
      */
-    public void render(Batcher2D batcher, int color, int x, int y, int w, int h, float startTime, float endTime)
-    {
+    public void render(Batcher2D batcher, int color, int x, int y, int w, int h, float startTime, float endTime) {
         float offset = 0;
 
-        for (Texture sprite : this.sprites)
-        {
+        for (Texture sprite : this.sprites) {
             float spriteTime = sprite.width / (float) this.pixelsPerSecond;
             float spriteStart = offset;
             float spriteEnd = offset + spriteTime;
 
-            if (spriteStart > endTime)
-            {
+            if (spriteStart > endTime) {
                 break;
             }
 

@@ -7,21 +7,12 @@ import mchorse.bbs.data.DataToString;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.events.RenderWorldEvent;
 import mchorse.bbs.forms.forms.Form;
-import mchorse.bbs.graphics.Draw;
-import mchorse.bbs.graphics.Framebuffer;
-import mchorse.bbs.graphics.GLStates;
-import mchorse.bbs.graphics.MatrixStack;
-import mchorse.bbs.graphics.RenderingContext;
+import mchorse.bbs.graphics.*;
 import mchorse.bbs.graphics.shaders.CommonShaderAccess;
 import mchorse.bbs.graphics.shaders.Shader;
 import mchorse.bbs.graphics.shaders.ShaderRepository;
 import mchorse.bbs.graphics.shaders.pipeline.ShaderPipeline;
-import mchorse.bbs.graphics.shaders.uniforms.UniformFloat;
-import mchorse.bbs.graphics.shaders.uniforms.UniformInt;
-import mchorse.bbs.graphics.shaders.uniforms.UniformMatrix3;
-import mchorse.bbs.graphics.shaders.uniforms.UniformMatrix4;
-import mchorse.bbs.graphics.shaders.uniforms.UniformVector2;
-import mchorse.bbs.graphics.shaders.uniforms.UniformVector3;
+import mchorse.bbs.graphics.shaders.uniforms.*;
 import mchorse.bbs.graphics.text.FontRenderer;
 import mchorse.bbs.graphics.text.builders.ColoredTextBuilder3D;
 import mchorse.bbs.graphics.text.builders.ITextBuilder;
@@ -52,8 +43,7 @@ import org.lwjgl.opengl.GL11;
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
-public class StudioRenderer implements IComponent
-{
+public class StudioRenderer implements IComponent {
     public StudioEngine engine;
 
     public RenderingContext context;
@@ -82,14 +72,12 @@ public class StudioRenderer implements IComponent
 
     private Entity dummy = EntityArchitect.createDummy();
 
-    public StudioRenderer(StudioEngine engine)
-    {
+    public StudioRenderer(StudioEngine engine) {
         this.engine = engine;
     }
 
     @Override
-    public void init() throws Exception
-    {
+    public void init() throws Exception {
         this.context = BBS.getRender();
 
         this.ubo = new ProjectionViewUBO(0);
@@ -110,16 +98,14 @@ public class StudioRenderer implements IComponent
         this.renderWorld = new RenderWorldEvent(this.context);
     }
 
-    public void freezeShadow()
-    {
+    public void freezeShadow() {
         this.shadowCameraFreeze = !this.shadowCameraFreeze;
     }
 
-    public void reloadShaders(boolean full)
-    {}
+    public void reloadShaders(boolean full) {
+    }
 
-    private void setupShaders()
-    {
+    private void setupShaders() {
         ShaderRepository mainShaders = this.context.getMainShaders();
         Shader vertexRGBA = new Shader(Link.create("studio:shaders/default/world/vertex_rgba.glsl"), VBOAttributes.VERTEX_RGBA);
         Shader vertexUVRGBA = new Shader(Link.create("studio:shaders/default/world/vertex_uv_rgba.glsl"), VBOAttributes.VERTEX_UV_RGBA);
@@ -163,17 +149,13 @@ public class StudioRenderer implements IComponent
         this.skyboxShader.attachUBO(this.context.getUBO(), "u_matrices");
     }
 
-    private void setupShaderPipeline()
-    {
-        try
-        {
+    private void setupShaderPipeline() {
+        try {
             String string = IOUtils.readText(BBS.getProvider().getAsset(Link.create("studio:shaders/default/default.shader.json")));
             MapType data = DataToString.mapFromString(string);
 
             this.pipeline.fromData(data);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -183,21 +165,18 @@ public class StudioRenderer implements IComponent
         this.finalShader = new Shader(Link.create("studio:shaders/default/deferred/vertex_2d-final.glsl"), VBOAttributes.VERTEX_2D);
         this.finalShader.onInitialize(CommonShaderAccess::initializeTexture);
 
-        for (StudioShaders.Stage stage : this.shaders.stages)
-        {
+        for (StudioShaders.Stage stage : this.shaders.stages) {
             stage.shader.attachUBO(this.context.getLights(), "u_lights_block");
         }
 
-        for (StudioShaders.Stage stage : this.targetShaders.stages)
-        {
+        for (StudioShaders.Stage stage : this.targetShaders.stages) {
             stage.shader.attachUBO(this.context.getLights(), "u_lights_block");
         }
     }
 
-    private void createSkybox()
-    {
+    private void createSkybox() {
         ByteBuffer data = VAO.DATA;
-        float v[] = new float[] {
+        float v[] = new float[]{
             /* Back (-Z) */
             -1F, 1F, -1F, -1F, -1F, -1F, 1F, -1F, -1F, 1F, -1F, -1F, 1F, 1F, -1F, -1F, 1F, -1F,
             /* Left (-X) */
@@ -214,8 +193,7 @@ public class StudioRenderer implements IComponent
 
         data.clear();
 
-        for (float value : v)
-        {
+        for (float value : v) {
             data.putFloat(value);
         }
 
@@ -226,33 +204,27 @@ public class StudioRenderer implements IComponent
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.ubo.delete();
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         this.dummy.basic.ticks += 1;
         this.ticks += 1;
 
         Form skyForm = this.engine.world.settings.skyForm;
 
-        if (skyForm != null)
-        {
+        if (skyForm != null) {
             this.dummy.setWorld(this.engine.world);
             skyForm.update(this.dummy);
         }
     }
 
     @Override
-    public void render(float transition)
-    {
-        for (FontRenderer fontRenderer : BBS.getFonts().fontRenderers.values())
-        {
-            if (fontRenderer != null)
-            {
+    public void render(float transition) {
+        for (FontRenderer fontRenderer : BBS.getFonts().fontRenderers.values()) {
+            if (fontRenderer != null) {
                 fontRenderer.setTime(this.ticks + transition);
             }
         }
@@ -260,8 +232,7 @@ public class StudioRenderer implements IComponent
         this.context.setTransition(transition);
         this.context.setWorld(this.engine.world);
 
-        if (this.engine.screen.canRefresh())
-        {
+        if (this.engine.screen.canRefresh()) {
             this.renderFrameTo(this.engine.cameraController.camera, this.shaders, 0, true);
             this.renderFinal(this.context.getCamera(), this.shaders);
         }
@@ -271,28 +242,23 @@ public class StudioRenderer implements IComponent
         this.context.runRunnables();
     }
 
-    private void renderFinal(Camera camera, StudioShaders shaders)
-    {
-        if (shaders.shadow != null)
-        {
+    private void renderFinal(Camera camera, StudioShaders shaders) {
+        if (shaders.shadow != null) {
             shaders.shadow.getMainTexture().bind(0);
         }
 
-        for (StudioShaders.Stage stage : shaders.stages)
-        {
+        for (StudioShaders.Stage stage : shaders.stages) {
             stage.framebuffer.applyClear();
 
             this.setupCompositeShader(shaders, stage.shader, camera, shaders.gbuffer);
 
             int i = shaders.getTextureIndex();
 
-            for (Texture texture : shaders.gbuffer.textures)
-            {
+            for (Texture texture : shaders.gbuffer.textures) {
                 texture.bind(i++);
             }
 
-            for (Texture texture : stage.inputs)
-            {
+            for (Texture texture : stage.inputs) {
                 texture.bind(i++);
             }
 
@@ -309,8 +275,7 @@ public class StudioRenderer implements IComponent
         shaders.frames += 1;
     }
 
-    private void setupCompositeShader(StudioShaders shaders, Shader shader, Camera camera, Framebuffer framebuffer)
-    {
+    private void setupCompositeShader(StudioShaders shaders, Shader shader, Camera camera, Framebuffer framebuffer) {
         UniformVector3 position = shader.getUniform("u_camera", UniformVector3.class);
         UniformMatrix4 projection = shader.getUniform("u_projection", UniformMatrix4.class);
         UniformMatrix4 view = shader.getUniform("u_view", UniformMatrix4.class);
@@ -333,8 +298,7 @@ public class StudioRenderer implements IComponent
         if (frames != null) frames.set(shaders.frames);
         if (near != null) near.set(camera.near);
         if (far != null) far.set(camera.far);
-        if (screenSize != null)
-        {
+        if (screenSize != null) {
             Texture mainTexture = framebuffer.getMainTexture();
 
             screenSize.set(mainTexture.width, mainTexture.height);
@@ -344,8 +308,7 @@ public class StudioRenderer implements IComponent
         if (prevProjection != null) prevProjection.set(shaders.prevProjection);
         if (prevView != null) prevView.set(shaders.prevView);
 
-        if (shaders.shadow != null)
-        {
+        if (shaders.shadow != null) {
             UniformMatrix4 shadowProjection = shader.getUniform("u_shadow_projection", UniformMatrix4.class);
             UniformMatrix4 shadowView = shader.getUniform("u_shadow_view", UniformMatrix4.class);
             UniformFloat shadowResolution = shader.getUniform("u_shadow_resolution", UniformFloat.class);
@@ -358,8 +321,7 @@ public class StudioRenderer implements IComponent
         this.updateSky(shader, this.engine.world.settings);
     }
 
-    private void renderFinalQuad()
-    {
+    private void renderFinalQuad() {
         GLStates.depthMask(false);
 
         Texture texture = this.getMainTexture();
@@ -370,15 +332,12 @@ public class StudioRenderer implements IComponent
         GLStates.depthMask(true);
     }
 
-    public Texture getMainTexture()
-    {
+    public Texture getMainTexture() {
         return this.shaders.stages.get(this.shaders.stages.size() - 1).framebuffer.getMainTexture();
     }
 
-    public void renderFrameToQuality(Camera camera, Framebuffer framebuffer, int pass, boolean renderScreen, float quality, Consumer<Framebuffer> rendering)
-    {
-        if (quality <= 0)
-        {
+    public void renderFrameToQuality(Camera camera, Framebuffer framebuffer, int pass, boolean renderScreen, float quality, Consumer<Framebuffer> rendering) {
+        if (quality <= 0) {
             quality = StudioSettings.renderQuality.get();
         }
 
@@ -392,8 +351,7 @@ public class StudioRenderer implements IComponent
         int lastW = gbufferAlbedo.width;
         int lastH = gbufferAlbedo.height;
 
-        if (lastW != w || lastH != h)
-        {
+        if (lastW != w || lastH != h) {
             this.targetShaders.resize(w, h);
         }
 
@@ -408,8 +366,7 @@ public class StudioRenderer implements IComponent
         texture.bind(0);
         Framebuffer.renderToQuad(this.context, this.finalShader);
 
-        if (rendering != null)
-        {
+        if (rendering != null) {
             rendering.accept(framebuffer);
         }
 
@@ -417,12 +374,9 @@ public class StudioRenderer implements IComponent
         GLStates.resetViewport();
     }
 
-    public void renderFrameTo(Camera camera, StudioShaders shaders, int pass, boolean renderScreen)
-    {
-        if (shaders.shadow != null)
-        {
-            if (!this.shadowCameraFreeze)
-            {
+    public void renderFrameTo(Camera camera, StudioShaders shaders, int pass, boolean renderScreen) {
+        if (shaders.shadow != null) {
+            if (!this.shadowCameraFreeze) {
                 this.shadowCamera.copy(camera);
             }
 
@@ -448,8 +402,7 @@ public class StudioRenderer implements IComponent
 
         this.renderFrameCommon(camera, this.context);
 
-        if (renderScreen)
-        {
+        if (renderScreen) {
             this.engine.screen.renderWorld(this.context);
         }
 
@@ -460,22 +413,19 @@ public class StudioRenderer implements IComponent
         GLStates.resetViewport();
     }
 
-    private void renderFrameCommon(Camera camera, RenderingContext context)
-    {
+    private void renderFrameCommon(Camera camera, RenderingContext context) {
         camera.updateView();
         context.stack.reset();
         context.getUBO().update(camera.projection, camera.view);
 
-        if (this.engine.world.settings.sky)
-        {
+        if (this.engine.world.settings.sky) {
             this.renderSkybox();
         }
 
         this.renderScene(context);
     }
 
-    private void renderSkybox()
-    {
+    private void renderSkybox() {
         WorldSettings settings = this.engine.world.settings;
 
         GLStates.depthMask(false);
@@ -492,8 +442,7 @@ public class StudioRenderer implements IComponent
 
         Form skyForm = this.engine.world.settings.skyForm;
 
-        if (skyForm != null)
-        {
+        if (skyForm != null) {
             this.dummy.setWorld(this.engine.world);
             skyForm.getRenderer().render(this.dummy, this.context);
         }
@@ -501,21 +450,18 @@ public class StudioRenderer implements IComponent
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
     }
 
-    private void updateSky(Shader shader, WorldSettings settings)
-    {
+    private void updateSky(Shader shader, WorldSettings settings) {
         UniformVector3 lightmap00 = shader.getUniform("u_lightmap00", UniformVector3.class);
         UniformVector3 lightmap10 = shader.getUniform("u_lightmap10", UniformVector3.class);
 
-        if (lightmap00 != null)
-        {
+        if (lightmap00 != null) {
             lightmap00.set(settings.lightmap00);
             lightmap10.set(settings.lightmap10);
         }
 
         UniformVector3 shadingDirection = shader.getUniform("u_shading", UniformVector3.class);
 
-        if (shadingDirection != null)
-        {
+        if (shadingDirection != null) {
             Vector3f vector3f = Vectors.TEMP_3F.set(settings.shadingDirection);
 
             shadingDirection.set(vector3f.mul(-1).normalize());
@@ -523,8 +469,7 @@ public class StudioRenderer implements IComponent
 
         UniformInt fog = shader.getUniform("u_fog", UniformInt.class);
 
-        if (fog != null)
-        {
+        if (fog != null) {
             int distance = (int) (this.engine.world.chunks.s * (this.engine.world.chunks.getW() - 1) / 2F);
 
             fog.set(settings.fog ? distance : 0);
@@ -547,68 +492,55 @@ public class StudioRenderer implements IComponent
         if (skyMidnight != null) skyMidnight.set(settings.skyMidnight);
     }
 
-    private void renderScene(RenderingContext context)
-    {
+    private void renderScene(RenderingContext context) {
         World world = context.getWorld();
 
-        if (world.settings.terrain)
-        {
+        if (world.settings.terrain) {
             ChunkArrayManager manager = (ChunkArrayManager) world.chunks;
 
             this.renderer.bindTexture(manager);
 
-            if (world.view.getThread().isIdling())
-            {
+            if (world.view.getThread().isIdling()) {
                 manager.buildChunks(this.context, this.engine.video != null && this.engine.video.isRecording());
             }
 
             this.renderer.render(manager, context);
 
-            if (context.isDebug() && StudioSettings.renderTerrainDebug.get())
-            {
+            if (context.isDebug() && StudioSettings.renderTerrainDebug.get()) {
                 this.renderDebugChunks(context.getCamera(), manager);
             }
         }
 
-        for (Entity entity : world.entities)
-        {
-            if (this.canRenderEntity(entity))
-            {
+        for (Entity entity : world.entities) {
+            if (this.canRenderEntity(entity)) {
                 entity.render(this.context);
             }
         }
 
-        for (WorldObject object : world.objects)
-        {
+        for (WorldObject object : world.objects) {
             object.render(this.context);
         }
 
         BBS.events.post(this.renderWorld);
     }
 
-    private boolean canRenderEntity(Entity entity)
-    {
+    private boolean canRenderEntity(Entity entity) {
         return true;
     }
 
-    private void renderDebugChunks(Camera camera, ChunkManager chunks)
-    {
+    private void renderDebugChunks(Camera camera, ChunkManager chunks) {
         int x = MathUtils.toChunk(camera.position.x, chunks.s);
         int y = MathUtils.toChunk(camera.position.y, chunks.s);
         int z = MathUtils.toChunk(camera.position.z, chunks.s);
         int r = 5;
         int r2 = r / 2;
 
-        for (int i = 0; i < r; i++)
-        {
-            for (int j = 0; j < r; j++)
-            {
-                for (int k = 0; k < r; k++)
-                {
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < r; j++) {
+                for (int k = 0; k < r; k++) {
                     ChunkDisplay display = chunks.getDisplay((x - r2 + i) * chunks.s, (y - r2 + j) * chunks.s, (z - r2 + k) * chunks.s);
 
-                    if (display != null)
-                    {
+                    if (display != null) {
                         this.renderDebugChunk(camera, display);
                     }
                 }
@@ -616,8 +548,7 @@ public class StudioRenderer implements IComponent
         }
     }
 
-    private void renderDebugChunk(Camera camera, ChunkDisplay display)
-    {
+    private void renderDebugChunk(Camera camera, ChunkDisplay display) {
         int x = display.x;
         int y = display.y;
         int z = display.z;
@@ -655,8 +586,7 @@ public class StudioRenderer implements IComponent
     }
 
     @Override
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         float renderQuality = StudioSettings.renderQuality.get();
 
         width *= renderQuality;

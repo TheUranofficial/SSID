@@ -5,22 +5,16 @@ import mchorse.bbs.graphics.text.FontRenderer;
 import mchorse.bbs.graphics.vao.VAOBuilder;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIContext;
+import mchorse.bbs.ui.framework.elements.input.text.highlighting.*;
 import mchorse.bbs.ui.framework.elements.input.text.undo.TextEditUndo;
 import mchorse.bbs.ui.framework.elements.input.text.utils.Cursor;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.HighlightedTextLine;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.ISyntaxHighlighter;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.JSSyntaxHighlighter;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.SyntaxStyle;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.TextLineNumber;
-import mchorse.bbs.ui.framework.elements.input.text.highlighting.TextSegment;
 import mchorse.bbs.utils.colors.Colors;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UITextEditor extends UITextarea<HighlightedTextLine>
-{
+public class UITextEditor extends UITextarea<HighlightedTextLine> {
     private ISyntaxHighlighter highlighter;
     private int placements;
     private boolean lines = true;
@@ -28,66 +22,55 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     private List<TextLineNumber> numbers = new ArrayList<>(40);
     private int lineNumber = 0;
 
-    public UITextEditor(Consumer<String> callback)
-    {
+    public UITextEditor(Consumer<String> callback) {
         super(callback);
 
         this.highlighter = new JSSyntaxHighlighter();
     }
 
     @Override
-    protected FontRenderer getFont()
-    {
+    protected FontRenderer getFont() {
         return BBS.getFonts().getRenderer(Link.assets("fonts/bbs_round_mono.json"));
     }
 
-    public UITextEditor highlighter(ISyntaxHighlighter highlighter)
-    {
+    public UITextEditor highlighter(ISyntaxHighlighter highlighter) {
         this.highlighter = highlighter;
 
         return this;
     }
 
     @Override
-    protected HighlightedTextLine createTextLine(String line)
-    {
+    protected HighlightedTextLine createTextLine(String line) {
         return new HighlightedTextLine(line);
     }
 
-    public UITextEditor noLineNumbers()
-    {
+    public UITextEditor noLineNumbers() {
         this.lines = false;
 
         return this;
     }
 
-    public ISyntaxHighlighter getHighlighter()
-    {
+    public ISyntaxHighlighter getHighlighter() {
         return this.highlighter;
     }
 
-    public void resetHighlight()
-    {
-        for (HighlightedTextLine textLine : this.text)
-        {
+    public void resetHighlight() {
+        for (HighlightedTextLine textLine : this.text) {
             textLine.resetSegments();
         }
     }
 
-    public void updateHighlighter()
-    {
+    public void updateHighlighter() {
         SyntaxStyle style = new SyntaxStyle();
 
-        if (this.highlighter.getStyle() != style)
-        {
+        if (this.highlighter.getStyle() != style) {
             this.highlighter.setStyle(style);
             this.resetHighlight();
         }
     }
 
     @Override
-    public void setText(String text)
-    {
+    public void setText(String text) {
         super.setText(text);
 
         /* It will be null before when it will get called from parent's constructor */
@@ -95,8 +78,7 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     }
 
     @Override
-    protected void recalculateSizes()
-    {
+    protected void recalculateSizes() {
         /* Calculate how many pixels will number lines will occupy horizontally */
         double power = Math.ceil(Math.log10(this.text.size() + 1));
 
@@ -106,28 +88,22 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     }
 
     @Override
-    protected void changedLine(int i)
-    {
+    protected void changedLine(int i) {
         String line = this.text.get(i).text;
 
-        if (line.contains("/*") || line.contains("*/"))
-        {
+        if (line.contains("/*") || line.contains("*/")) {
             this.changedLineAfter(i);
-        }
-        else
-        {
+        } else {
             super.changedLine(i);
             this.text.get(i).resetSegments();
         }
     }
 
     @Override
-    protected void changedLineAfter(int i)
-    {
+    protected void changedLineAfter(int i) {
         super.changedLineAfter(i);
 
-        while (i < this.text.size())
-        {
+        while (i < this.text.size()) {
             this.text.get(i).resetSegments();
 
             i += 1;
@@ -137,14 +113,13 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     /* Change input behavior */
 
     @Override
-    protected String getFromChar(char typedChar)
-    {
+    protected String getFromChar(char typedChar) {
         if (
             this.wasDoubleInsert(typedChar, ')', '(') ||
-            this.wasDoubleInsert(typedChar, ']', '[') ||
-            this.wasDoubleInsert(typedChar, '}', '{') ||
-            this.wasDoubleInsert(typedChar, '"', '"') ||
-            this.wasDoubleInsert(typedChar, '\'', '\'')
+                this.wasDoubleInsert(typedChar, ']', '[') ||
+                this.wasDoubleInsert(typedChar, '}', '{') ||
+                this.wasDoubleInsert(typedChar, '"', '"') ||
+                this.wasDoubleInsert(typedChar, '\'', '\'')
         ) {
             this.moveCursor(1, 0);
             this.playSound("insert");
@@ -152,34 +127,23 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
             return "";
         }
 
-        if (typedChar == '(')
-        {
+        if (typedChar == '(') {
             return "()";
-        }
-        else if (typedChar == '[')
-        {
+        } else if (typedChar == '[') {
             return "[]";
-        }
-        else if (typedChar == '{')
-        {
+        } else if (typedChar == '{') {
             return "{}";
-        }
-        else if (typedChar == '"')
-        {
+        } else if (typedChar == '"') {
             return "\"\"";
-        }
-        else if (typedChar == '\'')
-        {
+        } else if (typedChar == '\'') {
             return "''";
         }
 
         return super.getFromChar(typedChar);
     }
 
-    private boolean wasDoubleInsert(char input, char target, char supplementary)
-    {
-        if (input != target)
-        {
+    private boolean wasDoubleInsert(char input, char target, char supplementary) {
+        if (input != target) {
             return false;
         }
 
@@ -193,8 +157,7 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     }
 
     @Override
-    protected void keyNewLine(TextEditUndo undo)
-    {
+    protected void keyNewLine(TextEditUndo undo) {
         String line = this.text.get(this.cursor.line).text;
         boolean unwrap = line.length() >= 2
             && this.cursor.offset > 0
@@ -213,8 +176,7 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
 
         undo.postText += margin;
 
-        if (unwrap)
-        {
+        if (unwrap) {
             super.keyNewLine(undo);
 
             margin = this.createIndent(indent - 4);
@@ -228,14 +190,12 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     }
 
     @Override
-    protected void keyBackspace(TextEditUndo undo, boolean ctrl)
-    {
+    protected void keyBackspace(TextEditUndo undo, boolean ctrl) {
         String line = this.text.get(this.cursor.line).text;
 
         line = this.cursor.start(line);
 
-        if (!line.isEmpty() && line.trim().isEmpty())
-        {
+        if (!line.isEmpty() && line.trim().isEmpty()) {
             int offset = 4 - line.length() % 4;
 
             this.startSelecting();
@@ -247,38 +207,29 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
             this.deselect();
 
             undo.text = deleted;
-        }
-        else
-        {
+        } else {
             super.keyBackspace(undo, ctrl);
         }
     }
 
     @Override
-    protected void keyTab(boolean shift, TextEditUndo undo)
-    {
-        if (this.isSelected())
-        {
+    protected void keyTab(boolean shift, TextEditUndo undo) {
+        if (this.isSelected()) {
             Cursor min = this.getMin();
 
-            if (shift)
-            {
+            if (shift) {
                 min.offset = Math.max(min.offset - 4, 0);
             }
 
             Cursor temp = new Cursor();
             List<String> splits = UITextEditor.splitNewlineString(this.getSelectedText());
 
-            for (int i = 0; i < splits.size(); i++)
-            {
-                if (shift)
-                {
+            for (int i = 0; i < splits.size(); i++) {
+                if (shift) {
                     int indent = this.getIndent(splits.get(i));
 
                     splits.set(i, splits.get(i).substring(Math.min(indent, 4)));
-                }
-                else
-                {
+                } else {
                     splits.set(i, "    " + splits.get(i));
                 }
             }
@@ -291,15 +242,12 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
             this.getMin().set(min.line, splits.get(splits.size() - 1).length());
             min.copy(temp);
 
-            if (!shift)
-            {
+            if (!shift) {
                 min.offset += 4;
             }
 
             undo.postText = result;
-        }
-        else
-        {
+        } else {
             undo.postText = "    ";
 
             this.deleteSelection();
@@ -308,24 +256,19 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
         }
     }
 
-    public int getIndent(int i)
-    {
-        if (this.hasLine(i))
-        {
+    public int getIndent(int i) {
+        if (this.hasLine(i)) {
             return this.getIndent(this.text.get(i).text);
         }
 
         return 0;
     }
 
-    public int getIndent(String line)
-    {
-        for (int j = 0; j < line.length(); j++)
-        {
+    public int getIndent(String line) {
+        for (int j = 0; j < line.length(); j++) {
             char c = line.charAt(j);
 
-            if (c != ' ')
-            {
+            if (c != ' ') {
                 return j;
             }
         }
@@ -333,12 +276,10 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
         return line.length();
     }
 
-    public String createIndent(int i)
-    {
+    public String createIndent(int i) {
         StringBuilder builder = new StringBuilder();
 
-        while (i > 0)
-        {
+        while (i > 0) {
             builder.append(' ');
 
             i -= 1;
@@ -350,17 +291,14 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     /* Replacing rendering */
 
     @Override
-    protected int renderTextLine(FontRenderer font, VAOBuilder builder, String line, int index, int i, int j, int nx, int ny)
-    {
+    protected int renderTextLine(FontRenderer font, VAOBuilder builder, String line, int index, int i, int j, int nx, int ny) {
         /* Cache line number to be later rendered in drawForeground() */
-        if (this.lines && j == 0)
-        {
+        if (this.lines && j == 0) {
             String label = String.valueOf(i + 1);
 
             int x = this.area.x + 5 + this.placements - font.getWidth(label);
 
-            if (this.lineNumber >= this.numbers.size())
-            {
+            if (this.lineNumber >= this.numbers.size()) {
                 this.numbers.add(new TextLineNumber());
             }
 
@@ -371,29 +309,24 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
         /* Draw  */
         HighlightedTextLine textLine = this.text.get(i);
 
-        if (textLine.segments == null)
-        {
+        if (textLine.segments == null) {
             textLine.setSegments(this.highlighter.parse(font, this.text, textLine.text, i));
 
-            if (textLine.wrappedLines != null)
-            {
+            if (textLine.wrappedLines != null) {
                 textLine.calculateWrappedSegments(font);
             }
         }
 
         List<TextSegment> segments = textLine.segments;
 
-        if (textLine.wrappedSegments != null)
-        {
+        if (textLine.wrappedSegments != null) {
             segments = j < textLine.wrappedSegments.size() ? textLine.wrappedSegments.get(j) : null;
         }
 
-        if (segments != null)
-        {
+        if (segments != null) {
             boolean shadow = this.highlighter.getStyle().shadow;
 
-            for (TextSegment segment : segments)
-            {
+            for (TextSegment segment : segments) {
                 index = font.build(builder, segment.text, nx, ny, index, segment.color, shadow);
 
                 nx += segment.width;
@@ -404,32 +337,26 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
     }
 
     @Override
-    protected int getShiftX()
-    {
+    protected int getShiftX() {
         return this.lines ? 10 + this.placements - 1 : 0;
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         this.area.render(context.batcher, Colors.A100 | Colors.mulRGB(this.highlighter.getStyle().background, 0.8F));
     }
 
     @Override
-    protected void renderForeground(FontRenderer font, UIContext context)
-    {
-        if (this.lines)
-        {
+    protected void renderForeground(FontRenderer font, UIContext context) {
+        if (this.lines) {
             /* Draw line numbers background */
             int x = this.area.x + this.getShiftX();
 
             context.batcher.box(this.area.x, this.area.y, x, this.area.ey(), Colors.A100 | this.highlighter.getStyle().background);
 
             /* Draw cached line numbers */
-            for (TextLineNumber number : this.numbers)
-            {
-                if (!number.render)
-                {
+            for (TextLineNumber number : this.numbers) {
+                if (!number.render) {
                     break;
                 }
 
@@ -442,8 +369,7 @@ public class UITextEditor extends UITextarea<HighlightedTextLine>
             /* Draw shadow to the right of line numbers when scrolling */
             float a = Math.min(this.horizontal.scroll / 10F, 1F) * 0.25F;
 
-            if (a > 0)
-            {
+            if (a > 0) {
                 context.batcher.gradientHBox(x, this.area.y, x + 10, this.area.ey(), Colors.a(a), 0);
             }
         }

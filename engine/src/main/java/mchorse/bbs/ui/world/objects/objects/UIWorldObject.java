@@ -7,15 +7,13 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.world.entities.UIVector3d;
 import mchorse.bbs.world.objects.WorldObject;
 
-public abstract class UIWorldObject <T extends WorldObject> extends UIElement
-{
+public abstract class UIWorldObject<T extends WorldObject> extends UIElement {
     public UITextbox id;
     public UIVector3d position;
 
     protected T object;
 
-    public UIWorldObject()
-    {
+    public UIWorldObject() {
         super();
 
         this.relative(this).column().vertical().stretch();
@@ -28,8 +26,7 @@ public abstract class UIWorldObject <T extends WorldObject> extends UIElement
         this.add(UI.label(UIKeys.WORLD_OBJECTS_POSITION).background().marginTop(8), this.position);
     }
 
-    public void fillData(T object)
-    {
+    public void fillData(T object) {
         this.object = object;
 
         this.id.setText(object.id);

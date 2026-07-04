@@ -9,8 +9,7 @@ import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 
-public class UIParticleSchemeCollisionSection extends UIParticleSchemeComponentSection<ParticleComponentMotionCollision>
-{
+public class UIParticleSchemeCollisionSection extends UIParticleSchemeComponentSection<ParticleComponentMotionCollision> {
     public UIToggle enabled;
     public UITrackpad drag;
     public UITrackpad bounciness;
@@ -19,8 +18,7 @@ public class UIParticleSchemeCollisionSection extends UIParticleSchemeComponentS
 
     private boolean wasPresent;
 
-    public UIParticleSchemeCollisionSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeCollisionSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.enabled = new UIToggle(UIKeys.SNOWSTORM_COLLISION_ENABLED, (b) -> this.editor.dirty());
@@ -52,28 +50,24 @@ public class UIParticleSchemeCollisionSection extends UIParticleSchemeComponentS
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_COLLISION_TITLE;
     }
 
     @Override
-    public void beforeSave(ParticleScheme scheme)
-    {
+    public void beforeSave(ParticleScheme scheme) {
         this.component.enabled = this.enabled.getValue() ? MolangParser.ONE : MolangParser.ZERO;
     }
 
     @Override
-    protected ParticleComponentMotionCollision getComponent(ParticleScheme scheme)
-    {
+    protected ParticleComponentMotionCollision getComponent(ParticleScheme scheme) {
         this.wasPresent = this.scheme.get(ParticleComponentMotionCollision.class) != null;
 
         return scheme.getOrCreate(ParticleComponentMotionCollision.class);
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         this.enabled.setValue(this.wasPresent);
         this.drag.setValue(this.component.collisionDrag);
         this.bounciness.setValue(this.component.bounciness);

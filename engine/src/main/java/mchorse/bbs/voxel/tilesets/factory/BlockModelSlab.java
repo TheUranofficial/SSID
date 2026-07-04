@@ -7,29 +7,18 @@ import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 
-public class BlockModelSlab extends BlockModelAll
-{
+public class BlockModelSlab extends BlockModelAll {
     @Override
-    public BlockVariant getVariantForBuilding(RayTraceResult result)
-    {
-        if (result.normal.equals(Side.RIGHT.normal))
-        {
+    public BlockVariant getVariantForBuilding(RayTraceResult result) {
+        if (result.normal.equals(Side.RIGHT.normal)) {
             return this.variants.get(2);
-        }
-        else if (result.normal.equals(Side.LEFT.normal))
-        {
+        } else if (result.normal.equals(Side.LEFT.normal)) {
             return this.variants.get(3);
-        }
-        else if (result.normal.equals(Side.FRONT.normal))
-        {
+        } else if (result.normal.equals(Side.FRONT.normal)) {
             return this.variants.get(4);
-        }
-        else if (result.normal.equals(Side.BACK.normal))
-        {
+        } else if (result.normal.equals(Side.BACK.normal)) {
             return this.variants.get(5);
-        }
-        else if (result.normal.equals(Side.TOP.normal))
-        {
+        } else if (result.normal.equals(Side.TOP.normal)) {
             return this.variants.get(0);
         }
 
@@ -37,22 +26,14 @@ public class BlockModelSlab extends BlockModelAll
     }
 
     @Override
-    public IBlockVariant rotateVariant(IBlockVariant variant, boolean clockwise)
-    {
-        if (variant.equals(this.variants.get(2)))
-        {
+    public IBlockVariant rotateVariant(IBlockVariant variant, boolean clockwise) {
+        if (variant.equals(this.variants.get(2))) {
             return clockwise ? this.variants.get(4) : this.variants.get(5);
-        }
-        else if (variant.equals(this.variants.get(3)))
-        {
+        } else if (variant.equals(this.variants.get(3))) {
             return clockwise ? this.variants.get(5) : this.variants.get(4);
-        }
-        else if (variant.equals(this.variants.get(4)))
-        {
+        } else if (variant.equals(this.variants.get(4))) {
             return clockwise ? this.variants.get(3) : this.variants.get(2);
-        }
-        else if (variant.equals(this.variants.get(5)) )
-        {
+        } else if (variant.equals(this.variants.get(5))) {
             return clockwise ? this.variants.get(2) : this.variants.get(3);
         }
 
@@ -60,38 +41,23 @@ public class BlockModelSlab extends BlockModelAll
     }
 
     @Override
-    public IBlockVariant flipVariant(IBlockVariant variant, Axis axis)
-    {
-        if (axis == Axis.X)
-        {
-            if (variant.equals(this.variants.get(2)))
-            {
+    public IBlockVariant flipVariant(IBlockVariant variant, Axis axis) {
+        if (axis == Axis.X) {
+            if (variant.equals(this.variants.get(2))) {
                 return this.variants.get(3);
-            }
-            else if (variant.equals(this.variants.get(3)))
-            {
+            } else if (variant.equals(this.variants.get(3))) {
                 return this.variants.get(2);
             }
-        }
-        else if (axis == Axis.Y)
-        {
-            if (variant.equals(this.variants.get(0)))
-            {
+        } else if (axis == Axis.Y) {
+            if (variant.equals(this.variants.get(0))) {
                 return this.variants.get(1);
-            }
-            else if (variant.equals(this.variants.get(1)))
-            {
+            } else if (variant.equals(this.variants.get(1))) {
                 return this.variants.get(0);
             }
-        }
-        else if (axis == Axis.Z)
-        {
-            if (variant.equals(this.variants.get(4)))
-            {
+        } else if (axis == Axis.Z) {
+            if (variant.equals(this.variants.get(4))) {
                 return this.variants.get(5);
-            }
-            else if (variant.equals(this.variants.get(5)))
-            {
+            } else if (variant.equals(this.variants.get(5))) {
                 return this.variants.get(4);
             }
         }
@@ -100,8 +66,7 @@ public class BlockModelSlab extends BlockModelAll
     }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         BlockModel slabBottom = this.createModel();
         BlockModel slabTop = this.createModel();
         BlockModel slabLeft = this.createModel();

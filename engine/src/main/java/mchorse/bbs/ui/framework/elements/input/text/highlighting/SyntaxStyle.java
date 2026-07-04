@@ -3,8 +3,7 @@ package mchorse.bbs.ui.framework.elements.input.text.highlighting;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
 
-public class SyntaxStyle implements IMapSerializable
-{
+public class SyntaxStyle implements IMapSerializable {
     public String title;
     public boolean shadow;
     public int primary;
@@ -18,8 +17,7 @@ public class SyntaxStyle implements IMapSerializable
     public int lineNumbers;
     public int background;
 
-    public SyntaxStyle()
-    {
+    public SyntaxStyle() {
         this.title = "Monokai";
         this.shadow = true;
         this.primary = 0xf92472;
@@ -34,14 +32,12 @@ public class SyntaxStyle implements IMapSerializable
         this.background = 0x282923;
     }
 
-    public SyntaxStyle(MapType data)
-    {
+    public SyntaxStyle(MapType data) {
         this.fromData(data);
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putString("title", this.title);
         data.putBool("shadow", this.shadow);
         data.putInt("primary", this.primary);
@@ -57,8 +53,7 @@ public class SyntaxStyle implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.title = data.getString("title");
         this.shadow = data.getBool("shadow");
         this.primary = data.getInt("primary");

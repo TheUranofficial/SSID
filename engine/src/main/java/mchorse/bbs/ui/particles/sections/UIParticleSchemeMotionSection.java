@@ -1,11 +1,7 @@
 package mchorse.bbs.ui.particles.sections;
 
 import mchorse.bbs.l10n.keys.IKey;
-import mchorse.bbs.particles.components.motion.ParticleComponentInitialSpeed;
-import mchorse.bbs.particles.components.motion.ParticleComponentInitialSpin;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotion;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotionDynamic;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotionParametric;
+import mchorse.bbs.particles.components.motion.*;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
@@ -13,8 +9,7 @@ import mchorse.bbs.ui.framework.elements.buttons.UICirculate;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<ParticleComponentMotion>
-{
+public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<ParticleComponentMotion> {
     public UIElement position;
     public UIButton positionSpeed;
     public UIButton positionX;
@@ -31,8 +26,7 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
     private ParticleComponentInitialSpeed speed;
     private ParticleComponentInitialSpin spin;
 
-    public UIParticleSchemeMotionSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeMotionSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.positionSpeed = new UIButton(UIKeys.SNOWSTORM_MOTION_POSITION_SPEED, (b) ->
@@ -59,14 +53,11 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
         });
         this.rotationAcceleration = new UIButton(UIKeys.SNOWSTORM_MOTION_ROTATION_ACCELERATION, (b) ->
         {
-            if (this.component instanceof ParticleComponentMotionDynamic)
-            {
+            if (this.component instanceof ParticleComponentMotionDynamic) {
                 ParticleComponentMotionDynamic component = (ParticleComponentMotionDynamic) this.component;
 
                 this.editMoLang("motion.angle_acceleration", (str) -> component.rotationAcceleration = this.parse(str, component.rotationAcceleration), component.rotationAcceleration);
-            }
-            else
-            {
+            } else {
                 ParticleComponentMotionParametric component = (ParticleComponentMotionParametric) this.component;
 
                 this.editMoLang("motion.angle_expression", (str) -> component.rotation = this.parse(str, component.rotation), component.rotation);
@@ -92,16 +83,12 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
         this.fields.add(this.position, this.rotation);
     }
 
-    private void updatePosition(int index)
-    {
-        if (this.component instanceof ParticleComponentMotionDynamic)
-        {
+    private void updatePosition(int index) {
+        if (this.component instanceof ParticleComponentMotionDynamic) {
             ParticleComponentMotionDynamic component = (ParticleComponentMotionDynamic) this.component;
 
             this.editMoLang("motion.acceleration_" + index, (str) -> component.motionAcceleration[index] = this.parse(str, component.motionAcceleration[index]), component.motionAcceleration[index]);
-        }
-        else
-        {
+        } else {
             ParticleComponentMotionParametric component = (ParticleComponentMotionParametric) this.component;
 
             this.editMoLang("motion.position_" + index, (str) -> component.position[index] = this.parse(str, component.position[index]), component.position[index]);
@@ -109,35 +96,29 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_MOTION_TITLE;
     }
 
     @Override
-    protected void fillModes(UICirculate button)
-    {
+    protected void fillModes(UICirculate button) {
         button.addLabel(UIKeys.SNOWSTORM_MOTION_DYNAMIC);
         button.addLabel(UIKeys.SNOWSTORM_MOTION_PARAMETRIC);
     }
 
     @Override
-    protected Class<ParticleComponentMotion> getBaseClass()
-    {
+    protected Class<ParticleComponentMotion> getBaseClass() {
         return ParticleComponentMotion.class;
     }
 
     @Override
-    protected Class getDefaultClass()
-    {
+    protected Class getDefaultClass() {
         return ParticleComponentMotionDynamic.class;
     }
 
     @Override
-    protected Class getModeClass(int value)
-    {
-        if (value == 1)
-        {
+    protected Class getModeClass(int value) {
+        if (value == 1) {
             return ParticleComponentMotionParametric.class;
         }
 
@@ -145,8 +126,7 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         super.fillData();
 
         this.speed = this.scheme.getOrCreate(ParticleComponentInitialSpeed.class);
@@ -155,8 +135,7 @@ public class UIParticleSchemeMotionSection extends UIParticleSchemeModeSection<P
         this.positionDrag.removeFromParent();
         this.rotationDrag.removeFromParent();
 
-        if (this.component instanceof ParticleComponentMotionDynamic)
-        {
+        if (this.component instanceof ParticleComponentMotionDynamic) {
             this.position.add(this.positionDrag);
             this.rotation.add(this.rotationDrag);
         }

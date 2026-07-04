@@ -3,8 +3,7 @@ package mchorse.bbs.utils.colors;
 import mchorse.bbs.utils.StringUtils;
 import mchorse.bbs.utils.math.Interpolations;
 
-public class Colors
-{
+public class Colors {
     public static final int RGB = 0xffffff;
     public static final int RGBA = 0xffffffff;
 
@@ -54,8 +53,7 @@ public class Colors
 
     public static final Color COLOR = new Color();
 
-    public static int mulRGB(int color, float factor)
-    {
+    public static int mulRGB(int color, float factor) {
         COLOR.set(color);
         COLOR.r *= factor;
         COLOR.g *= factor;
@@ -64,34 +62,29 @@ public class Colors
         return COLOR.getARGBColor();
     }
 
-    public static int mulA(int color, float factor)
-    {
+    public static int mulA(int color, float factor) {
         COLOR.set(color);
         COLOR.a *= factor;
 
         return COLOR.getARGBColor();
     }
 
-    public static int setA(int color, float alpha)
-    {
+    public static int setA(int color, float alpha) {
         COLOR.set(color);
         COLOR.a = alpha;
 
         return COLOR.getARGBColor();
     }
 
-    public static int a(float alpha)
-    {
+    public static int a(float alpha) {
         return setA(0, alpha);
     }
 
-    public static void interpolate(Color target, int a, int b, float x)
-    {
+    public static void interpolate(Color target, int a, int b, float x) {
         interpolate(target, a, b, x, true);
     }
 
-    public static void interpolate(Color target, int a, int b, float x, boolean alpha)
-    {
+    public static void interpolate(Color target, int a, int b, float x, boolean alpha) {
         target.set(a, alpha);
         COLOR.set(b, alpha);
 
@@ -99,53 +92,43 @@ public class Colors
         target.g = Interpolations.lerp(target.g, COLOR.g, x);
         target.b = Interpolations.lerp(target.b, COLOR.b, x);
 
-        if (alpha)
-        {
+        if (alpha) {
             target.a = Interpolations.lerp(target.a, COLOR.a, x);
         }
     }
 
-    public static int parse(String color)
-    {
+    public static int parse(String color) {
         return parse(color, 0);
     }
 
-    public static int parse(String color, int orDefault)
-    {
-        try
-        {
+    public static int parse(String color, int orDefault) {
+        try {
             return parseWithException(color);
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return orDefault;
     }
 
-    public static int parseWithException(String color) throws Exception
-    {
-        if (color.startsWith("#"))
-        {
+    public static int parseWithException(String color) throws Exception {
+        if (color.startsWith("#")) {
             color = color.substring(1);
         }
 
-        if (color.length() == 6 || color.length() == 8)
-        {
+        if (color.length() == 6 || color.length() == 8) {
             return StringUtils.parseHex(color);
         }
 
         throw new Exception("Given color \"" + color + "\" can't be parsed!");
     }
 
-    public static float getAlpha(int color)
-    {
+    public static float getAlpha(int color) {
         COLOR.set(color);
 
         return COLOR.a;
     }
 
-    public static Color HSVtoRGB(float h, float s, float v)
-    {
+    public static Color HSVtoRGB(float h, float s, float v) {
         return HSVtoRGB(new Color(), h, s, v);
     }
 
@@ -154,8 +137,7 @@ public class Colors
      *
      * @link https://www.rapidtables.com/convert/color/hsv-to-rgb.html
      */
-    public static Color HSVtoRGB(Color color, float h, float s, float v)
-    {
+    public static Color HSVtoRGB(Color color, float h, float s, float v) {
         h *= 360;
         h %= 360;
 
@@ -163,28 +145,17 @@ public class Colors
         float x = c * (1 - Math.abs((h / 60F) % 2 - 1));
         float m = v - c;
 
-        if (h >= 0 && h < 60)
-        {
+        if (h >= 0 && h < 60) {
             color.set(c, x, 0);
-        }
-        else if (h >= 60 && h < 120)
-        {
+        } else if (h >= 60 && h < 120) {
             color.set(x, c, 0);
-        }
-        else if (h >= 120 && h < 180)
-        {
+        } else if (h >= 120 && h < 180) {
             color.set(0, c, x);
-        }
-        else if (h >= 180 && h < 240)
-        {
+        } else if (h >= 180 && h < 240) {
             color.set(0, x, c);
-        }
-        else if (h >= 240 && h < 300)
-        {
+        } else if (h >= 240 && h < 300) {
             color.set(x, 0, c);
-        }
-        else
-        {
+        } else {
             color.set(c, 0, x);
         }
 
@@ -195,8 +166,7 @@ public class Colors
         return color;
     }
 
-    public static Color RGBtoHSV(float r, float g, float b)
-    {
+    public static Color RGBtoHSV(float r, float g, float b) {
         return RGBtoHSV(new Color(), r, g, b);
     }
 
@@ -207,34 +177,25 @@ public class Colors
      *
      * @link https://www.rapidtables.com/convert/color/rgb-to-hsv.html
      */
-    public static Color RGBtoHSV(Color color, float r, float g, float b)
-    {
+    public static Color RGBtoHSV(Color color, float r, float g, float b) {
         float max = Math.max(r, Math.max(g, b));
         float min = Math.min(r, Math.min(g, b));
         float delta = max - min;
 
         /* Hue */
-        if (delta == 0)
-        {
+        if (delta == 0) {
             color.r = 0;
-        }
-        else if (max == r)
-        {
+        } else if (max == r) {
             color.r = 60F * (((g - b) / delta) % 6F);
-        }
-        else if (max == g)
-        {
+        } else if (max == g) {
             color.r = 60F * (((b - r) / delta) + 2F);
-        }
-        else if (max == b)
-        {
+        } else if (max == b) {
             color.r = 60F * (((r - g) / delta) + 4F);
         }
 
         color.r /= 360F;
 
-        if (color.r < 0)
-        {
+        if (color.r < 0) {
             color.r += 1F;
         }
 

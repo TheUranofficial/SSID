@@ -1,18 +1,13 @@
 package mchorse.bbs.forms.forms;
 
-import mchorse.bbs.forms.properties.BooleanProperty;
-import mchorse.bbs.forms.properties.ColorProperty;
-import mchorse.bbs.forms.properties.FloatProperty;
-import mchorse.bbs.forms.properties.LinkProperty;
-import mchorse.bbs.forms.properties.Vector4fProperty;
+import mchorse.bbs.forms.properties.*;
 import mchorse.bbs.forms.renderers.BillboardFormRenderer;
 import mchorse.bbs.forms.renderers.FormRenderer;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.utils.colors.Color;
 import org.joml.Vector4f;
 
-public class BillboardForm extends Form
-{
+public class BillboardForm extends Form {
     public final LinkProperty texture = new LinkProperty(this, "texture", null);
     public final BooleanProperty billboard = new BooleanProperty(this, "billboard", false);
     public final Vector4fProperty crop = new Vector4fProperty(this, "crop", new Vector4f(0, 0, 0, 0));
@@ -22,8 +17,7 @@ public class BillboardForm extends Form
     public final FloatProperty offsetY = new FloatProperty(this, "offsetY", 0F);
     public final FloatProperty rotation = new FloatProperty(this, "rotation", 0F);
 
-    public BillboardForm()
-    {
+    public BillboardForm() {
         super();
 
         this.resizeCrop.cantAnimate();
@@ -39,14 +33,12 @@ public class BillboardForm extends Form
     }
 
     @Override
-    protected FormRenderer createRenderer()
-    {
+    protected FormRenderer createRenderer() {
         return new BillboardFormRenderer(this);
     }
 
     @Override
-    public String getDefaultDisplayName()
-    {
+    public String getDefaultDisplayName() {
         Link link = this.texture.get();
 
         return link == null ? "none" : link.toString();

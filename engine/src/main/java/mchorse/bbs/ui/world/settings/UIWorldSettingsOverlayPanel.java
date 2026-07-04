@@ -10,8 +10,7 @@ import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.world.WorldSettings;
 
-public class UIWorldSettingsOverlayPanel extends UIOverlayPanel
-{
+public class UIWorldSettingsOverlayPanel extends UIOverlayPanel {
     public UIScrollView editor;
 
     public UIIcon changePreset;
@@ -20,8 +19,7 @@ public class UIWorldSettingsOverlayPanel extends UIOverlayPanel
 
     private WorldSettings settings;
 
-    public UIWorldSettingsOverlayPanel(WorldSettings worldSettings)
-    {
+    public UIWorldSettingsOverlayPanel(WorldSettings worldSettings) {
         super(UIKeys.WORLD_SETTINGS);
 
         this.editor = UI.scrollView(5, 10);
@@ -49,8 +47,7 @@ public class UIWorldSettingsOverlayPanel extends UIOverlayPanel
         this.icons.add(this.changePreset);
     }
 
-    private void reloadSettings(WorldSettings settings)
-    {
+    private void reloadSettings(WorldSettings settings) {
         this.settings = settings;
 
         this.worldSettings.removeFromParent();

@@ -6,34 +6,29 @@ import mchorse.bbs.world.WorldMetadata;
 
 import java.io.File;
 
-public abstract class ChunkFactory
-{
+public abstract class ChunkFactory {
     public File folder;
     public BlockSet blocks;
     protected final WorldMetadata metadata;
     protected boolean conversion;
 
-    public ChunkFactory(File folder, BlockSet blocks, WorldMetadata metadata)
-    {
+    public ChunkFactory(File folder, BlockSet blocks, WorldMetadata metadata) {
         this.folder = folder;
         this.blocks = blocks;
         this.metadata = metadata;
     }
 
-    public ChunkFactory conversion()
-    {
+    public ChunkFactory conversion() {
         this.conversion = true;
 
         return this;
     }
 
-    public WorldMetadata getMetadata()
-    {
+    public WorldMetadata getMetadata() {
         return this.metadata;
     }
 
-    public ChunkStorage createStorage()
-    {
+    public ChunkStorage createStorage() {
         return this.createStorage("chunks");
     }
 

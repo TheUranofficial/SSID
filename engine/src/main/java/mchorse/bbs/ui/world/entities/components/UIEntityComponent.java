@@ -5,12 +5,10 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.world.entities.components.Component;
 
-public class UIEntityComponent <T extends Component> extends UIElement
-{
+public class UIEntityComponent<T extends Component> extends UIElement {
     public T component;
 
-    public UIEntityComponent(T component)
-    {
+    public UIEntityComponent(T component) {
         super();
 
         this.component = component;

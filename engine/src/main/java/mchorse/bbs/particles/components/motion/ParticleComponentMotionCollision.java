@@ -16,8 +16,7 @@ import org.joml.Vector3d;
 
 import java.util.List;
 
-public class ParticleComponentMotionCollision extends ParticleComponentBase implements IComponentParticleUpdate
-{
+public class ParticleComponentMotionCollision extends ParticleComponentBase implements IComponentParticleUpdate {
     public MolangExpression enabled = MolangParser.ONE;
     public float collisionDrag = 0;
     public float bounciness = 1;
@@ -29,12 +28,10 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
     private Vector3d current = new Vector3d();
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         MapType object = new MapType();
 
-        if (MolangExpression.isZero(this.enabled))
-        {
+        if (MolangExpression.isZero(this.enabled)) {
             return object;
         }
 
@@ -48,10 +45,8 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
@@ -67,15 +62,12 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
     }
 
     @Override
-    public void update(ParticleEmitter emitter, Particle particle)
-    {
-        if (emitter.world == null)
-        {
+    public void update(ParticleEmitter emitter, Particle particle) {
+        if (emitter.world == null) {
             return;
         }
 
-        if (!particle.manual && !Operation.equals(this.enabled.get(), 0))
-        {
+        if (!particle.manual && !Operation.equals(this.enabled.get(), 0)) {
             float r = this.radius;
 
             this.previous.set(particle.getGlobalPosition(emitter, particle.prevPosition));
@@ -89,8 +81,7 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
             double z = now.z - prev.z;
             boolean veryBig = Math.abs(x) > 10 || Math.abs(y) > 10 || Math.abs(z) > 10;
 
-            if (veryBig || emitter.world.chunks.getCell((int) now.x, (int) now.y, (int) now.z, false) == null)
-            {
+            if (veryBig || emitter.world.chunks.getCell((int) now.x, (int) now.y, (int) now.z, false) == null) {
                 return;
             }
 
@@ -102,58 +93,49 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
 
             List<AABB> list = emitter.world.getCollisionAABBs(aabb.copy().expand(x, y, z));
 
-            for (AABB collisionBox : list)
-            {
+            for (AABB collisionBox : list) {
                 y = collisionBox.calculateOffset(Axis.Y, aabb, y);
             }
 
             aabb.offset(0, y, 0);
 
-            for (AABB collisionBox : list)
-            {
+            for (AABB collisionBox : list) {
                 x = collisionBox.calculateOffset(Axis.X, aabb, x);
             }
 
             aabb.offset(x, 0, 0);
 
-            for (AABB collisionBox : list)
-            {
+            for (AABB collisionBox : list) {
                 z = collisionBox.calculateOffset(Axis.Z, aabb, z);
             }
 
             aabb.offset(0, 0, z);
 
-            if (originalY != y || originalX != x || originalZ != z)
-            {
-                if (this.expireOnImpact)
-                {
+            if (originalY != y || originalX != x || originalZ != z) {
+                if (this.expireOnImpact) {
                     particle.dead = true;
 
                     return;
                 }
 
-                if (particle.relativePosition)
-                {
+                if (particle.relativePosition) {
                     particle.relativePosition = false;
                     particle.prevPosition.set(prev);
                 }
 
                 now.set(aabb.x + r, aabb.y + r, aabb.z + r);
 
-                if (originalY != y)
-                {
+                if (originalY != y) {
                     particle.accelerationFactor.y *= -this.bounciness;
                     now.y += originalY < y ? r : -r;
                 }
 
-                if (originalX != x)
-                {
+                if (originalX != x) {
                     particle.accelerationFactor.x *= -this.bounciness;
                     now.x += originalX < x ? r : -r;
                 }
 
-                if (originalZ != z)
-                {
+                if (originalZ != z) {
                     particle.accelerationFactor.z *= -this.bounciness;
                     now.z += originalZ < z ? r : -r;
                 }
@@ -165,8 +147,7 @@ public class ParticleComponentMotionCollision extends ParticleComponentBase impl
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 50;
     }
 }

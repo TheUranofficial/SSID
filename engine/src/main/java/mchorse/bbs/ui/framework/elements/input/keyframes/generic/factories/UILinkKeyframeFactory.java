@@ -7,10 +7,8 @@ import mchorse.bbs.ui.framework.elements.input.UITexturePicker;
 import mchorse.bbs.ui.framework.elements.input.keyframes.generic.UIPropertyEditor;
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 
-public class UILinkKeyframeFactory extends UIKeyframeFactory<Link>
-{
-    public UILinkKeyframeFactory(GenericKeyframe<Link> keyframe, UIPropertyEditor editor)
-    {
+public class UILinkKeyframeFactory extends UIKeyframeFactory<Link> {
+    public UILinkKeyframeFactory(GenericKeyframe<Link> keyframe, UIPropertyEditor editor) {
         super(keyframe, editor);
 
         UIButton button = new UIButton(UIKeys.GENERIC_KEYFRAMES_LINK_PICK_TEXTURE, (b) ->

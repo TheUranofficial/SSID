@@ -9,8 +9,7 @@ import mchorse.bbs.utils.clips.Clip;
 
 import java.util.function.Consumer;
 
-public interface IUIClipsDelegate
-{
+public interface IUIClipsDelegate {
     public Film getFilm();
 
     public Camera getCamera();

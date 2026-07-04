@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChunkProxy
-{
+public class ChunkProxy {
     private ChunkManager chunks;
     private UndoManager<World> undoManager;
     private boolean recording;
@@ -22,54 +21,44 @@ public class ChunkProxy
     private List<IBlockVariant> mask = new ArrayList<>();
     private boolean maskEnabled = true;
 
-    public ChunkProxy(ChunkManager chunks, UndoManager<World> undoManager)
-    {
+    public ChunkProxy(ChunkManager chunks, UndoManager<World> undoManager) {
         this.chunks = chunks;
         this.undoManager = undoManager;
     }
 
-    public ChunkManager getChunks()
-    {
+    public ChunkManager getChunks() {
         return this.chunks;
     }
 
-    public IBlockVariant getAir()
-    {
+    public IBlockVariant getAir() {
         return this.getSet().air;
     }
 
-    public BlockSet getSet()
-    {
+    public BlockSet getSet() {
         return this.chunks.builder.models;
     }
 
-    public boolean getMaskEnabled()
-    {
+    public boolean getMaskEnabled() {
         return this.maskEnabled;
     }
 
-    public void setMaskEnabled(boolean maskEnabled)
-    {
+    public void setMaskEnabled(boolean maskEnabled) {
         this.maskEnabled = maskEnabled;
     }
 
-    public List<IBlockVariant> getMask()
-    {
+    public List<IBlockVariant> getMask() {
         return this.mask;
     }
 
-    public boolean isMaskEnabled()
-    {
+    public boolean isMaskEnabled() {
         return !this.mask.isEmpty() && this.maskEnabled;
     }
 
-    public void begin()
-    {
+    public void begin() {
         this.recording = true;
     }
 
-    public void end()
-    {
+    public void end() {
         List<BlockDiff> list = new ArrayList<>();
 
         list.addAll(this.blocks.values());
@@ -79,19 +68,15 @@ public class ChunkProxy
         this.undoManager.pushUndo(createUndo(list));
     }
 
-    protected BlocksUndo createUndo(List<BlockDiff> list)
-    {
+    protected BlocksUndo createUndo(List<BlockDiff> list) {
         return new BlocksUndo(list);
     }
 
-    public boolean isBlockMasked(IBlockVariant variant)
-    {
+    public boolean isBlockMasked(IBlockVariant variant) {
         boolean hasBlockInMask = false;
 
-        for (IBlockVariant masked : this.mask)
-        {
-            if (masked.equals(variant))
-            {
+        for (IBlockVariant masked : this.mask) {
+            if (masked.equals(variant)) {
                 hasBlockInMask = true;
             }
         }
@@ -99,35 +84,28 @@ public class ChunkProxy
         return hasBlockInMask;
     }
 
-    public boolean setBlock(int x, int y, int z, IBlockVariant block)
-    {
+    public boolean setBlock(int x, int y, int z, IBlockVariant block) {
         IBlockVariant current = this.chunks.getBlock(x, y, z);
 
-        if (this.isMaskEnabled() && !this.isBlockMasked(current))
-        {
+        if (this.isMaskEnabled() && !this.isBlockMasked(current)) {
             return false;
         }
 
         return this.setBlockUnmasked(x, y, z, block);
     }
 
-    public boolean setBlockUnmasked(int x, int y, int z, IBlockVariant block)
-    {
+    public boolean setBlockUnmasked(int x, int y, int z, IBlockVariant block) {
         IBlockVariant current = this.chunks.getBlock(x, y, z);
 
         this.chunks.setBlockForced(x, y, z, block);
 
-        if (this.recording)
-        {
+        if (this.recording) {
             Vector3i position = new Vector3i(x, y, z);
             BlockDiff diff = this.blocks.get(position);
 
-            if (diff != null)
-            {
+            if (diff != null) {
                 diff.current = block;
-            }
-            else
-            {
+            } else {
                 this.blocks.put(position, new BlockDiff(position, current, block));
             }
         }
@@ -135,13 +113,11 @@ public class ChunkProxy
         return !current.equals(block);
     }
 
-    public IBlockVariant getBlock(int x, int y, int z)
-    {
+    public IBlockVariant getBlock(int x, int y, int z) {
         return this.chunks.getBlock(x, y, z);
     }
 
-    public boolean hasBlock(int x, int y, int z)
-    {
+    public boolean hasBlock(int x, int y, int z) {
         return this.chunks.hasBlock(x, y, z);
     }
 }

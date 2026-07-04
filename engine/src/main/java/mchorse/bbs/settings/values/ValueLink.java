@@ -15,16 +15,13 @@ import mchorse.bbs.utils.resources.LinkUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueLink extends BaseValueBasic<Link> implements IValueUIProvider
-{
-    public ValueLink(String id, Link defaultValue)
-    {
+public class ValueLink extends BaseValueBasic<Link> implements IValueUIProvider {
+    public ValueLink(String id, Link defaultValue) {
         super(id, defaultValue);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UIButton pick = new UIButton(UIKeys.TEXTURE_PICK_TEXTURE, (button) ->
         {
             UITexturePicker.open(ui, this.value, this::set);
@@ -36,22 +33,19 @@ public class ValueLink extends BaseValueBasic<Link> implements IValueUIProvider
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         BaseType type = LinkUtils.toData(this.value);
 
         return type == null ? new MapType() : type;
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
+    public void fromData(BaseType data) {
         this.value = LinkUtils.create(data);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.value == null ? "" : this.value.toString();
     }
 }

@@ -16,14 +16,12 @@ import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeGeneralSection extends UIParticleSchemeSection
-{
+public class UIParticleSchemeGeneralSection extends UIParticleSchemeSection {
     public UITextbox identifier;
     public UIButton pick;
     public UICirculate material;
 
-    public UIParticleSchemeGeneralSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeGeneralSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.identifier = new UITextbox(100, (str) ->
@@ -38,8 +36,7 @@ public class UIParticleSchemeGeneralSection extends UIParticleSchemeSection
             UIElement container = this.getParentContainer();
             UITexturePicker.open(container, this.scheme.texture, (link) ->
             {
-                if (link == null)
-                {
+                if (link == null) {
                     link = ParticleScheme.DEFAULT_TEXTURE;
                 }
 
@@ -61,12 +58,10 @@ public class UIParticleSchemeGeneralSection extends UIParticleSchemeSection
         this.fields.add(this.identifier, UI.row(5, 0, 20, this.pick, this.material));
     }
 
-    private void setTextureSize(Link link)
-    {
+    private void setTextureSize(Link link) {
         ParticleComponentAppearanceBillboard component = this.scheme.get(ParticleComponentAppearanceBillboard.class);
 
-        if (component == null)
-        {
+        if (component == null) {
             return;
         }
 
@@ -77,14 +72,12 @@ public class UIParticleSchemeGeneralSection extends UIParticleSchemeSection
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_GENERAL_TITLE;
     }
 
     @Override
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         super.setScheme(scheme);
 
         this.identifier.setText(scheme.identifier);

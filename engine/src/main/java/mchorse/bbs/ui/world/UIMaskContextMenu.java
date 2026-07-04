@@ -10,15 +10,13 @@ import mchorse.bbs.voxel.undo.ChunkProxy;
 
 import java.util.Iterator;
 
-public class UIMaskContextMenu extends UIContextMenu
-{
+public class UIMaskContextMenu extends UIContextMenu {
     public UIIcon add;
     public UIIcon enabled;
 
     private ChunkProxy proxy;
 
-    public UIMaskContextMenu(ChunkProxy proxy)
-    {
+    public UIMaskContextMenu(ChunkProxy proxy) {
         this.proxy = proxy;
 
         this.add = new UIIcon(Icons.ADD, (b) ->
@@ -39,18 +37,15 @@ public class UIMaskContextMenu extends UIContextMenu
         this.updateEnabled();
     }
 
-    private void updateEnabled()
-    {
+    private void updateEnabled() {
         this.enabled.both(this.proxy.getMaskEnabled() ? Icons.LOCKED : Icons.UNLOCKED);
     }
 
-    private void rebuild()
-    {
+    private void rebuild() {
         this.removeAll();
         this.add(this.enabled);
 
-        for (int i = 0; i < this.proxy.getMask().size(); i++)
-        {
+        for (int i = 0; i < this.proxy.getMask().size(); i++) {
             int cacheI = i;
 
             UIBlockVariant variant = new UIBlockVariant((v) -> this.proxy.getMask().set(cacheI, v));
@@ -64,30 +59,25 @@ public class UIMaskContextMenu extends UIContextMenu
     }
 
     @Override
-    protected void onRemove(UIElement parent)
-    {
+    protected void onRemove(UIElement parent) {
         super.onRemove(parent);
 
         Iterator<IBlockVariant> it = this.proxy.getMask().iterator();
 
-        while (it.hasNext())
-        {
-            if (it.next().isAir())
-            {
+        while (it.hasNext()) {
+            if (it.next().isAir()) {
                 it.remove();
             }
         }
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 
     @Override
-    public void setMouse(UIContext context)
-    {
+    public void setMouse(UIContext context) {
         this.xy(context.mouseX(), context.mouseY()).w(150).grid(5).width(24).height(24).padding(5);
     }
 }

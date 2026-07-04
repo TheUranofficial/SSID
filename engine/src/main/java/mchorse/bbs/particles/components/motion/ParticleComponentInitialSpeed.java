@@ -10,16 +10,13 @@ import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentInitialSpeed extends ParticleComponentBase implements IComponentParticleInitialize
-{
+public class ParticleComponentInitialSpeed extends ParticleComponentBase implements IComponentParticleInitialize {
     public MolangExpression speed = MolangParser.ONE;
     public MolangExpression[] direction;
 
     @Override
-    public BaseType toData()
-    {
-        if (this.direction != null)
-        {
+    public BaseType toData() {
+        if (this.direction != null) {
             return ParticleUtils.vectorToList(this.direction);
         }
 
@@ -27,16 +24,12 @@ public class ParticleComponentInitialSpeed extends ParticleComponentBase impleme
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (data.isList())
-        {
-            this.direction = new MolangExpression[] {MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (data.isList()) {
+            this.direction = new MolangExpression[]{MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
 
             ParticleUtils.vectorFromList(data.asList(), this.direction, parser);
-        }
-        else if (BaseType.isPrimitive(data))
-        {
+        } else if (BaseType.isPrimitive(data)) {
             this.speed = parser.parseData(data);
         }
 
@@ -44,24 +37,19 @@ public class ParticleComponentInitialSpeed extends ParticleComponentBase impleme
     }
 
     @Override
-    public boolean canBeEmpty()
-    {
+    public boolean canBeEmpty() {
         return true;
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
-        if (this.direction != null)
-        {
+    public void apply(ParticleEmitter emitter, Particle particle) {
+        if (this.direction != null) {
             particle.speed.set(
                 (float) this.direction[0].get(),
                 (float) this.direction[1].get(),
                 (float) this.direction[2].get()
             );
-        }
-        else
-        {
+        } else {
             float speed = (float) this.speed.get();
 
             particle.speed.mul(speed);
@@ -69,8 +57,7 @@ public class ParticleComponentInitialSpeed extends ParticleComponentBase impleme
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 5;
     }
 }

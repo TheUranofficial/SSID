@@ -3,8 +3,7 @@ package mchorse.bbs.utils.keyframes.generic.factories;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KeyframeFactories
-{
+public class KeyframeFactories {
     public static final Map<String, IGenericKeyframeFactory> FACTORIES = new HashMap<>();
     public static final ColorKeyframeFactory COLOR = new ColorKeyframeFactory();
     public static final TransformKeyframeFactory TRANSFORM = new TransformKeyframeFactory();
@@ -17,8 +16,7 @@ public class KeyframeFactories
     public static final Vector4fKeyframeFactory VECTOR4F = new Vector4fKeyframeFactory();
     public static final AnchorKeyframeFactory ANCHOR = new AnchorKeyframeFactory();
 
-    static
-    {
+    static {
         FACTORIES.put("color", COLOR);
         FACTORIES.put("transform", TRANSFORM);
         FACTORIES.put("pose", POSE);

@@ -8,8 +8,7 @@ import mchorse.bbs.graphics.vao.VBOAttributes;
 import mchorse.bbs.resources.Link;
 import org.joml.Matrix4f;
 
-public class UIShaders
-{
+public class UIShaders {
     /**
      * Projection view UBO (32 bits, projection and view matrices)
      */
@@ -87,8 +86,7 @@ public class UIShaders
      */
     public Shader pickingPreview;
 
-    public UIShaders()
-    {
+    public UIShaders() {
         this.ubo = new ProjectionViewUBO(1);
         this.ubo.init();
         this.ubo.bindUnit();
@@ -125,8 +123,7 @@ public class UIShaders
         this.pickingPreview.onInitialize(CommonShaderAccess::initializeTexture).attachUBO(this.ubo, "u_matrices");
     }
 
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         int scale = BBSSettings.getScale();
 
         this.ortho.setOrtho(0, width / scale, height / scale, 0, -100, 100);

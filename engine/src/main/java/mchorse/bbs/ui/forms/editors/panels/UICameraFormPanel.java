@@ -9,15 +9,13 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 import mchorse.bbs.ui.utils.UI;
 
-public class UICameraFormPanel extends UIFormPanel<CameraForm>
-{
+public class UICameraFormPanel extends UIFormPanel<CameraForm> {
     public UIToggle enabled;
     public UITextbox texture;
     public UITrackpad width;
     public UITrackpad height;
 
-    public UICameraFormPanel(UIForm editor)
-    {
+    public UICameraFormPanel(UIForm editor) {
         super(editor);
 
         this.enabled = new UIToggle(UIKeys.FORMS_EDITORS_CAMERA_ENABLED, (b) -> this.form.enabled.set(b.getValue()));
@@ -30,8 +28,7 @@ public class UICameraFormPanel extends UIFormPanel<CameraForm>
     }
 
     @Override
-    public void startEdit(CameraForm form)
-    {
+    public void startEdit(CameraForm form) {
         super.startEdit(form);
 
         Link texture = form.texture.get();

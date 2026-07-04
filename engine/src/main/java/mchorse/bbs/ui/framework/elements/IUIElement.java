@@ -3,15 +3,14 @@ package mchorse.bbs.ui.framework.elements;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
 
-public interface IUIElement
-{
+public interface IUIElement {
     /**
      * Should be called when position has to be recalculated
      */
     public void resize();
 
     /**
-     * Whether this element is enabled (and can accept any input) 
+     * Whether this element is enabled (and can accept any input)
      */
     public boolean isEnabled();
 

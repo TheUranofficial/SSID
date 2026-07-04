@@ -7,59 +7,49 @@ import mchorse.bbs.cubic.data.animation.AnimationVector;
 import mchorse.bbs.cubic.data.model.Model;
 import mchorse.bbs.cubic.data.model.ModelGroup;
 import mchorse.bbs.utils.Axis;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.pose.Transform;
 import org.joml.Vector3d;
 
 import java.util.List;
 
-public class CubicModelAnimator
-{
+public class CubicModelAnimator {
     private static Vector3d p = new Vector3d();
     private static Vector3d s = new Vector3d();
     private static Vector3d r = new Vector3d();
 
-    public static void resetPose(Model model)
-    {
-        for (ModelGroup group : model.topGroups)
-        {
+    public static void resetPose(Model model) {
+        for (ModelGroup group : model.topGroups) {
             resetGroup(group);
         }
     }
 
-    private static void resetGroup(ModelGroup group)
-    {
+    private static void resetGroup(ModelGroup group) {
         group.current.copy(group.initial);
 
-        for (ModelGroup childGroup : group.children)
-        {
+        for (ModelGroup childGroup : group.children) {
             resetGroup(childGroup);
         }
     }
 
-    public static void animate(Model model, Animation animation, float frame, float blend, boolean skipInitial)
-    {
-        for (ModelGroup group : model.topGroups)
-        {
+    public static void animate(Model model, Animation animation, float frame, float blend, boolean skipInitial) {
+        for (ModelGroup group : model.topGroups) {
             animateGroup(group, animation, frame, blend, skipInitial);
         }
     }
 
-    private static void animateGroup(ModelGroup group, Animation animation, float frame, float blend, boolean skipInitial)
-    {
+    private static void animateGroup(ModelGroup group, Animation animation, float frame, float blend, boolean skipInitial) {
         boolean applied = false;
 
         AnimationPart part = animation.parts.get(group.id);
 
-        if (part != null)
-        {
+        if (part != null) {
             applyGroupAnimation(group, part, frame, blend);
 
             applied = true;
         }
 
-        if (!applied && !skipInitial)
-        {
+        if (!applied && !skipInitial) {
             Transform initial = group.initial;
             Transform current = group.current;
 
@@ -68,14 +58,12 @@ public class CubicModelAnimator
             current.rotate.lerp(initial.rotate, blend);
         }
 
-        for (ModelGroup childGroup : group.children)
-        {
+        for (ModelGroup childGroup : group.children) {
             animateGroup(childGroup, animation, frame, blend, skipInitial);
         }
     }
 
-    private static void applyGroupAnimation(ModelGroup group, AnimationPart animation, float frame, float blend)
-    {
+    private static void applyGroupAnimation(ModelGroup group, AnimationPart animation, float frame, float blend) {
         Vector3d position = interpolateList(p, animation.position, frame, MolangHelper.Component.POSITION);
         Vector3d scale = interpolateList(s, animation.scale, frame, MolangHelper.Component.SCALE);
         Vector3d rotation = interpolateList(r, animation.rotation, frame, MolangHelper.Component.ROTATION);
@@ -96,17 +84,14 @@ public class CubicModelAnimator
         current.rotate.z = Interpolations.lerp(current.rotate.z, (float) rotation.z + initial.rotate.z, blend);
     }
 
-    private static Vector3d interpolateList(Vector3d vector, AnimationChannel channel, float frame, MolangHelper.Component component)
-    {
+    private static Vector3d interpolateList(Vector3d vector, AnimationChannel channel, float frame, MolangHelper.Component component) {
         return interpolate(vector, channel, frame, component);
     }
 
-    private static Vector3d interpolate(Vector3d output, AnimationChannel channel, float frame, MolangHelper.Component component)
-    {
+    private static Vector3d interpolate(Vector3d output, AnimationChannel channel, float frame, MolangHelper.Component component) {
         List<AnimationVector> keyframes = channel.keyframes;
 
-        if (keyframes.isEmpty())
-        {
+        if (keyframes.isEmpty()) {
             output.set(0, 0, 0);
 
             return output;
@@ -114,8 +99,7 @@ public class CubicModelAnimator
 
         AnimationVector first = keyframes.get(0);
 
-        if (frame < first.time * 20)
-        {
+        if (frame < first.time * 20) {
             output.x = MolangHelper.getValue(first.getStart(Axis.X), component, Axis.X);
             output.y = MolangHelper.getValue(first.getStart(Axis.Y), component, Axis.Y);
             output.z = MolangHelper.getValue(first.getStart(Axis.Z), component, Axis.Z);
@@ -125,12 +109,10 @@ public class CubicModelAnimator
 
         double duration = 0;
 
-        for (AnimationVector vector : keyframes)
-        {
+        for (AnimationVector vector : keyframes) {
             double length = vector.getLengthInTicks();
 
-            if (frame >= duration && frame < duration + length)
-            {
+            if (frame >= duration && frame < duration + length) {
                 double factor = (frame - duration) / length;
 
                 output.x = vector.interp.interpolate(vector, component, Axis.X, factor);

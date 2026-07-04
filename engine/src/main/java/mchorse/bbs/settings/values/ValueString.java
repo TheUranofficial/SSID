@@ -11,16 +11,13 @@ import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueString extends BaseValueBasic<String> implements IValueUIProvider
-{
-    public ValueString(String id, String defaultValue)
-    {
+public class ValueString extends BaseValueBasic<String> implements IValueUIProvider {
+    public ValueString(String id, String defaultValue) {
         super(id, defaultValue);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UITextbox textbox = UIValueFactory.stringUI(this, null);
 
         textbox.w(90);
@@ -29,23 +26,19 @@ public class ValueString extends BaseValueBasic<String> implements IValueUIProvi
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new StringType(this.value);
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (BaseType.isString(data))
-        {
+    public void fromData(BaseType data) {
+        if (BaseType.isString(data)) {
             this.value = data.asString();
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.value;
     }
 }

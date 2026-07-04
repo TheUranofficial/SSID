@@ -15,13 +15,11 @@ import mchorse.bbs.ui.utils.icons.Icons;
 
 import java.util.Map;
 
-public class UIParticleSchemeCurvesSection extends UIParticleSchemeSection
-{
+public class UIParticleSchemeCurvesSection extends UIParticleSchemeSection {
     public UIElement curves;
     public UIIcon add;
 
-    public UIParticleSchemeCurvesSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeCurvesSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.curves = UI.column();
@@ -31,13 +29,11 @@ public class UIParticleSchemeCurvesSection extends UIParticleSchemeSection
         this.fields.add(this.curves, this.add);
     }
 
-    private void addCurve()
-    {
+    private void addCurve() {
         String name = "curve1";
         int i = 1;
 
-        while (this.scheme.curves.containsKey(name))
-        {
+        while (this.scheme.curves.containsKey(name)) {
             name = "curve" + (i++);
         }
 
@@ -45,18 +41,14 @@ public class UIParticleSchemeCurvesSection extends UIParticleSchemeSection
         ParticleCurve curve = new ParticleCurve();
         UICurveEditor curveEditor = new UICurveEditor(this);
 
-        if (!parser.variables.containsKey(name))
-        {
+        if (!parser.variables.containsKey(name)) {
             parser.variables.put(name, new Variable(name, 0));
         }
 
-        try
-        {
+        try {
             curve.input = parser.parseExpression("variable.particle_age");
             curve.range = parser.parseExpression("variable.particle_lifetime");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -69,20 +61,17 @@ public class UIParticleSchemeCurvesSection extends UIParticleSchemeSection
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_CURVES_TITLE;
     }
 
     @Override
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         super.setScheme(scheme);
 
         this.curves.removeAll();
 
-        for (Map.Entry<String, ParticleCurve> entry : scheme.curves.entrySet())
-        {
+        for (Map.Entry<String, ParticleCurve> entry : scheme.curves.entrySet()) {
             UICurveEditor curve = new UICurveEditor(this);
 
             curve.fill(entry.getValue());

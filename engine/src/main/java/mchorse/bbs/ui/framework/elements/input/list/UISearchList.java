@@ -4,13 +4,11 @@ import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 
-public class UISearchList <T> extends UIElement
-{
+public class UISearchList<T> extends UIElement {
     public UITextbox search;
     public UIList<T> list;
 
-    public UISearchList(UIList<T> list)
-    {
+    public UISearchList(UIList<T> list) {
         this.search = new UITextbox(100, (str) -> this.filter(str, false));
         this.search.relative(this).set(0, 0, 0, 20).w(1, 0);
 
@@ -20,17 +18,14 @@ public class UISearchList <T> extends UIElement
         this.add(this.search, this.list);
     }
 
-    public UISearchList<T> label(IKey label)
-    {
+    public UISearchList<T> label(IKey label) {
         this.search.textbox.setPlaceholder(label);
 
         return this;
     }
 
-    public void filter(String str, boolean fill)
-    {
-        if (fill)
-        {
+    public void filter(String str, boolean fill) {
+        if (fill) {
             this.search.setText(str);
         }
 

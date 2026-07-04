@@ -10,8 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
-public class UIVector3d extends UIElement
-{
+public class UIVector3d extends UIElement {
     public UITrackpad x;
     public UITrackpad y;
     public UITrackpad z;
@@ -19,8 +18,7 @@ public class UIVector3d extends UIElement
     private Consumer<Vector3d> callback;
     private Vector3d vector = new Vector3d();
 
-    public UIVector3d(Consumer<Vector3d> callback)
-    {
+    public UIVector3d(Consumer<Vector3d> callback) {
         this.callback = callback;
 
         this.x = new UITrackpad((v) ->
@@ -49,22 +47,18 @@ public class UIVector3d extends UIElement
         this.add(this.x, this.y, this.z);
     }
 
-    private void syncCallback(double value)
-    {
-        if (Window.isKeyPressed(GLFW.GLFW_KEY_SPACE))
-        {
+    private void syncCallback(double value) {
+        if (Window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             this.vector.set(value, value, value);
             this.fill(this.vector);
         }
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(this.vector);
         }
     }
 
-    public void fill(Vector3d vector)
-    {
+    public void fill(Vector3d vector) {
         this.vector.set(vector);
 
         this.x.setValue(this.vector.x);
@@ -72,8 +66,7 @@ public class UIVector3d extends UIElement
         this.z.setValue(this.vector.z);
     }
 
-    public void fill(Vector3f vector)
-    {
+    public void fill(Vector3f vector) {
         this.vector.set(vector);
 
         this.x.setValue(this.vector.x);

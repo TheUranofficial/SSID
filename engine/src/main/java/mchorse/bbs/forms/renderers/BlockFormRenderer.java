@@ -14,19 +14,15 @@ import mchorse.bbs.voxel.blocks.BlockLink;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.world.entities.Entity;
 
-public class BlockFormRenderer extends FormRenderer<BlockForm>
-{
-    public BlockFormRenderer(BlockForm form)
-    {
+public class BlockFormRenderer extends FormRenderer<BlockForm> {
+    public BlockFormRenderer(BlockForm form) {
         super(form);
     }
 
-    private IBlockVariant getVariant(ChunkBuilder builder)
-    {
+    private IBlockVariant getVariant(ChunkBuilder builder) {
         BlockLink link = this.form.block.get();
 
-        if (link != null)
-        {
+        if (link != null) {
             return builder.models.getVariant(link);
         }
 
@@ -34,13 +30,11 @@ public class BlockFormRenderer extends FormRenderer<BlockForm>
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         ChunkBuilder chunkBuilder = context.menu.bridge.get(IBridgeWorld.class).getChunkBuilder();
         IBlockVariant variant = this.getVariant(chunkBuilder);
 
-        if (variant != null)
-        {
+        if (variant != null) {
             int w = x2 - x1;
             int h = y2 - y1;
             int scale = Math.min(w, h) / 2;
@@ -50,13 +44,11 @@ public class BlockFormRenderer extends FormRenderer<BlockForm>
     }
 
     @Override
-    protected void render3D(Entity entity, RenderingContext context)
-    {
+    protected void render3D(Entity entity, RenderingContext context) {
         ChunkBuilder chunkBuilder = context.getWorld().bridge.get(IBridgeWorld.class).getChunkBuilder();
         IBlockVariant variant = this.getVariant(chunkBuilder);
 
-        if (variant != null)
-        {
+        if (variant != null) {
             Shader shader = context.getShaders().get(VBOAttributes.VERTEX_NORMAL_UV_RGBA);
             VAOBuilder builder = context.getVAO().setup(shader, VAO.INDICES);
 

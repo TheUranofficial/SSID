@@ -1,4 +1,4 @@
 package mchorse.bbs.ui.dashboard.panels;
 
-public interface IFlightSupported
-{}
+public interface IFlightSupported {
+}

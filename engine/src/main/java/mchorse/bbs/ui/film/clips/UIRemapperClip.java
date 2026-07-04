@@ -1,26 +1,22 @@
 package mchorse.bbs.ui.film.clips;
 
 import mchorse.bbs.camera.clips.modifiers.RemapperClip;
-import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.film.IUIClipsDelegate;
 import mchorse.bbs.ui.film.utils.keyframes.UICameraDopeSheetEditor;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIRemapperClip extends UIClip<RemapperClip>
-{
+public class UIRemapperClip extends UIClip<RemapperClip> {
     public UICameraDopeSheetEditor channel;
     public UIButton editChannel;
 
-    public UIRemapperClip(RemapperClip clip, IUIClipsDelegate editor)
-    {
+    public UIRemapperClip(RemapperClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.channel = new UICameraDopeSheetEditor(this.editor);
@@ -33,16 +29,14 @@ public class UIRemapperClip extends UIClip<RemapperClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.C_CLIP.get("bbs:remapper")).marginTop(12), this.editChannel);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.channel.keyframes.setDuration(this.clip.duration.get());
@@ -50,8 +44,7 @@ public class UIRemapperClip extends UIClip<RemapperClip>
     }
 
     @Override
-    public void updateDuration(int duration)
-    {
+    public void updateDuration(int duration) {
         super.updateDuration(duration);
 
         this.channel.keyframes.duration = duration;

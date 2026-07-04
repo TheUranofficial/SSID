@@ -6,11 +6,9 @@ import mchorse.bbs.camera.clips.overwrite.PathClip;
 import mchorse.bbs.camera.data.InterpolationType;
 import mchorse.bbs.camera.data.Position;
 
-public class DollyToPathConverter implements IClipConverter<DollyClip, PathClip>
-{
+public class DollyToPathConverter implements IClipConverter<DollyClip, PathClip> {
     @Override
-    public PathClip convert(DollyClip dolly)
-    {
+    public PathClip convert(DollyClip dolly) {
         PathClip path = new PathClip();
         Position position = new Position();
         InterpolationType interp = InterpolationType.fromInterp(dolly.interp.get());

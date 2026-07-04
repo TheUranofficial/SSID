@@ -9,22 +9,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface IFactory <T, D>
-{
+public interface IFactory<T, D> {
     public Link getType(T object);
 
     public T create(Link type);
 
-    public default MapType toData(T object)
-    {
+    public default MapType toData(T object) {
         MapType data = new MapType();
 
-        if (object instanceof IDataSerializable)
-        {
+        if (object instanceof IDataSerializable) {
             BaseType baseData = ((IDataSerializable) object).toData();
 
-            if (baseData.isMap())
-            {
+            if (baseData.isMap()) {
                 data = baseData.asMap();
             }
 
@@ -34,26 +30,22 @@ public interface IFactory <T, D>
         return data;
     }
 
-    public default T fromData(MapType data)
-    {
-        if (data == null)
-        {
+    public default T fromData(MapType data) {
+        if (data == null) {
             return null;
         }
 
         Link type = Link.create(data.getString(this.getTypeKey()));
         T object = this.create(type);
 
-        if (object instanceof IDataSerializable)
-        {
+        if (object instanceof IDataSerializable) {
             ((IDataSerializable) object).fromData(data);
         }
 
         return object;
     }
 
-    public default String getTypeKey()
-    {
+    public default String getTypeKey() {
         return "type";
     }
 
@@ -63,12 +55,10 @@ public interface IFactory <T, D>
 
     public Collection<Link> getKeys();
 
-    public default Collection<String> getStringKeys()
-    {
+    public default Collection<String> getStringKeys() {
         Set<String> keys = new HashSet<>();
 
-        for (Link link : this.getKeys())
-        {
+        for (Link link : this.getKeys()) {
             keys.add(link.toString());
         }
 

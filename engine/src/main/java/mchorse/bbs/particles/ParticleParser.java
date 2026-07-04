@@ -17,55 +17,37 @@ import mchorse.bbs.particles.components.lifetime.ParticleComponentLifetimeLoopin
 import mchorse.bbs.particles.components.lifetime.ParticleComponentLifetimeOnce;
 import mchorse.bbs.particles.components.meta.ParticleComponentInitialization;
 import mchorse.bbs.particles.components.meta.ParticleComponentLocalSpace;
-import mchorse.bbs.particles.components.motion.ParticleComponentInitialSpeed;
-import mchorse.bbs.particles.components.motion.ParticleComponentInitialSpin;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotionCollision;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotionDynamic;
-import mchorse.bbs.particles.components.motion.ParticleComponentMotionParametric;
+import mchorse.bbs.particles.components.motion.*;
 import mchorse.bbs.particles.components.rate.ParticleComponentRateInstant;
 import mchorse.bbs.particles.components.rate.ParticleComponentRateSteady;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeBox;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeDisc;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeEntityAABB;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapePoint;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeSphere;
+import mchorse.bbs.particles.components.shape.*;
 import mchorse.bbs.resources.Link;
 
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParticleParser
-{
+public class ParticleParser {
     /* TODO: Rewrite */
     public static final String PREFIX = new String(Base64.getDecoder().decode("bWluZWNyYWZ0Og=="));
 
     public Map<String, Class<? extends ParticleComponentBase>> components = new HashMap<>();
 
-    public static boolean isEmpty(BaseType element)
-    {
-        if (element.isList())
-        {
+    public static boolean isEmpty(BaseType element) {
+        if (element.isList()) {
             return element.asList().isEmpty();
-        }
-        else if (element.isMap())
-        {
+        } else if (element.isMap()) {
             return element.asMap().isEmpty();
-        }
-        else if (element.isString())
-        {
+        } else if (element.isString()) {
             return element.asString().isEmpty();
-        }
-        else if (element.isNumeric())
-        {
+        } else if (element.isNumeric()) {
             return Operation.equals(element.asNumeric().doubleValue(), 0);
         }
 
         return true;
     }
 
-    public ParticleParser()
-    {
+    public ParticleParser() {
         /* Meta components */
         this.components.put("emitter_local_space", ParticleComponentLocalSpace.class);
         this.components.put("emitter_initialization", ParticleComponentInitialization.class);
@@ -105,27 +87,21 @@ public class ParticleParser
         this.components.put("particle_motion_parametric", ParticleComponentMotionParametric.class);
     }
 
-    public ParticleScheme fromData(MapType data) throws Exception
-    {
+    public ParticleScheme fromData(MapType data) throws Exception {
         return this.fromData(new ParticleScheme(), data);
     }
 
-    public ParticleScheme fromData(ParticleScheme scheme, MapType data) throws Exception
-    {
-        if (!data.isMap())
-        {
+    public ParticleScheme fromData(ParticleScheme scheme, MapType data) throws Exception {
+        if (!data.isMap()) {
             throw new Exception("The root element of Bedrock particle should be an object!");
         }
 
         /* Skip format_version check to avoid breaking semi-compatible particles */
         MapType root = data.asMap();
 
-        try
-        {
+        try {
             this.parseEffect(scheme, this.getObject(root, "particle_effect", "No particle_effect was found..."));
-        }
-        catch (MolangException e)
-        {
+        } catch (MolangException e) {
             throw new Exception("Couldn't parse some MoLang expression!", e);
         }
 
@@ -134,16 +110,13 @@ public class ParticleParser
         return scheme;
     }
 
-    private void parseEffect(ParticleScheme scheme, MapType effect) throws Exception
-    {
+    private void parseEffect(ParticleScheme scheme, MapType effect) throws Exception {
         this.parseDescription(scheme, this.getObject(effect, "description", "No particle_effect.description was found..."));
 
-        if (effect.has("curves"))
-        {
+        if (effect.has("curves")) {
             BaseType curves = effect.get("curves");
 
-            if (curves.isMap())
-            {
+            if (curves.isMap()) {
                 this.parseCurves(scheme, curves.asMap());
             }
         }
@@ -154,26 +127,21 @@ public class ParticleParser
     /**
      * Parse description object (which contains ID of the particle, material type and texture)
      */
-    private void parseDescription(ParticleScheme scheme, MapType description) throws Exception
-    {
-        if (description.has("identifier"))
-        {
+    private void parseDescription(ParticleScheme scheme, MapType description) throws Exception {
+        if (description.has("identifier")) {
             scheme.identifier = description.getString("identifier");
         }
 
         MapType parameters = this.getObject(description, "basic_render_parameters", "No particle_effect.basic_render_parameters was found...");
 
-        if (parameters.has("material"))
-        {
+        if (parameters.has("material")) {
             scheme.material = ParticleMaterial.fromString(parameters.getString("material"));
         }
 
-        if (parameters.has("texture"))
-        {
+        if (parameters.has("texture")) {
             String texture = parameters.getString("texture");
 
-            if (!texture.equals("textures/particle/particles"))
-            {
+            if (!texture.equals("textures/particle/particles")) {
                 scheme.texture = Link.create(texture);
             }
         }
@@ -182,14 +150,11 @@ public class ParticleParser
     /**
      * Parse curves object
      */
-    private void parseCurves(ParticleScheme scheme, MapType curves) throws Exception
-    {
-        for (Map.Entry<String, BaseType> entry : curves)
-        {
+    private void parseCurves(ParticleScheme scheme, MapType curves) throws Exception {
+        for (Map.Entry<String, BaseType> entry : curves) {
             BaseType data = entry.getValue();
 
-            if (data.isMap())
-            {
+            if (data.isMap()) {
                 ParticleCurve curve = new ParticleCurve();
 
                 curve.fromData(data.asMap(), scheme.parser);
@@ -198,41 +163,31 @@ public class ParticleParser
         }
     }
 
-    private void parseComponents(ParticleScheme scheme, MapType components) throws Exception
-    {
-        for (Map.Entry<String, BaseType> entry : components)
-        {
+    private void parseComponents(ParticleScheme scheme, MapType components) throws Exception {
+        for (Map.Entry<String, BaseType> entry : components) {
             String key = entry.getKey().replaceAll(PREFIX, "");
 
-            if (this.components.containsKey(key))
-            {
+            if (this.components.containsKey(key)) {
                 ParticleComponentBase component = null;
 
-                try
-                {
+                try {
                     component = this.components.get(key).getConstructor().newInstance();
+                } catch (Exception e) {
                 }
-                catch (Exception e)
-                {}
 
-                if (component != null)
-                {
+                if (component != null) {
                     component.fromData(entry.getValue(), scheme.parser);
                     scheme.components.add(component);
-                }
-                else
-                {
+                } else {
                     System.out.println("Failed to parse given component " + key + " in " + scheme.identifier + "!");
                 }
             }
         }
     }
 
-    private MapType getObject(MapType map, String key, String message) throws Exception
-    {
+    private MapType getObject(MapType map, String key, String message) throws Exception {
         /* Skip format_version check to avoid breaking semi-compatible particles */
-        if (!map.has(key, BaseType.TYPE_MAP))
-        {
+        if (!map.has(key, BaseType.TYPE_MAP)) {
             throw new Exception(message);
         }
 
@@ -242,8 +197,7 @@ public class ParticleParser
     /**
      * Turn given bedrock scheme into JSON
      */
-    public MapType toData(ParticleScheme scheme)
-    {
+    public MapType toData(ParticleScheme scheme) {
         MapType data = new MapType();
         MapType effect = new MapType();
 
@@ -257,8 +211,7 @@ public class ParticleParser
         return data;
     }
 
-    private void addDescription(MapType effect, ParticleScheme scheme)
-    {
+    private void addDescription(MapType effect, ParticleScheme scheme) {
         MapType desc = new MapType();
         MapType render = new MapType();
 
@@ -270,44 +223,36 @@ public class ParticleParser
         render.putString("material", scheme.material.id);
         render.putString("texture", "textures/particle/particles");
 
-        if (scheme.texture != null && !scheme.texture.equals(ParticleScheme.DEFAULT_TEXTURE))
-        {
+        if (scheme.texture != null && !scheme.texture.equals(ParticleScheme.DEFAULT_TEXTURE)) {
             render.putString("texture", scheme.texture.toString());
         }
     }
 
-    private void addCurves(MapType effect, ParticleScheme scheme)
-    {
+    private void addCurves(MapType effect, ParticleScheme scheme) {
         MapType curves = new MapType();
 
         effect.put("curves", curves);
 
-        for (Map.Entry<String, ParticleCurve> entry : scheme.curves.entrySet())
-        {
+        for (Map.Entry<String, ParticleCurve> entry : scheme.curves.entrySet()) {
             curves.put(entry.getKey(), entry.getValue().toData());
         }
     }
 
-    private void addComponents(MapType effect, ParticleScheme scheme)
-    {
+    private void addComponents(MapType effect, ParticleScheme scheme) {
         MapType components = new MapType();
 
         effect.put("components", components);
 
         main:
-        for (ParticleComponentBase component : scheme.components)
-        {
+        for (ParticleComponentBase component : scheme.components) {
             BaseType element = component.toData();
 
-            if (isEmpty(element) && !component.canBeEmpty())
-            {
+            if (isEmpty(element) && !component.canBeEmpty()) {
                 continue;
             }
 
-            for (Map.Entry<String, Class<? extends ParticleComponentBase>> entry : this.components.entrySet())
-            {
-                if (entry.getValue().equals(component.getClass()))
-                {
+            for (Map.Entry<String, Class<? extends ParticleComponentBase>> entry : this.components.entrySet()) {
+                if (entry.getValue().equals(component.getClass())) {
                     components.put(PREFIX + entry.getKey(), element);
 
                     continue main;

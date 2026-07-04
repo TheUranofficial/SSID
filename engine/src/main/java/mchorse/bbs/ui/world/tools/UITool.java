@@ -9,8 +9,7 @@ import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.undo.ChunkProxy;
 import org.joml.Vector3i;
 
-public abstract class UITool
-{
+public abstract class UITool {
     public final UIWorldEditorPanel editor;
     public final UIIcon button;
     public int lastMouseButton;
@@ -21,8 +20,7 @@ public abstract class UITool
     protected Vector3i firstBlock = new Vector3i();
     protected IBlockVariant variantToPlace;
 
-    public UITool(UIWorldEditorPanel editor)
-    {
+    public UITool(UIWorldEditorPanel editor) {
         this.editor = editor;
         this.panel = new UIElement();
         this.panel.w(100).column().vertical().stretch();
@@ -32,18 +30,15 @@ public abstract class UITool
 
     public abstract UIIcon createButton();
 
-    public UIElement getPanel()
-    {
+    public UIElement getPanel() {
         return this.panel;
     }
 
-    protected ChunkProxy getProxy()
-    {
+    protected ChunkProxy getProxy() {
         return this.editor.getProxy();
     }
 
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         this.getProxy().begin();
 
         this.lastMouseButton = mouseButton;
@@ -52,31 +47,27 @@ public abstract class UITool
         this.active = true;
     }
 
-    private IBlockVariant getVariant(RayTraceResult result)
-    {
+    private IBlockVariant getVariant(RayTraceResult result) {
         return this.lastMouseButton == 0 ? this.getProxy().getAir() : this.editor.getVariant(result);
     }
 
-    public void drag(RayTraceResult result)
-    {}
+    public void drag(RayTraceResult result) {
+    }
 
-    public void end(RayTraceResult result)
-    {
+    public void end(RayTraceResult result) {
         this.active = false;
 
         this.getProxy().end();
     }
 
-    public boolean mouseScrolled(int scroll)
-    {
+    public boolean mouseScrolled(int scroll) {
         return false;
     }
 
-    public boolean handleRayTracer(RayTraceResult result)
-    {
+    public boolean handleRayTracer(RayTraceResult result) {
         return true;
     }
 
-    public void render(RenderingContext context, RayTraceResult result)
-    {}
+    public void render(RenderingContext context, RayTraceResult result) {
+    }
 }

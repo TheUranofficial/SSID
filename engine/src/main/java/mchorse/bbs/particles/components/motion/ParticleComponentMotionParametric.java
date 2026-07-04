@@ -13,39 +13,32 @@ import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 import org.joml.Vector3f;
 
-public class ParticleComponentMotionParametric extends ParticleComponentMotion implements IComponentParticleInitialize, IComponentParticleUpdate
-{
+public class ParticleComponentMotionParametric extends ParticleComponentMotion implements IComponentParticleInitialize, IComponentParticleUpdate {
     public MolangExpression[] position = {MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
     public MolangExpression rotation = MolangParser.ZERO;
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         data.put("relative_position", ParticleUtils.vectorToList(this.position));
 
-        if (!MolangExpression.isZero(this.rotation))
-        {
+        if (!MolangExpression.isZero(this.rotation)) {
             data.put("rotation", this.rotation.toData());
         }
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType map = data.asMap();
 
-        if (map.has("relative_position") && map.get("relative_position").isList())
-        {
+        if (map.has("relative_position") && map.get("relative_position").isList()) {
             ParticleUtils.vectorFromList(map.getList("relative_position"), this.position, parser);
         }
 
-        if (map.has("rotation"))
-        {
+        if (map.has("rotation")) {
             this.rotation = parser.parseData(map.get("rotation"));
         }
 
@@ -53,8 +46,7 @@ public class ParticleComponentMotionParametric extends ParticleComponentMotion i
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
+    public void apply(ParticleEmitter emitter, Particle particle) {
         Vector3f position = new Vector3f((float) this.position[0].get(), (float) this.position[1].get(), (float) this.position[2].get());
 
         particle.manual = true;
@@ -68,8 +60,7 @@ public class ParticleComponentMotionParametric extends ParticleComponentMotion i
     }
 
     @Override
-    public void update(ParticleEmitter emitter, Particle particle)
-    {
+    public void update(ParticleEmitter emitter, Particle particle) {
         Vector3f position = new Vector3f((float) this.position[0].get(), (float) this.position[1].get(), (float) this.position[2].get());
 
         particle.matrix.transform(position);
@@ -80,8 +71,7 @@ public class ParticleComponentMotionParametric extends ParticleComponentMotion i
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 10;
     }
 }

@@ -29,8 +29,7 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class UICommonWorldEditor <T> extends UIWorldPanel
-{
+public abstract class UICommonWorldEditor<T> extends UIWorldPanel {
     public static final int LIST_HEIGHT = 20 + UIStringList.DEFAULT_HEIGHT * 6;
 
     public UISearchList<T> objects;
@@ -39,8 +38,7 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
     protected T object;
     protected T hoveredObject;
 
-    public UICommonWorldEditor(UIDashboard dashboard)
-    {
+    public UICommonWorldEditor(UIDashboard dashboard) {
         super(dashboard);
 
         this.objects = this.createSearchList((l) -> this.fill(l.get(0), false));
@@ -54,12 +52,12 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
 
             if (this.object != null) m.action(Icons.COPY, UIKeys.WORLD_CONTEXT_COPY, this::copyObject);
 
-            if (type != null)
-            {
+            if (type != null) {
                 m.action(Icons.PASTE, UIKeys.WORLD_CONTEXT_PASTE, () -> this.pasteObject(type));
             }
 
-            if (this.object != null) m.action(Icons.REMOVE, UIKeys.WORLD_CONTEXT_REMOVE, Colors.NEGATIVE, this::removeObject);
+            if (this.object != null)
+                m.action(Icons.REMOVE, UIKeys.WORLD_CONTEXT_REMOVE, Colors.NEGATIVE, this::removeObject);
         });
         this.objects.list.background();
         this.objects.relative(this).xy(10, 10).w(160).h(LIST_HEIGHT);
@@ -74,23 +72,20 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
         this.keys().register(Keys.WORLD_MOVE_TO_CURSOR, this::moveToCursor).active(() -> this.object != null);
     }
 
-    private void moveToCenter()
-    {
+    private void moveToCenter() {
         AABB hitbox = this.getHitbox(this.object);
 
         this.dashboard.orbit.position.set(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2, hitbox.z + hitbox.d / 2);
     }
 
-    private void moveToCursor()
-    {
+    private void moveToCursor() {
         RayTraceResult result = new RayTraceResult();
         Camera camera = this.dashboard.bridge.get(IBridgeCamera.class).getCamera();
         MouseInput input = BBS.getEngine().mouse;
 
         RayTracer.trace(result, this.dashboard.bridge.get(IBridgeWorld.class).getWorld().chunks, camera.position, camera.getMouseDirection(input.x, input.y), 64);
 
-        if (result.type == RayTraceType.BLOCK)
-        {
+        if (result.type == RayTraceType.BLOCK) {
             this.moveToCursor(this.object, result.hit);
         }
     }
@@ -103,8 +98,7 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
 
     protected abstract void addObject(T object);
 
-    protected void copyObject()
-    {
+    protected void copyObject() {
         Window.setClipboard(this.toData(this.object), "_Copy" + this.getClass().getSimpleName());
     }
 
@@ -114,22 +108,19 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
 
     protected abstract void removeObject();
 
-    protected void fill(T object, boolean select)
-    {
+    protected void fill(T object, boolean select) {
         this.object = object;
 
         this.editor.removeAll();
         this.editor.setVisible(object != null);
 
-        if (object != null)
-        {
+        if (object != null) {
             this.setupEditor(object);
         }
 
         this.editor.resize();
 
-        if (select)
-        {
+        if (select) {
             this.objects.list.setCurrent(object);
         }
     }
@@ -137,18 +128,14 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
     protected abstract void setupEditor(T object);
 
     @Override
-    public void appear()
-    {
+    public void appear() {
         List<T> objects = this.getList();
 
         this.objects.list.setList(objects);
 
-        if (this.object == null || !objects.contains(this.object))
-        {
+        if (this.object == null || !objects.contains(this.object)) {
             this.fill(objects.isEmpty() ? null : objects.get(0), true);
-        }
-        else
-        {
+        } else {
             this.fill(this.object, true);
         }
     }
@@ -156,10 +143,8 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
     protected abstract List<T> getList();
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.hoveredObject != null && context.mouseButton == 1)
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.hoveredObject != null && context.mouseButton == 1) {
             this.fill(this.hoveredObject, true);
 
             return true;
@@ -169,10 +154,8 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
     }
 
     @Override
-    public void renderInWorld(RenderingContext context)
-    {
-        if (!this.canBeSeen())
-        {
+    public void renderInWorld(RenderingContext context) {
+        if (!this.canBeSeen()) {
             return;
         }
 
@@ -181,22 +164,17 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
 
         this.hoveredObject = this.getClosestObject(camera.position, camera.getMouseDirection(input.x, input.y));
 
-        for (T object : this.objects.list.getList())
-        {
+        for (T object : this.objects.list.getList()) {
             this.renderObject(context, object);
         }
     }
 
-    protected void renderObject(RenderingContext context, T object)
-    {
+    protected void renderObject(RenderingContext context, T object) {
         AABB aabb = this.getHitbox(object);
 
-        if (object == this.hoveredObject || object == this.objects.list.getCurrentFirst())
-        {
+        if (object == this.hoveredObject || object == this.objects.list.getCurrentFirst()) {
             Draw.renderBox(context, aabb.x, aabb.y, aabb.z, aabb.w, aabb.h, aabb.d, 0, 0.5F, 1F);
-        }
-        else
-        {
+        } else {
             Draw.renderBox(context, aabb.x, aabb.y, aabb.z, aabb.w, aabb.h, aabb.d);
         }
     }
@@ -204,26 +182,19 @@ public abstract class UICommonWorldEditor <T> extends UIWorldPanel
     /**
      * Get the closest object to the camera
      */
-    private T getClosestObject(Vector3d finalPosition, Vector3f mouseDirection)
-    {
+    private T getClosestObject(Vector3d finalPosition, Vector3f mouseDirection) {
         T closest = null;
 
-        for (T object : this.objects.list.getList())
-        {
+        for (T object : this.objects.list.getList()) {
             AABB aabb = this.getHitbox(object);
 
-            if (aabb.intersectsRay(finalPosition, mouseDirection))
-            {
-                if (closest == null)
-                {
+            if (aabb.intersectsRay(finalPosition, mouseDirection)) {
+                if (closest == null) {
                     closest = object;
-                }
-                else
-                {
+                } else {
                     AABB aabb2 = this.getHitbox(closest);
 
-                    if (finalPosition.distanceSquared(aabb.x, aabb.y, aabb.z) < finalPosition.distanceSquared(aabb2.x, aabb2.y, aabb2.z))
-                    {
+                    if (finalPosition.distanceSquared(aabb.x, aabb.y, aabb.z) < finalPosition.distanceSquared(aabb2.x, aabb2.y, aabb2.z)) {
                         closest = object;
                     }
                 }

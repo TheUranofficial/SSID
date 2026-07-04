@@ -2,8 +2,7 @@ package mchorse.studio.ui;
 
 import mchorse.bbs.l10n.keys.IKey;
 
-public class UIKeysApp
-{
+public class UIKeysApp {
     /* Utility overlay panel */
     public static final IKey UTILITY_ANALYZE_LANG = IKey.lang("studio.ui.utility.analyze_lang");
     public static final IKey UTILITY_COMPILE_LANG = IKey.lang("studio.ui.utility.compile_lang");

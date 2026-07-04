@@ -9,14 +9,12 @@ import mchorse.bbs.ui.utils.UIUtils;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.Direction;
 
-public class UIGraphPanel extends UIDashboardPanel
-{
+public class UIGraphPanel extends UIDashboardPanel {
     public UIGraphCanvas canvas;
     public UITextbox expression;
     public UIIcon help;
 
-    public UIGraphPanel(UIDashboard dashboard)
-    {
+    public UIGraphPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.canvas = new UIGraphCanvas();

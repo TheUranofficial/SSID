@@ -10,8 +10,7 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelCube implements IMapSerializable
-{
+public class ModelCube implements IMapSerializable {
     public List<ModelQuad> quads = new ArrayList<>();
     public Vector3f origin = new Vector3f();
     public Vector3f size = new Vector3f();
@@ -27,8 +26,7 @@ public class ModelCube implements IMapSerializable
     public ModelUV top;
     public ModelUV bottom;
 
-    public void generateQuads(int textureWidth, int textureHeight)
-    {
+    public void generateQuads(int textureWidth, int textureHeight) {
         float tw = 1F / textureWidth;
         float th = 1F / textureHeight;
 
@@ -42,10 +40,9 @@ public class ModelCube implements IMapSerializable
 
         this.quads.clear();
 
-        if (this.front != null)
-        {
+        if (this.front != null) {
             Quad quad = this.front.createQuad();
-            
+
             this.quads.add(new ModelQuad()
                 .vertex(maxX, minY, minZ, quad.p4.x * tw, quad.p4.y * th)
                 .vertex(minX, minY, minZ, quad.p3.x * tw, quad.p3.y * th)
@@ -54,8 +51,7 @@ public class ModelCube implements IMapSerializable
                 .normal(0, 0, -1));
         }
 
-        if (this.right != null)
-        {
+        if (this.right != null) {
             Quad quad = this.right.createQuad();
 
             this.quads.add(new ModelQuad()
@@ -66,8 +62,7 @@ public class ModelCube implements IMapSerializable
                 .normal(1, 0, 0));
         }
 
-        if (this.back != null)
-        {
+        if (this.back != null) {
             Quad quad = this.back.createQuad();
 
             this.quads.add(new ModelQuad()
@@ -78,8 +73,7 @@ public class ModelCube implements IMapSerializable
                 .normal(0, 0, 1));
         }
 
-        if (this.left != null)
-        {
+        if (this.left != null) {
             Quad quad = this.left.createQuad();
 
             this.quads.add(new ModelQuad()
@@ -90,8 +84,7 @@ public class ModelCube implements IMapSerializable
                 .normal(-1, 0, 0));
         }
 
-        if (this.top != null)
-        {
+        if (this.top != null) {
             Quad quad = this.top.createQuad();
 
             this.quads.add(new ModelQuad()
@@ -102,8 +95,7 @@ public class ModelCube implements IMapSerializable
                 .normal(0, 1, 0));
         }
 
-        if (this.bottom != null)
-        {
+        if (this.bottom != null) {
             Quad quad = this.bottom.createQuad();
 
             this.quads.add(new ModelQuad()
@@ -116,19 +108,16 @@ public class ModelCube implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.put("from", DataStorageUtils.vector3fToData(this.origin));
         data.put("size", DataStorageUtils.vector3fToData(this.size));
         data.put("origin", DataStorageUtils.vector3fToData(this.pivot));
 
-        if (this.inflate != 0)
-        {
+        if (this.inflate != 0) {
             data.putFloat("offset", this.inflate);
         }
 
-        if (this.rotate.x != 0 || this.rotate.y != 0 || this.rotate.z != 0)
-        {
+        if (this.rotate.x != 0 || this.rotate.y != 0 || this.rotate.z != 0) {
             data.put("rotate", DataStorageUtils.vector3fToData(this.rotate));
         }
 
@@ -141,47 +130,38 @@ public class ModelCube implements IMapSerializable
         this.saveUVSide(uvs, "top", this.top);
         this.saveUVSide(uvs, "bottom", this.bottom);
 
-        if (uvs.size() > 0)
-        {
+        if (uvs.size() > 0) {
             data.put("uvs", uvs);
         }
     }
 
-    private void saveUVSide(MapType data, String key, ModelUV side)
-    {
-        if (side != null)
-        {
+    private void saveUVSide(MapType data, String key, ModelUV side) {
+        if (side != null) {
             data.put(key, side.toData());
         }
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.origin.set(DataStorageUtils.vector3fFromData(data.getList("from")));
         this.size.set(DataStorageUtils.vector3fFromData(data.getList("size")));
         this.pivot.set(DataStorageUtils.vector3fFromData(data.getList("origin")));
 
-        if (data.has("offset"))
-        {
+        if (data.has("offset")) {
             this.inflate = data.getFloat("offset");
         }
 
-        if (data.has("rotate"))
-        {
+        if (data.has("rotate")) {
             this.rotate.set(DataStorageUtils.vector3fFromData(data.getList("rotate")));
         }
 
-        if (data.has("uvs"))
-        {
+        if (data.has("uvs")) {
             this.parseUV(data.get("uvs"));
         }
     }
 
-    private void parseUV(BaseType data)
-    {
-        if (data instanceof MapType)
-        {
+    private void parseUV(BaseType data) {
+        if (data instanceof MapType) {
             MapType sides = (MapType) data;
 
             if (sides.has("front")) this.front = parseUVSide(sides, "front");
@@ -193,8 +173,7 @@ public class ModelCube implements IMapSerializable
         }
     }
 
-    private ModelUV parseUVSide(MapType uvs, String name)
-    {
+    private ModelUV parseUVSide(MapType uvs, String name) {
         ModelUV uv = new ModelUV();
 
         uv.fromData(uvs.getList(name));

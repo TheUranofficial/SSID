@@ -11,11 +11,7 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
 import mchorse.bbs.ui.framework.elements.input.list.UILinkList;
 import mchorse.bbs.ui.framework.elements.input.list.UISearchList;
-import mchorse.bbs.ui.framework.elements.overlay.UIConfirmOverlayPanel;
-import mchorse.bbs.ui.framework.elements.overlay.UIMessageFolderOverlayPanel;
-import mchorse.bbs.ui.framework.elements.overlay.UIMessageOverlayPanel;
-import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
-import mchorse.bbs.ui.framework.elements.overlay.UIOverlayPanel;
+import mchorse.bbs.ui.framework.elements.overlay.*;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.PNGEncoder;
@@ -26,8 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 
-public class UITextureManagerOverlayPanel extends UIOverlayPanel
-{
+public class UITextureManagerOverlayPanel extends UIOverlayPanel {
     public UIIcon linear;
     public UIIcon copy;
     public UIIcon export;
@@ -40,13 +35,11 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
 
     public boolean linkLinear;
 
-    public static File getFirstAvailableFile(File folder, String name)
-    {
+    public static File getFirstAvailableFile(File folder, String name) {
         File file = new File(folder, name + ".png");
         int index = 0;
 
-        while (file.exists())
-        {
+        while (file.exists()) {
             index += 1;
             file = new File(folder, name + index + ".png");
         }
@@ -54,8 +47,7 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
         return file;
     }
 
-    public UITextureManagerOverlayPanel(IKey title, UITextureManagerPanel panel)
-    {
+    public UITextureManagerOverlayPanel(IKey title, UITextureManagerPanel panel) {
         super(title);
 
         this.panel = panel;
@@ -63,16 +55,13 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
 
         this.textures = new UISearchList<>(new UILinkList((rl) ->
         {
-            if (this.panel.viewer.isDirty())
-            {
+            if (this.panel.viewer.isDirty()) {
                 UIOverlay.addOverlay(this.getContext(), new UIConfirmOverlayPanel(
                     UIKeys.TEXTURES_DISCARD_TITLE,
                     UIKeys.TEXTURES_DISCARD_DESCRIPTION,
                     (confirm) -> this.panel.pickLink(confirm ? rl.get(0) : this.panel.viewer.getTexture())
                 ));
-            }
-            else
-            {
+            } else {
                 this.panel.pickLink(rl.get(0));
             }
         }));
@@ -92,8 +81,7 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
         this.content.add(this.textures);
     }
 
-    private void toggleLinear()
-    {
+    private void toggleLinear() {
         Texture texture = BBS.getTextures().getTexture(this.panel.getLink());
 
         this.linkLinear = !this.linkLinear;
@@ -102,24 +90,20 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
         texture.setFilter(this.linkLinear ? GL11.GL_LINEAR : GL11.GL_NEAREST);
     }
 
-    private void copy()
-    {
+    private void copy() {
         Link link = this.textures.list.getCurrentFirst();
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
         Window.setClipboard(link.toString());
     }
 
-    private void export()
-    {
+    private void export() {
         Link link = this.textures.list.getCurrentFirst();
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
@@ -131,8 +115,7 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
 
         Pixels pixels = this.panel.viewer.getPixels();
 
-        try
-        {
+        try {
             PNGEncoder.writeToFile(pixels, file);
             UIMessageFolderOverlayPanel panel = new UIMessageFolderOverlayPanel(
                 UIKeys.TEXTURES_EXPORT_OVERLAY_TITLE,
@@ -143,9 +126,7 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
             panel.folder.tooltip(UIKeys.TEXTURES_EXPORT_OVERLAY_OPEN_FOLDER, Direction.LEFT);
 
             UIOverlay.addOverlay(this.getContext(), panel);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
             UIOverlay.addOverlay(this.getContext(), new UIMessageOverlayPanel(
@@ -155,10 +136,8 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
         }
     }
 
-    private void remove()
-    {
-        if (this.panel.getLink() == null)
-        {
+    private void remove() {
+        if (this.panel.getLink() == null) {
             return;
         }
 
@@ -168,12 +147,10 @@ public class UITextureManagerOverlayPanel extends UIOverlayPanel
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         super.renderBackground(context);
 
-        if (this.linkLinear)
-        {
+        if (this.linkLinear) {
             this.linear.area.render(context.batcher, Colors.A50 | BBSSettings.primaryColor.get());
         }
     }

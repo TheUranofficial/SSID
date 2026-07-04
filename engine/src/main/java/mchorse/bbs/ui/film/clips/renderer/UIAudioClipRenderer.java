@@ -8,25 +8,19 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIAudioClipRenderer extends UIClipRenderer<AudioClip>
-{
+public class UIAudioClipRenderer extends UIClipRenderer<AudioClip> {
     @Override
-    protected void renderBackground(UIContext context, int color, AudioClip clip, Area area, boolean selected, boolean current)
-    {
+    protected void renderBackground(UIContext context, int color, AudioClip clip, Area area, boolean selected, boolean current) {
         Link link = clip.audio.get();
 
-        if (link != null)
-        {
+        if (link != null) {
             SoundBuffer player = BBS.getSounds().get(link, true);
 
-            if (player != null)
-            {
+            if (player != null) {
                 context.batcher.box(area.x, area.y, area.ex(), area.ey(), Colors.mulRGB(color, 0.6F));
                 player.getWaveform().render(context.batcher, Colors.WHITE, area.x, area.y, area.w, area.h, 0, clip.duration.get() / 20F);
             }
-        }
-        else
-        {
+        } else {
             super.renderBackground(context, color, clip, area, selected, current);
         }
     }

@@ -7,14 +7,12 @@ import mchorse.bbs.ui.utils.icons.Icons;
 
 import java.io.File;
 
-public class UIMessageFolderOverlayPanel extends UIMessageOverlayPanel
-{
+public class UIMessageFolderOverlayPanel extends UIMessageOverlayPanel {
     public UIIcon folder;
 
     private File file;
 
-    public UIMessageFolderOverlayPanel(IKey title, IKey message, File file)
-    {
+    public UIMessageFolderOverlayPanel(IKey title, IKey message, File file) {
         super(title, message);
 
         this.file = file;

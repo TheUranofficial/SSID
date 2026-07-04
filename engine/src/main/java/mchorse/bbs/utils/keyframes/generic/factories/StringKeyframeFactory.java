@@ -8,35 +8,29 @@ import mchorse.bbs.ui.framework.elements.input.keyframes.generic.factories.UIStr
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public class StringKeyframeFactory implements IGenericKeyframeFactory<String>
-{
+public class StringKeyframeFactory implements IGenericKeyframeFactory<String> {
     @Override
-    public String fromData(BaseType data)
-    {
+    public String fromData(BaseType data) {
         return data.isString() ? data.asString() : "";
     }
 
     @Override
-    public BaseType toData(String value)
-    {
+    public BaseType toData(String value) {
         return new StringType(value);
     }
 
     @Override
-    public String copy(String value)
-    {
+    public String copy(String value) {
         return value;
     }
 
     @Override
-    public String interpolate(String a, String b, IInterpolation interpolation, float x)
-    {
+    public String interpolate(String a, String b, IInterpolation interpolation, float x) {
         return b;
     }
 
     @Override
-    public UIKeyframeFactory<String> createUI(GenericKeyframe<String> keyframe, UIPropertyEditor editor)
-    {
+    public UIKeyframeFactory<String> createUI(GenericKeyframe<String> keyframe, UIPropertyEditor editor) {
         return new UIStringKeyframeFactory(keyframe, editor);
     }
 }

@@ -7,41 +7,33 @@ import java.util.List;
 
 /**
  * Keybind manager
- * 
- * This bad boy is responsible for handling and registering keybind 
- * categories 
+ * <p>
+ * This bad boy is responsible for handling and registering keybind
+ * categories
  */
-public class KeybindManager implements IKeyHandler
-{
+public class KeybindManager implements IKeyHandler {
     private List<KeybindCategory> categories = new ArrayList<>();
 
-    public void add(KeybindCategory category)
-    {
+    public void add(KeybindCategory category) {
         this.categories.add(category);
     }
 
-    public void remove(KeybindCategory category)
-    {
+    public void remove(KeybindCategory category) {
         this.categories.remove(category);
     }
 
-    public void resetKeybinds()
-    {
-        for (KeybindCategory category : this.categories)
-        {
+    public void resetKeybinds() {
+        for (KeybindCategory category : this.categories) {
             category.resetKeybinds();
         }
     }
 
     @Override
-    public boolean handleKey(int key, int scancode, int action, int mods)
-    {
+    public boolean handleKey(int key, int scancode, int action, int mods) {
         boolean result = false;
 
-        for (KeybindCategory category : this.categories)
-        {
-            if (category.isActive() && category.handleKey(key, scancode, action, mods))
-            {
+        for (KeybindCategory category : this.categories) {
+            if (category.isActive() && category.handleKey(key, scancode, action, mods)) {
                 result = true;
             }
         }
@@ -50,6 +42,6 @@ public class KeybindManager implements IKeyHandler
     }
 
     @Override
-    public void handleTextInput(int key)
-    {}
+    public void handleTextInput(int key) {
+    }
 }

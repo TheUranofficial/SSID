@@ -10,16 +10,13 @@ import mchorse.bbs.ui.utils.icons.Icons;
 
 import java.io.File;
 
-public class ModelFormCategory extends FormCategory
-{
-    public ModelFormCategory()
-    {
+public class ModelFormCategory extends FormCategory {
+    public ModelFormCategory() {
         super(UIKeys.FORMS_CATEGORIES_MODELS);
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
 
         this.forms.clear();
@@ -30,15 +27,12 @@ public class ModelFormCategory extends FormCategory
 
         File[] files = folder.listFiles();
 
-        if (files == null)
-        {
+        if (files == null) {
             return;
         }
 
-        for (File file : files)
-        {
-            if (file.isDirectory())
-            {
+        for (File file : files) {
+            if (file.isDirectory()) {
                 ModelForm form = new ModelForm();
 
                 form.setModel(file.getName());
@@ -48,8 +42,7 @@ public class ModelFormCategory extends FormCategory
     }
 
     @Override
-    public UIFormCategory createUI(UIFormList list)
-    {
+    public UIFormCategory createUI(UIFormList list) {
         UIFormCategory category = super.createUI(list);
 
         category.context((menu) ->

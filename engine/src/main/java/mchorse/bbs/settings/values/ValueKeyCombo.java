@@ -13,24 +13,20 @@ import mchorse.bbs.ui.utils.keys.KeyCombo;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueKeyCombo extends BaseValueBasic<KeyCombo> implements IValueUIProvider
-{
-    public ValueKeyCombo(String id, KeyCombo combo)
-    {
+public class ValueKeyCombo extends BaseValueBasic<KeyCombo> implements IValueUIProvider {
+    public ValueKeyCombo(String id, KeyCombo combo) {
         super(id, combo);
     }
 
     @Override
-    public void set(KeyCombo value)
-    {
+    public void set(KeyCombo value) {
         this.preNotifyParent(this);
         this.value.copy(value);
         this.postNotifyParent(this);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UILabel label = UI.label(this.value.label, 0).labelAnchor(0, 0.5F);
         UIKeybind keybind = new UIKeybind(this::set);
 
@@ -41,12 +37,10 @@ public class ValueKeyCombo extends BaseValueBasic<KeyCombo> implements IValueUIP
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         ListType list = new ListType();
 
-        for (int key : this.value.keys)
-        {
+        for (int key : this.value.keys) {
             list.addInt(key);
         }
 
@@ -54,10 +48,8 @@ public class ValueKeyCombo extends BaseValueBasic<KeyCombo> implements IValueUIP
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (!data.isList())
-        {
+    public void fromData(BaseType data) {
+        if (!data.isList()) {
             return;
         }
 
@@ -65,8 +57,7 @@ public class ValueKeyCombo extends BaseValueBasic<KeyCombo> implements IValueUIP
 
         ListType list = data.asList();
 
-        for (int i = 0; i < list.size(); i++)
-        {
+        for (int i = 0; i < list.size(); i++) {
             this.value.keys.add(list.getInt(i));
         }
     }

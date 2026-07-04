@@ -9,13 +9,11 @@ import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.ui.framework.elements.buttons.UICirculate;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 
-public class UIParticleSchemeRateSection extends UIParticleSchemeModeSection<ParticleComponentRate>
-{
+public class UIParticleSchemeRateSection extends UIParticleSchemeModeSection<ParticleComponentRate> {
     public UIButton rate;
     public UIButton particles;
 
-    public UIParticleSchemeRateSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeRateSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.rate = new UIButton(UIKeys.SNOWSTORM_RATE_RATE, (b) ->
@@ -34,45 +32,38 @@ public class UIParticleSchemeRateSection extends UIParticleSchemeModeSection<Par
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_RATE_TITLE;
     }
 
     @Override
-    protected void fillModes(UICirculate button)
-    {
+    protected void fillModes(UICirculate button) {
         button.addLabel(UIKeys.SNOWSTORM_RATE_INSTANT);
         button.addLabel(UIKeys.SNOWSTORM_RATE_STEADY);
     }
 
     @Override
-    protected void restoreInfo(ParticleComponentRate component, ParticleComponentRate old)
-    {
+    protected void restoreInfo(ParticleComponentRate component, ParticleComponentRate old) {
         component.particles = old.particles;
     }
 
     @Override
-    protected Class<ParticleComponentRate> getBaseClass()
-    {
+    protected Class<ParticleComponentRate> getBaseClass() {
         return ParticleComponentRate.class;
     }
 
     @Override
-    protected Class getDefaultClass()
-    {
+    protected Class getDefaultClass() {
         return ParticleComponentRateInstant.class;
     }
 
     @Override
-    protected Class getModeClass(int value)
-    {
+    protected Class getModeClass(int value) {
         return value == 0 ? ParticleComponentRateInstant.class : ParticleComponentRateSteady.class;
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         super.fillData();
 
         this.updateVisibility();
@@ -81,22 +72,17 @@ public class UIParticleSchemeRateSection extends UIParticleSchemeModeSection<Par
             : UIKeys.SNOWSTORM_RATE_MAX_PARTICLES);
     }
 
-    private void updateVisibility()
-    {
-        if (this.isInstant())
-        {
+    private void updateVisibility() {
+        if (this.isInstant()) {
             this.rate.removeFromParent();
-        }
-        else if (!this.rate.hasParent())
-        {
+        } else if (!this.rate.hasParent()) {
             this.fields.add(this.rate);
         }
 
         this.resizeParent();
     }
 
-    private boolean isInstant()
-    {
+    private boolean isInstant() {
         return this.component instanceof ParticleComponentRateInstant;
     }
 }

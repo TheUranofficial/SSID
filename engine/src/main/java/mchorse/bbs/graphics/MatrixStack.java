@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * Simple implementation of a matrix stack
  */
-public class MatrixStack
-{
+public class MatrixStack {
     public final List<Matrix4f> model = new ArrayList<>();
     public final List<Matrix3f> normal = new ArrayList<>();
 
@@ -22,112 +21,93 @@ public class MatrixStack
 
     private int depth = 1;
 
-    public MatrixStack()
-    {
+    public MatrixStack() {
         this.reset();
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.setDepth(1);
 
         this.identity();
     }
 
-    private void setDepth(int depth)
-    {
+    private void setDepth(int depth) {
         this.depth = depth;
 
-        while (this.model.size() < this.depth)
-        {
+        while (this.model.size() < this.depth) {
             this.model.add(new Matrix4f());
             this.normal.add(new Matrix3f());
         }
     }
 
-    public Matrix4f getModelMatrix()
-    {
+    public Matrix4f getModelMatrix() {
         return this.model.get(this.depth - 1);
     }
 
-    public Matrix3f getNormalMatrix()
-    {
+    public Matrix3f getNormalMatrix() {
         return this.normal.get(this.depth - 1);
     }
 
-    public void push()
-    {
+    public void push() {
         this.push(this.getModelMatrix(), this.getNormalMatrix());
     }
 
-    public void push(Matrix4f model)
-    {
+    public void push(Matrix4f model) {
         this.push(model, this.tempNormalMatrix.set(model));
     }
 
-    public void push(Matrix4f model, Matrix3f normal)
-    {
+    public void push(Matrix4f model, Matrix3f normal) {
         this.setDepth(this.depth + 1);
 
         this.getModelMatrix().set(model);
         this.getNormalMatrix().set(normal);
     }
 
-    public void pop()
-    {
-        if (this.depth <= 1)
-        {
+    public void pop() {
+        if (this.depth <= 1) {
             throw new IllegalStateException("A one level stack can't be popped!");
         }
 
         this.setDepth(this.depth - 1);
     }
 
-    public void identity()
-    {
+    public void identity() {
         this.getModelMatrix().identity();
         this.getNormalMatrix().identity();
     }
 
-    public void multiply(Matrix4f matrix)
-    {
+    public void multiply(Matrix4f matrix) {
         this.getModelMatrix().mul(matrix);
         this.getNormalMatrix().mul(this.tempNormalMatrix.set(matrix));
     }
 
     /* Translate */
 
-    public void translate(Vector3f vector)
-    {
+    public void translate(Vector3f vector) {
         this.translate(vector.x, vector.y, vector.z);
     }
 
-    public void translate(float x, float y, float z)
-    {
+    public void translate(float x, float y, float z) {
         this.tempModelMatrix.identity();
         this.tempModelMatrix.setTranslation(x, y, z);
 
         this.getModelMatrix().mul(this.tempModelMatrix);
     }
 
-    public void translateRelative(Camera camera, Vector3d vector)
-    {
+    public void translateRelative(Camera camera, Vector3d vector) {
         this.translateRelative(camera, vector.x, vector.y, vector.z);
     }
 
-    public void translateRelative(Camera camera, double x, double y, double z)
-    {
+    public void translateRelative(Camera camera, double x, double y, double z) {
         this.translate(camera.getRelative(x, y, z));
     }
 
     /* Scale */
 
-    public void scale(float x, float y, float z)
-    {
+    public void scale(float x, float y, float z) {
         this.getModelMatrix().scale(x, y, z);
 
-        if (x < 0 || y < 0 || z < 0)
-        {
+        if (x < 0 || y < 0 || z < 0) {
             x = x < 0 ? -1 : 1;
             y = y < 0 ? -1 : 1;
             z = z < 0 ? -1 : 1;
@@ -138,8 +118,7 @@ public class MatrixStack
 
     /* Rotate */
 
-    public void rotateX(float radian)
-    {
+    public void rotateX(float radian) {
         this.tempModelMatrix.identity();
         this.tempModelMatrix.rotateX(radian);
 
@@ -150,8 +129,7 @@ public class MatrixStack
         this.getNormalMatrix().mul(this.tempNormalMatrix);
     }
 
-    public void rotateY(float radian)
-    {
+    public void rotateY(float radian) {
         this.tempModelMatrix.identity();
         this.tempModelMatrix.rotateY(radian);
 
@@ -162,8 +140,7 @@ public class MatrixStack
         this.getNormalMatrix().mul(this.tempNormalMatrix);
     }
 
-    public void rotateZ(float radian)
-    {
+    public void rotateZ(float radian) {
         this.tempModelMatrix.identity();
         this.tempModelMatrix.rotateZ(radian);
 

@@ -2,61 +2,51 @@ package mchorse.bbs.math;
 
 /**
  * Constant class
- * 
+ * <p>
  * This class simply returns supplied in the constructor value
  */
-public class Constant implements IExpression
-{
+public class Constant implements IExpression {
     private double doubleValue;
     private String stringValue;
 
-    public Constant(double doubleValue)
-    {
+    public Constant(double doubleValue) {
         this.doubleValue = doubleValue;
     }
 
-    public Constant(String stringValue)
-    {
+    public Constant(String stringValue) {
         this.stringValue = stringValue;
     }
 
     @Override
-    public IExpression get()
-    {
+    public IExpression get() {
         return this;
     }
 
     @Override
-    public boolean isNumber()
-    {
+    public boolean isNumber() {
         return this.stringValue == null;
     }
 
     @Override
-    public void set(double value)
-    {
+    public void set(double value) {
         this.doubleValue = value;
         this.stringValue = null;
     }
 
     @Override
-    public void set(String value)
-    {
+    public void set(String value) {
         this.doubleValue = 0;
         this.stringValue = value;
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return this.doubleValue;
     }
 
     @Override
-    public boolean booleanValue()
-    {
-        if (this.isNumber())
-        {
+    public boolean booleanValue() {
+        if (this.isNumber()) {
             return Operation.isTrue(this.doubleValue);
         }
 
@@ -64,14 +54,12 @@ public class Constant implements IExpression
     }
 
     @Override
-    public String stringValue()
-    {
+    public String stringValue() {
         return this.stringValue;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.stringValue == null ? String.valueOf(this.doubleValue) : "\"" + this.stringValue + "\"";
     }
 }

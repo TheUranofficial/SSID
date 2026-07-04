@@ -6,8 +6,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-public class VoxBuilder
-{
+public class VoxBuilder {
     public Vector3f translation;
     public Matrix3f transform;
     public Vector3f vector = new Vector3f();
@@ -19,8 +18,7 @@ public class VoxBuilder
     private Vector3f bottom;
     private Vector3f top;
 
-    public VoxBuilder(Vector3f translation, Matrix3f transform)
-    {
+    public VoxBuilder(Vector3f translation, Matrix3f transform) {
         this.translation = translation;
         this.transform = transform;
 
@@ -32,8 +30,7 @@ public class VoxBuilder
         this.top = this.processNormal(new Vector3f(0, 1, 0));
     }
 
-    private Vector3f processNormal(Vector3f normal)
-    {
+    private Vector3f processNormal(Vector3f normal) {
         /* Transform the normal */
         normal.set(normal.x, normal.z, normal.y);
         this.transform.transform(normal);
@@ -43,21 +40,16 @@ public class VoxBuilder
         return normal;
     }
 
-    public ModelMesh build(Vox vox)
-    {
+    public ModelMesh build(Vox vox) {
         /* Worst case scenario */
         ModelMesh mesh = new ModelMesh();
 
-        for (int x = 0; x < vox.w; x++)
-        {
-            for (int y = 0; y < vox.h; y++)
-            {
-                for (int z = 0; z < vox.d; z++)
-                {
+        for (int x = 0; x < vox.w; x++) {
+            for (int y = 0; y < vox.h; y++) {
+                for (int z = 0; z < vox.d; z++) {
                     int voxel = vox.voxels[vox.toIndex(x, y, z)];
 
-                    if (voxel != 0)
-                    {
+                    if (voxel != 0) {
                         this.buildVertex(mesh, x, y, z, voxel, vox);
                     }
                 }
@@ -67,8 +59,7 @@ public class VoxBuilder
         return mesh;
     }
 
-    private void buildVertex(ModelMesh mesh, int x, int y, int z, int voxel, Vox vox)
-    {
+    private void buildVertex(ModelMesh mesh, int x, int y, int z, int voxel, Vox vox) {
         boolean top = vox.has(x, y + 1, z);
         boolean bottom = vox.has(x, y - 1, z);
         boolean left = vox.has(x + 1, y, z);
@@ -76,8 +67,7 @@ public class VoxBuilder
         boolean front = vox.has(x, y, z + 1);
         boolean back = vox.has(x, y, z - 1);
 
-        if (!top)
-        {
+        if (!top) {
             Vector3f normal = this.top;
 
             this.add(mesh, vox, x, y + 1, z + 1, voxel, -0.5F, 0.5F, normal);
@@ -88,8 +78,7 @@ public class VoxBuilder
             this.add(mesh, vox, x, y + 1, z + 1, voxel, -0.5F, 0.5F, normal);
         }
 
-        if (!bottom)
-        {
+        if (!bottom) {
             Vector3f normal = this.bottom;
 
             this.add(mesh, vox, x + 1, y, z, voxel, 0.5F, -0.5F, normal);
@@ -100,8 +89,7 @@ public class VoxBuilder
             this.add(mesh, vox, x, y, z + 1, voxel, -0.5F, 0.5F, normal);
         }
 
-        if (!left)
-        {
+        if (!left) {
             Vector3f normal = this.left;
 
             this.add(mesh, vox, x + 1, y + 1, z, voxel, 0.5F, -0.5F, normal);
@@ -112,8 +100,7 @@ public class VoxBuilder
             this.add(mesh, vox, x + 1, y + 1, z, voxel, 0.5F, -0.5F, normal);
         }
 
-        if (!right)
-        {
+        if (!right) {
             Vector3f normal = this.right;
 
             this.add(mesh, vox, x, y, z + 1, voxel, -0.5F, 0.5F, normal);
@@ -124,8 +111,7 @@ public class VoxBuilder
             this.add(mesh, vox, x, y + 1, z, voxel, 0.5F, -0.5F, normal);
         }
 
-        if (!front)
-        {
+        if (!front) {
             Vector3f normal = this.front;
 
             this.add(mesh, vox, x + 1, y, z + 1, voxel, 0.5F, -0.5F, normal);
@@ -136,8 +122,7 @@ public class VoxBuilder
             this.add(mesh, vox, x, y + 1, z + 1, voxel, -0.5F, 0.5F, normal);
         }
 
-        if (!back)
-        {
+        if (!back) {
             Vector3f normal = this.back;
 
             this.add(mesh, vox, x, y + 1, z, voxel, -0.5F, 0.5F, normal);
@@ -149,8 +134,7 @@ public class VoxBuilder
         }
     }
 
-    private void add(ModelMesh mesh, Vox vox, int x, int y, int z, int voxel, float offsetU, float offsetV, Vector3f normal)
-    {
+    private void add(ModelMesh mesh, Vox vox, int x, int y, int z, int voxel, float offsetU, float offsetV, Vector3f normal) {
         float u = voxel + 0.5F + offsetU;
         float v = 0.5F + offsetV;
 
@@ -165,8 +149,7 @@ public class VoxBuilder
         mesh.uvs.add(new Vector2f(u, v));
     }
 
-    private Vector3f process(int x, int y, int z, Vox vox)
-    {
+    private Vector3f process(int x, int y, int z, Vox vox) {
         int w = (int) (vox.w / 2F);
         int h = (int) (vox.h / 2F);
         int d = (int) (vox.d / 2F);

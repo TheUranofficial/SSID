@@ -8,35 +8,29 @@ import mchorse.bbs.ui.framework.elements.input.keyframes.generic.factories.UIKey
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public class IntegerKeyframeFactory implements IGenericKeyframeFactory<Integer>
-{
+public class IntegerKeyframeFactory implements IGenericKeyframeFactory<Integer> {
     @Override
-    public Integer fromData(BaseType data)
-    {
+    public Integer fromData(BaseType data) {
         return data.isNumeric() ? data.asNumeric().intValue() : 0;
     }
 
     @Override
-    public BaseType toData(Integer value)
-    {
+    public BaseType toData(Integer value) {
         return new IntType(value);
     }
 
     @Override
-    public Integer copy(Integer value)
-    {
+    public Integer copy(Integer value) {
         return value;
     }
 
     @Override
-    public Integer interpolate(Integer a, Integer b, IInterpolation interpolation, float x)
-    {
+    public Integer interpolate(Integer a, Integer b, IInterpolation interpolation, float x) {
         return (int) interpolation.interpolate(a.intValue(), b.intValue(), x);
     }
 
     @Override
-    public UIKeyframeFactory<Integer> createUI(GenericKeyframe<Integer> keyframe, UIPropertyEditor editor)
-    {
+    public UIKeyframeFactory<Integer> createUI(GenericKeyframe<Integer> keyframe, UIPropertyEditor editor) {
         return new UIIntegerKeyframeFactory(keyframe, editor);
     }
 }

@@ -27,34 +27,28 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIWorldObjectsPanel extends UICommonWorldEditor<WorldObject> implements IFlightSupported
-{
-    public UIWorldObjectsPanel(UIDashboard dashboard)
-    {
+public class UIWorldObjectsPanel extends UICommonWorldEditor<WorldObject> implements IFlightSupported {
+    public UIWorldObjectsPanel(UIDashboard dashboard) {
         super(dashboard);
     }
 
     @Override
-    protected void moveToCursor(WorldObject object, Vector3d hit)
-    {
+    protected void moveToCursor(WorldObject object, Vector3d hit) {
         object.position.set(hit);
 
         this.fill(object, false);
     }
 
     @Override
-    protected UISearchList<WorldObject> createSearchList(Consumer<List<WorldObject>> callback)
-    {
+    protected UISearchList<WorldObject> createSearchList(Consumer<List<WorldObject>> callback) {
         return new UISearchList<>(new UIWorldObjectList(callback));
     }
 
     @Override
-    protected void addObject()
-    {
+    protected void addObject() {
         this.getContext().replaceContextMenu((menu) ->
         {
-            for (Link key : BBS.getFactoryWorldObjects().getKeys())
-            {
+            for (Link key : BBS.getFactoryWorldObjects().getKeys()) {
                 menu.action(Icons.ADD, UIKeys.WORLD_OBJECTS_CONTEXT_ADD.format(UIKeys.C_WORLD_OBJECT.get(key)), () ->
                 {
                     this.addObject(BBS.getFactoryWorldObjects().create(key));
@@ -64,20 +58,16 @@ public class UIWorldObjectsPanel extends UICommonWorldEditor<WorldObject> implem
     }
 
     @Override
-    protected void addObject(WorldObject object)
-    {
+    protected void addObject(WorldObject object) {
         RayTraceResult result = new RayTraceResult();
         UIContext context = this.getContext();
         Camera camera = context.menu.bridge.get(IBridgeCamera.class).getCamera();
 
         RayTracer.trace(result, context.menu.bridge.get(IBridgeWorld.class).getWorld().chunks, camera.position, camera.getLookDirection(), 64);
 
-        if (result.type == RayTraceType.BLOCK)
-        {
+        if (result.type == RayTraceType.BLOCK) {
             object.position.set(result.hit);
-        }
-        else
-        {
+        } else {
             Vector3f look = camera.getLookDirection().mul(3);
 
             object.position.set(camera.position).add(look.x, look.y, look.z);
@@ -88,70 +78,56 @@ public class UIWorldObjectsPanel extends UICommonWorldEditor<WorldObject> implem
     }
 
     @Override
-    protected MapType toData(WorldObject object)
-    {
+    protected MapType toData(WorldObject object) {
         return BBS.getFactoryWorldObjects().toData(object);
     }
 
     @Override
-    protected void pasteObject(MapType type)
-    {
+    protected void pasteObject(MapType type) {
         this.addObject(BBS.getFactoryWorldObjects().fromData(type));
     }
 
     @Override
-    protected void removeObject()
-    {
+    protected void removeObject() {
         List<WorldObject> list = this.objects.list.getList();
         int index = list.indexOf(this.object);
 
-        if (index == -1)
-        {
+        if (index == -1) {
             this.fill(null, true);
-        }
-        else
-        {
+        } else {
             this.objects.list.remove(this.object);
             this.fill(list.isEmpty() ? null : list.get(MathUtils.clamp(index, 0, list.size() - 1)), true);
         }
     }
 
     @Override
-    protected void setupEditor(WorldObject object)
-    {
-        try
-        {
+    protected void setupEditor(WorldObject object) {
+        try {
             UIWorldObject editor = BBS.getFactoryWorldObjects().getData(object).getConstructor().newInstance();
 
             editor.fillData(object);
 
             this.editor.add(editor);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected List<WorldObject> getList()
-    {
+    protected List<WorldObject> getList() {
         return this.dashboard.bridge.get(IBridgeWorld.class).getWorld().objects;
     }
 
     @Override
-    protected AABB getHitbox(WorldObject object)
-    {
+    protected AABB getHitbox(WorldObject object) {
         return object.getPickingHitbox();
     }
 
     @Override
-    protected void renderObject(RenderingContext context, WorldObject object)
-    {
+    protected void renderObject(RenderingContext context, WorldObject object) {
         super.renderObject(context, object);
 
-        if (!context.isDebug())
-        {
+        if (!context.isDebug()) {
             object.renderDebug(context);
         }
     }

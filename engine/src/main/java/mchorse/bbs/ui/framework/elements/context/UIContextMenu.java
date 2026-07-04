@@ -7,10 +7,8 @@ import mchorse.bbs.ui.framework.elements.utils.EventPropagation;
 import mchorse.bbs.utils.colors.Colors;
 import org.lwjgl.glfw.GLFW;
 
-public abstract class UIContextMenu extends UIElement
-{
-    public UIContextMenu()
-    {
+public abstract class UIContextMenu extends UIElement {
+    public UIContextMenu() {
         super();
 
         this.eventPropagataion(EventPropagation.BLOCK_INSIDE);
@@ -20,16 +18,14 @@ public abstract class UIContextMenu extends UIElement
 
     /**
      * Set mouse coordinate
-     *
+     * <p>
      * In this method for subclasses, you should setup the resizer
      */
     public abstract void setMouse(UIContext context);
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (!this.area.isInside(context))
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (!this.area.isInside(context)) {
             this.removeFromParent();
         }
 
@@ -37,10 +33,8 @@ public abstract class UIContextMenu extends UIElement
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.removeFromParent();
 
             return true;
@@ -50,8 +44,7 @@ public abstract class UIContextMenu extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         int color = BBSSettings.primaryColor.get();
 
         context.batcher.dropShadow(this.area.x, this.area.y, this.area.ex(), this.area.ey(), 10, Colors.A25 | color, color);

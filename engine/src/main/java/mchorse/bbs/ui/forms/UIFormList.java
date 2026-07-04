@@ -20,8 +20,7 @@ import mchorse.bbs.utils.colors.Colors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIFormList extends UIElement
-{
+public class UIFormList extends UIElement {
     public IUIFormList palette;
 
     public UIScrollView forms;
@@ -34,8 +33,7 @@ public class UIFormList extends UIElement
     private UIFormCategory recent;
     private List<UIFormCategory> categories = new ArrayList<>();
 
-    public UIFormList(IUIFormList palette)
-    {
+    public UIFormList(IUIFormList palette) {
         this.palette = palette;
 
         this.forms = UI.scrollView(0, 0);
@@ -58,18 +56,15 @@ public class UIFormList extends UIElement
         this.setupForms(BBS.getForms());
     }
 
-    private void focusSearch()
-    {
+    private void focusSearch() {
         this.search.clickItself();
     }
 
-    public void setupForms(FormArchitect forms)
-    {
+    public void setupForms(FormArchitect forms) {
         this.categories.clear();
         this.forms.removeAll();
 
-        for (FormCategory category : forms.categories)
-        {
+        for (FormCategory category : forms.categories) {
             UIFormCategory uiCategory = category.createUI(this);
 
             category.update();
@@ -82,52 +77,41 @@ public class UIFormList extends UIElement
         this.resize();
     }
 
-    private void search(String search)
-    {
+    private void search(String search) {
         search = search.trim();
 
-        for (UIFormCategory category : this.categories)
-        {
+        for (UIFormCategory category : this.categories) {
             category.search(search);
         }
     }
 
-    private void edit(UIButton b)
-    {
+    private void edit(UIButton b) {
         this.palette.toggleEditor();
     }
 
-    private void close(UIIcon b)
-    {
+    private void close(UIIcon b) {
         this.palette.exit();
     }
 
-    public void selectCategory(UIFormCategory category, Form form, boolean notify)
-    {
+    public void selectCategory(UIFormCategory category, Form form, boolean notify) {
         this.deselect();
 
         category.selected = form;
 
-        if (notify)
-        {
+        if (notify) {
             this.palette.accept(form);
         }
     }
 
-    public void deselect()
-    {
-        for (UIFormCategory category : this.categories)
-        {
+    public void deselect() {
+        for (UIFormCategory category : this.categories) {
             category.selected = null;
         }
     }
 
-    public UIFormCategory getSelectedCategory()
-    {
-        for (UIFormCategory category : this.categories)
-        {
-            if (category.selected != null)
-            {
+    public UIFormCategory getSelectedCategory() {
+        for (UIFormCategory category : this.categories) {
+            if (category.selected != null) {
                 return category;
             }
         }
@@ -135,37 +119,30 @@ public class UIFormList extends UIElement
         return null;
     }
 
-    public Form getSelected()
-    {
+    public Form getSelected() {
         UIFormCategory category = this.getSelectedCategory();
 
         return category == null ? null : category.selected;
     }
 
-    public void setSelected(Form form)
-    {
+    public void setSelected(Form form) {
         boolean found = false;
 
         this.deselect();
 
-        for (UIFormCategory category : this.categories)
-        {
+        for (UIFormCategory category : this.categories) {
             int index = category.category.forms.indexOf(form);
 
-            if (index == -1)
-            {
+            if (index == -1) {
                 category.selected = null;
-            }
-            else
-            {
+            } else {
                 found = true;
 
                 category.select(category.category.forms.get(index), false);
             }
         }
 
-        if (!found && form != null)
-        {
+        if (!found && form != null) {
             Form copy = form.copy();
 
             this.recent.category.forms.add(copy);
@@ -174,15 +151,13 @@ public class UIFormList extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
         /* Render form's display name and ID */
         Form selected = this.getSelected();
 
-        if (selected != null)
-        {
+        if (selected != null) {
             String displayName = selected.getDisplayName();
             String id = selected.getId();
 

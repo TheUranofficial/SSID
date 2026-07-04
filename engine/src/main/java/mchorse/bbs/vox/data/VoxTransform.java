@@ -10,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VoxTransform extends VoxBaseNode
-{
+public class VoxTransform extends VoxBaseNode {
     public int childId;
     public int unusedId;
     public int layerId;
     public List<Matrix4f> transforms;
 
-    public VoxTransform(InputStream stream, VoxReader reader) throws Exception
-    {
+    public VoxTransform(InputStream stream, VoxReader reader) throws Exception {
         this.id = reader.readInt(stream);
         this.attrs = reader.readDictionary(stream);
         this.childId = reader.readInt(stream);
@@ -27,23 +25,19 @@ public class VoxTransform extends VoxBaseNode
         this.num = reader.readInt(stream);
         this.transforms = new ArrayList<>();
 
-        for (int i = 0; i < this.num; i ++)
-        {
+        for (int i = 0; i < this.num; i++) {
             Map<String, String> dict = reader.readDictionary(stream);
             Matrix3f rotation = new Matrix3f();
             Vector3f translate = new Vector3f(0, 0, 0);
 
-            if (dict.containsKey("_r"))
-            {
+            if (dict.containsKey("_r")) {
                 rotation = reader.readRotation(Integer.parseInt(dict.get("_r")));
             }
 
-            if (dict.containsKey("_t"))
-            {
+            if (dict.containsKey("_t")) {
                 String[] splits = dict.get("_t").split(" ");
 
-                if (splits.length == 3)
-                {
+                if (splits.length == 3) {
                     /* Stupid coordinate systems... */
                     translate.set(-Integer.parseInt(splits[0]), Integer.parseInt(splits[1]), Integer.parseInt(splits[2]));
                 }

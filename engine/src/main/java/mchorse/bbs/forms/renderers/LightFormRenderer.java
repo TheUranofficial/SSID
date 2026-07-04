@@ -10,24 +10,20 @@ import mchorse.bbs.world.entities.Entity;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class LightFormRenderer extends FormRenderer<LightForm>
-{
-    public LightFormRenderer(LightForm form)
-    {
+public class LightFormRenderer extends FormRenderer<LightForm> {
+    public LightFormRenderer(LightForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         int color = this.form.color.get(context.getTransition()).getARGBColor();
 
         context.batcher.dropCircleShadow((x1 + x2) / 2, (y1 + y2) / 2, Math.min(x2 - x1, y2 - y1) / 2, 12, Colors.setA(color, 1F), Colors.setA(color, 0F));
     }
 
     @Override
-    protected void render3D(Entity entity, RenderingContext context)
-    {
+    protected void render3D(Entity entity, RenderingContext context) {
         Vector4f position = new Vector4f(0, 0, 0, 1);
 
         context.stack.getModelMatrix().transform(position);

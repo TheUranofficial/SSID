@@ -1,14 +1,12 @@
 package mchorse.bbs.ui.framework.elements.overlay;
 
-import mchorse.bbs.ui.framework.elements.utils.UIText;
 import mchorse.bbs.l10n.keys.IKey;
+import mchorse.bbs.ui.framework.elements.utils.UIText;
 
-public class UIMessageOverlayPanel extends UIOverlayPanel
-{
+public class UIMessageOverlayPanel extends UIOverlayPanel {
     public UIText message;
 
-    public UIMessageOverlayPanel(IKey title, IKey message)
-    {
+    public UIMessageOverlayPanel(IKey title, IKey message) {
         super(title);
 
         this.message = new UIText().text(message).textAnchorX(0.5F);
@@ -17,8 +15,7 @@ public class UIMessageOverlayPanel extends UIOverlayPanel
         this.content.add(this.message);
     }
 
-    public void setMessage(IKey message)
-    {
+    public void setMessage(IKey message) {
         this.message.text(message);
     }
 }

@@ -11,12 +11,10 @@ import mchorse.bbs.voxel.storage.data.ChunkCell;
 import mchorse.bbs.voxel.storage.data.ChunkDisplay;
 import mchorse.bbs.world.entities.architect.EntityArchitect;
 
-public class ChunkCubicCell extends ChunkCell
-{
+public class ChunkCubicCell extends ChunkCell {
     public ChunkDisplay display;
 
-    public ChunkCubicCell(ChunkManager manager, int x, int y, int z)
-    {
+    public ChunkCubicCell(ChunkManager manager, int x, int y, int z) {
         super(manager);
 
         int s = manager.s;
@@ -27,37 +25,31 @@ public class ChunkCubicCell extends ChunkCell
     }
 
     @Override
-    public void dirty()
-    {
+    public void dirty() {
         this.display.dirty();
     }
 
     @Override
-    public void pushDirty()
-    {
+    public void pushDirty() {
         this.display.cacheDirty();
 
         this.display.dirty = false;
     }
 
     @Override
-    public void popDirty()
-    {
-        if (this.display.wasDirty)
-        {
+    public void popDirty() {
+        if (this.display.wasDirty) {
             this.display.dirty();
         }
     }
 
     @Override
-    public ChunkDisplay getDisplay(int x, int y, int z)
-    {
+    public ChunkDisplay getDisplay(int x, int y, int z) {
         return this.display;
     }
 
     @Override
-    public IBlockVariant getBlock(int x, int y, int z)
-    {
+    public IBlockVariant getBlock(int x, int y, int z) {
         int dx = x - this.display.x;
         int dy = y - this.display.y;
         int dz = z - this.display.z;
@@ -66,12 +58,10 @@ public class ChunkCubicCell extends ChunkCell
     }
 
     @Override
-    public boolean setBlockLocal(int x, int y, int z, IBlockVariant block, boolean priority)
-    {
+    public boolean setBlockLocal(int x, int y, int z, IBlockVariant block, boolean priority) {
         IBlockVariant old = this.display.chunk.getBlock(x, y, z);
 
-        if (old != block)
-        {
+        if (old != block) {
             this.display.dirty(priority);
             this.display.chunk.setBlock(x, y, z, block);
             this.saveLater();
@@ -81,10 +71,8 @@ public class ChunkCubicCell extends ChunkCell
     }
 
     @Override
-    public void render(MatrixStack stack, Shader shader)
-    {
-        if (this.display.display == null)
-        {
+    public void render(MatrixStack stack, Shader shader) {
+        if (this.display.display == null) {
             return;
         }
 
@@ -94,28 +82,24 @@ public class ChunkCubicCell extends ChunkCell
     }
 
     @Override
-    public void copy(ChunkCell cell)
-    {
+    public void copy(ChunkCell cell) {
         this.display = ((ChunkCubicCell) cell).display;
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.display.delete();
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
         data.put("blocks", this.display.chunk.toData());
     }
 
     @Override
-    public void fromData(EntityArchitect architect, MapType data)
-    {
+    public void fromData(EntityArchitect architect, MapType data) {
         super.fromData(architect, data);
 
         this.display.chunk.fromData(data.get("blocks"), this.manager.builder.models);

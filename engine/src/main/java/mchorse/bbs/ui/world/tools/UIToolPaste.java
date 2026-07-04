@@ -24,15 +24,13 @@ import mchorse.bbs.voxel.storage.data.ChunkDisplay;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 import org.joml.Vector3i;
 
-public class UIToolPaste extends UITool
-{
+public class UIToolPaste extends UITool {
     public UIIcon save;
     public UIIcon load;
 
     private ChunkDisplay display;
 
-    public UIToolPaste(UIWorldEditorPanel editor)
-    {
+    public UIToolPaste(UIWorldEditorPanel editor) {
         super(editor);
 
         this.save = new UIIcon(Icons.SAVED, this::showSave);
@@ -48,8 +46,7 @@ public class UIToolPaste extends UITool
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.PASTE, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_PASTE, Direction.RIGHT);
@@ -57,10 +54,8 @@ public class UIToolPaste extends UITool
         return icon;
     }
 
-    private void showSave(UIIcon uiIcon)
-    {
-        if (this.editor.getBuffer() == null)
-        {
+    private void showSave(UIIcon uiIcon) {
+        if (this.editor.getBuffer() == null) {
             return;
         }
 
@@ -76,8 +71,7 @@ public class UIToolPaste extends UITool
         UIOverlay.addOverlay(this.editor.getContext(), panel);
     }
 
-    private void showLoad(UIIcon uiIcon)
-    {
+    private void showLoad(UIIcon uiIcon) {
         UIListOverlayPanel panel = new UIListOverlayPanel(
             UIKeys.WORLD_EDITOR_TOOLS_PASTE_LOAD_MODAL_TITLE,
             UIKeys.WORLD_EDITOR_TOOLS_PASTE_LOAD_MODAL_DESCRIPTION,
@@ -86,8 +80,7 @@ public class UIToolPaste extends UITool
                 BlockSet models = this.editor.getBridge().get(IBridgeWorld.class).getChunkBuilder().models;
                 Chunk chunk = BBS.getStructures().load(name, models);
 
-                if (chunk != null)
-                {
+                if (chunk != null) {
                     this.editor.setBuffer(chunk);
                 }
             }
@@ -99,14 +92,12 @@ public class UIToolPaste extends UITool
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
         Chunk buffer = this.editor.getBuffer();
 
-        if (buffer == null)
-        {
+        if (buffer == null) {
             return;
         }
 
@@ -116,14 +107,12 @@ public class UIToolPaste extends UITool
     }
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         Chunk buffer = this.editor.getBuffer();
 
         this.updateDisplay(buffer);
 
-        if (buffer == null)
-        {
+        if (buffer == null) {
             return;
         }
 
@@ -131,10 +120,8 @@ public class UIToolPaste extends UITool
 
         Draw.renderBox(context, min.x, min.y, min.z, buffer.w, buffer.h, buffer.d);
 
-        if (this.display != null)
-        {
-            if (this.display.display == null)
-            {
+        if (this.display != null) {
+            if (this.display.display == null) {
                 context.getWorld().chunks.builder.build(context, this.display, null);
             }
 
@@ -156,21 +143,16 @@ public class UIToolPaste extends UITool
         }
     }
 
-    private void updateDisplay(Chunk buffer)
-    {
-        if (buffer != null && this.display != null && this.display.chunk != buffer)
-        {
+    private void updateDisplay(Chunk buffer) {
+        if (buffer != null && this.display != null && this.display.chunk != buffer) {
             this.display.delete();
 
             this.display = null;
         }
 
-        if (buffer == null && this.display != null)
-        {
+        if (buffer == null && this.display != null) {
             this.display.delete();
-        }
-        else if (buffer != null && this.display == null)
-        {
+        } else if (buffer != null && this.display == null) {
             this.display = new ChunkDisplay(null, buffer, 0, 0, 0);
         }
     }

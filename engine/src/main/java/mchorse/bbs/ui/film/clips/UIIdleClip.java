@@ -9,23 +9,20 @@ import mchorse.bbs.ui.film.utils.UICameraUtils;
 
 /**
  * Idle clip panel
- *
+ * <p>
  * This panel is responsible for editing an idle clip. This panel uses basic
  * point and angle modules for manipulating idle clip's position.
  */
-public class UIIdleClip extends UIClip<IdleClip>
-{
+public class UIIdleClip extends UIClip<IdleClip> {
     public UIPointModule point;
     public UIAngleModule angle;
 
-    public UIIdleClip(IdleClip clip, IUIClipsDelegate editor)
-    {
+    public UIIdleClip(IdleClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.point = new UIPointModule(this.editor);
@@ -33,8 +30,7 @@ public class UIIdleClip extends UIClip<IdleClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(this.point.marginTop(12), this.angle.marginTop(6));
@@ -42,16 +38,14 @@ public class UIIdleClip extends UIClip<IdleClip>
     }
 
     @Override
-    public void editClip(Position position)
-    {
+    public void editClip(Position position) {
         this.clip.position.set(position);
 
         super.editClip(position);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.point.fill(clip.position.getPoint());

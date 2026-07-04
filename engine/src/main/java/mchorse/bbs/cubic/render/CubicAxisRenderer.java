@@ -7,13 +7,11 @@ import mchorse.bbs.graphics.vao.VAOBuilder;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-public class CubicAxisRenderer implements ICubicRenderer
-{
+public class CubicAxisRenderer implements ICubicRenderer {
     private Vector4f vector = new Vector4f();
 
     @Override
-    public boolean renderGroup(VAOBuilder builder, MatrixStack stack, ModelGroup group, Model model)
-    {
+    public boolean renderGroup(VAOBuilder builder, MatrixStack stack, ModelGroup group, Model model) {
         stack.push();
         stack.translate(group.initial.translate.x / 16, group.initial.translate.y / 16, group.initial.translate.z / 16);
 

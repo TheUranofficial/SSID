@@ -18,8 +18,7 @@ import org.joml.Vector3i;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class UIToolPainting extends UITool
-{
+public abstract class UIToolPainting extends UITool {
     protected int size = 1;
     protected int delay = 3;
 
@@ -34,26 +33,19 @@ public abstract class UIToolPainting extends UITool
 
     protected Vector3i lastBlock = new Vector3i();
 
-    public static Axis getLimit()
-    {
-        if (Window.isShiftPressed())
-        {
+    public static Axis getLimit() {
+        if (Window.isShiftPressed()) {
             return Axis.Y;
-        }
-        else if (Window.isCtrlPressed())
-        {
+        } else if (Window.isCtrlPressed()) {
             return Axis.X;
-        }
-        else if (Window.isAltPressed())
-        {
+        } else if (Window.isAltPressed()) {
             return Axis.Z;
         }
 
         return null;
     }
 
-    public UIToolPainting(UIWorldEditorPanel editor)
-    {
+    public UIToolPainting(UIWorldEditorPanel editor) {
         super(editor);
 
         this.sizeElement = new UITrackpad((v) -> this.size = v.intValue()).limit(1).integer();
@@ -71,8 +63,7 @@ public abstract class UIToolPainting extends UITool
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
         this.limit = getLimit();
@@ -86,12 +77,10 @@ public abstract class UIToolPainting extends UITool
         this.placeDelay = this.delay;
     }
 
-    protected Vector3i getCursor(RayTraceResult result)
-    {
+    protected Vector3i getCursor(RayTraceResult result) {
         Vector3i cursor = new Vector3i(result.block);
 
-        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled())
-        {
+        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled()) {
             cursor.add(result.normal);
         }
 
@@ -99,22 +88,16 @@ public abstract class UIToolPainting extends UITool
     }
 
     @Override
-    public void drag(RayTraceResult result)
-    {
+    public void drag(RayTraceResult result) {
         super.drag(result);
 
-        if (this.limit == null)
-        {
-            if (this.placeDelay >= 0)
-            {
+        if (this.limit == null) {
+            if (this.placeDelay >= 0) {
                 this.placeDelay -= 1;
 
-                if (this.placeDelay == 0)
-                {
+                if (this.placeDelay == 0) {
                     this.placeDelay = this.delay;
-                }
-                else
-                {
+                } else {
                     return;
                 }
             }
@@ -122,14 +105,12 @@ public abstract class UIToolPainting extends UITool
 
         Vector3i min = !result.type.isMissed() ? this.getCursor(result) : null;
 
-        if (this.limit != null)
-        {
+        if (this.limit != null) {
             Camera camera = this.editor.getBridge().get(IBridgeCamera.class).getCamera();
             Vector3d anchor = new Vector3d(this.firstBlock.x + 0.5D, this.firstBlock.y + 0.5D, this.firstBlock.z + 0.5D);
             Vector3d vec = Vectors.intersectPlanePerpendicular(this.limit, camera.position, camera.getMouseDirection(), anchor);
 
-            if (vec != null)
-            {
+            if (vec != null) {
                 min = new Vector3i((int) Math.floor(vec.x), (int) Math.floor(vec.y), (int) Math.floor(vec.z));
 
                 if (this.limit != Axis.X) min.x = this.firstBlock.x;
@@ -138,19 +119,14 @@ public abstract class UIToolPainting extends UITool
             }
         }
 
-        if (min != null)
-        {
+        if (min != null) {
             double distance = this.lastBlock.distanceSquared(min);
 
-            if ((distance > 1 && this.continuous.getValue()) || this.limit != null)
-            {
-                for (Vector3i block : UIToolLine.calculate(this.lastBlock, min))
-                {
+            if ((distance > 1 && this.continuous.getValue()) || this.limit != null) {
+                for (Vector3i block : UIToolLine.calculate(this.lastBlock, min)) {
                     this.placeBlock(result, block);
                 }
-            }
-            else
-            {
+            } else {
                 this.placeBlock(result, min);
             }
 
@@ -161,8 +137,7 @@ public abstract class UIToolPainting extends UITool
     protected abstract void placeBlock(RayTraceResult result, Vector3i center);
 
     @Override
-    public void end(RayTraceResult result)
-    {
+    public void end(RayTraceResult result) {
         super.end(result);
 
         this.limit = null;
@@ -171,10 +146,8 @@ public abstract class UIToolPainting extends UITool
     }
 
     @Override
-    public boolean mouseScrolled(int scroll)
-    {
-        if (Window.isShiftPressed())
-        {
+    public boolean mouseScrolled(int scroll) {
+        if (Window.isShiftPressed()) {
             this.size = MathUtils.clamp(this.size + (int) Math.copySign(1, scroll), 1, 100);
             this.sizeElement.setValue(this.size);
 
@@ -185,8 +158,7 @@ public abstract class UIToolPainting extends UITool
     }
 
     @Override
-    public boolean handleRayTracer(RayTraceResult result)
-    {
+    public boolean handleRayTracer(RayTraceResult result) {
         return this.limit != null || !this.placedBlocks.contains(result.block);
     }
 }

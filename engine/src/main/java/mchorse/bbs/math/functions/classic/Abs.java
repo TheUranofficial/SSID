@@ -4,24 +4,20 @@ import mchorse.bbs.math.IExpression;
 import mchorse.bbs.math.functions.NNFunction;
 
 /**
- * Absolute value function 
+ * Absolute value function
  */
-public class Abs extends NNFunction
-{
-    public Abs(IExpression[] expressions, String name) throws Exception
-    {
+public class Abs extends NNFunction {
+    public Abs(IExpression[] expressions, String name) throws Exception {
         super(expressions, name);
     }
 
     @Override
-    public int getRequiredArguments()
-    {
+    public int getRequiredArguments() {
         return 1;
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return Math.abs(this.getArg(0).doubleValue());
     }
 }

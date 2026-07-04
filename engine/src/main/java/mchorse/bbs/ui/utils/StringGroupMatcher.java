@@ -3,17 +3,14 @@ package mchorse.bbs.ui.utils;
 import mchorse.bbs.utils.Pair;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class StringGroupMatcher
-{
+public class StringGroupMatcher {
     private StringGroup lastGroup;
 
     /**
      * Find a group (two cursors) at given cursor
      */
-    public Pair<Integer, Integer> findGroup(int direction, String line, int offset)
-    {
-        if (line.isEmpty())
-        {
+    public Pair<Integer, Integer> findGroup(int direction, String line, int offset) {
+        if (line.isEmpty()) {
             return null;
         }
 
@@ -29,16 +26,11 @@ public class StringGroupMatcher
 
         this.lastGroup = null;
 
-        if (direction <= 0)
-        {
-            while (min > 0)
-            {
-                if (this.matchSelectGroup(group, String.valueOf(line.charAt(min - 1))))
-                {
+        if (direction <= 0) {
+            while (min > 0) {
+                if (this.matchSelectGroup(group, String.valueOf(line.charAt(min - 1)))) {
                     min -= 1;
-                }
-                else
-                {
+                } else {
                     break;
                 }
             }
@@ -46,16 +38,11 @@ public class StringGroupMatcher
 
         this.lastGroup = null;
 
-        if (direction >= 0)
-        {
-            while (max < line.length())
-            {
-                if (this.matchSelectGroup(group, String.valueOf(line.charAt(max))))
-                {
+        if (direction >= 0) {
+            while (max < line.length()) {
+                if (this.matchSelectGroup(group, String.valueOf(line.charAt(max)))) {
                     max += 1;
-                }
-                else
-                {
+                } else {
                     break;
                 }
             }
@@ -64,17 +51,13 @@ public class StringGroupMatcher
         return new Pair<>(min, max);
     }
 
-    private boolean matchSelectGroup(StringGroup group, String character)
-    {
-        if (group.match(character))
-        {
+    private boolean matchSelectGroup(StringGroup group, String character) {
+        if (group.match(character)) {
             return this.lastGroup == null;
         }
 
-        if (group == StringGroup.SPACE)
-        {
-            if (this.lastGroup == null)
-            {
+        if (group == StringGroup.SPACE) {
+            if (this.lastGroup == null) {
                 this.lastGroup = StringGroup.get(character);
             }
 

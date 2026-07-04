@@ -20,8 +20,7 @@ import org.joml.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BlockModelFactory implements IMapSerializable
-{
+public abstract class BlockModelFactory implements IMapSerializable {
     public static final Link DEFAULT_BLOCK_ID = Link.bbs("block");
 
     public Link blockId = DEFAULT_BLOCK_ID;
@@ -38,25 +37,21 @@ public abstract class BlockModelFactory implements IMapSerializable
     public final List<BlockVariant> variants = new ArrayList<>();
     public final BlockModels models = new BlockModels(this);
 
-    public IBlockVariant getVariantForBuilding(RayTraceResult result)
-    {
+    public IBlockVariant getVariantForBuilding(RayTraceResult result) {
         return this.variants.get(0);
     }
 
-    public IBlockVariant rotateVariant(IBlockVariant variant, boolean clockwise)
-    {
+    public IBlockVariant rotateVariant(IBlockVariant variant, boolean clockwise) {
         return variant;
     }
 
-    public IBlockVariant flipVariant(IBlockVariant variant, Axis axis)
-    {
+    public IBlockVariant flipVariant(IBlockVariant variant, Axis axis) {
         return variant;
     }
 
     public abstract void compile();
 
-    protected BlockModel createModel()
-    {
+    protected BlockModel createModel() {
         BlockModel model = new BlockModel();
 
         model.collision = this.collision;
@@ -71,16 +66,12 @@ public abstract class BlockModelFactory implements IMapSerializable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String label = this.blockId.toString();
 
-        if (this.variants.size() > 1)
-        {
+        if (this.variants.size() > 1) {
             label += "#" + this.variants.get(0).getLink().variant + " - " + this.variants.get(this.variants.size() - 1).getLink().variant;
-        }
-        else
-        {
+        } else {
             label += "#" + this.variants.get(0).getLink().variant;
         }
 
@@ -88,10 +79,8 @@ public abstract class BlockModelFactory implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
-        if (!this.blockId.equals(DEFAULT_BLOCK_ID))
-        {
+    public void toData(MapType data) {
+        if (!this.blockId.equals(DEFAULT_BLOCK_ID)) {
             data.put("blockId", LinkUtils.toData(this.blockId));
         }
 
@@ -106,8 +95,7 @@ public abstract class BlockModelFactory implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         if (data.has("blockId")) this.blockId = LinkUtils.create(data.get("blockId"));
         if (data.has("collision")) this.collision = data.getBool("collision");
         if (data.has("opaque")) this.opaque = data.getBool("opaque");
@@ -116,12 +104,10 @@ public abstract class BlockModelFactory implements IMapSerializable
         if (data.has("color")) this.color.set(data.getInt("color"), false);
         if (data.has("lighting")) this.lighting = data.getInt("lighting");
         if (data.has("all", BaseType.TYPE_LIST)) this.allUV.set(DataStorageUtils.vector2iFromData(data.getList("all")));
-        if (data.has("collisionBox", BaseType.TYPE_LIST))
-        {
+        if (data.has("collisionBox", BaseType.TYPE_LIST)) {
             ListType box = data.getList("collisionBox");
 
-            if (box.size() >= 6)
-            {
+            if (box.size() >= 6) {
                 this.collisionBox = new AABB();
                 this.collisionBox.fromData(box);
             }

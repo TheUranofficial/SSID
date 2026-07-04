@@ -7,16 +7,14 @@ import mchorse.bbs.world.entities.components.CollisionComponent;
 
 import java.util.List;
 
-public class BasicEntityBlueprint implements IEntityBlueprint
-{
+public class BasicEntityBlueprint implements IEntityBlueprint {
     @Override
-    public void fillComponents(List<EntityRecord> records)
-    {
+    public void fillComponents(List<EntityRecord> records) {
         records.add(new EntityRecord(BasicComponent.class, new BasicComponent()));
         records.add(new EntityRecord(CollisionComponent.class, new CollisionComponent()));
     }
 
     @Override
-    public void setupEntity(Entity entity)
-    {}
+    public void setupEntity(Entity entity) {
+    }
 }

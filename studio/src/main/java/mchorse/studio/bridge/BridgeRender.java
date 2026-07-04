@@ -7,16 +7,13 @@ import mchorse.studio.StudioEngine;
 
 import java.util.function.Consumer;
 
-public class BridgeRender extends BaseBridge implements IBridgeRender
-{
-    public BridgeRender(StudioEngine engine)
-    {
+public class BridgeRender extends BaseBridge implements IBridgeRender {
+    public BridgeRender(StudioEngine engine) {
         super(engine);
     }
 
     @Override
-    public void renderSceneTo(Camera camera, Framebuffer framebuffer, int pass, boolean renderScreen, float quality, Consumer<Framebuffer> rendering)
-    {
+    public void renderSceneTo(Camera camera, Framebuffer framebuffer, int pass, boolean renderScreen, float quality, Consumer<Framebuffer> rendering) {
         this.engine.renderer.renderFrameToQuality(camera, framebuffer, pass, renderScreen, quality, rendering);
     }
 }

@@ -8,14 +8,12 @@ import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
 import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public abstract class UICRUDDashboardPanel extends UISidebarDashboardPanel
-{
+public abstract class UICRUDDashboardPanel extends UISidebarDashboardPanel {
     public UIIcon openOverlay;
 
     public final UICRUDOverlayPanel overlay;
 
-    public UICRUDDashboardPanel(UIDashboard dashboard)
-    {
+    public UICRUDDashboardPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.overlay = this.createOverlayPanel();

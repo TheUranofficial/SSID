@@ -19,11 +19,7 @@ import mchorse.bbs.voxel.generation.Generator;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.raytracing.RayTraceType;
 import mchorse.bbs.voxel.raytracing.RayTracer;
-import mchorse.bbs.voxel.storage.ChunkArrayManager;
-import mchorse.bbs.voxel.storage.ChunkFactory;
-import mchorse.bbs.voxel.storage.ChunkManager;
-import mchorse.bbs.voxel.storage.ChunkStorage;
-import mchorse.bbs.voxel.storage.ChunkView;
+import mchorse.bbs.voxel.storage.*;
 import mchorse.bbs.voxel.storage.data.ChunkCell;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 import mchorse.bbs.world.entities.Entity;
@@ -36,14 +32,9 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public class World implements ITickable, IDisposable
-{
+public class World implements ITickable, IDisposable {
     public List<WorldObject> objects = new ArrayList<>();
     public List<Entity> entities = new ArrayList<>();
     public Set<Entity> toAdd = new HashSet<>();
@@ -67,8 +58,7 @@ public class World implements ITickable, IDisposable
     private File objectsFile;
     private File settingsFile;
 
-    public World(IBridge bridge, ChunkFactory factory, Generator generator)
-    {
+    public World(IBridge bridge, ChunkFactory factory, Generator generator) {
         this.bridge = bridge;
         this.architect = this.createArchitect();
 
@@ -82,8 +72,7 @@ public class World implements ITickable, IDisposable
         this.generator = generator;
     }
 
-    protected EntityArchitect createArchitect()
-    {
+    protected EntityArchitect createArchitect() {
         EntityArchitect architect = new EntityArchitect();
 
         architect.register(Link.bbs("player"), new PlayerEntityBlueprint());
@@ -93,104 +82,82 @@ public class World implements ITickable, IDisposable
         return architect;
     }
 
-    public EventBus getEventBus()
-    {
+    public EventBus getEventBus() {
         return this.eventBus;
     }
 
-    public void initialize(ChunkFactory factory)
-    {
+    public void initialize(ChunkFactory factory) {
         this.generator.fromMetadata(factory.getMetadata(), factory.blocks);
 
-        if (this.chunks instanceof ChunkArrayManager)
-        {
+        if (this.chunks instanceof ChunkArrayManager) {
             this.view = factory.createView((ChunkArrayManager) this.chunks, this);
 
             this.view.getThread().start();
         }
     }
 
-    public void readExtraData(File save)
-    {
+    public void readExtraData(File save) {
         this.objectsFile = new File(save, "objects.json");
 
-        if (this.objectsFile.exists())
-        {
-            try
-            {
+        if (this.objectsFile.exists()) {
+            try {
                 this.objects.clear();
 
                 String json = IOUtils.readText(this.objectsFile);
                 MapType data = DataToString.mapFromString(json);
                 ListType objectsList = data.getList("objects");
 
-                for (BaseType objectType : objectsList)
-                {
+                for (BaseType objectType : objectsList) {
                     WorldObject object = BBS.getFactoryWorldObjects().fromData((MapType) objectType);
 
-                    if (object != null)
-                    {
+                    if (object != null) {
                         this.objects.add(object);
                     }
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         this.settingsFile = new File(save, "world.json");
 
-        if (this.settingsFile.exists())
-        {
-            try
-            {
+        if (this.settingsFile.exists()) {
+            try {
                 String json = IOUtils.readText(this.settingsFile);
                 MapType data = DataToString.mapFromString(json);
 
                 this.settings.fromData(data);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         MapType props = new MapType();
         ListType propList = new ListType();
 
-        for (WorldObject object : this.objects)
-        {
+        for (WorldObject object : this.objects) {
             propList.add(BBS.getFactoryWorldObjects().toData(object));
         }
 
         props.put("objects", propList);
 
-        try
-        {
+        try {
             IOUtils.writeText(this.objectsFile, DataToString.toString(props, true));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try
-        {
+        try {
             Camera camera = this.bridge.get(IBridgeCamera.class).getCamera();
 
             this.settings.cameraPosition.set(camera.position);
             this.settings.cameraRotation.set(camera.rotation);
 
             IOUtils.writeText(this.settingsFile, DataToString.toString(this.settings.toData(), true));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -198,104 +165,85 @@ public class World implements ITickable, IDisposable
         this.chunks.delete();
     }
 
-    public void addEntitySafe(Entity entity)
-    {
+    public void addEntitySafe(Entity entity) {
         this.toAdd.add(entity);
         this.toRemove.remove(entity);
     }
 
-    public void addEntity(Entity entity)
-    {
+    public void addEntity(Entity entity) {
         entity.setWorld(this);
         this.entities.add(entity);
 
         ChunkCell cell = this.getCellForEntity(entity);
 
-        if (cell != null)
-        {
+        if (cell != null) {
             cell.addEntity(entity);
         }
     }
 
-    public void removeEntitySafe(Entity entity)
-    {
+    public void removeEntitySafe(Entity entity) {
         this.toRemove.add(entity);
         this.toAdd.remove(entity);
     }
 
-    public void removeEntity(Entity entity)
-    {
+    public void removeEntity(Entity entity) {
         entity.setWorld(null);
         entity.remove();
         this.entities.remove(entity);
 
         ChunkCell cell = this.getCellForEntity(entity);
 
-        if (cell != null)
-        {
+        if (cell != null) {
             cell.removeEntity(entity);
         }
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         this.updateEntities();
         this.updateCleanUp();
     }
 
-    private void updateEntities()
-    {
-        for (Entity entity : this.entities)
-        {
-            if (entity.world != null)
-            {
+    private void updateEntities() {
+        for (Entity entity : this.entities) {
+            if (entity.world != null) {
                 ChunkCell lastCell = this.getCellForEntity(entity);
 
                 entity.update();
 
                 ChunkCell currentCell = this.getCellForEntity(entity);
 
-                if (lastCell != currentCell)
-                {
+                if (lastCell != currentCell) {
                     if (lastCell != null) lastCell.removeEntity(entity);
                     if (currentCell != null) currentCell.addEntity(entity);
                 }
 
-                if (currentCell == null)
-                {
+                if (currentCell == null) {
                     this.removeEntitySafe(entity);
                 }
             }
 
-            if (entity.isRemoved())
-            {
+            if (entity.isRemoved()) {
                 this.removeEntitySafe(entity);
             }
         }
 
-        for (WorldObject object : this.objects)
-        {
+        for (WorldObject object : this.objects) {
             object.update(this);
         }
     }
 
-    private void updateCleanUp()
-    {
-        if (!this.toAdd.isEmpty())
-        {
-            for (Entity entity : this.toAdd)
-            {
+    private void updateCleanUp() {
+        if (!this.toAdd.isEmpty()) {
+            for (Entity entity : this.toAdd) {
                 this.addEntity(entity);
             }
 
             this.toAdd.clear();
         }
 
-        if (!this.toRemove.isEmpty())
-        {
-            for (Entity entity : this.toRemove)
-            {
+        if (!this.toRemove.isEmpty()) {
+            for (Entity entity : this.toRemove) {
                 this.removeEntity(entity);
             }
 
@@ -303,22 +251,17 @@ public class World implements ITickable, IDisposable
         }
     }
 
-    private ChunkCell getCellForEntity(Entity entity)
-    {
+    private ChunkCell getCellForEntity(Entity entity) {
         return this.chunks.getCell((int) entity.basic.position.x, (int) entity.basic.position.y, (int) entity.basic.position.z, false);
     }
 
-    public Entity getEntityByUUID(String uuid)
-    {
+    public Entity getEntityByUUID(String uuid) {
         return this.getEntityByUUID(UUID.fromString(uuid));
     }
 
-    public Entity getEntityByUUID(UUID uuid)
-    {
-        for (Entity entity : this.entities)
-        {
-            if (entity.getUUID().equals(uuid))
-            {
+    public Entity getEntityByUUID(UUID uuid) {
+        for (Entity entity : this.entities) {
+            if (entity.getUUID().equals(uuid)) {
                 return entity;
             }
         }
@@ -326,14 +269,11 @@ public class World implements ITickable, IDisposable
         return null;
     }
 
-    public List<Entity> getEntitiesInAABB(AABB volume)
-    {
+    public List<Entity> getEntitiesInAABB(AABB volume) {
         List<Entity> entities = new ArrayList<>();
 
-        for (Entity entity : this.entities)
-        {
-            if (volume.intersects(entity.basic.hitbox))
-            {
+        for (Entity entity : this.entities) {
+            if (volume.intersects(entity.basic.hitbox)) {
                 entities.add(entity);
             }
         }
@@ -341,18 +281,15 @@ public class World implements ITickable, IDisposable
         return entities;
     }
 
-    public List<AABB> getCollisionAABBs(AABB volume)
-    {
+    public List<AABB> getCollisionAABBs(AABB volume) {
         return this.getCollisionAABBs(volume.x, volume.y, volume.z, volume.w, volume.h, volume.d);
     }
 
-    public List<AABB> getCollisionAABBs(double x, double y, double z, double w, double h, double d)
-    {
+    public List<AABB> getCollisionAABBs(double x, double y, double z, double w, double h, double d) {
         return this.getCollisionAABBs(x, y, z, w, h, d, 1, 1, 1);
     }
 
-    public List<AABB> getCollisionAABBs(double x, double y, double z, double w, double h, double d, double dx, double dy, double dz)
-    {
+    public List<AABB> getCollisionAABBs(double x, double y, double z, double w, double h, double d, double dx, double dy, double dz) {
         List<AABB> boxes = new ArrayList<>();
 
         int originX = (int) Math.floor(Math.min(x, x + w));
@@ -368,16 +305,12 @@ public class World implements ITickable, IDisposable
         boolean py = dy >= 0;
         boolean pz = dz >= 0;
 
-        for (int i = px ? originX : endX, fx = px ? 1 : -1; i >= originX && i <= endX; i += fx)
-        {
-            for (int j = py ? originY : endY, fy = py ? 1 : -1; j >= originY && j <= endY; j += fy)
-            {
-                for (int k = pz ? originZ : endZ, fz = pz ? 1 : -1; k >= originZ && k <= endZ; k += fz)
-                {
+        for (int i = px ? originX : endX, fx = px ? 1 : -1; i >= originX && i <= endX; i += fx) {
+            for (int j = py ? originY : endY, fy = py ? 1 : -1; j >= originY && j <= endY; j += fy) {
+                for (int k = pz ? originZ : endZ, fz = pz ? 1 : -1; k >= originZ && k <= endZ; k += fz) {
                     BlockModel blockModel = this.chunks.getBlock(i, j, k).getModel();
 
-                    if (blockModel.collision)
-                    {
+                    if (blockModel.collision) {
                         AABB box = blockModel.collisionBox;
 
                         boxes.add(new AABB(i + box.x, j + box.y, k + box.z, box.w, box.h, box.d));
@@ -386,31 +319,26 @@ public class World implements ITickable, IDisposable
             }
         }
 
-        for (WorldObject object : this.objects)
-        {
+        for (WorldObject object : this.objects) {
             object.addCollisionBoxes(boxes);
         }
 
         return boxes;
     }
 
-    public Entity getEntity(Camera camera)
-    {
+    public Entity getEntity(Camera camera) {
         return this.getEntity(camera, null);
     }
 
-    public Entity getEntity(Camera camera, Entity exception)
-    {
+    public Entity getEntity(Camera camera, Entity exception) {
         return this.getEntity(camera.position, camera.getLookDirection(), exception);
     }
 
-    public Entity getEntity(Vector3d origin, Vector3f direction)
-    {
+    public Entity getEntity(Vector3d origin, Vector3f direction) {
         return this.getEntity(origin, direction, null);
     }
 
-    public Entity getEntity(Vector3d origin, Vector3f direction, Entity exception)
-    {
+    public Entity getEntity(Vector3d origin, Vector3f direction, Entity exception) {
         RayTraceResult result = new RayTraceResult();
 
         RayTracer.traceEntity(result, this, origin, direction, 128, exception);
@@ -418,8 +346,7 @@ public class World implements ITickable, IDisposable
         return result.type == RayTraceType.ENTITY ? result.entity : null;
     }
 
-    public Vector2f getLighting(double x, double y, double z)
-    {
+    public Vector2f getLighting(double x, double y, double z) {
         Vector2f result = new Vector2f();
 
         int minX = (int) Math.floor(x);
@@ -450,14 +377,11 @@ public class World implements ITickable, IDisposable
         return result;
     }
 
-    public <T extends WorldObject> List<T> getObjects(Class<T> type)
-    {
+    public <T extends WorldObject> List<T> getObjects(Class<T> type) {
         List<T> objects = new ArrayList<>();
 
-        for (WorldObject object : this.objects)
-        {
-            if (object.getClass() == type)
-            {
+        for (WorldObject object : this.objects) {
+            if (object.getClass() == type) {
                 objects.add((T) object);
             }
         }
@@ -465,14 +389,11 @@ public class World implements ITickable, IDisposable
         return objects;
     }
 
-    public List<WorldObject> getObjects(String id)
-    {
+    public List<WorldObject> getObjects(String id) {
         List<WorldObject> worldObjects = new ArrayList<>();
 
-        for (WorldObject object : this.objects)
-        {
-            if (object.id.equals(id))
-            {
+        for (WorldObject object : this.objects) {
+            if (object.id.equals(id)) {
                 worldObjects.add(object);
             }
         }
@@ -480,24 +401,19 @@ public class World implements ITickable, IDisposable
         return worldObjects;
     }
 
-    public void saveAll(boolean force)
-    {
-        for (ChunkCell cell : this.chunks.getCells())
-        {
-            if (cell != null && (cell.unsaved || force))
-            {
+    public void saveAll(boolean force) {
+        for (ChunkCell cell : this.chunks.getCells()) {
+            if (cell != null && (cell.unsaved || force)) {
                 this.save(cell);
             }
         }
     }
 
-    public void save(ChunkCell cell)
-    {
+    public void save(ChunkCell cell) {
         this.storage.save(this, cell);
     }
 
-    public boolean read(ChunkCell chunk)
-    {
+    public boolean read(ChunkCell chunk) {
         return this.storage.read(this, chunk);
     }
 }

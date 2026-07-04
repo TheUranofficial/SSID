@@ -2,37 +2,31 @@ package mchorse.bbs.math;
 
 /**
  * Negate operator class
- *
+ * <p>
  * This class is responsible for negating given value
  */
-public class Negate extends Wrapper
-{
-    public Negate(IExpression expression)
-    {
+public class Negate extends Wrapper {
+    public Negate(IExpression expression) {
         super(expression);
     }
 
     @Override
-    protected void process()
-    {
+    protected void process() {
         this.result.set(this.doubleValue());
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return this.booleanValue() ? 1 : 0;
     }
 
     @Override
-    public boolean booleanValue()
-    {
+    public boolean booleanValue() {
         return !this.expression.booleanValue();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "!" + this.expression.toString();
     }
 }

@@ -16,35 +16,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VoiceLines implements IDisposable
-{
+public class VoiceLines implements IDisposable {
     private Map<String, Pair<Wave, Waveform>> waves = new HashMap<>();
     private File folder;
 
-    public VoiceLines(File folder)
-    {
+    public VoiceLines(File folder) {
         this.folder = folder;
     }
 
-    public File getFolder()
-    {
+    public File getFolder() {
         return this.folder;
     }
 
-    public Pair<Wave, Waveform> get(VoicelineClip clip)
-    {
+    public Pair<Wave, Waveform> get(VoicelineClip clip) {
         String key = clip.uuid.get() + ":" + clip.variant.get();
 
-        if (this.waves.containsKey(key))
-        {
+        if (this.waves.containsKey(key)) {
             return this.waves.get(key);
         }
 
         Wave wave = null;
         Waveform waveform = null;
 
-        try
-        {
+        try {
             File file = new File(this.folder, clip.uuid.get() + "/" + clip.variant.get());
             List<ColorCode> colorCodes = new ArrayList<>();
             int color = BBSSettings.elevenVoiceColors.getColor(clip.voice.get());
@@ -55,9 +49,7 @@ public class VoiceLines implements IDisposable
             colorCodes.add(new ColorCode(0, wave.getDuration(), color));
 
             waveform.generate(wave, colorCodes, 40, 20);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -69,12 +61,9 @@ public class VoiceLines implements IDisposable
     }
 
     @Override
-    public void delete()
-    {
-        for (Pair<Wave, Waveform> waveform : this.waves.values())
-        {
-            if (waveform.b != null)
-            {
+    public void delete() {
+        for (Pair<Wave, Waveform> waveform : this.waves.values()) {
+            if (waveform.b != null) {
                 waveform.b.delete();
             }
         }

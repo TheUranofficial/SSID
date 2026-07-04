@@ -1,11 +1,9 @@
 package mchorse.bbs.voxel.raytracing;
 
-public enum RayTraceType
-{
+public enum RayTraceType {
     BLOCK, ENTITY, OBJECT, MISS;
 
-    public boolean isMissed()
-    {
+    public boolean isMissed() {
         return this == MISS;
     }
 }

@@ -8,8 +8,7 @@ import mchorse.bbs.data.types.MapType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShaderPipeline implements IMapSerializable
-{
+public class ShaderPipeline implements IMapSerializable {
     public List<ShaderBuffer> gbuffers = new ArrayList<>();
     public List<ShaderBuffer> composite = new ArrayList<>();
     public List<ShaderStage> stages = new ArrayList<>();
@@ -18,18 +17,15 @@ public class ShaderPipeline implements IMapSerializable
     public int shadowResolution = 1024;
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.gbuffers.clear();
         this.composite.clear();
         this.stages.clear();
 
         ListType gbuffers = data.getList("gbuffers");
 
-        for (BaseType gbuffer : gbuffers)
-        {
-            if (gbuffer.isMap())
-            {
+        for (BaseType gbuffer : gbuffers) {
+            if (gbuffer.isMap()) {
                 ShaderBuffer shaderBuffer = new ShaderBuffer();
 
                 shaderBuffer.fromData(gbuffer.asMap());
@@ -39,10 +35,8 @@ public class ShaderPipeline implements IMapSerializable
 
         ListType composites = data.getList("composite");
 
-        for (BaseType composite : composites)
-        {
-            if (composite.isMap())
-            {
+        for (BaseType composite : composites) {
+            if (composite.isMap()) {
                 ShaderBuffer shaderBuffer = new ShaderBuffer();
 
                 shaderBuffer.fromData(composite.asMap());
@@ -52,17 +46,15 @@ public class ShaderPipeline implements IMapSerializable
 
         ListType stages = data.getList("stages");
 
-        for (BaseType stage : stages)
-        {
-            if (stage.isMap())
-            {
+        for (BaseType stage : stages) {
+            if (stage.isMap()) {
                 ShaderStage shaderStage = new ShaderStage();
 
                 shaderStage.fromData(stage.asMap());
                 this.stages.add(shaderStage);
             }
         }
-        
+
         MapType shadowMap = data.getMap("shadow");
 
         this.shadowMap = shadowMap.getBool("enabled", false);
@@ -70,6 +62,6 @@ public class ShaderPipeline implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {}
+    public void toData(MapType data) {
+    }
 }

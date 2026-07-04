@@ -1,23 +1,19 @@
 package mchorse.bbs.settings.values.base;
 
-public abstract class BaseValueBasic <T> extends BaseValue
-{
+public abstract class BaseValueBasic<T> extends BaseValue {
     protected T value;
 
-    public BaseValueBasic(String id, T value)
-    {
+    public BaseValueBasic(String id, T value) {
         super(id);
 
         this.value = value;
     }
 
-    public T get()
-    {
+    public T get() {
         return this.value;
     }
 
-    public void set(T value)
-    {
+    public void set(T value) {
         this.preNotifyParent(this);
 
         this.value = value;

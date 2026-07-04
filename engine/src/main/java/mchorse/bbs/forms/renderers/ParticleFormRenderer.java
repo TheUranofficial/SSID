@@ -16,24 +16,20 @@ import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class ParticleFormRenderer extends FormRenderer<ParticleForm>
-{
+public class ParticleFormRenderer extends FormRenderer<ParticleForm> {
     private Matrix4f uiMatrix = new Matrix4f();
 
-    public ParticleFormRenderer(ParticleForm form)
-    {
+    public ParticleFormRenderer(ParticleForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         this.form.ensureEmitter(context.menu.bridge.get(IBridgeWorld.class).getWorld());
 
         ParticleEmitter emitter = this.form.getEmitter();
 
-        if (emitter != null)
-        {
+        if (emitter != null) {
             MatrixStack stack = context.render.stack;
             int scale = (y2 - y1) / 2;
 
@@ -51,18 +47,15 @@ public class ParticleFormRenderer extends FormRenderer<ParticleForm>
     }
 
     @Override
-    public void render3D(Entity entity, RenderingContext context)
-    {
+    public void render3D(Entity entity, RenderingContext context) {
         this.form.ensureEmitter(entity.world);
 
         ParticleEmitter emitter = this.form.getEmitter();
 
-        if (emitter != null)
-        {
+        if (emitter != null) {
             Camera camera = context.getCamera();
 
-            if (camera == null)
-            {
+            if (camera == null) {
                 return;
             }
 
@@ -80,8 +73,7 @@ public class ParticleFormRenderer extends FormRenderer<ParticleForm>
         }
     }
 
-    private void updateTexture(float transition)
-    {
+    private void updateTexture(float transition) {
         this.form.getEmitter().texture = this.form.texture.get(transition);
     }
 }

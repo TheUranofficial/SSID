@@ -35,8 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UIPropertyEditor extends UIElement
-{
+public class UIPropertyEditor extends UIElement {
     public UIElement frameButtons;
     public UIToggle instant;
     public UITrackpad tick;
@@ -53,16 +52,14 @@ public class UIPropertyEditor extends UIElement
 
     protected List<BaseValue> valueChannels = new ArrayList<>();
 
-    public UIPropertyEditor(IUIClipsDelegate delegate)
-    {
+    public UIPropertyEditor(IUIClipsDelegate delegate) {
         super();
 
         InterpolationTooltip tooltip = new InterpolationTooltip(0F, 1F, () ->
         {
             GenericKeyframe keyframe = this.properties.getCurrent();
 
-            if (keyframe == null)
-            {
+            if (keyframe == null) {
                 return null;
             }
 
@@ -96,16 +93,14 @@ public class UIPropertyEditor extends UIElement
             menu.action(Icons.MAXIMIZE, UIKeys.KEYFRAMES_CONTEXT_MAXIMIZE, this::resetView);
             menu.action(Icons.FULLSCREEN, UIKeys.KEYFRAMES_CONTEXT_SELECT_ALL, this::selectAll);
 
-            if (this.properties.selected)
-            {
+            if (this.properties.selected) {
                 menu.action(Icons.REMOVE, UIKeys.KEYFRAMES_CONTEXT_REMOVE, this::removeSelectedKeyframes);
                 menu.action(Icons.COPY, UIKeys.KEYFRAMES_CONTEXT_COPY, this::copyKeyframes);
             }
 
             Map<String, PastedKeyframes> pasted = this.parseKeyframes();
 
-            if (pasted != null)
-            {
+            if (pasted != null) {
                 UIContext context = this.getContext();
                 final Map<String, PastedKeyframes> keyframes = pasted;
                 double offset = this.properties.fromGraphX(context.mouseX);
@@ -124,8 +119,7 @@ public class UIPropertyEditor extends UIElement
         {
             Map<String, PastedKeyframes> pasted = this.parseKeyframes();
 
-            if (pasted != null)
-            {
+            if (pasted != null) {
                 UIContext context = this.getContext();
                 final Map<String, PastedKeyframes> keyframes = pasted;
                 double offset = this.properties.fromGraphX(context.mouseX);
@@ -140,8 +134,7 @@ public class UIPropertyEditor extends UIElement
         this.updateConverter();
     }
 
-    public void setChannels(List<GenericKeyframeChannel> properties, List<IFormProperty> property, List<Integer> colors)
-    {
+    public void setChannels(List<GenericKeyframeChannel> properties, List<IFormProperty> property, List<Integer> colors) {
         List<UIProperty> sheets = this.properties.properties;
 
         sheets.clear();
@@ -149,8 +142,7 @@ public class UIPropertyEditor extends UIElement
 
         this.valueChannels.clear();
 
-        for (int i = 0; i < properties.size(); i++)
-        {
+        for (int i = 0; i < properties.size(); i++) {
             GenericKeyframeChannel channel = properties.get(i);
 
             this.valueChannels.add(channel);
@@ -160,18 +152,15 @@ public class UIPropertyEditor extends UIElement
         this.frameButtons.setVisible(false);
     }
 
-    public void updateConverter()
-    {
+    public void updateConverter() {
         this.setConverter(UICameraDopeSheetEditor.CONVERTER);
     }
 
-    public void setConverter(IAxisConverter converter)
-    {
+    public void setConverter(IAxisConverter converter) {
         this.converter = converter;
         this.properties.setConverter(converter);
 
-        if (converter != null)
-        {
+        if (converter != null) {
             converter.updateField(this.tick);
         }
 
@@ -179,30 +168,23 @@ public class UIPropertyEditor extends UIElement
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
+    public boolean subMouseClicked(UIContext context) {
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
-        if (this.area.isInside(mouseX, mouseY))
-        {
+        if (this.area.isInside(mouseX, mouseY)) {
             /* On double-click add or remove a keyframe */
-            if (context.mouseButton == 0)
-            {
+            if (context.mouseButton == 0) {
                 long time = System.currentTimeMillis();
 
-                if (time - this.clickTimer < 175)
-                {
+                if (time - this.clickTimer < 175) {
                     this.clicks++;
 
-                    if (this.clicks >= 1)
-                    {
+                    if (this.clicks >= 1) {
                         this.clicks = 0;
                         this.doubleClick(mouseX, mouseY);
                     }
-                }
-                else
-                {
+                } else {
                     this.clicks = 0;
                 }
 
@@ -216,25 +198,21 @@ public class UIPropertyEditor extends UIElement
     /**
      * Parse keyframes from clipboard
      */
-    private Map<String, PastedKeyframes> parseKeyframes()
-    {
+    private Map<String, PastedKeyframes> parseKeyframes() {
         MapType data = Window.getClipboardMap("_CopyProperties");
 
-        if (data == null)
-        {
+        if (data == null) {
             return null;
         }
 
         Map<String, PastedKeyframes> temp = new HashMap<>();
 
-        for (String key : data.keys())
-        {
+        for (String key : data.keys()) {
             MapType map = data.getMap(key);
             ListType list = map.getList("keyframes");
             IGenericKeyframeFactory serializer = KeyframeFactories.FACTORIES.get(map.getString("type"));
 
-            for (int i = 0, c = list.size(); i < c; i++)
-            {
+            for (int i = 0, c = list.size(); i < c; i++) {
                 PastedKeyframes pastedKeyframes = temp.computeIfAbsent(key, k -> new PastedKeyframes(serializer));
                 GenericKeyframe keyframe = new GenericKeyframe("", serializer);
 
@@ -249,31 +227,26 @@ public class UIPropertyEditor extends UIElement
     /**
      * Copy keyframes to clipboard
      */
-    private void copyKeyframes()
-    {
+    private void copyKeyframes() {
         MapType keyframes = new MapType();
 
-        for (UIProperty property : this.properties.getProperties())
-        {
+        for (UIProperty property : this.properties.getProperties()) {
             int c = property.getSelectedCount();
 
-            if (c > 0)
-            {
+            if (c > 0) {
                 MapType data = new MapType();
                 ListType list = new ListType();
 
                 data.putString("type", CollectionUtils.getKey(KeyframeFactories.FACTORIES, property.channel.getFactory()));
                 data.put("keyframes", list);
 
-                for (int i = 0; i < c; i++)
-                {
+                for (int i = 0; i < c; i++) {
                     GenericKeyframe keyframe = property.channel.get(property.selected.get(i));
 
                     list.add(keyframe.toData());
                 }
 
-                if (!list.isEmpty())
-                {
+                if (!list.isEmpty()) {
                     keyframes.put(property.id, data);
                 }
             }
@@ -285,19 +258,16 @@ public class UIPropertyEditor extends UIElement
     /**
      * Paste copied keyframes to clipboard
      */
-    protected void pasteKeyframes(Map<String, PastedKeyframes> keyframes, long offset, int mouseY)
-    {
+    protected void pasteKeyframes(Map<String, PastedKeyframes> keyframes, long offset, int mouseY) {
         List<UIProperty> properties = this.properties.getProperties();
 
         this.properties.clearSelection();
 
-        if (keyframes.size() == 1)
-        {
+        if (keyframes.size() == 1) {
             UIProperty current = this.properties.getProperty(mouseY);
 
-            if (current == null)
-            {
-                current =  properties.get(0);
+            if (current == null) {
+                current = properties.get(0);
             }
 
             this.pasteKeyframesTo(current, keyframes.get(keyframes.keySet().iterator().next()), offset);
@@ -305,12 +275,9 @@ public class UIPropertyEditor extends UIElement
             return;
         }
 
-        for (Map.Entry<String, PastedKeyframes> entry : keyframes.entrySet())
-        {
-            for (UIProperty property : properties)
-            {
-                if (!property.id.equals(entry.getKey()))
-                {
+        for (Map.Entry<String, PastedKeyframes> entry : keyframes.entrySet()) {
+            for (UIProperty property : properties) {
+                if (!property.id.equals(entry.getKey())) {
                     continue;
                 }
 
@@ -319,18 +286,15 @@ public class UIPropertyEditor extends UIElement
         }
     }
 
-    private void pasteKeyframesTo(UIProperty property, PastedKeyframes pastedKeyframes, long offset)
-    {
-        if (property.channel.getFactory() != pastedKeyframes.factory)
-        {
+    private void pasteKeyframesTo(UIProperty property, PastedKeyframes pastedKeyframes, long offset) {
+        if (property.channel.getFactory() != pastedKeyframes.factory) {
             return;
         }
 
         long firstX = pastedKeyframes.keyframes.get(0).getTick();
         List<GenericKeyframe> toSelect = new ArrayList<>();
 
-        for (GenericKeyframe keyframe : pastedKeyframes.keyframes)
-        {
+        for (GenericKeyframe keyframe : pastedKeyframes.keyframes) {
             keyframe.setTick(keyframe.getTick() - firstX + offset);
 
             int index = property.channel.insert(keyframe.getTick(), keyframe.getValue());
@@ -340,8 +304,7 @@ public class UIPropertyEditor extends UIElement
             toSelect.add(inserted);
         }
 
-        for (GenericKeyframe select : toSelect)
-        {
+        for (GenericKeyframe select : toSelect) {
             property.selected.add(property.channel.getKeyframes().indexOf(select));
         }
 
@@ -349,81 +312,67 @@ public class UIPropertyEditor extends UIElement
         this.properties.setKeyframe(this.properties.getCurrent());
     }
 
-    protected void doubleClick(int mouseX, int mouseY)
-    {
+    protected void doubleClick(int mouseX, int mouseY) {
         this.properties.doubleClick(mouseX, mouseY);
         this.fillData(this.properties.getCurrent());
     }
 
-    public void resetView()
-    {
+    public void resetView() {
         this.properties.resetView();
     }
 
-    public void selectAll()
-    {
+    public void selectAll() {
         this.properties.selectAll();
     }
 
-    public void removeSelectedKeyframes()
-    {
+    public void removeSelectedKeyframes() {
         this.properties.removeSelectedKeyframes();
     }
 
-    private void setInstant(boolean instant)
-    {
+    private void setInstant(boolean instant) {
         this.properties.setInstant(instant);
     }
 
-    public void setTick(double tick)
-    {
+    public void setTick(double tick) {
         this.properties.setTick(this.converter == null ? tick : this.converter.from(tick));
     }
 
-    public void setDuration(int value)
-    {
+    public void setDuration(int value) {
         GenericKeyframe current = this.properties.getCurrent();
 
-        if (current != null)
-        {
+        if (current != null) {
             current.setDuration(value);
         }
     }
 
-    public void setValue(Object value)
-    {
+    public void setValue(Object value) {
         this.properties.setValue(value);
     }
 
-    public void pickInterpolation(IInterpolation interp)
-    {
+    public void pickInterpolation(IInterpolation interp) {
         this.properties.setInterpolation(interp);
     }
 
-    public void fillData(GenericKeyframe frame)
-    {
+    public void fillData(GenericKeyframe frame) {
         boolean show = frame != null;
 
         this.frameButtons.setVisible(show);
 
-        if (!show)
-        {
+        if (!show) {
             return;
         }
 
         double tick = frame.getTick();
         float duration = frame.getDuration();
 
-        if (this.editor != null)
-        {
+        if (this.editor != null) {
             this.editor.removeFromParent();
             this.editor = null;
         }
 
         this.editor = frame.getFactory().createUI(frame, this);
 
-        if (this.editor != null)
-        {
+        if (this.editor != null) {
             this.frameButtons.add(this.editor);
         }
 
@@ -433,21 +382,17 @@ public class UIPropertyEditor extends UIElement
         this.frameButtons.resize();
     }
 
-    public void pickKeyframe(GenericKeyframe frame)
-    {
+    public void pickKeyframe(GenericKeyframe frame) {
         this.fillData(frame);
 
         this.properties.selected = true;
 
         main:
-        for (UIProperty property : this.properties.getProperties())
-        {
+        for (UIProperty property : this.properties.getProperties()) {
             int i = 0;
 
-            for (Object object : property.channel.getKeyframes())
-            {
-                if (object == frame)
-                {
+            for (Object object : property.channel.getKeyframes()) {
+                if (object == frame) {
                     property.selected.add(i);
 
                     break main;
@@ -458,27 +403,22 @@ public class UIPropertyEditor extends UIElement
         }
     }
 
-    public void select(List<List<Integer>> selection, Vector2i selected)
-    {
+    public void select(List<List<Integer>> selection, Vector2i selected) {
         int i = 0;
         boolean deselect = true;
 
-        for (UIProperty property : this.properties.getProperties())
-        {
+        for (UIProperty property : this.properties.getProperties()) {
             List<Integer> sheetSelection = CollectionUtils.inRange(selection, i) ? selection.get(i) : null;
 
-            if (sheetSelection != null)
-            {
+            if (sheetSelection != null) {
                 property.selected.clear();
                 property.selected.addAll(sheetSelection);
             }
 
-            if (i == selected.x)
-            {
+            if (i == selected.x) {
                 GenericKeyframe keyframe = property.channel.get(selected.y);
 
-                if (keyframe != null)
-                {
+                if (keyframe != null) {
                     this.fillData(keyframe);
 
                     deselect = false;
@@ -488,19 +428,16 @@ public class UIPropertyEditor extends UIElement
             i += 1;
         }
 
-        if (deselect)
-        {
+        if (deselect) {
             this.fillData(null);
         }
     }
 
-    private static class PastedKeyframes
-    {
+    private static class PastedKeyframes {
         public IGenericKeyframeFactory factory;
         public List<GenericKeyframe> keyframes = new ArrayList<>();
 
-        public PastedKeyframes(IGenericKeyframeFactory factory)
-        {
+        public PastedKeyframes(IGenericKeyframeFactory factory) {
             this.factory = factory;
         }
     }

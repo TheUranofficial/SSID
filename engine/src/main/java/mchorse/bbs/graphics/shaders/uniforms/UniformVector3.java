@@ -5,36 +5,29 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 
-public class UniformVector3 extends Uniform
-{
+public class UniformVector3 extends Uniform {
     private static Vector3f temp = new Vector3f();
 
     private Vector3f value = new Vector3f();
 
-    public UniformVector3(String name)
-    {
+    public UniformVector3(String name) {
         super(name);
     }
 
-    public void set(Vector3d vector)
-    {
+    public void set(Vector3d vector) {
         this.set((float) vector.x, (float) vector.y, (float) vector.z);
     }
 
-    public void set(Vector3f vector)
-    {
+    public void set(Vector3f vector) {
         this.set(vector.x, vector.y, vector.z);
     }
 
-    public void set(Color color)
-    {
+    public void set(Color color) {
         this.set(color.r, color.g, color.b);
     }
 
-    public void set(float x, float y, float z)
-    {
-        if (this.value.equals(temp.set(x, y, z)))
-        {
+    public void set(float x, float y, float z) {
+        if (this.value.equals(temp.set(x, y, z))) {
             return;
         }
 
@@ -43,8 +36,7 @@ public class UniformVector3 extends Uniform
     }
 
     @Override
-    protected void submitUniform()
-    {
+    protected void submitUniform() {
         GL20.glUniform3f(this.uniform, this.value.x, this.value.y, this.value.z);
     }
 }

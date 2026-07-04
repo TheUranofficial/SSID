@@ -21,24 +21,20 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class LabelFormRenderer extends FormRenderer<LabelForm>
-{
-    public LabelFormRenderer(LabelForm form)
-    {
+public class LabelFormRenderer extends FormRenderer<LabelForm> {
+    public LabelFormRenderer(LabelForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         int color = this.form.color.get(context.getTransition()).getARGBColor();
 
         context.batcher.wallText(this.getRenderer(this.form.font.get(), context.render), TextUtils.processColoredText(this.form.text.get()), x1 + 4, y1 + 4, color, x2 - x1 - 8);
     }
 
     @Override
-    public void render3D(Entity entity, RenderingContext context)
-    {
+    public void render3D(Entity entity, RenderingContext context) {
         context.stack.push();
 
         ColoredTextBuilder3D textBuilder = ITextBuilder.colored3D;
@@ -55,12 +51,9 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
 
         GLStates.cullFaces(false);
 
-        if (this.form.max.get(context.getTransition()) <= 10)
-        {
+        if (this.form.max.get(context.getTransition()) <= 10) {
             this.renderString(context, builder, textBuilder, font);
-        }
-        else
-        {
+        } else {
             this.renderLimitedString(context, builder, textBuilder, font);
         }
 
@@ -69,8 +62,7 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
         context.stack.pop();
     }
 
-    private void renderString(RenderingContext context, VAOBuilder builder, ColoredTextBuilder3D textBuilder, FontRenderer text)
-    {
+    private void renderString(RenderingContext context, VAOBuilder builder, ColoredTextBuilder3D textBuilder, FontRenderer text) {
         String content = TextUtils.processColoredText(this.form.text.get());
         float transition = context.getTransition();
         int w = text.getWidth(content) - 1;
@@ -82,8 +74,7 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
 
         Color color = this.form.shadowColor.get(transition);
 
-        if (color.a > 0)
-        {
+        if (color.a > 0) {
             textBuilder.setMultiplicative(true);
             text.buildVAO(x, y, content, builder, textBuilder.setup(color.getARGBColor(), this.form.shadowX.get(transition), this.form.shadowY.get(transition), -0.1F));
             textBuilder.setMultiplicative(false);
@@ -98,23 +89,20 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
         this.renderShadow(context, x, y, w, h);
     }
 
-    private void renderLimitedString(RenderingContext context, VAOBuilder builder, ColoredTextBuilder3D textBuilder, FontRenderer text)
-    {
+    private void renderLimitedString(RenderingContext context, VAOBuilder builder, ColoredTextBuilder3D textBuilder, FontRenderer text) {
         float transition = context.getTransition();
         int w = 0;
         int h = text.getHeight();
         String content = TextUtils.processColoredText(this.form.text.get());
         List<String> lines = text.split(content, this.form.max.get(transition));
 
-        if (lines.size() <= 1)
-        {
+        if (lines.size() <= 1) {
             this.renderString(context, builder, textBuilder, text);
 
             return;
         }
 
-        for (String line : lines)
-        {
+        for (String line : lines) {
             w = Math.max(text.getWidth(line) - 1, w);
             h += 12;
         }
@@ -129,10 +117,8 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
 
         Color shadow = this.form.shadowColor.get(transition);
 
-        if (shadow.a > 0)
-        {
-            for (String line : lines)
-            {
+        if (shadow.a > 0) {
+            for (String line : lines) {
                 int x2 = x + (this.form.anchorLines.get() ? (int) ((w - text.getWidth(line)) * this.form.anchorX.get(transition)) : 0);
 
                 text.buildVAO(x2, y2, line, builder, ITextBuilder.colored3D.setup(shadow.getARGBColor(), this.form.shadowX.get(transition), this.form.shadowY.get(transition), -0.1F));
@@ -145,8 +131,7 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
 
         int color = this.form.color.get(transition).getARGBColor();
 
-        for (String line : lines)
-        {
+        for (String line : lines) {
             int x2 = x + (this.form.anchorLines.get() ? (int) ((w - text.getWidth(line)) * this.form.anchorX.get(transition)) : 0);
 
             text.buildVAO(x2, y2, line, builder, ITextBuilder.colored3D.setup(color));
@@ -161,13 +146,11 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
         this.renderShadow(context, x, y, w, h);
     }
 
-    private void renderShadow(RenderingContext context, int x, int y, int w, int h)
-    {
+    private void renderShadow(RenderingContext context, int x, int y, int w, int h) {
         float offset = this.form.offset.get(context.getTransition());
         Color color = this.form.background.get(context.getTransition());
 
-        if (color.a <= 0)
-        {
+        if (color.a <= 0) {
             return;
         }
 
@@ -193,10 +176,8 @@ public class LabelFormRenderer extends FormRenderer<LabelForm>
         context.stack.pop();
     }
 
-    private FontRenderer getRenderer(Link fontLink, RenderingContext context)
-    {
-        if (fontLink == null)
-        {
+    private FontRenderer getRenderer(Link fontLink, RenderingContext context) {
+        if (fontLink == null) {
             return context.getFont();
         }
 

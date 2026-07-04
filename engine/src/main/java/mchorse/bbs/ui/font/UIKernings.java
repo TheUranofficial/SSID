@@ -9,15 +9,13 @@ import mchorse.bbs.ui.utils.icons.Icons;
 
 import java.util.List;
 
-public class UIKernings extends UIElement
-{
+public class UIKernings extends UIElement {
     public UIIcon add;
     public UIElement editor;
 
     private List<Kerning> kernings;
 
-    public UIKernings()
-    {
+    public UIKernings() {
         this.add = new UIIcon(Icons.ADD, (b) ->
         {
             Kerning kerning = new Kerning('\0', 0);
@@ -34,8 +32,7 @@ public class UIKernings extends UIElement
         this.add(this.editor);
     }
 
-    private void addKerning(Kerning kerning)
-    {
+    private void addKerning(Kerning kerning) {
         UIKerning uiKerning = new UIKerning(kerning);
 
         uiKerning.context((menu) ->
@@ -46,22 +43,19 @@ public class UIKernings extends UIElement
         this.editor.add(uiKerning);
     }
 
-    private void removeKerning(UIKerning kerning)
-    {
+    private void removeKerning(UIKerning kerning) {
         this.kernings.remove(kerning.getKerning());
         kerning.removeFromParent();
 
         this.getParentContainer().resize();
     }
 
-    public void fill(List<Kerning> kernings)
-    {
+    public void fill(List<Kerning> kernings) {
         this.kernings = kernings;
 
         this.editor.removeAll();
 
-        for (Kerning kerning : kernings)
-        {
+        for (Kerning kerning : kernings) {
             this.addKerning(kerning);
         }
 

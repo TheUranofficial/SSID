@@ -22,8 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class VideoRecorder
-{
+public class VideoRecorder {
     public File movies;
     public Engine engine;
 
@@ -34,26 +33,22 @@ public class VideoRecorder
     private ByteBuffer buffer;
     private Texture texture;
 
-    public VideoRecorder(File movies, Engine engine)
-    {
+    public VideoRecorder(File movies, Engine engine) {
         this.movies = movies;
         this.movies.mkdirs();
 
         this.engine = engine;
     }
 
-    public boolean isRecording()
-    {
+    public boolean isRecording() {
         return this.recording;
     }
 
     /**
      * Start recording the video using ffmpeg
      */
-    public void startRecording(Texture texture)
-    {
-        if (this.recording)
-        {
+    public void startRecording(Texture texture) {
+        if (this.recording) {
             return;
         }
 
@@ -62,15 +57,13 @@ public class VideoRecorder
         int width = texture.width;
         int height = texture.height;
 
-        if (this.buffer == null)
-        {
+        if (this.buffer == null) {
             this.buffer = MemoryUtil.memAlloc(width * height * 3);
         }
 
         this.engine.toggleRealTime(false);
 
-        try
-        {
+        try {
             Path path = Paths.get(this.movies.toString());
             String movieName = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
             String params = BBSSettings.videoEncoderArguments.get();
@@ -99,9 +92,7 @@ public class VideoRecorder
             this.recording = true;
 
             UIUtils.playClick(2F);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -109,41 +100,31 @@ public class VideoRecorder
     /**
      * Stop recording
      */
-    public void stopRecording()
-    {
-        if (!this.recording)
-        {
+    public void stopRecording() {
+        if (!this.recording) {
             return;
         }
 
         this.texture = null;
 
-        if (this.buffer != null)
-        {
+        if (this.buffer != null) {
             MemoryUtil.memFree(this.buffer);
 
             this.buffer = null;
         }
 
-        try
-        {
-            if (this.channel.isOpen())
-            {
+        try {
+            if (this.channel.isOpen()) {
                 this.channel.close();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try
-        {
+        try {
             this.process.waitFor(1, TimeUnit.MINUTES);
             this.process.destroy();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -156,10 +137,8 @@ public class VideoRecorder
     /**
      * Record a frame
      */
-    public void recordFrame()
-    {
-        if (!this.recording)
-        {
+    public void recordFrame() {
+        if (!this.recording) {
             return;
         }
 
@@ -168,12 +147,9 @@ public class VideoRecorder
         GL11.glGetTexImage(this.texture.target, 0, GL12.GL_BGR, GL11.GL_UNSIGNED_BYTE, this.buffer);
         this.buffer.rewind();
 
-        try
-        {
+        try {
             this.channel.write(this.buffer);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -183,14 +159,10 @@ public class VideoRecorder
     /**
      * Toggle recording of the video
      */
-    public void toggleRecording(Texture texture)
-    {
-        if (this.recording)
-        {
+    public void toggleRecording(Texture texture) {
+        if (this.recording) {
             this.stopRecording();
-        }
-        else
-        {
+        } else {
             this.startRecording(this.texture);
         }
 

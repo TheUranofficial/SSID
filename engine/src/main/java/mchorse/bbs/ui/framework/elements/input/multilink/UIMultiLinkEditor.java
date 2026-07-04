@@ -22,8 +22,7 @@ import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.resources.FilteredLink;
 
-public class UIMultiLinkEditor extends UICanvasEditor
-{
+public class UIMultiLinkEditor extends UICanvasEditor {
     public static Shader multiLinkShader;
 
     public UITexturePicker picker;
@@ -42,8 +41,7 @@ public class UIMultiLinkEditor extends UICanvasEditor
     public UITrackpad pixelate;
     public UIToggle erase;
 
-    public UIMultiLinkEditor(UITexturePicker picker)
-    {
+    public UIMultiLinkEditor(UITexturePicker picker) {
         super();
 
         this.picker = picker;
@@ -89,13 +87,11 @@ public class UIMultiLinkEditor extends UICanvasEditor
         this.editor.add(UI.label(UIKeys.TEXTURE_EDITOR_CUSTOM_SIZE).background(), this.autoSize, this.sizeW, this.sizeH);
     }
 
-    public void resetView()
-    {
+    public void resetView() {
         int w = 0;
         int h = 0;
 
-        for (FilteredLink child : this.picker.multiLink.children)
-        {
+        for (FilteredLink child : this.picker.multiLink.children) {
             Texture texture = BBS.getTextures().getTexture(child.path);
 
             w = Math.max(w, child.getWidth(texture.width));
@@ -106,37 +102,30 @@ public class UIMultiLinkEditor extends UICanvasEditor
         this.color.picker.removeFromParent();
     }
 
-    private void resizeCanvas()
-    {
+    private void resizeCanvas() {
         int w = 0;
         int h = 0;
 
-        for (FilteredLink child : this.picker.multiLink.children)
-        {
-            try
-            {
+        for (FilteredLink child : this.picker.multiLink.children) {
+            try {
                 Texture texture = BBS.getTextures().getTexture(child.path);
 
                 w = Math.max(w, child.getWidth(texture.width));
                 h = Math.max(h, child.getHeight(texture.height));
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
 
-        if (w != this.getWidth() || h != this.getHeight())
-        {
+        if (w != this.getWidth() || h != this.getHeight()) {
             this.setSize(w, h);
         }
     }
 
-    public void close()
-    {
+    public void close() {
         this.color.picker.removeFromParent();
     }
 
-    public void setLink(FilteredLink link)
-    {
+    public void setLink(FilteredLink link) {
         this.link = link;
 
         this.color.setColor(link.color);
@@ -154,24 +143,20 @@ public class UIMultiLinkEditor extends UICanvasEditor
     }
 
     @Override
-    protected void startDragging(UIContext context)
-    {
+    protected void startDragging(UIContext context) {
         super.startDragging(context);
 
-        if (this.mouse == 0)
-        {
+        if (this.mouse == 0) {
             this.lastT = this.link.shiftX;
             this.lastV = this.link.shiftY;
         }
     }
 
     @Override
-    protected void dragging(UIContext context)
-    {
+    protected void dragging(UIContext context) {
         super.dragging(context);
 
-        if (this.dragging && this.mouse == 0)
-        {
+        if (this.dragging && this.mouse == 0) {
             double dx = (context.mouseX - this.lastX) / this.scaleX.getZoom();
             double dy = (context.mouseY - this.lastY) / this.scaleY.getZoom();
 
@@ -187,16 +172,13 @@ public class UIMultiLinkEditor extends UICanvasEditor
     }
 
     @Override
-    protected boolean shouldDrawCanvas(UIContext context)
-    {
+    protected boolean shouldDrawCanvas(UIContext context) {
         return this.picker.multiLink != null;
     }
 
     @Override
-    protected void renderCanvasFrame(UIContext context)
-    {
-        for (FilteredLink child : this.picker.multiLink.children)
-        {
+    protected void renderCanvasFrame(UIContext context) {
+        for (FilteredLink child : this.picker.multiLink.children) {
             Texture texture = context.render.getTextures().getTexture(child.path);
 
             int ow = texture.width;
@@ -204,31 +186,25 @@ public class UIMultiLinkEditor extends UICanvasEditor
             int ww = ow;
             int hh = oh;
 
-            if (child.scaleToLargest)
-            {
+            if (child.scaleToLargest) {
                 ww = this.w;
                 hh = this.h;
-            }
-            else if (child.scale != 1)
-            {
+            } else if (child.scale != 1) {
                 ww = (int) (ww * child.scale);
                 hh = (int) (hh * child.scale);
             }
 
-            if (ww > 0 && hh > 0)
-            {
+            if (ww > 0 && hh > 0) {
                 Area area = this.calculate(-this.w / 2 + child.shiftX, -this.h / 2 + child.shiftY, -this.w / 2 + child.shiftX + ww, -this.h / 2 + child.shiftY + hh);
                 boolean needsMultLinkShader = child.pixelate > 1 || child.erase;
 
-                if (child == this.picker.currentFiltered)
-                {
+                if (child == this.picker.currentFiltered) {
                     context.batcher.box(area.x, area.y, area.ex(), area.ey(), Colors.setA(Colors.RED, 0.25F));
                 }
 
                 Shader shader = context.render.getShaders().get(VBOAttributes.VERTEX_UV_RGBA_2D);
 
-                if (needsMultLinkShader)
-                {
+                if (needsMultLinkShader) {
                     this.ensureShaderCreated(context.render);
 
                     shader = multiLinkShader;
@@ -244,10 +220,8 @@ public class UIMultiLinkEditor extends UICanvasEditor
         }
     }
 
-    private void ensureShaderCreated(RenderingContext context)
-    {
-        if (multiLinkShader == null)
-        {
+    private void ensureShaderCreated(RenderingContext context) {
+        if (multiLinkShader == null) {
             multiLinkShader = new Shader(Link.assets("shaders/ui/vertex_uv_rgba_2d-multilink.glsl"), VBOAttributes.VERTEX_UV_RGBA_2D);
             multiLinkShader.onInitialize(CommonShaderAccess::initializeTexture).attachUBO(context.getUBO(), "u_matrices");
         }

@@ -1,50 +1,44 @@
 package mchorse.bbs.ui.framework.tooltips;
 
+import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
-import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.utils.renderers.InterpolationRenderer;
 import mchorse.bbs.utils.math.IInterpolation;
 
 import java.util.function.Supplier;
 
-public class InterpolationTooltip implements ITooltip
-{
+public class InterpolationTooltip implements ITooltip {
     public float ax;
     public float ay;
     public Supplier<IInterpolation> interpolation;
     public Supplier<Integer> duration;
     public int margin = 10;
 
-    public InterpolationTooltip(float ax, float ay, Supplier<IInterpolation> interpolation)
-    {
+    public InterpolationTooltip(float ax, float ay, Supplier<IInterpolation> interpolation) {
         this(ax, ay, interpolation, null);
     }
 
-    public InterpolationTooltip(float ax, float ay, Supplier<IInterpolation> interpolation, Supplier<Integer> duration)
-    {
+    public InterpolationTooltip(float ax, float ay, Supplier<IInterpolation> interpolation, Supplier<Integer> duration) {
         this.ax = ax;
         this.ay = ay;
         this.interpolation = interpolation;
         this.duration = duration;
     }
 
-    public InterpolationTooltip margin(int margin)
-    {
+    public InterpolationTooltip margin(int margin) {
         this.margin = margin;
 
         return this;
     }
 
     @Override
-    public IKey getLabel()
-    {
+    public IKey getLabel() {
         return IKey.EMPTY;
     }
 
     @Override
-    public void renderTooltip(UIContext context)
-    {
+    public void renderTooltip(UIContext context) {
         Area area = context.tooltip.area;
         IInterpolation interpolation = this.interpolation == null ? null : this.interpolation.get();
         int duration = this.duration == null ? 40 : this.duration.get();

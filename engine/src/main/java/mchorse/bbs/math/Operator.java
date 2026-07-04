@@ -2,12 +2,11 @@ package mchorse.bbs.math;
 
 /**
  * Operator class
- * 
- * This class is responsible for performing a calculation of two values 
+ * <p>
+ * This class is responsible for performing a calculation of two values
  * based on given operation.
  */
-public class Operator implements IExpression
-{
+public class Operator implements IExpression {
     public static boolean DEBUG = false;
 
     public Operation operation;
@@ -15,22 +14,17 @@ public class Operator implements IExpression
     public IExpression b;
     private IExpression result = new Constant(0);
 
-    public Operator(Operation op, IExpression a, IExpression b)
-    {
+    public Operator(Operation op, IExpression a, IExpression b) {
         this.operation = op;
         this.a = a;
         this.b = b;
     }
 
     @Override
-    public IExpression get()
-    {
-        if (!this.isNumber() && this.operation == Operation.ADD)
-        {
+    public IExpression get() {
+        if (!this.isNumber() && this.operation == Operation.ADD) {
             this.result.set(this.stringValue());
-        }
-        else
-        {
+        } else {
             this.result.set(this.doubleValue());
         }
 
@@ -38,24 +32,21 @@ public class Operator implements IExpression
     }
 
     @Override
-    public boolean isNumber()
-    {
+    public boolean isNumber() {
         return this.a.isNumber() || this.b.isNumber();
     }
 
     @Override
-    public void set(double value)
-    {}
+    public void set(double value) {
+    }
 
     @Override
-    public void set(String value)
-    {}
+    public void set(String value) {
+    }
 
     @Override
-    public double doubleValue()
-    {
-        if (!this.isNumber() && this.operation == Operation.EQUALS)
-        {
+    public double doubleValue() {
+        if (!this.isNumber() && this.operation == Operation.EQUALS) {
             return this.a.stringValue().equals(this.b.stringValue()) ? 1 : 0;
         }
 
@@ -63,16 +54,13 @@ public class Operator implements IExpression
     }
 
     @Override
-    public boolean booleanValue()
-    {
+    public boolean booleanValue() {
         return Operation.isTrue(this.doubleValue());
     }
 
     @Override
-    public String stringValue()
-    {
-        if (this.operation == Operation.ADD)
-        {
+    public String stringValue() {
+        if (this.operation == Operation.ADD) {
             return this.a.stringValue() + this.b.stringValue();
         }
 
@@ -80,10 +68,8 @@ public class Operator implements IExpression
     }
 
     @Override
-    public String toString()
-    {
-        if (DEBUG)
-        {
+    public String toString() {
+        if (DEBUG) {
             return "(" + this.a.toString() + " " + this.operation.sign + " " + this.b.toString() + ")";
         }
 

@@ -18,8 +18,7 @@ import mchorse.bbs.world.World;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
-public class UILookClip extends UIClip<LookClip>
-{
+public class UILookClip extends UIClip<LookClip> {
     /* TODO: Aperture */
     public static final String SELECTOR_HELP = "";
 
@@ -32,14 +31,12 @@ public class UILookClip extends UIClip<LookClip>
 
     public UIElement row;
 
-    public UILookClip(LookClip clip, IUIClipsDelegate editor)
-    {
+    public UILookClip(LookClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.selector = new UITextboxHelp(500, (str) ->
@@ -67,8 +64,7 @@ public class UILookClip extends UIClip<LookClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_SELECTOR).marginTop(12), this.selector);
@@ -80,8 +76,7 @@ public class UILookClip extends UIClip<LookClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.selector.setText(this.clip.selector.get());
@@ -92,23 +87,19 @@ public class UILookClip extends UIClip<LookClip>
         this.forward.setValue(this.clip.forward.get());
     }
 
-    private void rayTrace(boolean center)
-    {
+    private void rayTrace(boolean center) {
         Camera camera = this.editor.getCamera();
         World world = this.getContext().menu.bridge.get(IBridgeWorld.class).getWorld();
         RayTraceResult result = new RayTraceResult();
 
         RayTracer.traceEntity(result, world, camera.position, camera.getLookDirection(), 128);
 
-        if (center && result.type == RayTraceType.BLOCK)
-        {
+        if (center && result.type == RayTraceType.BLOCK) {
             Vector3i pos = result.block;
 
             BaseValue.edit(this.clip.block, (block) -> block.get().set(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5));
             this.fillData();
-        }
-        else if (!center && !result.type.isMissed())
-        {
+        } else if (!center && !result.type.isMissed()) {
             Vector3d vec = result.hit;
 
             BaseValue.edit(this.clip.block, (block) -> block.get().set(vec.x, vec.y, vec.z));

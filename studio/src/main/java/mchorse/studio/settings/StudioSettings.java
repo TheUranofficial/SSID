@@ -5,8 +5,7 @@ import mchorse.bbs.settings.values.ValueBoolean;
 import mchorse.bbs.settings.values.ValueFloat;
 import mchorse.bbs.settings.values.ValueInt;
 
-public class StudioSettings
-{
+public class StudioSettings {
     public static ValueBoolean welcome;
 
     public static ValueBoolean renderTerrainDebug;
@@ -14,8 +13,7 @@ public class StudioSettings
     public static ValueBoolean renderVsync;
     public static ValueInt renderFrameRate;
 
-    public static void register(SettingsBuilder builder)
-    {
+    public static void register(SettingsBuilder builder) {
         welcome = builder.category("rendering").getBoolean("welcome", false);
         welcome.invisible();
 

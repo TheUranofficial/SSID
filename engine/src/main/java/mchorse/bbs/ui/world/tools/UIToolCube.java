@@ -9,16 +9,13 @@ import mchorse.bbs.voxel.processor.FillProcessor;
 import mchorse.bbs.voxel.processor.Processor;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 
-public class UIToolCube extends UIToolProcessorPainter
-{
-    public UIToolCube(UIWorldEditorPanel editor)
-    {
+public class UIToolCube extends UIToolProcessorPainter {
+    public UIToolCube(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.BLOCK, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_CUBE, Direction.RIGHT);
@@ -27,8 +24,7 @@ public class UIToolCube extends UIToolProcessorPainter
     }
 
     @Override
-    protected Processor createProcessor(RayTraceResult result)
-    {
+    protected Processor createProcessor(RayTraceResult result) {
         return new FillProcessor(this.variantToPlace, false).collect();
     }
 }

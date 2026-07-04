@@ -3,43 +3,35 @@ package mchorse.bbs.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataPath
-{
+public class DataPath {
     public static final DataPath EMPTY = new DataPath(true);
 
     public List<String> strings = new ArrayList<>();
     public boolean folder;
 
-    public DataPath(String path)
-    {
+    public DataPath(String path) {
         this.set(path);
     }
 
-    public DataPath(boolean folder)
-    {
+    public DataPath(boolean folder) {
         this.folder = folder;
     }
 
-    public int size()
-    {
+    public int size() {
         return this.strings.size();
     }
 
-    public void set(String path)
-    {
+    public void set(String path) {
         this.strings.clear();
 
-        if (path.isEmpty())
-        {
+        if (path.isEmpty()) {
             this.folder = true;
 
             return;
         }
 
-        for (String string : path.split("/"))
-        {
-            if (string.trim().isEmpty())
-            {
+        for (String string : path.split("/")) {
+            if (string.trim().isEmpty()) {
                 continue;
             }
 
@@ -49,15 +41,13 @@ public class DataPath
         this.folder = path.trim().endsWith("/");
     }
 
-    public void combine(DataPath path)
-    {
+    public void combine(DataPath path) {
         this.strings.addAll(path.strings);
 
         this.folder = path.folder;
     }
 
-    public DataPath copy()
-    {
+    public DataPath copy() {
         DataPath dataPath = new DataPath(this.folder);
 
         dataPath.strings.addAll(this.strings);
@@ -65,8 +55,7 @@ public class DataPath
         return dataPath;
     }
 
-    public DataPath copy(DataPath path)
-    {
+    public DataPath copy(DataPath path) {
         this.strings.clear();
         this.strings.addAll(path.strings);
 
@@ -75,12 +64,10 @@ public class DataPath
         return this;
     }
 
-    public DataPath getParent()
-    {
+    public DataPath getParent() {
         DataPath dataPath = this.copy();
 
-        if (!dataPath.strings.isEmpty())
-        {
+        if (!dataPath.strings.isEmpty()) {
             dataPath.strings.remove(dataPath.strings.size() - 1);
         }
 
@@ -89,8 +76,7 @@ public class DataPath
         return dataPath;
     }
 
-    public DataPath getChild(String name)
-    {
+    public DataPath getChild(String name) {
         DataPath dataPath = this.copy();
         DataPath child = new DataPath(name);
 
@@ -99,12 +85,10 @@ public class DataPath
         return dataPath;
     }
 
-    public DataPath getTo(int levels)
-    {
+    public DataPath getTo(int levels) {
         DataPath dataPath = this.copy();
 
-        while (dataPath.strings.size() > levels)
-        {
+        while (dataPath.strings.size() > levels) {
             dataPath.strings.remove(dataPath.strings.size() - 1);
             dataPath.folder = true;
         }
@@ -112,27 +96,21 @@ public class DataPath
         return dataPath;
     }
 
-    public boolean startsWith(DataPath path, int levels)
-    {
-        if (this.startsWith(path))
-        {
+    public boolean startsWith(DataPath path, int levels) {
+        if (this.startsWith(path)) {
             return this.strings.size() - path.strings.size() == levels;
         }
 
         return false;
     }
 
-    public boolean startsWith(DataPath path)
-    {
-        if (this.strings.size() < path.strings.size())
-        {
+    public boolean startsWith(DataPath path) {
+        if (this.strings.size() < path.strings.size()) {
             return false;
         }
 
-        for (int i = 0, c = path.strings.size(); i < c; i++)
-        {
-            if (!this.strings.get(i).equals(path.strings.get(i)))
-            {
+        for (int i = 0, c = path.strings.size(); i < c; i++) {
+            if (!this.strings.get(i).equals(path.strings.get(i))) {
                 return false;
             }
         }
@@ -141,15 +119,12 @@ public class DataPath
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof DataPath)
-        {
+        if (obj instanceof DataPath) {
             DataPath dataPath = (DataPath) obj;
 
             return this.toString().equals(dataPath.toString());
@@ -159,15 +134,12 @@ public class DataPath
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.join("/", this.strings);
     }
 
-    public String getLast()
-    {
-        if (this.strings.isEmpty())
-        {
+    public String getLast() {
+        if (this.strings.isEmpty()) {
             return "";
         }
 
@@ -175,12 +147,10 @@ public class DataPath
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int code = 5;
 
-        for (String string : this.strings)
-        {
+        for (String string : this.strings) {
             code = 37 * code + string.hashCode();
         }
 

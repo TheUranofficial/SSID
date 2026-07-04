@@ -5,11 +5,9 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.utils.colors.Colors;
 
-public class DarkTooltipStyle extends TooltipStyle
-{
+public class DarkTooltipStyle extends TooltipStyle {
     @Override
-    public void renderBackground(UIContext context, Area area)
-    {
+    public void renderBackground(UIContext context, Area area) {
         int color = BBSSettings.primaryColor.get();
 
         context.batcher.dropShadow(area.x, area.y, area.ex(), area.ey(), 6, Colors.A25 + color, color);
@@ -17,14 +15,12 @@ public class DarkTooltipStyle extends TooltipStyle
     }
 
     @Override
-    public int getTextColor()
-    {
+    public int getTextColor() {
         return Colors.WHITE;
     }
 
     @Override
-    public int getForegroundColor()
-    {
+    public int getForegroundColor() {
         return BBSSettings.primaryColor.get();
     }
 }

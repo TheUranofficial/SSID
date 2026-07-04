@@ -13,28 +13,23 @@ import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentRateSteady extends ParticleComponentRate implements IComponentParticleRender
-{
+public class ParticleComponentRateSteady extends ParticleComponentRate implements IComponentParticleRender {
     public static final MolangExpression DEFAULT_PARTICLES = new MolangValue(null, new Constant(50));
 
     public MolangExpression spawnRate = MolangParser.ONE;
 
-    public ParticleComponentRateSteady()
-    {
+    public ParticleComponentRateSteady() {
         this.particles = DEFAULT_PARTICLES;
     }
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         if (!MolangExpression.isOne(this.spawnRate)) data.put("spawn_rate", this.spawnRate.toData());
         if (!MolangExpression.isConstant(this.particles, 50)) data.put("max_particles", this.particles.toData());
     }
 
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
@@ -47,34 +42,29 @@ public class ParticleComponentRateSteady extends ParticleComponentRate implement
     }
 
     @Override
-    public void preRender(ParticleEmitter emitter, float transition)
-    {}
+    public void preRender(ParticleEmitter emitter, float transition) {
+    }
 
     @Override
-    public void render(ParticleEmitter emitter, Particle particle, VAOBuilder builder, float transition)
-    {}
+    public void render(ParticleEmitter emitter, Particle particle, VAOBuilder builder, float transition) {
+    }
 
     @Override
-    public void renderUI(Particle particle, VAOBuilder builder, float transition)
-    {}
+    public void renderUI(Particle particle, VAOBuilder builder, float transition) {
+    }
 
     @Override
-    public void postRender(ParticleEmitter emitter, float transition)
-    {
-        if (emitter.playing)
-        {
+    public void postRender(ParticleEmitter emitter, float transition) {
+        if (emitter.playing) {
             double particles = emitter.getAge(transition) * this.spawnRate.get();
             double diff = particles - emitter.index;
             double spawn = Math.round(diff);
 
-            if (spawn > 0)
-            {
+            if (spawn > 0) {
                 emitter.setEmitterVariables(transition);
 
-                for (int i = 0; i < spawn; i++)
-                {
-                    if (emitter.particles.size() < this.particles.get())
-                    {
+                for (int i = 0; i < spawn; i++) {
+                    if (emitter.particles.size() < this.particles.get()) {
                         emitter.spawnParticle();
                     }
                 }
@@ -83,8 +73,7 @@ public class ParticleComponentRateSteady extends ParticleComponentRate implement
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 10;
     }
 }

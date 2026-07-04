@@ -1,28 +1,24 @@
 package mchorse.bbs.ui.film.clips;
 
 import mchorse.bbs.camera.clips.modifiers.DragClip;
-import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.film.IUIClipsDelegate;
 import mchorse.bbs.ui.film.clips.widgets.UIBitToggle;
 import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 
-public class UIDragClip extends UIClip<DragClip>
-{
+public class UIDragClip extends UIClip<DragClip> {
     public UIToggle deterministic;
     public UITrackpad factor;
     public UITrackpad rate;
     public UIBitToggle active;
 
-    public UIDragClip(DragClip clip, IUIClipsDelegate editor)
-    {
+    public UIDragClip(DragClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.deterministic = new UIToggle(UIKeys.CAMERA_PANELS_DETERMINISTIC, (b) ->
@@ -46,8 +42,7 @@ public class UIDragClip extends UIClip<DragClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.C_CLIP.get("bbs:drag")).marginTop(12), this.deterministic);
@@ -55,8 +50,7 @@ public class UIDragClip extends UIClip<DragClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.deterministic.setValue(this.clip.deterministic.get());

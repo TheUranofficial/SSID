@@ -47,8 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class UIScreenplayEditor extends UIElement
-{
+public class UIScreenplayEditor extends UIElement {
     public UIElement masterBar;
     public UIAudioPlayer master;
     public UIIcon generate;
@@ -62,8 +61,7 @@ public class UIScreenplayEditor extends UIElement
     private SyntaxStyle style = new SyntaxStyle();
     private List<ColorCode> colorCodes = new ArrayList<>();
 
-    public UIScreenplayEditor(UIFilmPanel panel)
-    {
+    public UIScreenplayEditor(UIFilmPanel panel) {
         this.panel = panel;
 
         this.master = new UIAudioPlayer();
@@ -80,8 +78,7 @@ public class UIScreenplayEditor extends UIElement
         this.editor.relative(this).y(40).w(1F).h(1F, -40);
         this.editor.clips.context((menu) ->
         {
-            if (this.film == null)
-            {
+            if (this.film == null) {
                 return;
             }
 
@@ -103,13 +100,11 @@ public class UIScreenplayEditor extends UIElement
         this.keys().register(Keys.PLAUSE, () -> this.master.play.clickItself());
     }
 
-    private void parseFountain(String str)
-    {
+    private void parseFountain(String str) {
         List<VoicelineClip> clips = new ArrayList<>();
         int layer = this.film.voiceLines.getTopLayer();
 
-        for (Fountain.Reply reply : Fountain.parseReplies(str))
-        {
+        for (Fountain.Reply reply : Fountain.parseReplies(str)) {
             VoicelineClip clip = new VoicelineClip();
 
             clip.layer.set(layer);
@@ -127,8 +122,7 @@ public class UIScreenplayEditor extends UIElement
             /* Post runnable is necessary because callback is calling from non-main thread */
             context.render.postRunnable(() ->
             {
-                if (result.clip != null && result.status == ElevenLabsResult.Status.GENERATED)
-                {
+                if (result.clip != null && result.status == ElevenLabsResult.Status.GENERATED) {
                     Pair<Wave, Waveform> pair = UIFilmPanel.getVoiceLines().get(result.clip);
                     int duration = (int) (pair.a.getDuration() * 20);
 
@@ -142,20 +136,16 @@ public class UIScreenplayEditor extends UIElement
         });
     }
 
-    public void setCursor(int ticks)
-    {
+    public void setCursor(int ticks) {
         SoundPlayer player = this.master.getPlayer();
 
-        if (player != null)
-        {
+        if (player != null) {
             player.setPlaybackPosition(ticks / 20F);
         }
     }
 
-    private void generate()
-    {
-        if (this.master.getPlayer() != null)
-        {
+    private void generate() {
+        if (this.master.getPlayer() != null) {
             this.master.getPlayer().stop();
         }
 
@@ -165,18 +155,15 @@ public class UIScreenplayEditor extends UIElement
 
         this.colorCodes.clear();
 
-        for (Clip aClip : this.film.voiceLines.get())
-        {
-            if (!(aClip instanceof VoicelineClip))
-            {
+        for (Clip aClip : this.film.voiceLines.get()) {
+            if (!(aClip instanceof VoicelineClip)) {
                 continue;
             }
 
             VoicelineClip clip = (VoicelineClip) aClip;
             Wave wave = UIFilmPanel.getVoiceLines().get(clip).a;
 
-            if (wave != null)
-            {
+            if (wave != null) {
                 map.put(clip, wave);
             }
         }
@@ -185,17 +172,14 @@ public class UIScreenplayEditor extends UIElement
         byte[] bytes = new byte[totalBytes + totalBytes % 2];
         ByteBuffer buffer = MemoryUtil.memAlloc(2);
 
-        for (Clip aClip : this.film.voiceLines.get())
-        {
-            if (!(aClip instanceof VoicelineClip))
-            {
+        for (Clip aClip : this.film.voiceLines.get()) {
+            if (!(aClip instanceof VoicelineClip)) {
                 continue;
             }
 
             VoicelineClip clip = (VoicelineClip) aClip;
 
-            try
-            {
+            try {
                 float time = clip.tick.get() / 20F;
                 float duration = clip.duration.get() / 20F;
                 Wave wave = map.get(clip);
@@ -208,8 +192,7 @@ public class UIScreenplayEditor extends UIElement
                 length = Math.min(wave.data.length, MathUtils.clamp(length, 0, bytes.length - offset));
                 length -= length % 2;
 
-                for (int i = 0; i < length; i += 2)
-                {
+                for (int i = 0; i < length; i += 2) {
                     buffer.position(0);
                     buffer.put(wave.data[i]);
                     buffer.put(wave.data[i + 1]);
@@ -226,23 +209,20 @@ public class UIScreenplayEditor extends UIElement
                     buffer.putShort(0, (short) MathUtils.clamp(finalShort, Short.MIN_VALUE, Short.MAX_VALUE));
 
                     bytes[offset + i + 1] = buffer.get(1);
-                    bytes[offset + i] =     buffer.get(0);
+                    bytes[offset + i] = buffer.get(0);
                 }
 
                 this.colorCodes.add(new ColorCode(time, time + duration, BBSSettings.elevenVoiceColors.getColor(clip.voice.get())));
 
                 lastWave = wave;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         MemoryUtil.memFree(buffer);
 
-        if (lastWave != null)
-        {
+        if (lastWave != null) {
             Wave wave = new Wave(lastWave.audioFormat, lastWave.numChannels, lastWave.sampleRate, lastWave.bitsPerSample, bytes);
 
             this.master.loadAudio(wave, this.colorCodes);
@@ -255,15 +235,12 @@ public class UIScreenplayEditor extends UIElement
         }
     }
 
-    private void generateSubtitles()
-    {
+    private void generateSubtitles() {
         Film data = this.panel.getData();
         int layer = data.camera.getTopLayer();
 
-        for (Clip aClip : this.film.voiceLines.get())
-        {
-            if (!(aClip instanceof VoicelineClip))
-            {
+        for (Clip aClip : this.film.voiceLines.get()) {
+            if (!(aClip instanceof VoicelineClip)) {
                 continue;
             }
 
@@ -282,32 +259,27 @@ public class UIScreenplayEditor extends UIElement
         this.panel.showPanel(this.panel.cameraClips);
     }
 
-    private void saveAudio()
-    {
+    private void saveAudio() {
         Wave wave = this.master.getWave();
 
-        if (wave == null)
-        {
+        if (wave == null) {
             return;
         }
 
-        try
-        {
+        try {
             File folder = BBS.getAssetsPath("audio");
             String filename = this.panel.getData().getId() + ".wav";
 
             WaveWriter.write(new File(folder, filename), wave);
             ListType colorCodes = new ListType();
 
-            for (ColorCode colorCode : this.colorCodes)
-            {
+            for (ColorCode colorCode : this.colorCodes) {
                 colorCodes.add(colorCode.toData());
             }
 
             DataToString.writeSilently(new File(folder, filename + ".json"), colorCodes, true);
 
-            if (Window.isCtrlPressed())
-            {
+            if (Window.isCtrlPressed()) {
                 Film film = this.panel.getFilm();
                 int layer = film.camera.getTopLayer();
 
@@ -319,43 +291,35 @@ public class UIScreenplayEditor extends UIElement
 
                 film.camera.addClip(clip);
                 this.panel.showPanel(this.panel.cameraClips);
-            }
-            else
-            {
+            } else {
                 UIOverlay.addOverlay(this.getContext(), new UIMessageFolderOverlayPanel(
                     UIKeys.VOICE_LINE_SAVE_AUDIO_TITLE,
                     UIKeys.VOICE_LINE_SAVE_AUDIO_DESCRIPTION.format(filename),
                     folder
                 ));
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void setFilm(Film film)
-    {
+    public void setFilm(Film film) {
         this.film = film;
 
         this.fillData();
     }
 
-    private void fillData()
-    {
+    private void fillData() {
         this.editor.clips.setClips(this.film.voiceLines);
 
         this.resize();
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         SoundPlayer player = this.master.getPlayer();
 
-        if (player != null)
-        {
+        if (player != null) {
             this.panel.getRunner().ticks = TimeUtils.toTick(player.getPlaybackPosition());
         }
 

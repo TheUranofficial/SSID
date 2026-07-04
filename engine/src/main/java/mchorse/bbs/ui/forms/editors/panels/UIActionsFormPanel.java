@@ -12,8 +12,7 @@ import mchorse.bbs.ui.framework.elements.input.list.UISearchList;
 import mchorse.bbs.ui.framework.elements.input.list.UIStringList;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIActionsFormPanel extends UIFormPanel<ModelForm>
-{
+public class UIActionsFormPanel extends UIFormPanel<ModelForm> {
     public UIStringList actions;
 
     public UISearchList<String> pickAction;
@@ -24,8 +23,7 @@ public class UIActionsFormPanel extends UIFormPanel<ModelForm>
 
     private ActionConfig action;
 
-    public UIActionsFormPanel(UIForm editor)
-    {
+    public UIActionsFormPanel(UIForm editor) {
         super(editor);
 
         this.actions = new UIStringList((l) -> this.pickAction(l.get(0), false));
@@ -69,14 +67,12 @@ public class UIActionsFormPanel extends UIFormPanel<ModelForm>
         this.add(this.actions);
     }
 
-    private void pickAction(String key, boolean select)
-    {
+    private void pickAction(String key, boolean select) {
         ActionsConfig config = this.form.actions.get();
 
         this.action = config.actions.get(key);
 
-        if (this.action == null)
-        {
+        if (this.action == null) {
             this.action = new ActionConfig(key);
 
             config.actions.put(key, this.action);
@@ -88,15 +84,13 @@ public class UIActionsFormPanel extends UIFormPanel<ModelForm>
         this.fade.setValue(this.action.fade);
         this.tick.setValue(this.action.tick);
 
-        if (select)
-        {
+        if (select) {
             this.actions.setCurrentScroll(key);
         }
     }
 
     @Override
-    public void startEdit(ModelForm form)
-    {
+    public void startEdit(ModelForm form) {
         super.startEdit(form);
 
         this.form.ensureAnimator();
@@ -113,16 +107,14 @@ public class UIActionsFormPanel extends UIFormPanel<ModelForm>
     }
 
     @Override
-    public void finishEdit()
-    {
+    public void finishEdit() {
         super.finishEdit();
 
         ActionsConfig.removeDefaultActions(this.form.actions.get().actions);
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
         /* TODO: Extract */

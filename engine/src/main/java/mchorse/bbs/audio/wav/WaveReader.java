@@ -9,23 +9,18 @@ import java.io.InputStream;
 /**
  * @link http://soundfile.sapp.org/doc/WaveFormat/
  */
-public class WaveReader extends BinaryReader
-{
-    public Wave read(InputStream stream) throws Exception
-    {
-        try
-        {
+public class WaveReader extends BinaryReader {
+    public Wave read(InputStream stream) throws Exception {
+        try {
             BinaryChunk main = this.readChunk(stream);
 
-            if (!main.id.equals("RIFF"))
-            {
+            if (!main.id.equals("RIFF")) {
                 throw new Exception("Given file is not 'RIFF'! It's '" + main.id + "' instead...");
             }
 
             String format = this.readFourString(stream);
 
-            if (!format.equals("WAVE"))
-            {
+            if (!format.equals("WAVE")) {
                 throw new Exception("Given RIFF file is not a 'WAVE' file! It's '" + format + "' instead...");
             }
 
@@ -39,12 +34,10 @@ public class WaveReader extends BinaryReader
 
             int read = 0;
 
-            while (read < 2)
-            {
+            while (read < 2) {
                 BinaryChunk chunk = this.readChunk(stream);
 
-                if (chunk.id.equals("fmt "))
-                {
+                if (chunk.id.equals("fmt ")) {
                     audioFormat = this.readShort(stream);
                     numChannels = this.readShort(stream);
 
@@ -55,21 +48,16 @@ public class WaveReader extends BinaryReader
                     bitsPerSample = this.readShort(stream);
 
                     /* Discarding extra data */
-                    if (chunk.size > 16)
-                    {
+                    if (chunk.size > 16) {
                         stream.skip(chunk.size - 16);
                     }
 
                     read++;
-                }
-                else if (chunk.id.equals("data"))
-                {
+                } else if (chunk.id.equals("data")) {
                     data = new byte[chunk.size];
                     stream.read(data);
                     read++;
-                }
-                else
-                {
+                } else {
                     this.skip(stream, chunk.size);
                 }
             }
@@ -77,17 +65,14 @@ public class WaveReader extends BinaryReader
             stream.close();
 
             return new Wave(audioFormat, numChannels, sampleRate, byteRate, blockAlign, bitsPerSample, data);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public BinaryChunk readChunk(InputStream stream) throws Exception
-    {
+    public BinaryChunk readChunk(InputStream stream) throws Exception {
         String id = this.readFourString(stream);
         int size = this.readInt(stream);
 

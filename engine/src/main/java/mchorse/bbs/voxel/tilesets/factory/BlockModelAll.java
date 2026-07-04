@@ -3,17 +3,14 @@ package mchorse.bbs.voxel.tilesets.factory;
 import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 
-public class BlockModelAll extends BlockModelFactory
-{
+public class BlockModelAll extends BlockModelFactory {
     public static final int DEFAULT_SIZE = 16;
 
-    public static void cube(BlockModel model, float u, float v)
-    {
+    public static void cube(BlockModel model, float u, float v) {
         cube(model, 0, 0, 0, 1, 1, 1, u, v);
     }
 
-    public static void cube(BlockModel model, float x1, float y1, float z1, float x2, float y2, float z2, float u, float v)
-    {
+    public static void cube(BlockModel model, float x1, float y1, float z1, float x2, float y2, float z2, float u, float v) {
         float w = (x2 - x1) * DEFAULT_SIZE;
         float h = (y2 - y1) * DEFAULT_SIZE;
         float d = (z2 - z1) * DEFAULT_SIZE;
@@ -107,12 +104,11 @@ public class BlockModelAll extends BlockModelFactory
         model.back = back;
     }
 
-    public BlockModelAll()
-    {}
+    public BlockModelAll() {
+    }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         BlockModel model = this.createModel();
 
         cube(model, this.allUV.x, this.allUV.y);

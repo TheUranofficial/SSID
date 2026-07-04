@@ -1,6 +1,5 @@
 package mchorse.bbs.utils;
 
-public enum Axis
-{
+public enum Axis {
     X, Y, Z;
 }

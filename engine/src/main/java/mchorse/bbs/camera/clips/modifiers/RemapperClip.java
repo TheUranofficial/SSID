@@ -8,12 +8,10 @@ import mchorse.bbs.utils.clips.ClipContext;
 import mchorse.bbs.utils.keyframes.KeyframeChannel;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class RemapperClip extends CameraClip
-{
+public class RemapperClip extends CameraClip {
     public final KeyframeChannel channel = new KeyframeChannel("channel");
 
-    public RemapperClip()
-    {
+    public RemapperClip() {
         super();
 
         this.add(this.channel);
@@ -23,8 +21,7 @@ public class RemapperClip extends CameraClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         double factor = this.channel.interpolate(context.relativeTick + context.transition);
         int duration = this.duration.get();
 
@@ -35,14 +32,12 @@ public class RemapperClip extends CameraClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new RemapperClip();
     }
 
     @Override
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         super.breakDownClip(original, offset);
 
         this.channel.moveX(-offset);

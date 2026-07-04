@@ -4,8 +4,7 @@ import mchorse.bbs.core.IDisposable;
 import mchorse.bbs.graphics.vao.VAO;
 import mchorse.bbs.voxel.Chunk;
 
-public class ChunkDisplay implements IDisposable
-{
+public class ChunkDisplay implements IDisposable {
     public ChunkCell parent;
 
     public Chunk chunk;
@@ -19,8 +18,7 @@ public class ChunkDisplay implements IDisposable
     public boolean wasDirty;
     public boolean dirty;
 
-    public ChunkDisplay(ChunkCell parent, Chunk chunk, int x, int y, int z)
-    {
+    public ChunkDisplay(ChunkCell parent, Chunk chunk, int x, int y, int z) {
         this.parent = parent;
         this.chunk = chunk;
 
@@ -32,16 +30,14 @@ public class ChunkDisplay implements IDisposable
     /**
      * Cache current dirty value.
      */
-    public void cacheDirty()
-    {
+    public void cacheDirty() {
         this.wasDirty = this.dirty;
     }
 
     /**
      * Mark this chunk display as dirty.
      */
-    public void dirty()
-    {
+    public void dirty() {
         this.dirty(false);
     }
 
@@ -49,16 +45,11 @@ public class ChunkDisplay implements IDisposable
      * Mark this chunk display as dirty with optional priority flag (that
      * inserts chunk display in the front of dirty chunk display list).
      */
-    public void dirty(boolean priority)
-    {
-        if (!this.dirty)
-        {
-            if (priority)
-            {
+    public void dirty(boolean priority) {
+        if (!this.dirty) {
+            if (priority) {
                 this.parent.manager.dirty.add(0, this);
-            }
-            else
-            {
+            } else {
                 this.parent.manager.dirty.add(this);
             }
         }
@@ -66,10 +57,8 @@ public class ChunkDisplay implements IDisposable
         this.dirty = true;
     }
 
-    public void render()
-    {
-        if (this.display != null)
-        {
+    public void render() {
+        if (this.display != null) {
             this.display.bindForRender();
             this.display.renderElements();
             this.display.unbindForRender();
@@ -77,10 +66,8 @@ public class ChunkDisplay implements IDisposable
     }
 
     @Override
-    public void delete()
-    {
-        if (this.display != null)
-        {
+    public void delete() {
+        if (this.display != null) {
             this.display.delete();
 
             this.display = null;

@@ -10,13 +10,12 @@ import java.util.List;
 
 /**
  * Chunk manager (flat array implementation).
- *
+ * <p>
  * This implementation is used for limited viewport design for fast random access
  * with limitation of not being able to have chunks arbitrarily located in the
  * chunk manager (unlike conversion managers which use hash maps).
  */
-public abstract class ChunkArrayManager extends ChunkManager
-{
+public abstract class ChunkArrayManager extends ChunkManager {
     public final List<ChunkCell> render = new ArrayList<>();
     protected ChunkCell[] chunks;
 
@@ -30,8 +29,7 @@ public abstract class ChunkArrayManager extends ChunkManager
     protected int h;
     protected int d;
 
-    public ChunkArrayManager(BlockSet models, int x, int y, int z, int w, int h, int d)
-    {
+    public ChunkArrayManager(BlockSet models, int x, int y, int z, int w, int h, int d) {
         super(models);
 
         this.x = x;
@@ -44,25 +42,21 @@ public abstract class ChunkArrayManager extends ChunkManager
     }
 
     @Override
-    public int getW()
-    {
+    public int getW() {
         return this.w;
     }
 
     @Override
-    public int getH()
-    {
+    public int getH() {
         return this.h;
     }
 
     @Override
-    public int getD()
-    {
+    public int getD() {
         return this.d;
     }
 
-    public void setXYZ(int x, int y, int z)
-    {
+    public void setXYZ(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -72,8 +66,7 @@ public abstract class ChunkArrayManager extends ChunkManager
 
     public abstract Vector3i getVectorFromIndex(int i, Vector3i vector);
 
-    public void sortFromOrigin()
-    {
+    public void sortFromOrigin() {
         float dx = (this.x + this.w / 2) * this.s;
         float dz = (this.z + this.d / 2) * this.s;
 
@@ -86,18 +79,15 @@ public abstract class ChunkArrayManager extends ChunkManager
         });
     }
 
-    public boolean isOutside(int x, int y, int z)
-    {
+    public boolean isOutside(int x, int y, int z) {
         return x < this.x * this.s || x >= (this.x + this.w) * this.s
             || y < this.y * this.s || y >= (this.y + this.h) * this.s
             || z < this.z * this.s || z >= (this.z + this.d) * this.s;
     }
 
     @Override
-    public void rebuild()
-    {
-        for (ChunkCell cell : this.render)
-        {
+    public void rebuild() {
+        for (ChunkCell cell : this.render) {
             cell.dirty();
         }
 

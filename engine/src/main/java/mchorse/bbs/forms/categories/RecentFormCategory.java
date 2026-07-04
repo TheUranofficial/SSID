@@ -6,22 +6,18 @@ import mchorse.bbs.ui.forms.UIFormList;
 import mchorse.bbs.ui.forms.categories.UIFormCategory;
 import mchorse.bbs.ui.forms.categories.UIRecentFormCategory;
 
-public class RecentFormCategory extends FormCategory
-{
-    public RecentFormCategory()
-    {
+public class RecentFormCategory extends FormCategory {
+    public RecentFormCategory() {
         super(UIKeys.FORMS_CATEGORIES_RECENT);
     }
 
     @Override
-    public boolean canModify(Form form)
-    {
+    public boolean canModify(Form form) {
         return true;
     }
 
     @Override
-    public UIFormCategory createUI(UIFormList list)
-    {
+    public UIFormCategory createUI(UIFormList list) {
         return new UIRecentFormCategory(this, list);
     }
 }

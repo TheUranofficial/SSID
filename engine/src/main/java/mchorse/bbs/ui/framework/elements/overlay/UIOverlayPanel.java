@@ -16,8 +16,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
-public class UIOverlayPanel extends UIElement
-{
+public class UIOverlayPanel extends UIElement {
     public UILabel title;
     public UIElement icons;
     public UIIcon close;
@@ -27,8 +26,7 @@ public class UIOverlayPanel extends UIElement
     private int lastX;
     private int lastY;
 
-    public UIOverlayPanel(IKey title)
-    {
+    public UIOverlayPanel(IKey title) {
         super();
 
         this.title = UI.label(title);
@@ -47,29 +45,24 @@ public class UIOverlayPanel extends UIElement
         this.mouseEventPropagataion(EventPropagation.BLOCK_INSIDE);
     }
 
-    public void onClose(Consumer<UIOverlayCloseEvent> callback)
-    {
+    public void onClose(Consumer<UIOverlayCloseEvent> callback) {
         this.events.register(UIOverlayCloseEvent.class, callback);
     }
 
-    public void close()
-    {
+    public void close() {
         UIElement parent = this.getParent();
 
-        if (parent instanceof UIOverlay)
-        {
+        if (parent instanceof UIOverlay) {
             ((UIOverlay) parent).closeItself();
         }
     }
 
-    public void confirm()
-    {}
+    public void confirm() {
+    }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.title.area.isInside(context))
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.title.area.isInside(context)) {
             this.moving = true;
             this.lastX = context.mouseX;
             this.lastY = context.mouseY;
@@ -81,26 +74,20 @@ public class UIOverlayPanel extends UIElement
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.moving = super.subMouseReleased(context);
 
         return false;
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (!context.isFocused() || Window.isCtrlPressed())
-        {
-            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-            {
+    public boolean subKeyPressed(UIContext context) {
+        if (!context.isFocused() || Window.isCtrlPressed()) {
+            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 this.close();
 
                 return true;
-            }
-            else if (context.isPressed(GLFW.GLFW_KEY_ENTER))
-            {
+            } else if (context.isPressed(GLFW.GLFW_KEY_ENTER)) {
                 this.confirm();
 
                 return true;
@@ -111,10 +98,8 @@ public class UIOverlayPanel extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.moving && (context.mouseX != this.lastX || context.mouseY != this.lastY))
-        {
+    public void render(UIContext context) {
+        if (this.moving && (context.mouseX != this.lastX || context.mouseY != this.lastY)) {
             this.flex.x.offset += context.mouseX - this.lastX;
             this.flex.y.offset += context.mouseY - this.lastY;
 
@@ -129,8 +114,7 @@ public class UIOverlayPanel extends UIElement
         super.render(context);
     }
 
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         int color = BBSSettings.primaryColor.get();
 
         context.batcher.dropShadow(this.area.x, this.area.y, this.area.ex(), this.area.ey(), 10, Colors.A25 | color, color);
@@ -138,19 +122,16 @@ public class UIOverlayPanel extends UIElement
 
         this.icons.area.render(context.batcher, Colors.CONTROL_BAR);
 
-        if (this.close.area.isInside(context))
-        {
+        if (this.close.area.isInside(context)) {
             this.close.area.render(context.batcher, Colors.RED | Colors.A100);
         }
 
-        if (this.title.area.isInside(context))
-        {
+        if (this.title.area.isInside(context)) {
             context.batcher.icon(Icons.ALL_DIRECTIONS, Colors.GRAY, this.area.mx(), this.title.area.my(), 0.5F, 0.5F);
         }
     }
 
-    public void onClose()
-    {
+    public void onClose() {
         this.events.emit(new UIOverlayCloseEvent(this));
     }
 }

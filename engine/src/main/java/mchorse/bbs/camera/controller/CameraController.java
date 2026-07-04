@@ -11,26 +11,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CameraController implements ICameraController
-{
+public class CameraController implements ICameraController {
     public Camera camera = new Camera();
     private ICameraController current;
     private List<ICameraController> controllers = new ArrayList<>();
 
     private Vector3d prevPosition = new Vector3d();
 
-    public void updateCurrent()
-    {
+    public void updateCurrent() {
         ICameraController current = null;
 
-        for (ICameraController controller : this.controllers)
-        {
-            if (current == null)
-            {
+        for (ICameraController controller : this.controllers) {
+            if (current == null) {
                 current = controller;
-            }
-            else if (controller.getPriority() > current.getPriority())
-            {
+            } else if (controller.getPriority() > current.getPriority()) {
                 current = controller;
             }
         }
@@ -38,25 +32,20 @@ public class CameraController implements ICameraController
         this.current = current;
     }
 
-    public ICameraController getCurrent()
-    {
+    public ICameraController getCurrent() {
         return this.current;
     }
 
-    public void add(ICameraController controller)
-    {
+    public void add(ICameraController controller) {
         this.controllers.add(controller);
         this.updateCurrent();
     }
 
-    public void remove(Class clazz)
-    {
+    public void remove(Class clazz) {
         Iterator<ICameraController> it = this.controllers.iterator();
 
-        while (it.hasNext())
-        {
-            if (it.next().getClass() == clazz)
-            {
+        while (it.hasNext()) {
+            if (it.next().getClass() == clazz) {
                 it.remove();
             }
         }
@@ -64,14 +53,11 @@ public class CameraController implements ICameraController
         this.updateCurrent();
     }
 
-    public void remove(ICameraController controller)
-    {
+    public void remove(ICameraController controller) {
         Iterator<ICameraController> it = this.controllers.iterator();
 
-        while (it.hasNext())
-        {
-            if (it.next() == controller)
-            {
+        while (it.hasNext()) {
+            if (it.next() == controller) {
                 it.remove();
             }
         }
@@ -79,15 +65,13 @@ public class CameraController implements ICameraController
         this.updateCurrent();
     }
 
-    public void updateSoundPosition()
-    {
+    public void updateSoundPosition() {
         Camera camera = this.camera;
         SoundManager sounds = BBS.getSounds();
 
         sounds.update();
 
-        if (sounds.isDevicePresent())
-        {
+        if (sounds.isDevicePresent()) {
             sounds.setPosition(camera.position);
             sounds.setVelocity(camera.position.x - this.prevPosition.x, camera.position.y - this.prevPosition.y, camera.position.z - this.prevPosition.z);
             sounds.setOrientation(camera);
@@ -96,46 +80,36 @@ public class CameraController implements ICameraController
         this.prevPosition.set(camera.position);
     }
 
-    public void tick()
-    {
-        if (this.current instanceof ITickable)
-        {
+    public void tick() {
+        if (this.current instanceof ITickable) {
             ((ITickable) this.current).update();
         }
     }
 
     @Override
-    public void setup(Camera camera, float transition)
-    {
+    public void setup(Camera camera, float transition) {
         float fov = this.camera.fov;
 
-        if (this.current != null)
-        {
+        if (this.current != null) {
             this.current.setup(camera, transition);
         }
 
-        if (fov != this.camera.fov)
-        {
+        if (fov != this.camera.fov) {
             this.resize(Window.width, Window.height);
         }
     }
 
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         this.camera.updatePerspectiveProjection(width, height);
     }
 
-    public boolean has(ICameraController controller)
-    {
+    public boolean has(ICameraController controller) {
         return this.controllers.contains(controller);
     }
 
-    public boolean has(Class clazz)
-    {
-        for (ICameraController controller : this.controllers)
-        {
-            if (controller.getClass() == clazz)
-            {
+    public boolean has(Class clazz) {
+        for (ICameraController controller : this.controllers) {
+            if (controller.getClass() == clazz) {
                 return true;
             }
         }

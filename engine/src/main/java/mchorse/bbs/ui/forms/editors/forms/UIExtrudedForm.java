@@ -5,10 +5,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.panels.UIExtrudedFormPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UIExtrudedForm extends UIForm<ExtrudedForm>
-{
-    public UIExtrudedForm()
-    {
+public class UIExtrudedForm extends UIForm<ExtrudedForm> {
+    public UIExtrudedForm() {
         super();
 
         this.defaultPanel = new UIExtrudedFormPanel(this);

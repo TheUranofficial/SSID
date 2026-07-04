@@ -4,75 +4,63 @@ import mchorse.bbs.data.DataStorageContext;
 
 import java.io.IOException;
 
-public class DoubleType extends NumericType
-{
+public class DoubleType extends NumericType {
     public double value;
 
-    public DoubleType()
-    {}
+    public DoubleType() {
+    }
 
-    public DoubleType(double value)
-    {
+    public DoubleType(double value) {
         this.value = value;
     }
 
     /* Numeric type implementation */
 
     @Override
-    public int intValue()
-    {
+    public int intValue() {
         return (int) this.value;
     }
 
     @Override
-    public float floatValue()
-    {
+    public float floatValue() {
         return (float) this.value;
     }
 
     @Override
-    public long longValue()
-    {
+    public long longValue() {
         return (long) this.value;
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return this.value;
     }
 
     /* BaseType implementation */
 
     @Override
-    public byte getTypeId()
-    {
+    public byte getTypeId() {
         return BaseType.TYPE_DOUBLE;
     }
 
     @Override
-    public BaseType copy()
-    {
+    public BaseType copy() {
         return new DoubleType(this.value);
     }
 
     @Override
-    public void read(DataStorageContext context) throws IOException
-    {
+    public void read(DataStorageContext context) throws IOException {
         this.value = context.in.readDouble();
     }
 
     @Override
-    public void write(DataStorageContext context) throws IOException
-    {
+    public void write(DataStorageContext context) throws IOException {
         context.out.writeDouble(this.value);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof DoubleType)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof DoubleType) {
             return this.value == ((DoubleType) obj).value;
         }
 
@@ -80,8 +68,7 @@ public class DoubleType extends NumericType
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.value + "d";
     }
 }

@@ -16,12 +16,11 @@ import java.util.function.Consumer;
 
 /**
  * Points GUI module
- *
+ * <p>
  * This module is responsible for displaying "buttons" for picking up path
  * clip's points, and also an ability to add or remove them.
  */
-public class UIPointsModule extends UIAbstractModule
-{
+public class UIPointsModule extends UIAbstractModule {
     /* Input */
     public PathClip path;
     public Consumer<Integer> picker;
@@ -34,8 +33,7 @@ public class UIPointsModule extends UIAbstractModule
      */
     public int index = 0;
 
-    public UIPointsModule(IUIClipsDelegate editor, Consumer<Integer> picker)
-    {
+    public UIPointsModule(IUIClipsDelegate editor, Consumer<Integer> picker) {
         super(editor);
 
         this.picker = picker;
@@ -52,16 +50,13 @@ public class UIPointsModule extends UIAbstractModule
         });
     }
 
-    public void setIndex(int index)
-    {
+    public void setIndex(int index) {
         this.index = index;
         this.scroll.scrollIntoView(index * this.scroll.scrollItemSize);
     }
 
-    public void moveBack()
-    {
-        if (this.index == 0)
-        {
+    public void moveBack() {
+        if (this.index == 0) {
             return;
         }
 
@@ -70,10 +65,8 @@ public class UIPointsModule extends UIAbstractModule
         this.index = this.index - 1;
     }
 
-    public void moveForward()
-    {
-        if (this.index >= this.path.size() - 1)
-        {
+    public void moveForward() {
+        if (this.index >= this.path.size() - 1) {
             return;
         }
 
@@ -82,8 +75,7 @@ public class UIPointsModule extends UIAbstractModule
         this.index = this.index - 1;
     }
 
-    public void addPoint()
-    {
+    public void addPoint() {
         this.path.points.add(this.index + 1, new Position(this.editor.getCamera()));
 
         this.index = MathUtils.clamp(this.index + 1, 0, this.path.points.size() - 1);
@@ -91,16 +83,13 @@ public class UIPointsModule extends UIAbstractModule
         this.scroll.setSize(this.path.size());
         this.scroll.scrollTo(this.index * this.scroll.scrollItemSize);
 
-        if (this.picker != null)
-        {
+        if (this.picker != null) {
             this.picker.accept(this.index);
         }
     }
 
-    public void removePoint()
-    {
-        if (this.path.points.size() == 1 && this.index >= 0)
-        {
+    public void removePoint() {
+        if (this.path.points.size() == 1 && this.index >= 0) {
             return;
         }
 
@@ -110,8 +99,7 @@ public class UIPointsModule extends UIAbstractModule
         this.scroll.setSize(this.path.size());
         this.scroll.scrollTo(this.index * this.scroll.scrollItemSize);
 
-        if (this.picker != null)
-        {
+        if (this.picker != null) {
             this.picker.accept(this.index);
         }
     }
@@ -120,8 +108,7 @@ public class UIPointsModule extends UIAbstractModule
      * Setup the path clip and also fill or reset this module's fields based
      * on the path clip.
      */
-    public void fill(PathClip path)
-    {
+    public void fill(PathClip path) {
         this.path = path;
         this.index = 0;
         this.scroll.setSize(path.size());
@@ -130,36 +117,29 @@ public class UIPointsModule extends UIAbstractModule
 
     /**
      * Mouse was clicked
-     *
+     * <p>
      * This method responsible for adding and removing points in the path
      * clip and initiating scrolling.
      */
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
+    public boolean subMouseClicked(UIContext context) {
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
-        if (this.area.isInside(context))
-        {
-            if (context.mouseButton == 2 || (context.mouseButton == 0 && Window.isCtrlPressed()))
-            {
+        if (this.area.isInside(context)) {
+            if (context.mouseButton == 2 || (context.mouseButton == 0 && Window.isCtrlPressed())) {
                 this.scroll.dragging = true;
 
                 return true;
-            }
-            else if (context.mouseButton == 0)
-            {
+            } else if (context.mouseButton == 0) {
                 int index = this.scroll.getIndex(mouseX, mouseY);
                 int size = this.path.size();
 
-                if (index >= 0 && index < size)
-                {
+                if (index >= 0 && index < size) {
                     /* Pick a point */
                     this.index = index;
 
-                    if (this.picker != null)
-                    {
+                    if (this.picker != null) {
                         this.picker.accept(index);
                     }
                 }
@@ -172,21 +152,19 @@ public class UIPointsModule extends UIAbstractModule
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
+    public boolean subMouseScrolled(UIContext context) {
         return this.scroll.mouseScroll(context);
     }
 
     /**
      * Mouse button was released
-     *
+     * <p>
      * If scrolling was initiated on click, this method will be responsible for
      * selecting a point in the path or shifting the playback timeline to the
      * location of the of current path point.
      */
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.scroll.mouseReleased(context);
 
         return super.subMouseReleased(context);
@@ -194,15 +172,13 @@ public class UIPointsModule extends UIAbstractModule
 
     /**
      * Draw the module
-     *
+     * <p>
      * This method will draw the background, button labels (+/-) and also alls
      * the buttons. It also responsible for scrolling.
      */
     @Override
-    public void render(UIContext context)
-    {
-        if (this.path == null)
-        {
+    public void render(UIContext context) {
+        if (this.path == null) {
             return;
         }
 
@@ -217,8 +193,7 @@ public class UIPointsModule extends UIAbstractModule
         context.batcher.box(x, y, x + this.area.w, y + this.area.h, Colors.A50);
         context.batcher.clip(this.area, context);
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             String label = String.valueOf(i);
             int xx = this.area.x + i * this.scroll.scrollItemSize - this.scroll.scroll;
             int w = context.font.getWidth(label);
@@ -234,8 +209,7 @@ public class UIPointsModule extends UIAbstractModule
         int mw = this.area.w;
         int scroll = this.scroll.getScrollBar(mw);
 
-        if (scroll != 0)
-        {
+        if (scroll != 0) {
             int bx = this.area.x + (int) (this.scroll.scroll / (float) (this.scroll.scrollSize - this.area.w) * (mw - scroll));
             int by = y + this.area.h + 2;
 
@@ -243,13 +217,11 @@ public class UIPointsModule extends UIAbstractModule
         }
 
         /* Overlay "shadows" for informing the user that  */
-        if (this.scroll.scroll > 0 && this.scroll.scrollSize >= this.area.w - 40)
-        {
+        if (this.scroll.scroll > 0 && this.scroll.scrollSize >= this.area.w - 40) {
             context.batcher.gradientHBox(x, y, x + 4, y + this.area.h, Colors.A50, 0);
         }
 
-        if (this.scroll.scroll < this.scroll.scrollSize - this.area.w && this.scroll.scrollSize >= this.area.w)
-        {
+        if (this.scroll.scroll < this.scroll.scrollSize - this.area.w && this.scroll.scrollSize >= this.area.w) {
             context.batcher.gradientHBox(x + this.area.w - 4, y, x + this.area.w, y + this.area.h, 0, Colors.A50);
         }
 

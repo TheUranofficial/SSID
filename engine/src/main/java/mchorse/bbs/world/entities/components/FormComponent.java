@@ -17,45 +17,37 @@ import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
 
-public class FormComponent extends Component implements IRenderableComponent
-{
+public class FormComponent extends Component implements IRenderableComponent {
     public Form form;
     public Form firstPersonForm;
     public Vector3d firstPersonOffset = new Vector3d(0D, 0D, 0.5D);
 
-    public void setForm(Form form)
-    {
+    public void setForm(Form form) {
         this.form = form;
     }
 
     @Override
-    public void postUpdate()
-    {
+    public void postUpdate() {
         super.postUpdate();
 
-        if (this.form != null)
-        {
+        if (this.form != null) {
             this.form.update(this.entity);
         }
 
-        if (this.firstPersonForm != null)
-        {
+        if (this.firstPersonForm != null) {
             this.firstPersonForm.update(this.entity);
         }
     }
 
-    public void renderFirstPerson(Entity entity, RenderingContext context)
-    {
-        if (this.firstPersonForm == null)
-        {
+    public void renderFirstPerson(Entity entity, RenderingContext context) {
+        if (this.firstPersonForm == null) {
             return;
         }
 
         Vector3d position = Vectors.TEMP_3D.set(this.entity.basic.prevPosition).lerp(this.entity.basic.position, context.getTransition());
         Vector2f lighting = this.entity.world.getLighting(position.x, position.y + this.entity.basic.hitbox.h / 2, position.z);
 
-        for (Shader shader : context.getShaders().getAll())
-        {
+        for (Shader shader : context.getShaders().getAll()) {
             CommonShaderAccess.setLightMapCoords(shader, lighting.x, lighting.y);
         }
 
@@ -82,18 +74,15 @@ public class FormComponent extends Component implements IRenderableComponent
     }
 
     @Override
-    public void render(RenderingContext context)
-    {
-        if (this.form != null)
-        {
+    public void render(RenderingContext context) {
+        if (this.form != null) {
             context.stack.push();
             context.stack.multiply(this.entity.getMatrixForRenderWithRotation(context.getCamera(), context.getTransition()));
 
             Vector3d position = Vectors.TEMP_3D.set(this.entity.basic.prevPosition).lerp(this.entity.basic.position, context.getTransition());
             Vector2f lighting = this.entity.world.getLighting(position.x, position.y + this.entity.basic.hitbox.h / 2, position.z);
 
-            for (Shader shader : context.getShaders().getAll())
-            {
+            for (Shader shader : context.getShaders().getAll()) {
                 CommonShaderAccess.setLightMapCoords(shader, lighting.x, lighting.y);
             }
 
@@ -104,15 +93,12 @@ public class FormComponent extends Component implements IRenderableComponent
     }
 
     @Override
-    public void toData(MapType data)
-    {
-        if (this.form != null)
-        {
+    public void toData(MapType data) {
+        if (this.form != null) {
             data.put("form", FormUtils.toData(this.form));
         }
 
-        if (this.firstPersonForm != null)
-        {
+        if (this.firstPersonForm != null) {
             data.put("firstPersonForm", FormUtils.toData(this.firstPersonForm));
         }
 
@@ -120,19 +106,16 @@ public class FormComponent extends Component implements IRenderableComponent
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         MapType form = data.getMap("form", null);
 
-        if (form != null)
-        {
+        if (form != null) {
             this.form = FormUtils.fromData(form);
         }
 
         MapType firstPersonForm = data.getMap("firstPersonForm", null);
 
-        if (firstPersonForm != null)
-        {
+        if (firstPersonForm != null) {
             this.firstPersonForm = FormUtils.fromData(firstPersonForm);
         }
 

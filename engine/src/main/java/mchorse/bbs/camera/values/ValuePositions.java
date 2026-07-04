@@ -5,17 +5,14 @@ import mchorse.bbs.settings.values.ValueList;
 
 import java.util.List;
 
-public class ValuePositions extends ValueList<ValuePosition>
-{
-    public ValuePositions(String id)
-    {
+public class ValuePositions extends ValueList<ValuePosition> {
+    public ValuePositions(String id) {
         super(id);
     }
 
     /* Setters */
 
-    public void add(Position position)
-    {
+    public void add(Position position) {
         this.preNotifyParent();
 
         this.add(new ValuePosition("", position));
@@ -23,10 +20,8 @@ public class ValuePositions extends ValueList<ValuePosition>
         this.postNotifyParent();
     }
 
-    public void add(int index, Position position)
-    {
-        if (index >= this.list.size())
-        {
+    public void add(int index, Position position) {
+        if (index >= this.list.size()) {
             this.add(position);
 
             return;
@@ -40,8 +35,7 @@ public class ValuePositions extends ValueList<ValuePosition>
         this.postNotifyParent();
     }
 
-    public void move(int index, int to)
-    {
+    public void move(int index, int to) {
         this.preNotifyParent();
 
         this.list.add(index, this.list.remove(to));
@@ -50,8 +44,7 @@ public class ValuePositions extends ValueList<ValuePosition>
         this.postNotifyParent();
     }
 
-    public void remove(int index)
-    {
+    public void remove(int index) {
         this.preNotifyParent();
 
         this.list.remove(index);
@@ -60,13 +53,11 @@ public class ValuePositions extends ValueList<ValuePosition>
         this.postNotifyParent();
     }
 
-    public void set(List<Position> positions)
-    {
+    public void set(List<Position> positions) {
         this.preNotifyParent();
         this.list.clear();
 
-        for (Position position : positions)
-        {
+        for (Position position : positions) {
             this.add(position.copy());
         }
 
@@ -74,8 +65,7 @@ public class ValuePositions extends ValueList<ValuePosition>
         this.postNotifyParent();
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.preNotifyParent();
 
         this.list.clear();
@@ -85,19 +75,16 @@ public class ValuePositions extends ValueList<ValuePosition>
 
     /* Getters */
 
-    public Position get(int index)
-    {
+    public Position get(int index) {
         return this.list.get(index).get();
     }
 
-    public int size()
-    {
+    public int size() {
         return this.list.size();
     }
 
     @Override
-    protected ValuePosition create(String id)
-    {
+    protected ValuePosition create(String id) {
         return new ValuePosition(id);
     }
 }

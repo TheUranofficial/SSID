@@ -8,8 +8,7 @@ import mchorse.bbs.utils.EnumUtils;
 import mchorse.bbs.utils.keyframes.KeyframeInterpolation;
 import mchorse.bbs.utils.math.Interpolation;
 
-public class UIKeys
-{
+public class UIKeys {
     public static final IKey BLOCK_VARIANT_CONTEXT_INSERT_EMPTY = IKey.lang("bbs.ui.block_variant.context.insert_empty");
     public static final IKey CAMERA_EDITOR_KEYS_CLIPS_DESELECT = IKey.lang("bbs.ui.camera.editor.keys.clips.deselect");
     public static final IKey CAMERA_EDITOR_KEYS_CLIPS_TITLE = IKey.lang("bbs.ui.camera.editor.keys.clips.title");
@@ -366,7 +365,7 @@ public class UIKeys
     public static final IKey PANELS_CONTEXT_OPEN = IKey.lang("bbs.ui.panels.context.open");
     public static final IKey PANELS_CONTEXT_PASTE = IKey.lang("bbs.ui.panels.context.paste");
     public static final IKey PANELS_KEYS_CATEGORY = IKey.lang("bbs.ui.panels.keys.category");
-    public static final IKey PANELS_KEYS_OPEN_DATA_MANAGER = IKey.lang("bbs.ui.panels.keys.open_data_list", "Open data manager",PANELS_KEYS_CATEGORY);
+    public static final IKey PANELS_KEYS_OPEN_DATA_MANAGER = IKey.lang("bbs.ui.panels.keys.open_data_list", "Open data manager", PANELS_KEYS_CATEGORY);
     public static final IKey PANELS_KEYS_WORLD_EDITOR = IKey.lang("bbs.ui.panels.keys.world_editor");
     public static final IKey PANELS_MODALS_ADD = IKey.lang("bbs.ui.panels.modals.add");
     public static final IKey PANELS_MODALS_ADD_FOLDER = IKey.lang("bbs.ui.panels.modals.add_folder");
@@ -548,7 +547,7 @@ public class UIKeys
     public static final IKey TEXTURE_EDITOR_SIZE_H = IKey.lang("bbs.ui.texture.editor.size_h");
     public static final IKey TEXTURE_EDITOR_SIZE_W = IKey.lang("bbs.ui.texture.editor.size_w");
     public static final IKey TEXTURE_MULTISKIN = IKey.lang("bbs.ui.texture.multiskin");
-    public static final IKey TEXTURE_NO_DATA = IKey.lang( "bbs.ui.texture.no_data");
+    public static final IKey TEXTURE_NO_DATA = IKey.lang("bbs.ui.texture.no_data");
     public static final IKey TEXTURE_OPEN_FOLDER = IKey.lang("bbs.ui.texture.open_folder");
     public static final IKey TEXTURE_PICK_TEXTURE = IKey.lang("bbs.ui.texture.pick_texture");
     public static final IKey TILE_SET_BLOCK_MODELS_TITLE = IKey.lang("bbs.ui.tile_set.block_models.title");

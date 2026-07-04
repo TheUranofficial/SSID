@@ -15,8 +15,7 @@ import mchorse.bbs.utils.pose.PoseManager;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class UIPosesContextMenu extends UIContextMenu
-{
+public class UIPosesContextMenu extends UIContextMenu {
     public UIIcon copy;
     public UIIcon paste;
     public UIIcon reset;
@@ -31,8 +30,7 @@ public class UIPosesContextMenu extends UIContextMenu
     private Supplier<MapType> supplier;
     private Consumer<MapType> callback;
 
-    public UIPosesContextMenu(String group, Supplier<MapType> supplier, Consumer<MapType> callback)
-    {
+    public UIPosesContextMenu(String group, Supplier<MapType> supplier, Consumer<MapType> callback) {
         this.group = group;
         this.supplier = supplier;
         this.callback = callback;
@@ -44,8 +42,7 @@ public class UIPosesContextMenu extends UIContextMenu
         {
             MapType data = Window.getClipboardMap("_ModelCopyPose");
 
-            if (data != null)
-            {
+            if (data != null) {
                 this.send(data);
             }
         });
@@ -56,8 +53,7 @@ public class UIPosesContextMenu extends UIContextMenu
         {
             String name = this.name.getText();
 
-            if (!name.isEmpty())
-            {
+            if (!name.isEmpty()) {
                 PoseManager.savePose(this.group, name, this.supplier.get());
 
                 this.data = PoseManager.getPoses(group);
@@ -79,16 +75,13 @@ public class UIPosesContextMenu extends UIContextMenu
         this.fillPoses();
     }
 
-    private void send(MapType map)
-    {
-        if (this.callback != null)
-        {
+    private void send(MapType map) {
+        if (this.callback != null) {
             this.callback.accept(map);
         }
     }
 
-    private void fillPoses()
-    {
+    private void fillPoses() {
         this.poses.clear();
         this.poses.add(this.data.keys());
         this.poses.sort();
@@ -96,14 +89,12 @@ public class UIPosesContextMenu extends UIContextMenu
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 
     @Override
-    public void setMouse(UIContext context)
-    {
+    public void setMouse(UIContext context) {
         /* Padding from both side + 4 icon 20px + 3 margin 5px */
         this.xy(context.mouseX(), context.mouseY()).w(10 + 80 + 15).column().vertical().stretch().padding(5);
     }

@@ -10,20 +10,17 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Consumer;
 
-public class UIToggle extends UIClickable<UIToggle> implements ITextColoring
-{
+public class UIToggle extends UIClickable<UIToggle> implements ITextColoring {
     public IKey label;
     public int color = Colors.WHITE;
     public boolean textShadow = true;
     private boolean value;
 
-    public UIToggle(IKey label, Consumer<UIToggle> callback)
-    {
+    public UIToggle(IKey label, Consumer<UIToggle> callback) {
         this(label, false, callback);
     }
 
-    public UIToggle(IKey label, boolean value, Consumer<UIToggle> callback)
-    {
+    public UIToggle(IKey label, boolean value, Consumer<UIToggle> callback) {
         super(callback);
 
         this.label = label;
@@ -32,60 +29,51 @@ public class UIToggle extends UIClickable<UIToggle> implements ITextColoring
     }
 
     @Override
-    public void setColor(int color, boolean shadow)
-    {
+    public void setColor(int color, boolean shadow) {
         this.color(color, shadow);
     }
 
-    public UIToggle label(IKey label)
-    {
+    public UIToggle label(IKey label) {
         this.label = label;
 
         return this;
     }
 
-    public UIToggle setValue(boolean value)
-    {
+    public UIToggle setValue(boolean value) {
         this.value = value;
 
         return this;
     }
 
-    public UIToggle color(int color)
-    {
+    public UIToggle color(int color) {
         return this.color(color, true);
     }
 
-    public UIToggle color(int color, boolean textShadow)
-    {
+    public UIToggle color(int color, boolean textShadow) {
         this.color = color;
         this.textShadow = textShadow;
 
         return this;
     }
 
-    public boolean getValue()
-    {
+    public boolean getValue() {
         return this.value;
     }
 
     @Override
-    protected void click(int mouseWheel)
-    {
+    protected void click(int mouseWheel) {
         this.value = !this.value;
 
         super.click(mouseWheel);
     }
 
     @Override
-    protected UIToggle get()
-    {
+    protected UIToggle get() {
         return this;
     }
 
     @Override
-    protected void renderSkin(UIContext context)
-    {
+    protected void renderSkin(UIContext context) {
         FontRenderer font = context.font;
         String label = font.limitToWidth(this.label.get(), this.area.w - 18);
 
@@ -98,8 +86,7 @@ public class UIToggle extends UIClickable<UIToggle> implements ITextColoring
         int y = this.area.my();
         int color = BBSSettings.primaryColor.get();
 
-        if (this.hover)
-        {
+        if (this.hover) {
             color = Colors.mulRGB(color, 0.85F);
         }
 
@@ -107,17 +94,13 @@ public class UIToggle extends UIClickable<UIToggle> implements ITextColoring
         context.batcher.box(x, y - h / 2, x + w, y - h / 2 + h, Colors.A100);
         context.batcher.box(x + 1, y - h / 2 + 1, x + w - 1, y - h / 2 + h - 1, Colors.A100 | (this.value ? color : (this.hover ? 0x3a3a3a : 0x444444)));
 
-        if (this.value)
-        {
+        if (this.value) {
             context.batcher.gradientHBox(x + 1, y - h / 2 + 1, x + w / 2, y - h / 2 + h - 1, Colors.setA(Colors.WHITE, 0.33F), Colors.setA(Colors.WHITE, 0F));
-        }
-        else
-        {
+        } else {
             context.batcher.gradientHBox(x + w / 2, y - h / 2 + 1, x + w - 1, y - h / 2 + h - 1, 0, Colors.A50);
         }
 
-        if (!this.isEnabled())
-        {
+        if (!this.isEnabled()) {
             context.batcher.box(x, y - h / 2, x + w, y - h / 2 + h, Colors.A50);
         }
 
@@ -129,8 +112,7 @@ public class UIToggle extends UIClickable<UIToggle> implements ITextColoring
         context.batcher.box(x - 2, y - 6, x + 3, y + 7, Colors.GRAY);
         context.batcher.box(x - 2, y - 6, x + 2, y + 6, Colors.LIGHTER_GRAY);
 
-        if (!this.isEnabled())
-        {
+        if (!this.isEnabled()) {
             context.batcher.box(x - 4, y - 8, x + 4, y + 8, Colors.A50);
 
             context.batcher.outlinedIcon(Icons.LOCKED, this.area.ex() - w / 2 - 2, y, 0.5F, 0.5F);

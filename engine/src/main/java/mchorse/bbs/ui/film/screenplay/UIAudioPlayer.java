@@ -1,12 +1,7 @@
 package mchorse.bbs.ui.film.screenplay;
 
 import mchorse.bbs.BBSSettings;
-import mchorse.bbs.audio.ColorCode;
-import mchorse.bbs.audio.SoundBuffer;
-import mchorse.bbs.audio.SoundPlayer;
-import mchorse.bbs.audio.Wave;
-import mchorse.bbs.audio.Waveform;
-import mchorse.bbs.audio.wav.WaveReader;
+import mchorse.bbs.audio.*;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.IUITreeEventListener;
 import mchorse.bbs.ui.framework.elements.UIElement;
@@ -15,12 +10,9 @@ import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.colors.Colors;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
-public class UIAudioPlayer extends UIElement implements IUITreeEventListener
-{
+public class UIAudioPlayer extends UIElement implements IUITreeEventListener {
     public static final float PIXELS = 40;
 
     public UIIcon play;
@@ -32,36 +24,31 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
 
     private boolean wasPlaying;
 
-    public UIAudioPlayer()
-    {
+    public UIAudioPlayer() {
         this.play = new UIIcon(Icons.PLAY, (b) -> this.togglePlaying());
         this.play.relative(this).h(1F);
 
         this.add(this.play);
     }
 
-    public Wave getWave()
-    {
+    public Wave getWave() {
         return this.wave;
     }
 
-    public SoundPlayer getPlayer()
-    {
+    public SoundPlayer getPlayer() {
         return this.player;
     }
 
     @Override
-    public void onAddedToTree(UIElement element)
-    {}
+    public void onAddedToTree(UIElement element) {
+    }
 
     @Override
-    public void onRemovedFromTree(UIElement element)
-    {
+    public void onRemovedFromTree(UIElement element) {
         this.delete();
     }
 
-    public void delete()
-    {
+    public void delete() {
         if (this.waveform != null) this.waveform.delete();
         if (this.buffer != null) this.buffer.delete();
         if (this.player != null) this.player.delete();
@@ -72,8 +59,7 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
         this.player = null;
     }
 
-    public void loadAudio(Wave wave, List<ColorCode> colorCodes)
-    {
+    public void loadAudio(Wave wave, List<ColorCode> colorCodes) {
         this.wave = wave;
         this.waveform = new Waveform();
 
@@ -86,16 +72,11 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
         this.player.stop();
     }
 
-    public void togglePlaying()
-    {
-        if (this.player != null)
-        {
-            if (this.player.isPlaying())
-            {
+    public void togglePlaying() {
+        if (this.player != null) {
+            if (this.player.isPlaying()) {
                 this.player.pause();
-            }
-            else
-            {
+            } else {
                 this.player.play();
             }
 
@@ -105,18 +86,15 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
         }
     }
 
-    private void updatePlayIcon()
-    {
+    private void updatePlayIcon() {
         this.play.both(this.player.isPlaying() ? Icons.PAUSE : Icons.PLAY);
     }
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
+    protected boolean subMouseClicked(UIContext context) {
         Area.SHARED.set(this.area.x + 20, this.area.y, this.area.w - 20, this.area.h);
 
-        if (this.player != null && Area.SHARED.isInside(context) && context.mouseButton == 0)
-        {
+        if (this.player != null && Area.SHARED.isInside(context) && context.mouseButton == 0) {
             float playback = this.player.getPlaybackPosition();
             float offset = playback > 2F ? playback - 2F : 0F;
             float newPlayback = (context.mouseX - (this.area.x + 20)) / PIXELS;
@@ -130,12 +108,10 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.area.render(context.batcher, Colors.A75);
 
-        if (this.waveform != null)
-        {
+        if (this.waveform != null) {
             int w = this.area.w - 20;
             float playback = this.player.getPlaybackPosition();
             float offset = playback > 2F ? playback - 2F : 0F;
@@ -152,8 +128,7 @@ public class UIAudioPlayer extends UIElement implements IUITreeEventListener
             context.batcher.textCard(context.font, label, this.area.ex() - 5 - context.font.getWidth(label), this.area.y + (this.area.h - context.font.getHeight()) / 2, Colors.WHITE, color);
         }
 
-        if (this.player != null && this.wasPlaying != this.player.isPlaying())
-        {
+        if (this.player != null && this.wasPlaying != this.player.isPlaying()) {
             this.wasPlaying = this.player.isPlaying();
 
             this.updatePlayIcon();

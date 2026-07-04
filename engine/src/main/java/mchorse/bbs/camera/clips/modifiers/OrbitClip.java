@@ -16,12 +16,11 @@ import org.joml.Vector3f;
 
 /**
  * Orbit modifier
- * 
+ * <p>
  * This modifier is responsible for making the camera orbit around
  * the given entity with given yaw and pitch.
  */
-public class OrbitClip extends EntityClip
-{
+public class OrbitClip extends EntityClip {
     /**
      * In addition, copy yaw and pitch from entity
      */
@@ -42,8 +41,7 @@ public class OrbitClip extends EntityClip
      */
     public final ValueFloat pitch = new ValueFloat("pitch", 0F);
 
-    public OrbitClip()
-    {
+    public OrbitClip() {
         super();
 
         this.add(this.copy);
@@ -53,20 +51,16 @@ public class OrbitClip extends EntityClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
-        if (this.checkForDead())
-        {
+    public void applyClip(ClipContext context, Position position) {
+        if (this.checkForDead()) {
             this.tryFindingEntity(context.bridge.get(IBridgeWorld.class).getWorld());
         }
 
-        if (this.entities == null)
-        {
+        if (this.entities == null) {
             return;
         }
 
-        if (!context.applyUnderneath(this.tick.get(), 0, this.position))
-        {
+        if (!context.applyUnderneath(this.tick.get(), 0, this.position)) {
             this.position.copy(position);
         }
 
@@ -76,8 +70,7 @@ public class OrbitClip extends EntityClip
         Entity entity = this.entities.get(0);
         Vector3f vector = Matrices.rotation(MathUtils.toRad(pitch), MathUtils.toRad(-yaw));
 
-        if (this.copy.get())
-        {
+        if (this.copy.get()) {
             float entityYaw = MathUtils.toDeg(Interpolations.lerp(entity.basic.prevRotation.y, entity.basic.rotation.y, context.transition));
             float entityPitch = MathUtils.toDeg(Interpolations.lerp(entity.basic.prevRotation.x, entity.basic.rotation.x, context.transition));
 
@@ -101,8 +94,7 @@ public class OrbitClip extends EntityClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new OrbitClip();
     }
 }

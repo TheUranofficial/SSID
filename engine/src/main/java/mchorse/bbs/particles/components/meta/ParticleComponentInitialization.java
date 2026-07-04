@@ -10,43 +10,39 @@ import mchorse.bbs.particles.components.IComponentEmitterUpdate;
 import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentInitialization extends ParticleComponentBase implements IComponentEmitterInitialize, IComponentEmitterUpdate
-{
+public class ParticleComponentInitialization extends ParticleComponentBase implements IComponentEmitterInitialize, IComponentEmitterUpdate {
     public MolangExpression creation = MolangParser.ZERO;
     public MolangExpression update = MolangParser.ZERO;
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         if (!MolangExpression.isZero(this.creation)) data.put("creation_expression", this.creation.toData());
         if (!MolangExpression.isZero(this.update)) data.put("per_update_expression", this.update.toData());
     }
 
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType element = data.asMap();
 
-        if (element.has("creation_expression")) this.creation = parser.parseGlobalData(element.get("creation_expression"));
-        if (element.has("per_update_expression")) this.update = parser.parseGlobalData(element.get("per_update_expression"));
+        if (element.has("creation_expression"))
+            this.creation = parser.parseGlobalData(element.get("creation_expression"));
+        if (element.has("per_update_expression"))
+            this.update = parser.parseGlobalData(element.get("per_update_expression"));
 
         return super.fromData(element, parser);
     }
 
     @Override
-    public void apply(ParticleEmitter emitter)
-    {
+    public void apply(ParticleEmitter emitter) {
         this.creation.get();
         emitter.replaceVariables();
     }
 
     @Override
-    public void update(ParticleEmitter emitter)
-    {
+    public void update(ParticleEmitter emitter) {
         this.update.get();
         emitter.replaceVariables();
     }

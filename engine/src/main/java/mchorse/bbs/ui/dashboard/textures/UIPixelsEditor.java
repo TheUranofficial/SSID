@@ -31,8 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class UIPixelsEditor extends UICanvasEditor
-{
+public class UIPixelsEditor extends UICanvasEditor {
     public UITrackpad brightness;
 
     public UIElement toolbar;
@@ -54,8 +53,7 @@ public class UIPixelsEditor extends UICanvasEditor
     private UndoManager<Pixels> undoManager;
     private PixelsUndo pixelsUndo;
 
-    public UIPixelsEditor()
-    {
+    public UIPixelsEditor() {
         super();
 
         this.brightness = new UITrackpad();
@@ -65,9 +63,11 @@ public class UIPixelsEditor extends UICanvasEditor
         this.toolbar = new UIElement();
         this.toolbar.relative(this).w(1F).h(30).row(0).resize().padding(5);
 
-        this.primary = new UIColor((c) -> {}).noLabel();
+        this.primary = new UIColor((c) -> {
+        }).noLabel();
         this.primary.direction(Direction.RIGHT).w(20);
-        this.secondary = new UIColor((c) -> {}).noLabel();
+        this.secondary = new UIColor((c) -> {
+        }).noLabel();
         this.secondary.direction(Direction.RIGHT).w(20);
 
         this.undo = new UIIcon(Icons.UNDO, (b) -> this.undo());
@@ -94,26 +94,22 @@ public class UIPixelsEditor extends UICanvasEditor
         this.setEditing(false);
     }
 
-    public Pixels getPixels()
-    {
+    public Pixels getPixels() {
         return this.pixels;
     }
 
-    protected void wasChanged()
-    {}
+    protected void wasChanged() {
+    }
 
-    public boolean isEditing()
-    {
+    public boolean isEditing() {
         return this.editing;
     }
 
-    public void toggleEditor()
-    {
+    public void toggleEditor() {
         this.setEditing(!this.editing);
     }
 
-    public void setEditing(boolean editing)
-    {
+    public void setEditing(boolean editing) {
         this.editing = editing;
 
         this.primary.setColor(0);
@@ -121,88 +117,72 @@ public class UIPixelsEditor extends UICanvasEditor
 
         this.toolbar.setVisible(editing);
 
-        if (editing)
-        {
+        if (editing) {
             this.undoManager = new UndoManager<>();
             this.undoManager.setCallback(this::handleUndo);
-        }
-        else
-        {
+        } else {
             this.undoManager = null;
         }
 
         this.pixelsUndo = null;
     }
 
-    private void handleUndo(IUndo<Pixels> pixelsIUndo, boolean redo)
-    {
+    private void handleUndo(IUndo<Pixels> pixelsIUndo, boolean redo) {
         this.updateTexture();
     }
 
-    private void copyPixel()
-    {
+    private void copyPixel() {
         UIContext context = this.getContext();
         int pixelX = (int) Math.floor(this.scaleX.from(context.mouseX)) + this.w / 2;
         int pixelY = (int) Math.floor(this.scaleY.from(context.mouseY)) + this.h / 2;
         Color color = this.pixels.getColor(pixelX, pixelY);
 
-        if (color != null)
-        {
+        if (color != null) {
             Window.setClipboard(color.stringify());
 
             UIUtils.playClick();
         }
     }
 
-    private void swapColors()
-    {
+    private void swapColors() {
         int swap = this.primary.picker.color.getRGBColor();
 
         this.primary.setColor(this.secondary.picker.color.getRGBColor());
         this.secondary.setColor(swap);
     }
 
-    private void pickColor()
-    {
+    private void pickColor() {
         UIContext context = this.getContext();
         Vector2i pixel = this.getHoverPixel(context.mouseX, context.mouseY);
         Color color = this.pixels.getColor(pixel.x, pixel.y);
 
-        if (color != null)
-        {
+        if (color != null) {
             this.primary.setColor(color.getRGBColor());
         }
     }
 
-    protected void updateTexture()
-    {
+    protected void updateTexture() {
         this.pixels.rewindBuffer();
         this.temporary.bind();
         this.temporary.updateTexture(this.pixels);
     }
 
-    private void undo()
-    {
-        if (this.undoManager.undo(this.pixels))
-        {
+    private void undo() {
+        if (this.undoManager.undo(this.pixels)) {
             UIUtils.playClick();
         }
     }
 
-    private void redo()
-    {
-        if (this.undoManager.redo(this.pixels))
-        {
+    private void redo() {
+        if (this.undoManager.redo(this.pixels)) {
             UIUtils.playClick();
         }
     }
 
-    public void fillPixels(Pixels pixels)
-    {
+    public void fillPixels(Pixels pixels) {
         this.lastPixel = null;
 
-        if (this.temporary != null)
-        {
+        if (this.temporary != null) {
             this.temporary.delete();
             this.temporary = null;
         }
@@ -211,8 +191,7 @@ public class UIPixelsEditor extends UICanvasEditor
 
         this.pixels = pixels;
 
-        if (pixels != null)
-        {
+        if (pixels != null) {
             this.temporary = new Texture();
             this.temporary.setFilter(GL11.GL_NEAREST);
 
@@ -222,18 +201,15 @@ public class UIPixelsEditor extends UICanvasEditor
     }
 
     @Override
-    protected boolean isMouseButtonAllowed(int mouseButton)
-    {
+    protected boolean isMouseButtonAllowed(int mouseButton) {
         return super.isMouseButtonAllowed(mouseButton) || mouseButton == 1;
     }
 
     @Override
-    protected void startDragging(UIContext context)
-    {
+    protected void startDragging(UIContext context) {
         super.startDragging(context);
 
-        if (this.editing && (this.mouse == 0 || this.mouse == 1) && this.pixelsUndo == null)
-        {
+        if (this.editing && (this.mouse == 0 || this.mouse == 1) && this.pixelsUndo == null) {
             this.pixelsUndo = new PixelsUndo();
             this.drawColor = this.mouse == 1 ? new Color(0, 0, 0, 0) : this.primary.picker.color;
 
@@ -247,14 +223,11 @@ public class UIPixelsEditor extends UICanvasEditor
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
-        if (this.dragging && this.pixelsUndo != null)
-        {
+    public boolean subMouseReleased(UIContext context) {
+        if (this.dragging && this.pixelsUndo != null) {
             Vector2i hoverPixel = this.getHoverPixel(context.mouseX, context.mouseY);
 
-            if (Window.isShiftPressed() && this.lastPixel != null)
-            {
+            if (Window.isShiftPressed() && this.lastPixel != null) {
                 LineRasterizer rasterizer = new LineRasterizer(
                     new Vector2d(this.lastPixel.x, this.lastPixel.y),
                     new Vector2d(hoverPixel.x, hoverPixel.y)
@@ -264,8 +237,7 @@ public class UIPixelsEditor extends UICanvasEditor
                 rasterizer.setupRange(0F, 1F, 1F / (float) this.lastPixel.distance(hoverPixel));
                 rasterizer.solve(pixels);
 
-                for (Vector2i pixel : pixels)
-                {
+                for (Vector2i pixel : pixels) {
                     this.pixelsUndo.setColor(this.pixels, pixel.x, pixel.y, this.drawColor);
                 }
 
@@ -282,12 +254,11 @@ public class UIPixelsEditor extends UICanvasEditor
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {}
+    protected void renderBackground(UIContext context) {
+    }
 
     @Override
-    protected void renderCanvasFrame(UIContext context)
-    {
+    protected void renderCanvasFrame(UIContext context) {
         int x = -this.w / 2;
         int y = -this.h / 2;
         Area area = this.calculate(x, y, x + this.w, y + this.h);
@@ -305,15 +276,13 @@ public class UIPixelsEditor extends UICanvasEditor
             Colors.A50
         );
 
-        if (this.editing && this.dragging && (this.lastX != context.mouseX || this.lastY != context.mouseY) && (this.mouse == 0 || this.mouse == 1))
-        {
+        if (this.editing && this.dragging && (this.lastX != context.mouseX || this.lastY != context.mouseY) && (this.mouse == 0 || this.mouse == 1)) {
             Vector2i last = this.getHoverPixel(this.lastX, this.lastY);
             Vector2i current = this.getHoverPixel(context.mouseX, context.mouseY);
 
             double distance = Math.max(new Vector2d(current.x, current.y).distance(last.x, last.y), 1);
 
-            for (int i = 0; i <= distance; i++)
-            {
+            for (int i = 0; i <= distance; i++) {
                 int xx = (int) Interpolations.lerp(last.x, current.x, i / distance);
                 int yy = (int) Interpolations.lerp(last.y, current.y, i / distance);
 
@@ -328,14 +297,12 @@ public class UIPixelsEditor extends UICanvasEditor
         }
     }
 
-    protected Texture getRenderTexture(UIContext context)
-    {
+    protected Texture getRenderTexture(UIContext context) {
         return this.temporary;
     }
 
     @Override
-    protected void renderCheckboard(UIContext context, Area area)
-    {
+    protected void renderCheckboard(UIContext context, Area area) {
         int brightness = (int) (this.brightness.getValue() * 255);
         int color = Colors.setA(brightness << 16 | brightness << 8 | brightness, 1F);
 
@@ -343,12 +310,10 @@ public class UIPixelsEditor extends UICanvasEditor
     }
 
     @Override
-    protected void renderForeground(UIContext context)
-    {
+    protected void renderForeground(UIContext context) {
         super.renderForeground(context);
 
-        if (this.editing)
-        {
+        if (this.editing) {
             context.batcher.box(this.area.x, this.area.y, this.area.ex(), this.area.y + 10, Colors.A50);
             context.batcher.gradientVBox(this.area.x, this.area.y + 10, this.area.ex(), this.area.y + 30, Colors.A50, 0);
         }
@@ -361,8 +326,7 @@ public class UIPixelsEditor extends UICanvasEditor
         int b = 0;
         int a = 0;
 
-        if (color != null)
-        {
+        if (color != null) {
             r = (int) Math.floor(color.r * 255);
             g = (int) Math.floor(color.g * 255);
             b = (int) Math.floor(color.b * 255);
@@ -375,10 +339,9 @@ public class UIPixelsEditor extends UICanvasEditor
         };
 
         int x = this.area.x + 10;
-        int y = this.area.ey() - context.font.getHeight() - 10 - (information.length - 1)* 14;
+        int y = this.area.ey() - context.font.getHeight() - 10 - (information.length - 1) * 14;
 
-        for (String line : information)
-        {
+        for (String line : information) {
             context.batcher.textCard(context.font, line, x, y);
 
             y += 14;

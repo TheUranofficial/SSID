@@ -4,23 +4,17 @@ import mchorse.bbs.BBS;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.forms.FormArchitect;
-import mchorse.bbs.forms.properties.AnchorProperty;
-import mchorse.bbs.forms.properties.BooleanProperty;
-import mchorse.bbs.forms.properties.FloatProperty;
-import mchorse.bbs.forms.properties.IFormProperty;
-import mchorse.bbs.forms.properties.StringProperty;
-import mchorse.bbs.forms.properties.TransformProperty;
+import mchorse.bbs.forms.properties.*;
 import mchorse.bbs.forms.renderers.FormRenderer;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.math.IInterpolation;
+import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.world.entities.Entity;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Form implements IMapSerializable
-{
+public abstract class Form implements IMapSerializable {
     private Form parent;
 
     public final StringProperty name = new StringProperty(this, "name", "");
@@ -39,8 +33,7 @@ public abstract class Form implements IMapSerializable
     protected String cachedID;
     protected final Map<String, IFormProperty> properties = new HashMap<>();
 
-    public Form()
-    {
+    public Form() {
         this.name.cantAnimate();
 
         this.register(this.name);
@@ -60,38 +53,31 @@ public abstract class Form implements IMapSerializable
         this.register(this.hitboxEyeHeight);
     }
 
-    protected void register(IFormProperty property)
-    {
-        if (this.properties.containsKey(property.getKey()))
-        {
+    protected void register(IFormProperty property) {
+        if (this.properties.containsKey(property.getKey())) {
             throw new IllegalStateException("Property " + property.getKey() + " was already registered for form by ID " + this.getId() + "!");
         }
 
         this.properties.put(property.getKey(), property);
     }
 
-    public Map<String, IFormProperty> getProperties()
-    {
+    public Map<String, IFormProperty> getProperties() {
         return Collections.unmodifiableMap(properties);
     }
 
     /**
      * Only body parts can set form's parent.
      */
-    void setParent(Form parent)
-    {
+    void setParent(Form parent) {
         this.parent = parent;
     }
 
-    public Form getParent()
-    {
+    public Form getParent() {
         return this.parent;
     }
 
-    public FormRenderer getRenderer()
-    {
-        if (this.renderer == null)
-        {
+    public FormRenderer getRenderer() {
+        if (this.renderer == null) {
             this.renderer = this.createRenderer();
         }
 
@@ -102,58 +88,48 @@ public abstract class Form implements IMapSerializable
 
     /* ID and display name */
 
-    public String getId()
-    {
-        if (this.cachedID == null)
-        {
+    public String getId() {
+        if (this.cachedID == null) {
             this.cachedID = BBS.getForms().getType(this).toString();
         }
 
         return this.cachedID;
     }
 
-    public String getIdOrName()
-    {
+    public String getIdOrName() {
         String name = this.name.get();
 
         return name.isEmpty() ? this.getId() : name;
     }
 
-    public final String getDisplayName()
-    {
+    public final String getDisplayName() {
         String name = this.name.get();
 
-        if (!name.isEmpty())
-        {
+        if (!name.isEmpty()) {
             return name;
         }
 
         return this.getDefaultDisplayName();
     }
 
-    protected String getDefaultDisplayName()
-    {
+    protected String getDefaultDisplayName() {
         return this.getId();
     }
 
     /* Update */
 
-    public void update(Entity entity)
-    {
+    public void update(Entity entity) {
         this.updateHitbox(entity);
 
         this.parts.update(entity);
 
-        for (IFormProperty property : this.properties.values())
-        {
+        for (IFormProperty property : this.properties.values()) {
             property.update();
         }
     }
 
-    public void updateHitbox(Entity entity)
-    {
-        if (this.hitbox.get() && this.parent == null)
-        {
+    public void updateHitbox(Entity entity) {
+        if (this.hitbox.get() && this.parent == null) {
             entity.basic.hitboxWidth = this.hitboxWidth.get();
             entity.basic.hitboxHeight = this.hitboxHeight.get();
             entity.basic.eyeHeight = this.hitboxEyeHeight.get();
@@ -163,14 +139,11 @@ public abstract class Form implements IMapSerializable
 
     /* Tweening */
 
-    public void tween(Form form, int duration, IInterpolation interpolation, int offset, boolean playing)
-    {
-        for (IFormProperty property : this.properties.values())
-        {
+    public void tween(Form form, int duration, IInterpolation interpolation, int offset, boolean playing) {
+        for (IFormProperty property : this.properties.values()) {
             IFormProperty formProperty = form.properties.get(property.getKey());
 
-            if (formProperty != null)
-            {
+            if (formProperty != null) {
                 property.tween(formProperty.get(), property.get(), duration, interpolation, offset, playing);
             }
         }
@@ -180,39 +153,31 @@ public abstract class Form implements IMapSerializable
 
     /* Data comparison and (de)serialization */
 
-    public final Form copy()
-    {
+    public final Form copy() {
         FormArchitect forms = BBS.getForms();
 
         return forms.fromData(forms.toData(this));
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof Form)
-        {
+        if (obj instanceof Form) {
             Form form = (Form) obj;
 
-            if (!this.parts.equals(form.parts))
-            {
+            if (!this.parts.equals(form.parts)) {
                 return false;
             }
 
-            if (this.properties.size() != form.properties.size())
-            {
+            if (this.properties.size() != form.properties.size()) {
                 return false;
             }
 
-            for (String key : this.properties.keySet())
-            {
-                if (!this.properties.get(key).equals(form.properties.get(key)))
-                {
+            for (String key : this.properties.keySet()) {
+                if (!this.properties.get(key).equals(form.properties.get(key))) {
                     return false;
                 }
             }
@@ -222,23 +187,19 @@ public abstract class Form implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.put("bodyParts", this.parts.toData());
 
-        for (IFormProperty property : this.properties.values())
-        {
+        for (IFormProperty property : this.properties.values()) {
             property.toData(data);
         }
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.parts.fromData(data.getMap("bodyParts"));
 
-        for (IFormProperty property : this.properties.values())
-        {
+        for (IFormProperty property : this.properties.values()) {
             property.fromData(data);
         }
     }

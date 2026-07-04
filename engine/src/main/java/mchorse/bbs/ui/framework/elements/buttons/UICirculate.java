@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class UICirculate extends UIClickable<UICirculate>
-{
+public class UICirculate extends UIClickable<UICirculate> {
     public IKey label;
 
     public boolean custom;
@@ -22,77 +21,63 @@ public class UICirculate extends UIClickable<UICirculate>
     protected Set<Integer> disabled = new HashSet<>();
     protected int value = 0;
 
-    public UICirculate(Consumer<UICirculate> callback)
-    {
+    public UICirculate(Consumer<UICirculate> callback) {
         super(callback);
 
         this.h(20);
     }
 
-    public UICirculate color(int color)
-    {
+    public UICirculate color(int color) {
         this.custom = true;
         this.customColor = color & Colors.RGB;
 
         return this;
     }
 
-    public List<IKey> getLabels()
-    {
+    public List<IKey> getLabels() {
         return this.labels;
     }
 
-    public void addLabel(IKey label)
-    {
-        if (this.labels.isEmpty())
-        {
+    public void addLabel(IKey label) {
+        if (this.labels.isEmpty()) {
             this.label = label;
         }
 
         this.labels.add(label);
     }
 
-    public void disable(int value)
-    {
-        if (this.disabled.size() < this.labels.size())
-        {
+    public void disable(int value) {
+        if (this.disabled.size() < this.labels.size()) {
             this.disabled.add(value);
         }
     }
 
-    public int getValue()
-    {
+    public int getValue() {
         return this.value;
     }
 
-    public String getLabel()
-    {
+    public String getLabel() {
         return this.labels.get(this.value).get();
     }
 
-    public void setValue(int value)
-    {
+    public void setValue(int value) {
         this.setValue(value, 1);
     }
 
-    public void setValue(int value, int direction)
-    {
+    public void setValue(int value, int direction) {
         this.value = value;
 
-        if (this.disabled.contains(value))
-        {
+        if (this.disabled.contains(value)) {
             this.setValue(value + direction, direction);
 
             return;
         }
 
-        if (this.value > this.labels.size() - 1)
-        {
+        if (this.value > this.labels.size() - 1) {
             this.value = 0;
         }
 
-        if (this.value < 0)
-        {
+        if (this.value < 0) {
             this.value = this.labels.size() - 1;
         }
 
@@ -100,14 +85,12 @@ public class UICirculate extends UIClickable<UICirculate>
     }
 
     @Override
-    protected boolean isAllowed(int mouseButton)
-    {
+    protected boolean isAllowed(int mouseButton) {
         return mouseButton == 0 || mouseButton == 1;
     }
 
     @Override
-    protected void click(int mouseButton)
-    {
+    protected void click(int mouseButton) {
         int direction = mouseButton == 0 ? 1 : -1;
 
         this.setValue(this.value + direction, direction);
@@ -116,18 +99,15 @@ public class UICirculate extends UIClickable<UICirculate>
     }
 
     @Override
-    protected UICirculate get()
-    {
+    protected UICirculate get() {
         return this;
     }
 
     @Override
-    protected void renderSkin(UIContext context)
-    {
+    protected void renderSkin(UIContext context) {
         int color = Colors.A100 | (this.custom ? this.customColor : BBSSettings.primaryColor.get());
 
-        if (this.hover)
-        {
+        if (this.hover) {
             color = Colors.mulRGB(color, 0.85F);
         }
 

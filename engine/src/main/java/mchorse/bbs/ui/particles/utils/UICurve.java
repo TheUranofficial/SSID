@@ -25,8 +25,7 @@ import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector2d;
 import org.lwjgl.opengl.GL11;
 
-public class UICurve extends UIElement
-{
+public class UICurve extends UIElement {
     private UIParticleSchemeSection section;
     private UITrackpad value;
 
@@ -41,8 +40,7 @@ public class UICurve extends UIElement
     /* x = min, y = max */
     private Vector2d range = new Vector2d();
 
-    public UICurve(UIParticleSchemeSection section)
-    {
+    public UICurve(UIParticleSchemeSection section) {
         this.section = section;
 
         this.value = new UITrackpad((v) ->
@@ -59,24 +57,19 @@ public class UICurve extends UIElement
         {
             menu.action(Icons.ADD, UIKeys.SNOWSTORM_CURVES_CONTEXT_ADD, this::addPoint);
 
-            if (this.index >= 0)
-            {
+            if (this.index >= 0) {
                 menu.action(Icons.REMOVE, UIKeys.SNOWSTORM_CURVES_CONTEXT_REMOVE, this::removePoint);
             }
         });
     }
 
-    private void addPoint()
-    {
+    private void addPoint() {
         int index = this.index + 1;
 
-        if (index < this.curve.nodes.size())
-        {
+        if (index < this.curve.nodes.size()) {
             this.curve.nodes.add(index, MolangParser.ZERO);
             this.setIndex(index);
-        }
-        else
-        {
+        } else {
             this.curve.nodes.add(MolangParser.ZERO);
             this.setIndex(this.curve.nodes.size() - 1);
         }
@@ -84,10 +77,8 @@ public class UICurve extends UIElement
         this.section.dirty();
     }
 
-    private void removePoint()
-    {
-        if (this.index < 0)
-        {
+    private void removePoint() {
+        if (this.index < 0) {
             return;
         }
 
@@ -96,16 +87,14 @@ public class UICurve extends UIElement
         this.section.dirty();
     }
 
-    public void fill(ParticleCurve curve)
-    {
+    public void fill(ParticleCurve curve) {
         this.curve = curve;
 
         this.setIndex(-1);
         this.updateRange();
     }
 
-    private void setIndex(int i)
-    {
+    private void setIndex(int i) {
         this.index = i;
 
         boolean isValid = i >= 0 && i < this.curve.nodes.size();
@@ -113,14 +102,12 @@ public class UICurve extends UIElement
         this.value.setVisible(true);
         this.value.setEnabled(isValid);
 
-        if (isValid)
-        {
+        if (isValid) {
             this.value.setValue(this.curve.nodes.get(i).get());
         }
     }
 
-    private Vector2d getVector(int index, double min, double max)
-    {
+    private Vector2d getVector(int index, double min, double max) {
         index = MathUtils.clamp(index, 0, this.curve.nodes.size() - 1);
 
         MolangExpression expression = this.curve.nodes.get(index);
@@ -133,13 +120,11 @@ public class UICurve extends UIElement
         return new Vector2d(x, y);
     }
 
-    private void updateRange()
-    {
+    private void updateRange() {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
 
-        for (int i = 0; i < this.curve.nodes.size(); i++)
-        {
+        for (int i = 0; i < this.curve.nodes.size(); i++) {
             MolangExpression expression = this.curve.nodes.get(i);
             double value = expression.get();
 
@@ -151,8 +136,7 @@ public class UICurve extends UIElement
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         this.graph.copy(this.area);
@@ -163,20 +147,16 @@ public class UICurve extends UIElement
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 0)
-        {
-            for (int i = 0; i < this.curve.nodes.size(); i++)
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 0) {
+            for (int i = 0; i < this.curve.nodes.size(); i++) {
                 Vector2d point = this.getVector(i, this.range.x, this.range.y);
 
                 double dx = point.x - context.mouseX;
                 double dy = point.y - context.mouseY;
                 double d = dx * dx + dy * dy;
 
-                if (d <= 25)
-                {
+                if (d <= 25) {
                     this.setIndex(i);
 
                     this.dragging = true;
@@ -196,10 +176,8 @@ public class UICurve extends UIElement
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
-        if (this.moving)
-        {
+    public boolean subMouseReleased(UIContext context) {
+        if (this.moving) {
             this.updateRange();
         }
 
@@ -210,12 +188,10 @@ public class UICurve extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.area.render(context.batcher, Colors.A50);
 
-        if (this.curve != null)
-        {
+        if (this.curve != null) {
             this.handleDragging(context);
 
             context.batcher.clip(this.area, context);
@@ -226,22 +202,18 @@ public class UICurve extends UIElement
         super.render(context);
     }
 
-    private void handleDragging(UIContext context)
-    {
-        if (this.dragging && !this.moving)
-        {
+    private void handleDragging(UIContext context) {
+        if (this.dragging && !this.moving) {
             int dx = context.mouseX - this.lastX;
             int dy = context.mouseY - this.lastY;
             int d = dx * dx + dy * dy;
 
-            if (d > 9)
-            {
+            if (d > 9) {
                 this.moving = true;
             }
         }
 
-        if (this.moving)
-        {
+        if (this.moving) {
             double factor = -(context.mouseY - this.graph.ey()) / (double) this.graph.h;
             double value = this.range.x + factor * (this.range.y - this.range.x);
 
@@ -251,8 +223,7 @@ public class UICurve extends UIElement
         }
     }
 
-    private void drawGraph(UIContext context)
-    {
+    private void drawGraph(UIContext context) {
         int c = this.curve.nodes.size();
 
         VAOBuilder builder = context.batcher.begin(GL11.GL_LINES, VBOAttributes.VERTEX_RGBA_2D, null);
@@ -271,8 +242,7 @@ public class UICurve extends UIElement
         builder.xy(this.graph.ex(), this.area.y).rgba(0.5F, 0.5F, 0.5F, 0.5F);
         builder.xy(this.graph.ex(), this.area.ey()).rgba(0.5F, 0.5F, 0.5F, 0.5F);
 
-        if (this.curve.type == ParticleCurveType.HERMITE && c >= 4)
-        {
+        if (this.curve.type == ParticleCurveType.HERMITE && c >= 4) {
             Vector2d first = this.getVector(1, this.range.x, this.range.y);
             Vector2d last = this.getVector(c - 2, this.range.x, this.range.y);
 
@@ -289,36 +259,29 @@ public class UICurve extends UIElement
 
         color.set(BBSSettings.primaryColor.get(), false);
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             Vector2d v1 = this.getVector(i, this.range.x, this.range.y);
             Vector2d v2 = this.getVector(i + 1, this.range.x, this.range.y);
             boolean last = i == c - 1;
 
-            if (this.curve.type == ParticleCurveType.LINEAR)
-            {
+            if (this.curve.type == ParticleCurveType.LINEAR) {
                 line.add((float) v1.x, (float) v1.y);
 
-                if (last)
-                {
+                if (last) {
                     line.add((float) v2.x, (float) v2.y);
                 }
-            }
-            else
-            {
+            } else {
                 Vector2d v0 = this.getVector(i - 1, this.range.x, this.range.y);
                 Vector2d v3 = this.getVector(i + 2, this.range.x, this.range.y);
                 final double d = 5;
 
-                for (int j = 0; j < d; j++)
-                {
+                for (int j = 0; j < d; j++) {
                     int x1 = (int) Interpolations.lerp(v1.x, v2.x, j / d);
                     int vy1 = (int) Interpolations.cubicHermite(v0.y, v1.y, v2.y, v3.y, j / d);
 
                     line.add(x1, vy1);
 
-                    if (last)
-                    {
+                    if (last) {
                         int x2 = (int) Interpolations.lerp(v1.x, v2.x, (j + 1) / d);
                         int vy2 = (int) Interpolations.cubicHermite(v0.y, v1.y, v2.y, v3.y, (j + 1) / d);
 
@@ -330,8 +293,7 @@ public class UICurve extends UIElement
 
         line.render(context.batcher, SolidColorLineRenderer.get(color.r, color.g, color.b, 1F));
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             Vector2d vector = this.getVector(i, this.range.x, this.range.y);
             int x = (int) vector.x;
             int y = (int) vector.y;

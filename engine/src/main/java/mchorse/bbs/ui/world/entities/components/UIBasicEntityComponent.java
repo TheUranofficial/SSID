@@ -8,16 +8,14 @@ import mchorse.bbs.ui.world.entities.UIVector3d;
 import mchorse.bbs.world.entities.components.BasicComponent;
 import org.joml.Vector3d;
 
-public class UIBasicEntityComponent extends UIEntityComponent<BasicComponent>
-{
+public class UIBasicEntityComponent extends UIEntityComponent<BasicComponent> {
     public UITextbox name;
     public UIVector3d position;
     public UIVector3d rotation;
     public UIVector3d velocity;
     public UITrackpad speed;
 
-    public UIBasicEntityComponent(BasicComponent component)
-    {
+    public UIBasicEntityComponent(BasicComponent component) {
         super(component);
 
         this.name = new UITextbox(1000, (t) -> this.component.name = t);

@@ -5,28 +5,22 @@ import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.StringType;
 import mchorse.bbs.settings.values.base.BaseValueBasic;
 
-public class ValueInterpolationType extends BaseValueBasic<InterpolationType>
-{
-    public ValueInterpolationType(String id)
-    {
+public class ValueInterpolationType extends BaseValueBasic<InterpolationType> {
+    public ValueInterpolationType(String id) {
         super(id, InterpolationType.HERMITE);
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new StringType(this.value.name);
     }
 
     @Override
-    public void fromData(BaseType base)
-    {
+    public void fromData(BaseType base) {
         String key = base.asString();
 
-        for (InterpolationType type : InterpolationType.values())
-        {
-            if (type.name.equals(key))
-            {
+        for (InterpolationType type : InterpolationType.values()) {
+            if (type.name.equals(key)) {
                 this.value = type;
 
                 break;

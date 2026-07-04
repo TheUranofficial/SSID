@@ -5,26 +5,21 @@ import java.util.List;
 
 /**
  * Compound undo
- *
+ * <p>
  * This generalized undo element allows to undo/redo multiple undo/redos
  * at a time
  */
-public class CompoundUndo <T> implements IUndo<T>
-{
+public class CompoundUndo<T> implements IUndo<T> {
     private List<IUndo<T>> undos = new ArrayList<>();
     private boolean mergable = true;
 
-    public CompoundUndo(List<IUndo<T>> undos)
-    {
+    public CompoundUndo(List<IUndo<T>> undos) {
         this.undos.addAll(undos);
     }
 
-    public CompoundUndo(IUndo<T>... undos)
-    {
-        for (IUndo<T> undo : undos)
-        {
-            if (undo == null)
-            {
+    public CompoundUndo(IUndo<T>... undos) {
+        for (IUndo<T> undo : undos) {
+            if (undo == null) {
                 continue;
             }
 
@@ -32,24 +27,20 @@ public class CompoundUndo <T> implements IUndo<T>
         }
     }
 
-    public List<IUndo<T>> getUndos()
-    {
+    public List<IUndo<T>> getUndos() {
         return this.undos;
     }
 
     /**
      * Get first undo matching given class
      */
-    public IUndo<T> getFirst(Class<? extends IUndo<T>> clazz)
-    {
+    public IUndo<T> getFirst(Class<? extends IUndo<T>> clazz) {
         int i = 0;
 
-        while (i < this.undos.size())
-        {
+        while (i < this.undos.size()) {
             IUndo<T> undo = this.undos.get(i);
 
-            if (clazz.isAssignableFrom(undo.getClass()))
-            {
+            if (clazz.isAssignableFrom(undo.getClass())) {
                 return undo;
             }
 
@@ -62,16 +53,13 @@ public class CompoundUndo <T> implements IUndo<T>
     /**
      * Get last undo matching given class
      */
-    public IUndo<T> getLast(Class<? extends IUndo<T>> clazz)
-    {
+    public IUndo<T> getLast(Class<? extends IUndo<T>> clazz) {
         int i = this.undos.size() - 1;
 
-        while (i >= 0)
-        {
+        while (i >= 0) {
             IUndo<T> undo = this.undos.get(i);
 
-            if (clazz.isAssignableFrom(undo.getClass()))
-            {
+            if (clazz.isAssignableFrom(undo.getClass())) {
                 return undo;
             }
 
@@ -81,12 +69,9 @@ public class CompoundUndo <T> implements IUndo<T>
         return null;
     }
 
-    public boolean has(Class<? extends IUndo<T>> clazz)
-    {
-        for (IUndo<T> undo : this.undos)
-        {
-            if (clazz.isAssignableFrom(undo.getClass()))
-            {
+    public boolean has(Class<? extends IUndo<T>> clazz) {
+        for (IUndo<T> undo : this.undos) {
+            if (clazz.isAssignableFrom(undo.getClass())) {
                 return true;
             }
         }
@@ -95,24 +80,19 @@ public class CompoundUndo <T> implements IUndo<T>
     }
 
     @Override
-    public IUndo<T> noMerging()
-    {
+    public IUndo<T> noMerging() {
         this.mergable = false;
 
         return this;
     }
 
     @Override
-    public boolean isMergeable(IUndo<T> undo)
-    {
-        if (this.mergable && undo instanceof CompoundUndo && ((CompoundUndo<T>) undo).undos.size() == this.undos.size())
-        {
+    public boolean isMergeable(IUndo<T> undo) {
+        if (this.mergable && undo instanceof CompoundUndo && ((CompoundUndo<T>) undo).undos.size() == this.undos.size()) {
             CompoundUndo<T> compound = (CompoundUndo<T>) undo;
 
-            for (int i = 0; i < this.undos.size(); i++)
-            {
-                if (!this.undos.get(i).isMergeable(compound.undos.get(i)))
-                {
+            for (int i = 0; i < this.undos.size(); i++) {
+                if (!this.undos.get(i).isMergeable(compound.undos.get(i))) {
                     return false;
                 }
             }
@@ -124,36 +104,29 @@ public class CompoundUndo <T> implements IUndo<T>
     }
 
     @Override
-    public void merge(IUndo<T> undo)
-    {
+    public void merge(IUndo<T> undo) {
         CompoundUndo<T> theUndo = (CompoundUndo<T>) undo;
 
-        for (int i = 0, c = this.undos.size(); i < c; i++)
-        {
+        for (int i = 0, c = this.undos.size(); i < c; i++) {
             IUndo<T> otherChildUndo = theUndo.undos.get(i);
             IUndo<T> myUndo = this.undos.get(i);
 
-            if (myUndo.isMergeable(otherChildUndo))
-            {
+            if (myUndo.isMergeable(otherChildUndo)) {
                 myUndo.merge(otherChildUndo);
             }
         }
     }
 
     @Override
-    public void undo(T context)
-    {
-        for (int i = this.undos.size() - 1; i >= 0; i--)
-        {
+    public void undo(T context) {
+        for (int i = this.undos.size() - 1; i >= 0; i--) {
             this.undos.get(i).undo(context);
         }
     }
 
     @Override
-    public void redo(T context)
-    {
-        for (IUndo<T> undo : this.undos)
-        {
+    public void redo(T context) {
+        for (IUndo<T> undo : this.undos) {
             undo.redo(context);
         }
     }

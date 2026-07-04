@@ -18,11 +18,10 @@ import java.util.List;
 
 /**
  * Mouse renderer
- * 
- * This class is responsible for rendering a mouse pointer on the screen 
+ * <p>
+ * This class is responsible for rendering a mouse pointer on the screen
  */
-public class InputRenderer
-{
+public class InputRenderer {
     private static boolean disabledForFrame = false;
 
     private List<PressedKey> pressedKeys = new ArrayList<>();
@@ -33,34 +32,28 @@ public class InputRenderer
     private long lastDWheelTime;
     private int lastDWheelScroll;
 
-    public static void disable()
-    {
+    public static void disable() {
         disabledForFrame = true;
     }
 
     /* Shift -6 and -8 to get it into the center */
-    public static void renderMouseButtons(Batcher2D batcher, int x, int y, int scroll, boolean left, boolean right, boolean middle, boolean isScrolling)
-    {
+    public static void renderMouseButtons(Batcher2D batcher, int x, int y, int scroll, boolean left, boolean right, boolean middle, boolean isScrolling) {
         batcher.icon(Icons.MOUSE_BODY, x - 1, y);
 
-        if (left)
-        {
+        if (left) {
             batcher.icon(Icons.MOUSE_LMB, x, y + 1);
         }
 
-        if (right)
-        {
+        if (right) {
             batcher.icon(Icons.MOUSE_RMB, x + 6, y + 1);
         }
 
-        if (middle || isScrolling)
-        {
+        if (middle || isScrolling) {
             int offset = 0;
 
             y += 1;
 
-            if (isScrolling)
-            {
+            if (isScrolling) {
                 offset = scroll < 0 ? 1 : -1;
             }
 
@@ -70,8 +63,7 @@ public class InputRenderer
         }
     }
 
-    public static void renderMouseWheel(Batcher2D batcher, int x, int y, int scroll, long current)
-    {
+    public static void renderMouseWheel(Batcher2D batcher, int x, int y, int scroll, long current) {
         int color = BBSSettings.primaryColor.get();
 
         batcher.dropShadow(x, y, x + 4, y + 16, 2, Colors.A50 | color, color);
@@ -80,23 +72,19 @@ public class InputRenderer
 
         int offset = (int) ((current % 1000 / 50) % 4);
 
-        if (scroll >= 0)
-        {
+        if (scroll >= 0) {
             offset = 3 - offset;
         }
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             batcher.box(x, y + offset, x + 4, y + offset + 1, 0x88555555);
 
             y += 4;
         }
     }
 
-    public void render(UIBaseMenu menu, int mouseX, int mouseY)
-    {
-        if (disabledForFrame)
-        {
+    public void render(UIBaseMenu menu, int mouseX, int mouseY) {
+        if (disabledForFrame) {
             disabledForFrame = false;
 
             return;
@@ -104,8 +92,7 @@ public class InputRenderer
 
         this.renderMouse(menu.context.batcher, mouseX, mouseY);
 
-        if (BBSSettings.enableKeystrokeRendering.get())
-        {
+        if (BBSSettings.enableKeystrokeRendering.get()) {
             this.renderKeys(menu, mouseX, mouseY);
         }
     }
@@ -113,15 +100,12 @@ public class InputRenderer
     /**
      * Draw mouse cursor
      */
-    private void renderMouse(Batcher2D batcher, int x, int y)
-    {
-        if (BBSSettings.enableCursorRendering.get())
-        {
+    private void renderMouse(Batcher2D batcher, int x, int y) {
+        if (BBSSettings.enableCursorRendering.get()) {
             batcher.icon(Icons.CURSOR, x, y);
         }
 
-        if (BBSSettings.enableMouseButtonRendering.get())
-        {
+        if (BBSSettings.enableMouseButtonRendering.get()) {
             boolean left = Window.isMouseButtonPressed(0);
             boolean right = Window.isMouseButtonPressed(1);
             boolean middle = Window.isMouseButtonPressed(2);
@@ -130,27 +114,23 @@ public class InputRenderer
             long current = System.currentTimeMillis();
             boolean isScrolling = scroll != 0 || current - this.lastDWheelTime < 500;
 
-            if (scroll != 0)
-            {
+            if (scroll != 0) {
                 this.lastDWheelTime = current;
                 this.lastDWheelScroll = scroll;
             }
 
-            if (scroll == 0 && isScrolling)
-            {
+            if (scroll == 0 && isScrolling) {
                 scroll = this.lastDWheelScroll;
             }
 
             x += 16;
             y += 2;
 
-            if (left || right || middle || isScrolling)
-            {
+            if (left || right || middle || isScrolling) {
                 renderMouseButtons(batcher, x, y, scroll, left, right, middle, isScrolling);
             }
 
-            if (isScrolling)
-            {
+            if (isScrolling) {
                 x += 16;
 
                 renderMouseWheel(batcher, x, y, scroll, current);
@@ -161,35 +141,26 @@ public class InputRenderer
     /**
      * Render pressed key strokes
      */
-    private void renderKeys(UIBaseMenu menu, int mouseX, int mouseY)
-    {
+    private void renderKeys(UIBaseMenu menu, int mouseX, int mouseY) {
         float lqx = Math.round(mouseX / (float) menu.width);
         float lqy = Math.round(mouseY / (float) menu.height);
         int mode = BBSSettings.keystrokeMode.get();
 
-        if (lqx == this.currentQX && lqy == this.currentQY)
-        {
+        if (lqx == this.currentQX && lqy == this.currentQY) {
             this.currentQX = this.lastQX;
             this.currentQY = this.lastQY;
         }
 
-        if (mode == 1)
-        {
+        if (mode == 1) {
             this.currentQX = 0;
             this.currentQY = 1;
-        }
-        else if (mode == 2)
-        {
+        } else if (mode == 2) {
             this.currentQX = 1;
             this.currentQY = 1;
-        }
-        else if (mode == 3)
-        {
+        } else if (mode == 3) {
             this.currentQX = 1;
             this.currentQY = 0;
-        }
-        else if (mode == 4)
-        {
+        } else if (mode == 4) {
             this.currentQX = 0;
             this.currentQY = 0;
         }
@@ -205,16 +176,12 @@ public class InputRenderer
         FontRenderer font = menu.context.font;
         Iterator<PressedKey> it = this.pressedKeys.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             PressedKey key = it.next();
 
-            if (key.hasExpired())
-            {
+            if (key.hasExpired()) {
                 it.remove();
-            }
-            else
-            {
+            } else {
                 int x = mx + (qx < 0.5F ? key.x : -(key.x + key.width + 16));
                 int y = my + (int) (Interpolation.EXP_INOUT.interpolate(0, 1, key.getFactor()) * 50 * fy);
                 int fw = 16 + key.width;
@@ -232,36 +199,28 @@ public class InputRenderer
         this.lastQY = lqy;
     }
 
-    public void keyPressed(UIContext context, int key)
-    {
-        if (key < 0 || context == null || context.font == null)
-        {
+    public void keyPressed(UIContext context, int key) {
+        if (key < 0 || context == null || context.font == null) {
             return;
         }
 
         boolean inputUnfocused = context.activeElement == null;
 
-        if (inputUnfocused)
-        {
+        if (inputUnfocused) {
             PressedKey last = null;
             int offset = -1000;
 
-            for (PressedKey pressed : this.pressedKeys)
-            {
-                if (pressed.key == key)
-                {
+            for (PressedKey pressed : this.pressedKeys) {
+                if (pressed.key == key) {
                     offset = pressed.increment(context.font);
-                }
-                else if (offset != -1000)
-                {
+                } else if (offset != -1000) {
                     pressed.x += offset;
                 }
 
                 last = pressed;
             }
 
-            if (offset != -1000)
-            {
+            if (offset != -1000) {
                 return;
             }
 
@@ -271,8 +230,7 @@ public class InputRenderer
 
             newKey.setupName(context.font);
 
-            if (newKey.x + newKey.width + offset > context.menu.width - offset * 2)
-            {
+            if (newKey.x + newKey.width + offset > context.menu.width - offset * 2) {
                 newKey.x = 0;
             }
 
@@ -283,8 +241,7 @@ public class InputRenderer
     /**
      * Information about pressed key strokes
      */
-    public static class PressedKey
-    {
+    public static class PressedKey {
         public static int INDEX = 0;
 
         public int key;
@@ -296,51 +253,43 @@ public class InputRenderer
         public int i;
         public int times = 1;
 
-        public PressedKey(int key, int x)
-        {
+        public PressedKey(int key, int x) {
             this.key = key;
             this.time = System.currentTimeMillis();
             this.x = x;
 
-            this.i = INDEX ++;
+            this.i = INDEX++;
         }
 
-        public void setupName(FontRenderer font)
-        {
+        public void setupName(FontRenderer font) {
             this.name = KeyCodes.getName(this.key);
             this.width = font.getWidth(this.name) - 1;
         }
 
-        public float getFactor()
-        {
+        public float getFactor() {
             return (System.currentTimeMillis() - this.time - 500) / 1000F;
         }
 
-        public boolean hasExpired()
-        {
-            if (Window.isKeyPressed(this.key))
-            {
+        public boolean hasExpired() {
+            if (Window.isKeyPressed(this.key)) {
                 this.time = System.currentTimeMillis();
             }
 
             return System.currentTimeMillis() - this.time > 1500;
         }
 
-        public String getLabel()
-        {
-            if (this.times > 1)
-            {
+        public String getLabel() {
+            if (this.times > 1) {
                 return this.name + " (" + this.times + ")";
             }
 
             return this.name;
         }
 
-        public int increment(FontRenderer font)
-        {
+        public int increment(FontRenderer font) {
             int lastWidth = this.width;
 
-            this.times ++;
+            this.times++;
             this.width = font.getWidth(this.getLabel());
 
             return this.width - lastWidth;

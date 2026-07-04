@@ -5,47 +5,39 @@ import mchorse.bbs.data.DataToString;
 
 import java.io.IOException;
 
-public class StringType extends BaseType
-{
+public class StringType extends BaseType {
     public String value = "";
 
-    public StringType()
-    {}
+    public StringType() {
+    }
 
-    public StringType(String value)
-    {
+    public StringType(String value) {
         this.value = value;
     }
 
     @Override
-    public byte getTypeId()
-    {
+    public byte getTypeId() {
         return BaseType.TYPE_STRING;
     }
 
     @Override
-    public BaseType copy()
-    {
+    public BaseType copy() {
         return new StringType(this.value);
     }
 
     @Override
-    public void read(DataStorageContext context) throws IOException
-    {
+    public void read(DataStorageContext context) throws IOException {
         this.value = context.in.readUTF();
     }
 
     @Override
-    public void write(DataStorageContext context) throws IOException
-    {
+    public void write(DataStorageContext context) throws IOException {
         context.out.writeUTF(this.value);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof StringType)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof StringType) {
             return this.value.equals(((StringType) obj).value);
         }
 
@@ -53,8 +45,7 @@ public class StringType extends BaseType
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return DataToString.escapeQuoted(this.value);
     }
 }

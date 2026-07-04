@@ -12,21 +12,15 @@ import mchorse.bbs.utils.watchdog.WatchDogEvent;
 import mchorse.bbs.vox.VoxModelLoader;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ModelManager implements IDisposable, IWatchDogListener
-{
+public class ModelManager implements IDisposable, IWatchDogListener {
     public final Map<String, CubicModel> models = new HashMap<>();
     public final List<IModelLoader> loaders = new ArrayList<>();
     public final AssetProvider provider;
     public final MolangParser parser;
 
-    public ModelManager(AssetProvider provider)
-    {
+    public ModelManager(AssetProvider provider) {
         this.provider = provider;
         this.parser = new MolangParser();
 
@@ -36,10 +30,8 @@ public class ModelManager implements IDisposable, IWatchDogListener
         this.loaders.add(new VoxModelLoader());
     }
 
-    public CubicModel getModel(String id)
-    {
-        if (this.models.containsKey(id))
-        {
+    public CubicModel getModel(String id) {
+        if (this.models.containsKey(id)) {
             return this.models.get(id);
         }
 
@@ -47,29 +39,21 @@ public class ModelManager implements IDisposable, IWatchDogListener
         Link modelLink = Link.assets("models/" + id);
         Collection<Link> links = this.provider.getLinksFromPath(modelLink, false);
 
-        for (IModelLoader loader : this.loaders)
-        {
-            try
-            {
+        for (IModelLoader loader : this.loaders) {
+            try {
                 model = loader.load(id, this, modelLink, links);
 
-                if (model != null)
-                {
+                if (model != null) {
                     break;
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if (model == null)
-        {
+        if (model == null) {
             System.err.println("Model \"" + id + "\" wasn't loaded properly, or was loaded with no top level groups!");
-        }
-        else
-        {
+        } else {
             System.out.println("Model \"" + id + "\" was loaded!");
         }
 
@@ -79,11 +63,10 @@ public class ModelManager implements IDisposable, IWatchDogListener
     }
 
     @Override
-    public void delete()
-    {}
+    public void delete() {
+    }
 
-    public void reload()
-    {
+    public void reload() {
         this.delete();
         this.models.clear();
     }
@@ -93,17 +76,14 @@ public class ModelManager implements IDisposable, IWatchDogListener
      * solution that would only work for the cubic model loader.
      */
     @Override
-    public void accept(Path path, WatchDogEvent event)
-    {
+    public void accept(Path path, WatchDogEvent event) {
         Link link = BBS.getProvider().getLink(path.toFile());
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
-        if (link.path.endsWith(".bbs.json") || link.path.endsWith(".vox"))
-        {
+        if (link.path.endsWith(".bbs.json") || link.path.endsWith(".vox")) {
             int index = link.path.lastIndexOf('/');
             int secondIndex = link.path.lastIndexOf('/', index - 1);
             String key = link.path.substring(secondIndex + 1, index);

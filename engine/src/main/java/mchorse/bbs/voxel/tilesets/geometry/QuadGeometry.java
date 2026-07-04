@@ -9,8 +9,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class QuadGeometry extends BlockGeometry
-{
+public class QuadGeometry extends BlockGeometry {
     public Vector3f p1 = new Vector3f();
     public Vector3f p2 = new Vector3f();
     public Vector3f p3 = new Vector3f();
@@ -27,14 +26,12 @@ public class QuadGeometry extends BlockGeometry
     private Vector4f computedAO = new Vector4f(1);
     private Vector3f vertex = new Vector3f();
 
-    public QuadGeometry(float x, float y, float z)
-    {
+    public QuadGeometry(float x, float y, float z) {
         this.n.set(x, y, z);
     }
 
     @Override
-    public void complete()
-    {
+    public void complete() {
         this.min = new Vector3f(
             this.min(this.p1.x, this.p2.x, this.p3.x, this.p4.x),
             this.min(this.p1.y, this.p2.y, this.p3.y, this.p4.y),
@@ -56,24 +53,20 @@ public class QuadGeometry extends BlockGeometry
         this.t1.y += dy;
     }
 
-    private float min(float a, float b, float c, float d)
-    {
+    private float min(float a, float b, float c, float d) {
         return Math.min(d, Math.min(c, Math.min(b, a)));
     }
 
-    private float max(float a, float b, float c, float d)
-    {
+    private float max(float a, float b, float c, float d) {
         return Math.max(d, Math.max(c, Math.max(b, a)));
     }
 
     @Override
-    public int build(int nx, int ny, int nz, int index, IBlockVariant block, ChunkBuilder builder, VAOBuilder vao, VBOAttributes attributes)
-    {
+    public int build(int nx, int ny, int nz, int index, IBlockVariant block, ChunkBuilder builder, VAOBuilder vao, VBOAttributes attributes) {
         float tw = builder.models.atlasWidth;
         float th = builder.models.atlasHeight;
 
-        if (this.ao)
-        {
+        if (this.ao) {
             this.computeAOs(builder, nx, ny, nz);
         }
 
@@ -127,23 +120,17 @@ public class QuadGeometry extends BlockGeometry
 
         vao.rgba(ao4 * r, ao4 * g, ao4 * b, a);
 
-        if (this.both)
-        {
+        if (this.both) {
             vao.index(index).index(index + 3).index(index + 2);
             vao.index(index).index(index + 1).index(index + 3);
 
             vao.index(index + 2).index(index + 3).index(index);
             vao.index(index + 3).index(index + 1).index(index);
-        }
-        else
-        {
-            if (ao1 + ao4 > ao2 + ao3)
-            {
+        } else {
+            if (ao1 + ao4 > ao2 + ao3) {
                 vao.index(index + 2).index(index + 3).index(index);
                 vao.index(index + 3).index(index + 1).index(index);
-            }
-            else
-            {
+            } else {
                 vao.index(index + 2).index(index + 1).index(index);
                 vao.index(index + 2).index(index + 3).index(index + 1);
             }
@@ -152,8 +139,7 @@ public class QuadGeometry extends BlockGeometry
         return index + 4;
     }
 
-    private float getLightingFactor(Vector3f vertex, ChunkBuilder builder, int nx, int ny, int nz)
-    {
+    private float getLightingFactor(Vector3f vertex, ChunkBuilder builder, int nx, int ny, int nz) {
         int x = this.round(vertex.x - 0.5F, this.n.x);
         int y = this.round(vertex.y - 0.5F, this.n.y);
         int z = this.round(vertex.z - 0.5F, this.n.z);
@@ -190,8 +176,7 @@ public class QuadGeometry extends BlockGeometry
         return (float) Interpolations.bilerp(0.5, 0.5, base, side1, side2, corner) / 15F;
     }
 
-    private void computeAOs(ChunkBuilder builder, int nx, int ny, int nz)
-    {
+    private void computeAOs(ChunkBuilder builder, int nx, int ny, int nz) {
         this.computedAO.x = this.computeAO(builder, this.p1, nx, ny, nz);
         this.computedAO.y = this.computeAO(builder, this.p2, nx, ny, nz);
         this.computedAO.z = this.computeAO(builder, this.p3, nx, ny, nz);
@@ -203,8 +188,7 @@ public class QuadGeometry extends BlockGeometry
      *
      * @link https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/
      */
-    private float computeAO(ChunkBuilder builder, Vector3f vertex, int nx, int ny, int nz)
-    {
+    private float computeAO(ChunkBuilder builder, Vector3f vertex, int nx, int ny, int nz) {
         int x = this.round(vertex.x - 0.5F, this.n.x);
         int y = this.round(vertex.y - 0.5F, this.n.y);
         int z = this.round(vertex.z - 0.5F, this.n.z);
@@ -232,27 +216,21 @@ public class QuadGeometry extends BlockGeometry
 
         int finalAO;
 
-        if (side1 > 0 && side2 > 0)
-        {
+        if (side1 > 0 && side2 > 0) {
             finalAO = 0;
-        }
-        else
-        {
+        } else {
             finalAO = 3 - (side1 + side2 + corner);
         }
 
-        if (finalAO == 3 && builder.emitsAO(nx + (int) this.n.x, ny + (int) this.n.y, nz + (int) this.n.z))
-        {
+        if (finalAO == 3 && builder.emitsAO(nx + (int) this.n.x, ny + (int) this.n.y, nz + (int) this.n.z)) {
             finalAO = 2;
         }
 
         return 1 * (finalAO / 3F * 0.5F + 0.5F);
     }
 
-    private int round(float number, float normal)
-    {
-        if (normal != 0)
-        {
+    private int round(float number, float normal) {
+        if (normal != 0) {
             return 0;
         }
 
@@ -260,10 +238,8 @@ public class QuadGeometry extends BlockGeometry
     }
 
     @Override
-    public boolean isOverlapping(BlockGeometry geometry, float x, float y, float z)
-    {
-        if (!(geometry instanceof QuadGeometry))
-        {
+    public boolean isOverlapping(BlockGeometry geometry, float x, float y, float z) {
+        if (!(geometry instanceof QuadGeometry)) {
             return false;
         }
 

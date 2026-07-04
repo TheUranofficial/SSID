@@ -8,14 +8,12 @@ import java.util.List;
 
 /**
  * Launcher.
- *
+ * <p>
  * This class is responsible for launching the game with all of its dependencies,
  * in a user-friendly manner (i.e. by double-clicking on the jar).
  */
-public class Launcher
-{
-    public static void main(String[] strings)
-    {
+public class Launcher {
+    static void main() {
         JavaLauncher launcher = new JavaLauncher();
         MapType defaultSettings = new MapType();
 
@@ -33,39 +31,32 @@ public class Launcher
         args.add("--gameDirectory");
         args.add(gameDirectory);
 
-        if (settings.has("game.world"))
-        {
+        if (settings.has("game.world")) {
             args.add("-dw");
             args.add(settings.getString("game.world"));
         }
 
-        if (settings.has("game.width"))
-        {
+        if (settings.has("game.width")) {
             args.add("-ww");
             args.add(String.valueOf(settings.getInt("game.width")));
         }
 
-        if (settings.has("game.height"))
-        {
+        if (settings.has("game.height")) {
             args.add("-wh");
             args.add(String.valueOf(settings.getInt("game.height")));
         }
 
-        if (settings.getBool("game.development"))
-        {
+        if (settings.getBool("game.development")) {
             args.add("--development");
         }
 
-        try
-        {
+        try {
             File logFile = launcher.getLogFile(gameDirectory);
 
             launcher.launch(args, logFile);
 
             System.out.println(String.join(" ", args));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -21,8 +21,7 @@ import mchorse.bbs.utils.resources.Pixels;
 
 import java.util.List;
 
-public class UIFontOverlayPanel extends UIOverlayPanel
-{
+public class UIFontOverlayPanel extends UIOverlayPanel {
     public UIElement column;
     public UITextbox name;
     public UITrackpad height;
@@ -31,8 +30,7 @@ public class UIFontOverlayPanel extends UIOverlayPanel
 
     private UIFontPanel panel;
 
-    public UIFontOverlayPanel(IKey title, UIFontPanel panel)
-    {
+    public UIFontOverlayPanel(IKey title, UIFontPanel panel) {
         super(title);
 
         this.panel = panel;
@@ -51,8 +49,7 @@ public class UIFontOverlayPanel extends UIOverlayPanel
         {
             menu.action(Icons.ADD, UIKeys.FONT_EDITOR_CONTEXT_ADD, () -> this.addGlyph(null));
 
-            if (this.glyphsList.isSelected())
-            {
+            if (this.glyphsList.isSelected()) {
                 menu.action(Icons.DUPE, UIKeys.FONT_EDITOR_CONTEXT_DUPLICATE, () ->
                 {
                     this.addGlyph(this.panel.glyphs.get(this.glyphsList.getCurrentFirst()));
@@ -72,8 +69,7 @@ public class UIFontOverlayPanel extends UIOverlayPanel
         this.content.add(this.column, this.searchList);
     }
 
-    private void addGlyph(GlyphData data)
-    {
+    private void addGlyph(GlyphData data) {
         UIOverlay.addOverlay(this.getContext(), new UIPromptOverlayPanel(
             UIKeys.FONT_EDITOR_CONTEXT_ADD_TITLE,
             UIKeys.FONT_EDITOR_CONTEXT_ADD_DESCRIPTION,
@@ -81,38 +77,30 @@ public class UIFontOverlayPanel extends UIOverlayPanel
         ));
     }
 
-    private int parseGlyph(String string)
-    {
+    private int parseGlyph(String string) {
         string = string.trim();
 
         int glyph = -1;
 
-        try
-        {
+        try {
             glyph = Integer.parseInt(string);
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
-        if (glyph < 0 && string.startsWith("#"))
-        {
-            try
-            {
+        if (glyph < 0 && string.startsWith("#")) {
+            try {
                 glyph = StringUtils.parseHex(string.substring(1));
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
 
         return glyph;
     }
 
-    private void addGlyph(String string, GlyphData data)
-    {
+    private void addGlyph(String string, GlyphData data) {
         int glyph = this.parseGlyph(string);
 
-        if (glyph < 0)
-        {
+        if (glyph < 0) {
             UIOverlay.addOverlay(this.getContext(), new UIMessageOverlayPanel(
                 UIKeys.GENERAL_ERROR,
                 UIKeys.FONT_EDITOR_ERROR_INVALID_GLYPH.format(string)
@@ -121,8 +109,7 @@ public class UIFontOverlayPanel extends UIOverlayPanel
             return;
         }
 
-        if (this.panel.glyphs.containsKey(glyph))
-        {
+        if (this.panel.glyphs.containsKey(glyph)) {
             UIOverlay.addOverlay(this.getContext(), new UIMessageOverlayPanel(
                 UIKeys.GENERAL_ERROR,
                 UIKeys.FONT_EDITOR_ERROR_ALREADY_EXISTS.format(string, Character.getName(glyph).toLowerCase())
@@ -135,15 +122,12 @@ public class UIFontOverlayPanel extends UIOverlayPanel
         int width = (int) (height * 0.7F);
         Glyph aGlyph = new Glyph(0, 0, width, height);
 
-        if (data == null)
-        {
+        if (data == null) {
             aGlyph.character = (char) glyph;
             aGlyph.advance = width;
             aGlyph.offsetX = 0;
             aGlyph.offsetY = -height;
-        }
-        else
-        {
+        } else {
             aGlyph.fromData(data.glyph.toData());
             aGlyph.character = (char) glyph;
         }
@@ -158,8 +142,7 @@ public class UIFontOverlayPanel extends UIOverlayPanel
         this.panel.pickGlyph(glyph);
     }
 
-    private void removeGlyph()
-    {
+    private void removeGlyph() {
         int glyph = this.glyphsList.getCurrentFirst();
         int index = this.glyphsList.getIndex();
 

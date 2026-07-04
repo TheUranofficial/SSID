@@ -1,33 +1,27 @@
 package mchorse.bbs.ui.framework.elements.input.list;
 
+import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Label;
-import mchorse.bbs.l10n.keys.IKey;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UILabelList <T> extends UIList<Label<T>>
-{
-    public UILabelList(Consumer<List<Label<T>>> callback)
-    {
+public class UILabelList<T> extends UIList<Label<T>> {
+    public UILabelList(Consumer<List<Label<T>>> callback) {
         super(callback);
 
         this.scroll.scrollItemSize = 16;
     }
 
-    public void add(IKey title, T value)
-    {
+    public void add(IKey title, T value) {
         this.add(new Label<>(title, value));
     }
 
-    public void setCurrentTitle(String title)
-    {
-        for (int i = 0; i < this.list.size(); i ++)
-        {
-            if (this.list.get(i).title.equals(title))
-            {
+    public void setCurrentTitle(String title) {
+        for (int i = 0; i < this.list.size(); i++) {
+            if (this.list.get(i).title.equals(title)) {
                 this.setIndex(i);
 
                 return;
@@ -35,12 +29,9 @@ public class UILabelList <T> extends UIList<Label<T>>
         }
     }
 
-    public void setCurrentValue(T value)
-    {
-        for (int i = 0; i < this.list.size(); i ++)
-        {
-            if (this.list.get(i).value.equals(value))
-            {
+    public void setCurrentValue(T value) {
+        for (int i = 0; i < this.list.size(); i++) {
+            if (this.list.get(i).value.equals(value)) {
                 this.setIndex(i);
 
                 return;
@@ -49,16 +40,14 @@ public class UILabelList <T> extends UIList<Label<T>>
     }
 
     @Override
-    protected boolean sortElements()
-    {
+    protected boolean sortElements() {
         Collections.sort(this.list, (a, b) -> a.title.get().compareToIgnoreCase(b.title.get()));
 
         return true;
     }
 
     @Override
-    protected String elementToString(UIContext context, int i, Label<T> element)
-    {
+    protected String elementToString(UIContext context, int i, Label<T> element) {
         return element.title.get();
     }
 }

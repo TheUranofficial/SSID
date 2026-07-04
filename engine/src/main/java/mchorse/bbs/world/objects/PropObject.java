@@ -18,8 +18,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-public class PropObject extends WorldObject
-{
+public class PropObject extends WorldObject {
     public Form form;
     public final Transform transform = new Transform();
 
@@ -28,27 +27,22 @@ public class PropObject extends WorldObject
 
     private Entity entity;
 
-    private void ensureEntity(World world)
-    {
-        if (this.entity == null)
-        {
+    private void ensureEntity(World world) {
+        if (this.entity == null) {
             this.entity = EntityArchitect.createDummy();
             this.entity.world = world;
         }
     }
 
     @Override
-    public void addCollisionBoxes(List<AABB> boxes)
-    {
-        if (this.collidable)
-        {
+    public void addCollisionBoxes(List<AABB> boxes) {
+        if (this.collidable) {
             boxes.add(this.getPickingHitbox());
         }
     }
 
     @Override
-    public AABB getPickingHitbox()
-    {
+    public AABB getPickingHitbox() {
         AABB hitbox = super.getPickingHitbox();
 
         hitbox.x -= this.hitbox.x / 2;
@@ -61,10 +55,8 @@ public class PropObject extends WorldObject
     }
 
     @Override
-    public void update(World world)
-    {
-        if (this.form == null)
-        {
+    public void update(World world) {
+        if (this.form == null) {
             return;
         }
 
@@ -73,12 +65,10 @@ public class PropObject extends WorldObject
     }
 
     @Override
-    public void render(RenderingContext context)
-    {
+    public void render(RenderingContext context) {
         super.render(context);
 
-        if (this.form == null)
-        {
+        if (this.form == null) {
             return;
         }
 
@@ -87,8 +77,7 @@ public class PropObject extends WorldObject
         Vector3d position = this.position;
         Vector2f lighting = this.entity.world.getLighting(position.x, position.y + this.hitbox.y / 2, position.z);
 
-        for (Shader shader : context.getShaders().getAll())
-        {
+        for (Shader shader : context.getShaders().getAll()) {
             CommonShaderAccess.setLightMapCoords(shader, lighting.x, lighting.y);
         }
 
@@ -101,18 +90,15 @@ public class PropObject extends WorldObject
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return super.toString() + (this.form == null ? "" : " " + this.form.getId());
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
-        if (this.form != null)
-        {
+        if (this.form != null) {
             data.put("form", FormUtils.toData(this.form));
         }
 
@@ -122,12 +108,10 @@ public class PropObject extends WorldObject
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         super.fromData(data);
 
-        if (data.has("form"))
-        {
+        if (data.has("form")) {
             this.form = FormUtils.fromData(data.getMap("form"));
         }
 

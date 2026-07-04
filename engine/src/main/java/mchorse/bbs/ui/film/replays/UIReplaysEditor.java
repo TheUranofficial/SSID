@@ -50,8 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UIReplaysEditor extends UIElement
-{
+public class UIReplaysEditor extends UIElement {
     private static final Map<String, Integer> COLORS = new HashMap<>();
 
     public UIIcon toggleKeyframes;
@@ -71,8 +70,7 @@ public class UIReplaysEditor extends UIElement
     private Film film;
     private Replay replay;
 
-    static
-    {
+    static {
         COLORS.put("x", Colors.RED);
         COLORS.put("y", Colors.GREEN);
         COLORS.put("z", Colors.BLUE);
@@ -95,8 +93,7 @@ public class UIReplaysEditor extends UIElement
         COLORS.put("color", Colors.INACTIVE);
     }
 
-    public UIReplaysEditor(UIFilmPanel filmPanel)
-    {
+    public UIReplaysEditor(UIFilmPanel filmPanel) {
         this.filmPanel = filmPanel;
 
         int w = 120;
@@ -124,34 +121,27 @@ public class UIReplaysEditor extends UIElement
         this.markContainer();
     }
 
-    private void toggleProperties(boolean properties)
-    {
-        if (this.propertyEditor != null)
-        {
+    private void toggleProperties(boolean properties) {
+        if (this.propertyEditor != null) {
             this.keyframeEditor.setVisible(!properties);
             this.propertyEditor.setVisible(properties);
         }
     }
 
-    public void handleUndo(ValueChangeUndo change, boolean redo)
-    {
-        if (this.keyframeEditor != null)
-        {
+    public void handleUndo(ValueChangeUndo change, boolean redo) {
+        if (this.keyframeEditor != null) {
             this.keyframeEditor.keyframes.applySelection(change.getKeyframeSelection(redo));
         }
 
-        if (this.propertyEditor != null)
-        {
+        if (this.propertyEditor != null) {
             this.propertyEditor.properties.applySelection(change.getPropertiesSelection(redo));
         }
     }
 
-    public void setFilm(Film film)
-    {
+    public void setFilm(Film film) {
         this.film = film;
 
-        if (film != null)
-        {
+        if (film != null) {
             List<Replay> replays = film.replays.getList();
 
             this.replays.setList(replays);
@@ -159,8 +149,7 @@ public class UIReplaysEditor extends UIElement
         }
     }
 
-    public void setReplay(Replay replay)
-    {
+    public void setReplay(Replay replay) {
         this.replay = replay;
 
         this.keyframes.setVisible(replay != null);
@@ -169,10 +158,8 @@ public class UIReplaysEditor extends UIElement
         this.replays.setCurrentScroll(replay);
     }
 
-    public void moveReplay(double x, double y, double z)
-    {
-        if (this.replay != null)
-        {
+    public void moveReplay(double x, double y, double z) {
+        if (this.replay != null) {
             int cursor = this.filmPanel.getCursor();
 
             this.replay.keyframes.x.insert(cursor, x);
@@ -181,13 +168,11 @@ public class UIReplaysEditor extends UIElement
         }
     }
 
-    public void updateChannelsList()
-    {
+    public void updateChannelsList() {
         if (this.keyframeEditor != null) this.keyframeEditor.removeFromParent();
         if (this.propertyEditor != null) this.propertyEditor.removeFromParent();
 
-        if (this.replay == null)
-        {
+        if (this.replay == null) {
             return;
         }
 
@@ -197,8 +182,7 @@ public class UIReplaysEditor extends UIElement
         List<KeyframeChannel> keyframes = new ArrayList<>();
         List<Integer> tempKeyframesColors = new ArrayList<>();
 
-        for (String key : ReplayKeyframes.CURATED_CHANNELS)
-        {
+        for (String key : ReplayKeyframes.CURATED_CHANNELS) {
             BaseValue value = this.replay.keyframes.get(key);
 
             keyframes.add((KeyframeChannel) value);
@@ -220,12 +204,10 @@ public class UIReplaysEditor extends UIElement
         List<Integer> propertiesColors = new ArrayList<>();
         List<IFormProperty> formProperties = new ArrayList<>();
 
-        for (String key : FormUtils.collectPropertyPaths(this.replay.form.get()))
-        {
+        for (String key : FormUtils.collectPropertyPaths(this.replay.form.get())) {
             GenericKeyframeChannel property = this.replay.properties.getOrCreate(this.replay.form.get(), key);
 
-            if (property != null)
-            {
+            if (property != null) {
                 IFormProperty formProperty = FormUtils.getProperty(this.replay.form.get(), key);
 
                 properties.add(property);
@@ -234,8 +216,7 @@ public class UIReplaysEditor extends UIElement
             }
         }
 
-        if (!properties.isEmpty())
-        {
+        if (!properties.isEmpty()) {
             this.propertyEditor = new UIPropertyEditor(this.filmPanel.cameraClips);
             this.propertyEditor.setChannels(properties, formProperties, propertiesColors);
             this.propertyEditor.relative(this.keyframes).full();
@@ -254,14 +235,11 @@ public class UIReplaysEditor extends UIElement
         if (this.propertyEditor != null) this.propertyEditor.resetView();
     }
 
-    public void pickForm(Form form, String bone)
-    {
+    public void pickForm(Form form, String bone) {
         String path = FormUtils.getPath(form);
 
-        if (!bone.isEmpty())
-        {
-            if (this.propertyEditor == null)
-            {
+        if (!bone.isEmpty()) {
+            if (this.propertyEditor == null) {
                 return;
             }
 
@@ -270,16 +248,13 @@ public class UIReplaysEditor extends UIElement
         }
     }
 
-    public void pickFormProperty(Form form, String bone)
-    {
+    public void pickFormProperty(Form form, String bone) {
         String path = FormUtils.getPath(form);
         boolean shift = Window.isShiftPressed();
         ContextMenuManager manager = new ContextMenuManager();
 
-        for (IFormProperty formProperty : form.getProperties().values())
-        {
-            if (!formProperty.canCreateChannel())
-            {
+        for (IFormProperty formProperty : form.getProperties().values()) {
+            if (!formProperty.canCreateChannel()) {
                 continue;
             }
 
@@ -293,14 +268,11 @@ public class UIReplaysEditor extends UIElement
         this.getContext().replaceContextMenu(manager.create());
     }
 
-    private void pickProperty(String bone, String key, boolean insert)
-    {
+    private void pickProperty(String bone, String key, boolean insert) {
         List<UIProperty> properties = this.propertyEditor.properties.getProperties();
 
-        for (UIProperty property : properties)
-        {
-            if (FormUtils.getPropertyPath(property.property).equals(key))
-            {
+        for (UIProperty property : properties) {
+            if (FormUtils.getPropertyPath(property.property).equals(key)) {
                 this.pickProperty(bone, property, insert);
 
                 break;
@@ -308,12 +280,10 @@ public class UIReplaysEditor extends UIElement
         }
     }
 
-    private void pickProperty(String bone, UIProperty property, boolean insert)
-    {
+    private void pickProperty(String bone, UIProperty property, boolean insert) {
         int tick = this.filmPanel.getRunner().ticks;
 
-        if (insert)
-        {
+        if (insert) {
             this.propertyEditor.properties.addCurrent(property, tick);
             this.propertyEditor.fillData(this.propertyEditor.properties.getCurrent());
 
@@ -322,14 +292,12 @@ public class UIReplaysEditor extends UIElement
 
         GenericKeyframeSegment segment = property.channel.find(tick);
 
-        if (segment != null)
-        {
+        if (segment != null) {
             GenericKeyframe closest = segment.getClosest();
 
             this.propertyEditor.pickKeyframe(closest);
 
-            if (this.propertyEditor.editor instanceof UIPoseKeyframeFactory)
-            {
+            if (this.propertyEditor.editor instanceof UIPoseKeyframeFactory) {
                 ((UIPoseKeyframeFactory) this.propertyEditor.editor).poseEditor.selectBone(bone);
             }
 
@@ -337,45 +305,35 @@ public class UIReplaysEditor extends UIElement
         }
     }
 
-    public boolean clickViewport(UIContext context, Area area)
-    {
+    public boolean clickViewport(UIContext context, Area area) {
         StencilFormFramebuffer stencil = this.filmPanel.getController().getStencil();
 
-        if (stencil.hasPicked())
-        {
+        if (stencil.hasPicked()) {
             Pair<Form, String> pair = stencil.getPicked();
 
-            if (pair != null && context.mouseButton < 2)
-            {
-                if (!this.isVisible())
-                {
+            if (pair != null && context.mouseButton < 2) {
+                if (!this.isVisible()) {
                     this.filmPanel.showPanel(this);
                 }
 
-                if (context.mouseButton == 0)
-                {
+                if (context.mouseButton == 0) {
                     this.pickForm(pair.a, pair.b);
 
                     return true;
-                }
-                else if (context.mouseButton == 1)
-                {
+                } else if (context.mouseButton == 1) {
                     this.pickFormProperty(pair.a, pair.b);
 
                     return true;
                 }
             }
-        }
-        else if (context.mouseButton == 1 && this.isVisible())
-        {
+        } else if (context.mouseButton == 1 && this.isVisible()) {
             RayTraceResult traceResult = new RayTraceResult();
             World world = context.menu.bridge.get(IBridgeWorld.class).getWorld();
             Camera camera = this.filmPanel.getCamera();
 
             RayTracer.trace(traceResult, world.chunks, camera.position, camera.getMouseDirection(context.mouseX, context.mouseY, area), 64F);
 
-            if (traceResult.type == RayTraceType.BLOCK)
-            {
+            if (traceResult.type == RayTraceType.BLOCK) {
                 context.replaceContextMenu((menu) ->
                 {
                     float pitch = camera.rotation.x;
@@ -392,10 +350,8 @@ public class UIReplaysEditor extends UIElement
         return false;
     }
 
-    private void renderBackground(UIContext context)
-    {
-        if (!BBSSettings.audioWaveformVisible.get())
-        {
+    private void renderBackground(UIContext context) {
+        if (!BBSSettings.audioWaveformVisible.get()) {
             return;
         }
 
@@ -403,17 +359,14 @@ public class UIReplaysEditor extends UIElement
 
         Scale scale = this.keyframeEditor.keyframes.getScaleX();
 
-        if (propertyEditor != null && propertyEditor.isVisible())
-        {
+        if (propertyEditor != null && propertyEditor.isVisible()) {
             scale = propertyEditor.properties.getScaleX();
         }
 
-        for (SoundPlayer file : BBS.getSounds().getPlayers())
-        {
+        for (SoundPlayer file : BBS.getSounds().getPlayers()) {
             Waveform wave = file.getBuffer().getWaveform();
 
-            if (wave != null && !file.isStopped())
-            {
+            if (wave != null && !file.isStopped()) {
                 float duration = file.getBuffer().getDuration();
 
                 int x1 = (int) scale.to(0F);
@@ -425,16 +378,12 @@ public class UIReplaysEditor extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         context.batcher.box(this.icons.area.x, this.icons.area.y, this.replays.area.ex(), this.icons.area.ey(), Colors.CONTROL_BAR);
 
-        if (this.keyframeEditor != null && this.keyframeEditor.isVisible())
-        {
+        if (this.keyframeEditor != null && this.keyframeEditor.isVisible()) {
             UIDashboardPanels.renderHighlight(context.batcher, this.toggleKeyframes.area);
-        }
-        else if (this.propertyEditor != null && this.propertyEditor.isVisible())
-        {
+        } else if (this.propertyEditor != null && this.propertyEditor.isVisible()) {
             UIDashboardPanels.renderHighlight(context.batcher, this.toggleProperties.area);
         }
 

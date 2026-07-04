@@ -1,19 +1,15 @@
 package mchorse.bbs.data.types;
 
-public abstract class NumericType extends BaseType
-{
-    public boolean boolValue()
-    {
+public abstract class NumericType extends BaseType {
+    public boolean boolValue() {
         return this.intValue() != 0;
     }
 
-    public byte byteValue()
-    {
+    public byte byteValue() {
         return (byte) this.intValue();
     }
 
-    public short shortValue()
-    {
+    public short shortValue() {
         return (short) this.intValue();
     }
 

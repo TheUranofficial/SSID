@@ -6,13 +6,11 @@ import mchorse.bbs.ui.tileset.UITileSetEditorPanel;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelVertical;
 
-public class UIModelBlockVertical <T extends BlockModelVertical> extends UIModelBlockFactory<T>
-{
+public class UIModelBlockVertical<T extends BlockModelVertical> extends UIModelBlockFactory<T> {
     public UIButton top;
     public UIButton bottom;
 
-    public UIModelBlockVertical(UITileSetEditorPanel editor)
-    {
+    public UIModelBlockVertical(UITileSetEditorPanel editor) {
         super(editor);
 
         this.top = new UIButton(UIKeys.TILE_SET_VERTICAL_TOP, (b) -> this.editUV(this.model.topUV));

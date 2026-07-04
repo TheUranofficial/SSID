@@ -10,18 +10,17 @@ import mchorse.bbs.utils.clips.ClipContext;
 
 /**
  * Math modifier
- * 
- * Probably the most complex modifier in Aperture. This modifier accepts 
- * a math expression (which supports basic operators, variables and 
- * functions) written by user, and calculates the value based on that 
+ * <p>
+ * Probably the most complex modifier in Aperture. This modifier accepts
+ * a math expression (which supports basic operators, variables and
+ * functions) written by user, and calculates the value based on that
  * expression.
- * 
- * This modifier provides all essential input variables for math 
- * expressions, such as: position, angle, progress, progress offset from 
+ * <p>
+ * This modifier provides all essential input variables for math
+ * expressions, such as: position, angle, progress, progress offset from
  * fixture, current value and more!
  */
-public class MathClip extends ComponentClip
-{
+public class MathClip extends ComponentClip {
     private static Position next = new Position();
 
     public MathBuilder builder = new MathBuilder();
@@ -47,8 +46,7 @@ public class MathClip extends ComponentClip
 
     public final ValueExpression expression = new ValueExpression("expression", this.builder);
 
-    public MathClip()
-    {
+    public MathClip() {
         super();
 
         this.add(this.expression);
@@ -74,12 +72,10 @@ public class MathClip extends ComponentClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         IExpression expression = this.expression.get();
 
-        if (expression != null)
-        {
+        if (expression != null) {
             context.applyUnderneath(context.ticks + 1, context.transition, next);
 
             int duration = this.duration.get();
@@ -106,44 +102,37 @@ public class MathClip extends ComponentClip
             this.varRoll.set(position.angle.roll);
             this.varFov.set(position.angle.fov);
 
-            if (this.isActive(0))
-            {
+            if (this.isActive(0)) {
                 this.varValue.set(position.point.x);
                 position.point.x = expression.get().doubleValue();
             }
 
-            if (this.isActive(1))
-            {
+            if (this.isActive(1)) {
                 this.varValue.set(position.point.y);
                 position.point.y = expression.get().doubleValue();
             }
 
-            if (this.isActive(2))
-            {
+            if (this.isActive(2)) {
                 this.varValue.set(position.point.z);
                 position.point.z = expression.get().doubleValue();
             }
 
-            if (this.isActive(3))
-            {
+            if (this.isActive(3)) {
                 this.varValue.set(position.angle.yaw);
                 position.angle.yaw = (float) expression.get().doubleValue();
             }
 
-            if (this.isActive(4))
-            {
+            if (this.isActive(4)) {
                 this.varValue.set(position.angle.pitch);
                 position.angle.pitch = (float) expression.get().doubleValue();
             }
 
-            if (this.isActive(5))
-            {
+            if (this.isActive(5)) {
                 this.varValue.set(position.angle.roll);
                 position.angle.roll = (float) expression.get().doubleValue();
             }
 
-            if (this.isActive(6))
-            {
+            if (this.isActive(6)) {
                 this.varValue.set(position.angle.fov);
                 position.angle.fov = (float) expression.get().doubleValue();
             }
@@ -151,8 +140,7 @@ public class MathClip extends ComponentClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new MathClip();
     }
 }

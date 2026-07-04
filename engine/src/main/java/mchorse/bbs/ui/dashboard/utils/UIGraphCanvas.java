@@ -11,16 +11,14 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.framework.elements.utils.UICanvas;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIGraphCanvas extends UICanvas
-{
+public class UIGraphCanvas extends UICanvas {
     private MathBuilder builder;
     private Variable x;
     private boolean first = true;
 
     public IExpression expression;
 
-    public UIGraphCanvas()
-    {
+    public UIGraphCanvas() {
         super();
 
         this.builder = new MathBuilder();
@@ -29,25 +27,19 @@ public class UIGraphCanvas extends UICanvas
         this.scaleY.inverse = true;
     }
 
-    public void parseExpression(String expression)
-    {
-        try
-        {
+    public void parseExpression(String expression) {
+        try {
             this.expression = this.builder.parse(expression);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.expression = null;
         }
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
-        if (this.first)
-        {
+        if (this.first) {
             this.scaleX.view(-10, 10);
             this.scaleX.calculateMultiplier();
             this.scaleY.view(-10, 10);
@@ -58,16 +50,14 @@ public class UIGraphCanvas extends UICanvas
     }
 
     @Override
-    protected void renderCanvas(UIContext context)
-    {
+    protected void renderCanvas(UIContext context) {
         this.area.render(context.batcher, Colors.A50);
 
         this.renderVerticalGrid(context);
         this.renderHorizontalGridAndGraph(context);
     }
 
-    private void renderVerticalGrid(UIContext context)
-    {
+    private void renderVerticalGrid(UIContext context) {
         /* Draw vertical grid */
         int ty = (int) this.scaleY.from(this.area.ey());
         int by = (int) this.scaleY.from(this.area.y - 12);
@@ -79,12 +69,10 @@ public class UIGraphCanvas extends UICanvas
         min -= min % mult + mult;
         max -= max % mult - mult;
 
-        for (int j = 0, c = (max - min) / mult; j < c; j++)
-        {
+        for (int j = 0, c = (max - min) / mult; j < c; j++) {
             int y = (int) this.scaleY.to(min + j * mult);
 
-            if (y >= this.area.ey())
-            {
+            if (y >= this.area.ey()) {
                 continue;
             }
 
@@ -93,8 +81,7 @@ public class UIGraphCanvas extends UICanvas
         }
     }
 
-    private void renderHorizontalGridAndGraph(UIContext context)
-    {
+    private void renderHorizontalGridAndGraph(UIContext context) {
         /* Draw scaling grid */
         int tx = (int) this.scaleX.from(this.area.ex());
         int bx = (int) this.scaleX.from(this.area.x);
@@ -106,12 +93,10 @@ public class UIGraphCanvas extends UICanvas
         min -= min % mult + mult;
         max -= max % mult - mult;
 
-        for (int j = 0, c = (max - min) / mult; j < c; j++)
-        {
+        for (int j = 0, c = (max - min) / mult; j < c; j++) {
             int x = (int) this.scaleX.to(min + j * mult);
 
-            if (x >= this.area.ex())
-            {
+            if (x >= this.area.ex()) {
                 break;
             }
 
@@ -119,13 +104,11 @@ public class UIGraphCanvas extends UICanvas
             context.batcher.text(String.valueOf(min + j * mult), x + 4, this.area.y + 4);
         }
 
-        if (this.expression == null)
-        {
+        if (this.expression == null) {
             return;
         }
 
-        if (Window.isMouseButtonPressed(0) && !context.isFocused())
-        {
+        if (Window.isMouseButtonPressed(0) && !context.isFocused()) {
             int mouseX = context.mouseX;
             double x = this.scaleX.from(mouseX);
 
@@ -136,15 +119,13 @@ public class UIGraphCanvas extends UICanvas
             int y2 = (int) this.scaleY.to(y) + 1;
             boolean isNaN = Double.isNaN(y);
 
-            if (y1 < y2)
-            {
+            if (y1 < y2) {
                 y1 -= 12;
             }
 
             String coordinate = "(" + UITrackpad.format(x) + ", " + (isNaN ? "undefined" : UITrackpad.format(y)) + ")";
 
-            if (!isNaN)
-            {
+            if (!isNaN) {
                 context.batcher.box(mouseX, Math.min(y1, y2), mouseX + 1, Math.max(y1, y2), Colors.CURSOR);
             }
 
@@ -160,8 +141,7 @@ public class UIGraphCanvas extends UICanvas
         LineBuilder line = new LineBuilder(1F);
         double step = 1;
 
-        for (double j = this.area.x - step; j < this.area.ex() + step; j += step)
-        {
+        for (double j = this.area.x - step; j < this.area.ex() + step; j += step) {
             double previous = this.scaleX.from(j);
 
             this.x.set(previous);

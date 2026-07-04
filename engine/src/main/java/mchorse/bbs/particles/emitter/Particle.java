@@ -4,8 +4,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class Particle
-{
+public class Particle {
     /* Randoms */
     public float random1 = (float) Math.random();
     public float random2 = (float) Math.random();
@@ -51,32 +50,27 @@ public class Particle
 
     private Vector3d global = new Vector3d();
 
-    public Particle(int index)
-    {
+    public Particle(int index) {
         this.index = index;
 
         this.speed.set((float) Math.random() - 0.5F, (float) Math.random() - 0.5F, (float) Math.random() - 0.5F);
         this.speed.normalize();
     }
 
-    public double getAge(float transition)
-    {
+    public double getAge(float transition) {
         return (this.age + transition) / 20.0;
     }
 
-    public Vector3d getGlobalPosition(ParticleEmitter emitter)
-    {
+    public Vector3d getGlobalPosition(ParticleEmitter emitter) {
         return this.getGlobalPosition(emitter, this.position);
     }
 
-    public Vector3d getGlobalPosition(ParticleEmitter emitter, Vector3d vector)
-    {
+    public Vector3d getGlobalPosition(ParticleEmitter emitter, Vector3d vector) {
         double px = vector.x;
         double py = vector.y;
         double pz = vector.z;
 
-        if (this.relativePosition && this.relativeRotation)
-        {
+        if (this.relativePosition && this.relativeRotation) {
             Vector3f v = new Vector3f((float) px, (float) py, (float) pz);
             emitter.rotation.transform(v);
 
@@ -94,16 +88,14 @@ public class Particle
         return this.global;
     }
 
-    public void update(ParticleEmitter emitter)
-    {
+    public void update(ParticleEmitter emitter) {
         this.prevRotation = this.rotation;
         this.prevPosition.set(this.position);
 
         this.setupMatrix(emitter);
 
-        if (!this.manual)
-        {
-            float rotationAcceleration = this.rotationAcceleration / 20F -this.rotationDrag * this.rotationVelocity;
+        if (!this.manual) {
+            float rotationAcceleration = this.rotationAcceleration / 20F - this.rotationDrag * this.rotationVelocity;
             this.rotationVelocity += rotationAcceleration / 20F;
             this.rotation = this.initialRotation + this.rotationVelocity * this.age;
 
@@ -120,8 +112,7 @@ public class Particle
             vec.y *= this.accelerationFactor.y;
             vec.z *= this.accelerationFactor.z;
 
-            if (this.relativePosition || this.relativeRotation)
-            {
+            if (this.relativePosition || this.relativeRotation) {
                 this.matrix.transform(vec);
             }
 
@@ -130,30 +121,22 @@ public class Particle
             this.position.z += vec.z / 20F;
         }
 
-        if (this.lifetime >= 0 && this.age >= this.lifetime)
-        {
+        if (this.lifetime >= 0 && this.age >= this.lifetime) {
             this.dead = true;
         }
 
-        this.age ++;
+        this.age++;
     }
 
-    public void setupMatrix(ParticleEmitter emitter)
-    {
-        if (this.relativePosition)
-        {
-            if (this.relativeRotation)
-            {
+    public void setupMatrix(ParticleEmitter emitter) {
+        if (this.relativePosition) {
+            if (this.relativeRotation) {
                 this.matrix.identity();
-            }
-            else if (!this.matrixSet)
-            {
+            } else if (!this.matrixSet) {
                 this.matrix.set(emitter.rotation);
                 this.matrixSet = true;
             }
-        }
-        else if (this.relativeRotation)
-        {
+        } else if (this.relativeRotation) {
             this.matrix.set(emitter.rotation);
         }
     }

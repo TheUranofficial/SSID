@@ -17,43 +17,36 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class FormRenderer <T extends Form>
-{
+public abstract class FormRenderer<T extends Form> {
     protected T form;
 
-    public FormRenderer(T form)
-    {
+    public FormRenderer(T form) {
         this.form = form;
     }
 
-    public T getForm()
-    {
+    public T getForm() {
         return this.form;
     }
 
-    public List<String> getBones()
-    {
+    public List<String> getBones() {
         return Collections.emptyList();
     }
 
     public abstract void renderUI(UIContext context, int x1, int y1, int x2, int y2);
 
-    public final void render(Entity entity, RenderingContext context)
-    {
+    public final void render(Entity entity, RenderingContext context) {
         boolean isPicking = context instanceof UIRenderingContext && ((UIRenderingContext) context).getStencil().picking;
 
         context.stack.push();
         context.stack.multiply(this.form.transform.get(context.getTransition()).createMatrix());
 
-        if (isPicking)
-        {
+        if (isPicking) {
             this.setupUniform((UIRenderingContext) context);
         }
 
         this.render3D(entity, context);
 
-        if (isPicking)
-        {
+        if (isPicking) {
             this.handlePicking((UIRenderingContext) context);
         }
 
@@ -62,36 +55,29 @@ public abstract class FormRenderer <T extends Form>
         context.stack.pop();
     }
 
-    protected void setupUniform(UIRenderingContext context)
-    {
-        for (Shader shader : context.getShaders().getAll())
-        {
+    protected void setupUniform(UIRenderingContext context) {
+        for (Shader shader : context.getShaders().getAll()) {
             Uniform pickerIndex = shader.getUniform("u_picker_index");
 
-            if (pickerIndex instanceof UniformInt)
-            {
+            if (pickerIndex instanceof UniformInt) {
                 ((UniformInt) pickerIndex).set(context.getStencil().objectIndex);
             }
         }
     }
 
-    protected void handlePicking(UIRenderingContext context)
-    {
+    protected void handlePicking(UIRenderingContext context) {
         context.getStencil().addPicking(this.form);
     }
 
     protected abstract void render3D(Entity entity, RenderingContext context);
 
-    public void renderBodyParts(Entity target, RenderingContext context)
-    {
-        for (BodyPart part : this.form.parts.getAll())
-        {
+    public void renderBodyParts(Entity target, RenderingContext context) {
+        for (BodyPart part : this.form.parts.getAll()) {
             part.render(target, context);
         }
     }
 
-    public void collectMatrices(Entity entity, MatrixStack stack, Map<String, Matrix4f> matrices, String prefix, float transition)
-    {
+    public void collectMatrices(Entity entity, MatrixStack stack, Map<String, Matrix4f> matrices, String prefix, float transition) {
         stack.push();
         stack.multiply(this.form.transform.get(transition).createMatrix());
 
@@ -99,12 +85,10 @@ public abstract class FormRenderer <T extends Form>
 
         int i = 0;
 
-        for (BodyPart part : this.form.parts.getAll())
-        {
+        for (BodyPart part : this.form.parts.getAll()) {
             Form form = part.getForm();
 
-            if (form != null)
-            {
+            if (form != null) {
                 stack.push();
                 stack.multiply(part.getTransform().createMatrix());
 

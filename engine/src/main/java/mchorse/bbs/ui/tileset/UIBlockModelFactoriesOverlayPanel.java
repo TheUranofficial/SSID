@@ -19,8 +19,7 @@ import mchorse.bbs.voxel.tilesets.factory.BlockModelFactoryData;
 
 import java.util.List;
 
-public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
-{
+public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel {
     public UISearchList<BlockModelFactory> searchList;
     public UIBlockModelFactoryList list;
 
@@ -30,8 +29,7 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
 
     private UITileSetEditorPanel menu;
 
-    public UIBlockModelFactoriesOverlayPanel(UITileSetEditorPanel menu, IKey title)
-    {
+    public UIBlockModelFactoriesOverlayPanel(UITileSetEditorPanel menu, IKey title) {
         super(title);
 
         this.menu = menu;
@@ -54,8 +52,7 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
 
             MapType map = Window.getClipboardMap("_BlockModelFactoriesCopy");
 
-            if (map != null)
-            {
+            if (map != null) {
                 m.action(Icons.PASTE, UIKeys.TILE_SET_LIST_CONTEXT_PASTE, () ->
                 {
                     this.addModel(BBS.getFactoryBlockModels().fromData(map));
@@ -67,8 +64,7 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         this.searchList.label(UIKeys.GENERAL_SEARCH);
         this.searchList.relative(this.content).full().x(6).w(1F, -12);
 
-        if (this.menu.panel != null)
-        {
+        if (this.menu.panel != null) {
             this.list.setCurrentScroll(menu.panel.model);
         }
 
@@ -76,12 +72,10 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         this.content.add(this.searchList);
     }
 
-    private void addModel(UIIcon b)
-    {
+    private void addModel(UIIcon b) {
         this.getContext().replaceContextMenu((menu) ->
         {
-            for (Link key : BBS.getFactoryBlockModels().getKeys())
-            {
+            for (Link key : BBS.getFactoryBlockModels().getKeys()) {
                 BlockModelFactoryData data = BBS.getFactoryBlockModels().getData(key);
 
                 menu.action(data.icon, UIKeys.C_BLOCK_MODEL.get(key), () -> this.addModel(BBS.getFactoryBlockModels().create(key)));
@@ -89,8 +83,7 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         });
     }
 
-    private void addModel(BlockModelFactory model)
-    {
+    private void addModel(BlockModelFactory model) {
         this.menu.getBlockSet().registerFactory(model);
 
         this.list.update();
@@ -100,12 +93,10 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         this.menu.dirty();
     }
 
-    private void replaceModel(UIIcon b)
-    {
+    private void replaceModel(UIIcon b) {
         this.getContext().replaceContextMenu((menu) ->
         {
-            for (Link key : BBS.getFactoryBlockModels().getKeys())
-            {
+            for (Link key : BBS.getFactoryBlockModels().getKeys()) {
                 BlockModelFactoryData data = BBS.getFactoryBlockModels().getData(key);
 
                 menu.action(data.icon, UIKeys.C_BLOCK_MODEL.get(key), () -> this.replaceModel(BBS.getFactoryBlockModels().create(key)));
@@ -113,8 +104,7 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         });
     }
 
-    private void replaceModel(BlockModelFactory model)
-    {
+    private void replaceModel(BlockModelFactory model) {
         BlockSet blockSet = this.menu.getBlockSet();
         int index = blockSet.factories.indexOf(this.menu.panel.model);
         BlockModelFactory old = blockSet.factories.get(index);
@@ -130,25 +120,21 @@ public class UIBlockModelFactoriesOverlayPanel extends UIOverlayPanel
         this.menu.dirty();
     }
 
-    private void removeModel(UIIcon b)
-    {
+    private void removeModel(UIIcon b) {
         UIOverlay.addOverlay(this.getContext(), new UIConfirmOverlayPanel(
             UIKeys.GENERAL_REMOVE,
             UIKeys.TILE_SET_LIST_REMOVE_MODEL_WARNING,
             (confirm) ->
             {
-                if (confirm)
-                {
+                if (confirm) {
                     this.removeModel();
                 }
             }
         ));
     }
 
-    private void removeModel()
-    {
-        if (this.menu.panel != null)
-        {
+    private void removeModel() {
+        if (this.menu.panel != null) {
             List<BlockModelFactory> factories = this.menu.getBlockSet().factories;
             int index = factories.indexOf(this.menu.panel.model);
 

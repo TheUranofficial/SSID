@@ -14,42 +14,35 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.utils.UIModelRenderer;
 import org.joml.Vector3f;
 
-public class UIParticleSchemeRenderer extends UIModelRenderer
-{
+public class UIParticleSchemeRenderer extends UIModelRenderer {
     public ParticleEmitter emitter;
 
     private Vector3f vector = new Vector3f(0, 0, 0);
 
-    public UIParticleSchemeRenderer()
-    {
+    public UIParticleSchemeRenderer() {
         super();
 
         this.emitter = new ParticleEmitter();
     }
 
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         this.emitter = new ParticleEmitter();
         this.emitter.setScheme(scheme);
     }
 
     @Override
-    protected void update()
-    {
+    protected void update() {
         super.update();
 
-        if (this.emitter != null)
-        {
+        if (this.emitter != null) {
             this.emitter.rotation.identity();
             this.emitter.update();
         }
     }
 
     @Override
-    protected void renderUserModel(UIContext context)
-    {
-        if (this.emitter == null || this.emitter.scheme == null)
-        {
+    protected void renderUserModel(UIContext context) {
+        if (this.emitter == null || this.emitter.scheme == null) {
             return;
         }
 
@@ -63,14 +56,12 @@ public class UIParticleSchemeRenderer extends UIModelRenderer
 
         ParticleComponentKillPlane plane = this.emitter.scheme.get(ParticleComponentKillPlane.class);
 
-        if (plane.a != 0 || plane.b != 0 || plane.c != 0)
-        {
+        if (plane.a != 0 || plane.b != 0 || plane.c != 0) {
             this.renderPlane(context.render, plane.a, plane.b, plane.c, plane.d);
         }
     }
 
-    private void renderPlane(RenderingContext context, float a, float b, float c, float d)
-    {
+    private void renderPlane(RenderingContext context, float a, float b, float c, float d) {
         Shader basic = context.getShaders().get(VBOAttributes.VERTEX_RGBA);
         VAOBuilder buffer = context.getVAO().setup(basic);
         final float alpha = 0.5F;
@@ -96,24 +87,18 @@ public class UIParticleSchemeRenderer extends UIModelRenderer
         GLStates.cullFaces(true);
     }
 
-    private void calculate(float i, float j, float a, float b, float c, float d)
-    {
+    private void calculate(float i, float j, float a, float b, float c, float d) {
         final float radius = 5;
 
-        if (b != 0)
-        {
+        if (b != 0) {
             this.vector.x = -radius + radius * 2 * i;
             this.vector.z = -radius + radius * 2 * j;
             this.vector.y = (a * this.vector.x + c * this.vector.z + d) / -b;
-        }
-        else if (a != 0)
-        {
+        } else if (a != 0) {
             this.vector.y = -radius + radius * 2 * i;
             this.vector.z = -radius + radius * 2 * j;
             this.vector.x = (b * this.vector.y + c * this.vector.z + d) / -a;
-        }
-        else if (c != 0)
-        {
+        } else if (c != 0) {
             this.vector.x = -radius + radius * 2 * i;
             this.vector.y = -radius + radius * 2 * j;
             this.vector.z = (b * this.vector.y + a * this.vector.x + d) / -c;
@@ -121,8 +106,7 @@ public class UIParticleSchemeRenderer extends UIModelRenderer
     }
 
     @Override
-    protected void renderGrid(UIContext context)
-    {
+    protected void renderGrid(UIContext context) {
         super.renderGrid(context);
 
         Shader shader = context.render.getShaders().get(VBOAttributes.VERTEX_RGBA);

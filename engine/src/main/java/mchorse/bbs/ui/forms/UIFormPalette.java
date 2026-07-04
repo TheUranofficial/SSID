@@ -11,8 +11,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
-public class UIFormPalette extends UIElement implements IUIFormList
-{
+public class UIFormPalette extends UIElement implements IUIFormList {
     public UIFormList list;
     public UIFormEditor editor;
 
@@ -20,12 +19,10 @@ public class UIFormPalette extends UIElement implements IUIFormList
 
     private UIFormCategory lastSelected;
 
-    public static UIFormPalette open(UIElement parent, boolean editing, Form form, Consumer<Form> callback)
-    {
+    public static UIFormPalette open(UIElement parent, boolean editing, Form form, Consumer<Form> callback) {
         UIContext context = parent.getContext();
 
-        if (!parent.getRoot().getChildren(UIFormPalette.class).isEmpty() || context == null)
-        {
+        if (!parent.getRoot().getChildren(UIFormPalette.class).isEmpty() || context == null) {
             return null;
         }
 
@@ -44,8 +41,7 @@ public class UIFormPalette extends UIElement implements IUIFormList
         return palette;
     }
 
-    public UIFormPalette(Consumer<Form> callback)
-    {
+    public UIFormPalette(Consumer<Form> callback) {
         this.callback = callback;
 
         this.list = new UIFormList(this);
@@ -60,56 +56,42 @@ public class UIFormPalette extends UIElement implements IUIFormList
         this.eventPropagataion(EventPropagation.BLOCK_INSIDE).markContainer();
     }
 
-    public UIFormPalette updatable()
-    {
+    public UIFormPalette updatable() {
         this.editor.renderer.updatable();
 
         return this;
     }
 
-    public void edit(boolean editing)
-    {
-        if (editing != this.editor.isEditing())
-        {
+    public void edit(boolean editing) {
+        if (editing != this.editor.isEditing()) {
             this.toggleEditor();
         }
     }
 
     @Override
-    public void exit()
-    {
-        if (!this.editor.isEditing())
-        {
+    public void exit() {
+        if (!this.editor.isEditing()) {
             this.removeFromParent();
-        }
-        else
-        {
+        } else {
             this.toggleEditor();
         }
     }
 
     @Override
-    public void toggleEditor()
-    {
-        if (!this.editor.isEditing())
-        {
+    public void toggleEditor() {
+        if (!this.editor.isEditing()) {
             Form form = this.list.getSelected();
 
-            if (this.editor.edit(form))
-            {
+            if (this.editor.edit(form)) {
                 this.lastSelected = this.list.getSelectedCategory();
             }
-        }
-        else
-        {
+        } else {
             Form form = this.editor.finish();
 
-            if (this.lastSelected.category.canModify(form))
-            {
+            if (this.lastSelected.category.canModify(form)) {
                 int index = this.lastSelected.category.forms.indexOf(this.lastSelected.selected);
 
-                if (index >= 0)
-                {
+                if (index >= 0) {
                     this.lastSelected.category.forms.set(index, form);
                 }
             }
@@ -125,24 +107,19 @@ public class UIFormPalette extends UIElement implements IUIFormList
     }
 
     @Override
-    public void accept(Form form)
-    {
-        if (this.callback != null)
-        {
+    public void accept(Form form) {
+        if (this.callback != null) {
             this.callback.accept(form);
         }
     }
 
-    public void setSelected(Form form)
-    {
+    public void setSelected(Form form) {
         this.list.setSelected(form);
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.exit();
         }
 
@@ -150,8 +127,7 @@ public class UIFormPalette extends UIElement implements IUIFormList
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.area.render(context.batcher, Colors.A75);
 
         super.render(context);

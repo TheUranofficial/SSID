@@ -22,16 +22,14 @@ import mchorse.bbs.utils.colors.Colors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UISettingsOverlayPanel extends UIOverlayPanel
-{
+public class UISettingsOverlayPanel extends UIOverlayPanel {
     public UIScrollView options;
 
     private Settings settings;
     private IKey title = UIKeys.CONFIG_TITLE;
     private UIIcon currentButton;
 
-    public UISettingsOverlayPanel()
-    {
+    public UISettingsOverlayPanel() {
         super(UIKeys.CONFIG_TITLE);
 
         this.options = new UIScrollView(ScrollDirection.VERTICAL);
@@ -40,8 +38,7 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
         this.options.relative(this.content).full();
         this.options.column().scroll().vertical().stretch().padding(10).height(20);
 
-        for (Settings settings : BBS.getConfigs().modules.values())
-        {
+        for (Settings settings : BBS.getConfigs().modules.values()) {
             UIIcon icon = new UIIcon(settings.icon, (b) ->
             {
                 this.selectConfig(settings.getId(), b);
@@ -56,18 +53,15 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
         this.markContainer();
     }
 
-    public void selectConfig(String mod, UIIcon currentButton)
-    {
+    public void selectConfig(String mod, UIIcon currentButton) {
         this.settings = BBS.getConfigs().modules.get(mod);
         this.currentButton = currentButton;
 
         this.refresh();
     }
 
-    public void refresh()
-    {
-        if (this.settings == null)
-        {
+    public void refresh() {
+        if (this.settings == null) {
             return;
         }
 
@@ -75,10 +69,8 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
 
         boolean first = true;
 
-        for (ValueGroup category : this.settings.categories.values())
-        {
-            if (!category.isVisible())
-            {
+        for (ValueGroup category : this.settings.categories.values()) {
+            if (!category.isVisible()) {
                 continue;
             }
 
@@ -91,15 +83,12 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
             label.tooltip(IKey.lang(catTooltipKey), Direction.BOTTOM);
             this.options.add(label);
 
-            for (BaseValue value : category.getAll())
-            {
-                if (!value.isVisible() || !(value instanceof IValueUIProvider))
-                {
+            for (BaseValue value : category.getAll()) {
+                if (!value.isVisible() || !(value instanceof IValueUIProvider)) {
                     continue;
                 }
 
-                for (UIElement element : ((IValueUIProvider) value).getFields(this))
-                {
+                for (UIElement element : ((IValueUIProvider) value).getFields(this)) {
                     options.add(element);
                 }
             }
@@ -108,8 +97,7 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
 
             this.options.add(firstContainer);
 
-            for (UIElement element : options)
-            {
+            for (UIElement element : options) {
                 this.options.add(element);
             }
 
@@ -120,12 +108,10 @@ public class UISettingsOverlayPanel extends UIOverlayPanel
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         super.renderBackground(context);
 
-        if (this.currentButton != null)
-        {
+        if (this.currentButton != null) {
             this.currentButton.area.render(context.batcher, BBSSettings.primaryColor(Colors.A100));
         }
     }

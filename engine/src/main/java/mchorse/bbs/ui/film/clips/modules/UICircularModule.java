@@ -8,13 +8,12 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 
 /**
  * Circular GUI module
- *
+ * <p>
  * This class unifies four trackpads into one object which edits
  * {@link CircularClip}'s other properties, and makes it way easier to reuse
  * in other classes.
  */
-public class UICircularModule extends UIAbstractModule
-{
+public class UICircularModule extends UIAbstractModule {
     public UITrackpad offset;
     public UITrackpad circles;
     public UITrackpad distance;
@@ -23,8 +22,7 @@ public class UICircularModule extends UIAbstractModule
 
     public CircularClip clip;
 
-    public UICircularModule(IUIClipsDelegate editor)
-    {
+    public UICircularModule(IUIClipsDelegate editor) {
         super(editor);
 
         this.offset = new UITrackpad((value) -> this.clip.offset.set(value.floatValue()));
@@ -46,8 +44,7 @@ public class UICircularModule extends UIAbstractModule
         this.add(UIClip.label(UIKeys.CAMERA_PANELS_CIRCLE), this.offset, this.circles, this.distance, this.pitch, this.fov);
     }
 
-    public void fill(CircularClip clip)
-    {
+    public void fill(CircularClip clip) {
         this.clip = clip;
 
         this.offset.setValue(clip.offset.get());

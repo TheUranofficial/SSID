@@ -11,33 +11,27 @@ import java.util.List;
 
 /**
  * Combined geometry
- * 
- * This class is responsible for combining multiple block geometry 
+ * <p>
+ * This class is responsible for combining multiple block geometry
  * entries.
  */
-public class CombinedGeometry extends BlockGeometry
-{
+public class CombinedGeometry extends BlockGeometry {
     public List<BlockGeometry> geometries = new ArrayList<>();
 
-    public CombinedGeometry(BlockGeometry... geometries)
-    {
+    public CombinedGeometry(BlockGeometry... geometries) {
         this.geometries.addAll(Arrays.asList(geometries));
     }
 
     @Override
-    public void complete()
-    {
-        for (BlockGeometry geometry : this.geometries)
-        {
+    public void complete() {
+        for (BlockGeometry geometry : this.geometries) {
             geometry.complete();
         }
     }
 
     @Override
-    public int build(int nx, int ny, int nz, int index, IBlockVariant block, ChunkBuilder builder, VAOBuilder vao, VBOAttributes attributes)
-    {
-        for (BlockGeometry geometry : this.geometries)
-        {
+    public int build(int nx, int ny, int nz, int index, IBlockVariant block, ChunkBuilder builder, VAOBuilder vao, VBOAttributes attributes) {
+        for (BlockGeometry geometry : this.geometries) {
             index = geometry.build(nx, ny, nz, index, block, builder, vao, attributes);
         }
 
@@ -45,25 +39,20 @@ public class CombinedGeometry extends BlockGeometry
     }
 
     @Override
-    public boolean isOverlapping(BlockGeometry geometry, float x, float y, float z)
-    {
-        if (!(geometry instanceof CombinedGeometry))
-        {
+    public boolean isOverlapping(BlockGeometry geometry, float x, float y, float z) {
+        if (!(geometry instanceof CombinedGeometry)) {
             return false;
         }
 
         CombinedGeometry combined = (CombinedGeometry) geometry;
         int size = this.geometries.size();
 
-        if (combined.geometries.size() != size)
-        {
+        if (combined.geometries.size() != size) {
             return false;
         }
 
-        for (int i = 0; i < size; i++)
-        {
-            if (!this.geometries.get(i).isOverlapping(combined.geometries.get(i), x, y, z))
-            {
+        for (int i = 0; i < size; i++) {
+            if (!this.geometries.get(i).isOverlapping(combined.geometries.get(i), x, y, z)) {
                 return false;
             }
         }

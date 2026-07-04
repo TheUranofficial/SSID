@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIKeyframes extends UIBaseKeyframes<Keyframe>
-{
+public class UIKeyframes extends UIBaseKeyframes<Keyframe> {
     public static final int TOP_MARGIN = 15;
 
     public Selection which = Selection.NOT_SELECTED;
@@ -34,21 +33,18 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     private UISheet current;
     private Area editArea = new Area();
 
-    public UIKeyframes(Consumer<Keyframe> callback)
-    {
+    public UIKeyframes(Consumer<Keyframe> callback) {
         super(callback);
 
         this.scaleY = new Scale(this.area, ScrollDirection.VERTICAL);
         this.scaleY.inverse().anchor(0.5F);
     }
 
-    public Scale getScaleY()
-    {
+    public Scale getScaleY() {
         return this.scaleY;
     }
 
-    public void editSheet(UISheet sheet)
-    {
+    public void editSheet(UISheet sheet) {
         this.clearSelection();
 
         this.current = sheet;
@@ -59,10 +55,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         this.resetViewY();
     }
 
-    public void resetViewY()
-    {
-        if (this.current == null)
-        {
+    public void resetViewY() {
+        if (this.current == null) {
             return;
         }
 
@@ -74,34 +68,26 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         double minY = Double.POSITIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
 
-        if (c > 1)
-        {
-            for (Keyframe frame : channel.getKeyframes())
-            {
+        if (c > 1) {
+            for (Keyframe frame : channel.getKeyframes()) {
                 minY = Math.min(minY, frame.getValue());
                 maxY = Math.max(maxY, frame.getValue());
             }
-        }
-        else
-        {
+        } else {
             minY = -10;
             maxY = 10;
 
-            if (c == 1)
-            {
+            if (c == 1) {
                 Keyframe first = channel.get(0);
 
                 minY = maxY = first.getValue();
             }
         }
 
-        if (Math.abs(maxY - minY) < 0.01F)
-        {
+        if (Math.abs(maxY - minY) < 0.01F) {
             /* Centerize */
             this.scaleY.setShift(minY);
-        }
-        else
-        {
+        } else {
             /* Spread apart vertically */
             this.scaleY.viewOffset(minY, maxY, this.area.h, 20);
         }
@@ -109,78 +95,60 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
 
     /* Implementation of setters */
 
-    public void setTick(double tick, boolean opposite)
-    {
-        if (this.isMultipleSelected())
-        {
-            if (this.which == Selection.KEYFRAME)
-            {
+    public void setTick(double tick, boolean opposite) {
+        if (this.isMultipleSelected()) {
+            if (this.which == Selection.KEYFRAME) {
                 tick = (long) tick;
             }
 
             double dx = tick - this.which.getX(this.getCurrent());
 
-            for (UISheet sheet : this.getSheets())
-            {
+            for (UISheet sheet : this.getSheets()) {
                 sheet.setTick(dx, this.which, opposite);
             }
-        }
-        else
-        {
+        } else {
             this.which.setX(this.getCurrent(), tick, opposite);
         }
 
         this.sliding = true;
     }
 
-    public void setValue(double value, boolean opposite)
-    {
-        if (this.isMultipleSelected())
-        {
+    public void setValue(double value, boolean opposite) {
+        if (this.isMultipleSelected()) {
             double dy = value - this.which.getY(this.getCurrent());
 
-            for (UISheet sheet : this.getSheets())
-            {
+            for (UISheet sheet : this.getSheets()) {
                 sheet.setValue(dy, this.which, opposite);
             }
-        }
-        else
-        {
+        } else {
             this.which.setY(this.getCurrent(), value, opposite);
         }
     }
 
-    public void setInterpolation(KeyframeInterpolation interp)
-    {
-        for (UISheet sheet : this.getSheets())
-        {
+    public void setInterpolation(KeyframeInterpolation interp) {
+        for (UISheet sheet : this.getSheets()) {
             sheet.setInterpolation(interp);
         }
     }
 
-    public void setEasing(KeyframeEasing easing)
-    {
-        for (UISheet sheet : this.getSheets())
-        {
+    public void setEasing(KeyframeEasing easing) {
+        for (UISheet sheet : this.getSheets()) {
             sheet.setEasing(easing);
         }
     }
 
     /* Graphing code */
 
-    public int toGraphY(double value)
-    {
+    public int toGraphY(double value) {
         return (int) this.scaleY.to(value);
     }
 
-    public double fromGraphY(int mouseY)
-    {
+    public double fromGraphY(int mouseY) {
         return this.scaleY.from(mouseY);
     }
 
     @Override
-    public void resetView()
-    {
+    public void resetView() {
         int c = 0;
 
         this.scaleX.set(0, 2);
@@ -189,10 +157,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         int max = Integer.MIN_VALUE;
 
         /* Find minimum and maximum */
-        for (UISheet sheet : this.sheets)
-        {
-            for (Keyframe frame : sheet.channel.getKeyframes())
-            {
+        for (UISheet sheet : this.sheets) {
+            for (Keyframe frame : sheet.channel.getKeyframes()) {
                 min = Integer.min((int) frame.getTick(), min);
                 max = Integer.max((int) frame.getTick(), max);
             }
@@ -200,38 +166,31 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
             c = Math.max(c, sheet.channel.getKeyframes().size());
         }
 
-        if (c <= 1)
-        {
-            if (c == 0)
-            {
+        if (c <= 1) {
+            if (c == 0) {
                 min = 0;
             }
 
             max = this.duration;
         }
 
-        if (Math.abs(max - min) > 0.01F)
-        {
+        if (Math.abs(max - min) > 0.01F) {
             this.scaleX.viewOffset(min, max, this.area.w, 20);
         }
     }
 
-    public Keyframe getCurrent()
-    {
+    public Keyframe getCurrent() {
         UISheet current = this.getCurrentSheet();
 
         return current == null ? null : current.getKeyframe();
     }
 
-    public List<UISheet> getSheets()
-    {
+    public List<UISheet> getSheets() {
         return this.current == null ? this.sheets : this.currentSheet;
     }
 
-    public UISheet getSheet(int mouseY)
-    {
-        if (this.current != null)
-        {
+    public UISheet getSheet(int mouseY) {
+        if (this.current != null) {
             return this.current;
         }
 
@@ -244,10 +203,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public void selectAll()
-    {
-        for (UISheet sheet : this.getSheets())
-        {
+    public void selectAll() {
+        for (UISheet sheet : this.getSheets()) {
             sheet.selectAll();
         }
 
@@ -255,17 +212,13 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         this.setKeyframe(this.getCurrent());
     }
 
-    public UISheet getCurrentSheet()
-    {
-        if (this.current != null)
-        {
+    public UISheet getCurrentSheet() {
+        if (this.current != null) {
             return this.current;
         }
 
-        for (UISheet sheet : this.sheets)
-        {
-            if (!sheet.selected.isEmpty())
-            {
+        for (UISheet sheet : this.sheets) {
+            if (!sheet.selected.isEmpty()) {
                 return sheet;
             }
         }
@@ -274,12 +227,10 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public int getSelectedCount()
-    {
+    public int getSelectedCount() {
         int i = 0;
 
-        for (UISheet sheet : this.getSheets())
-        {
+        for (UISheet sheet : this.getSheets()) {
             i += sheet.getSelectedCount();
         }
 
@@ -287,23 +238,19 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public void clearSelection()
-    {
+    public void clearSelection() {
         this.which = Selection.NOT_SELECTED;
 
-        for (UISheet sheet : this.sheets)
-        {
+        for (UISheet sheet : this.sheets) {
             sheet.clearSelection();
         }
     }
 
     @Override
-    public void addCurrent(int mouseX, int mouseY)
-    {
+    public void addCurrent(int mouseX, int mouseY) {
         UISheet sheet = this.getSheet(mouseY);
 
-        if (sheet == null)
-        {
+        if (sheet == null) {
             return;
         }
 
@@ -315,8 +262,7 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         Keyframe frame = this.getCurrent();
         long oldTick = tick;
 
-        if (frame != null)
-        {
+        if (frame != null) {
             easing = frame.getEasing();
             interp = frame.getInterpolation();
             oldTick = frame.getTick();
@@ -325,8 +271,7 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         sheet.selected.clear();
         sheet.selected.add(sheet.channel.insert(tick, value));
 
-        if (oldTick != tick)
-        {
+        if (oldTick != tick) {
             frame = this.getCurrent();
             frame.setEasing(easing);
             frame.setInterpolation(interp);
@@ -334,12 +279,10 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public void removeCurrent()
-    {
+    public void removeCurrent() {
         Keyframe frame = this.getCurrent();
 
-        if (frame == null)
-        {
+        if (frame == null) {
             return;
         }
 
@@ -352,10 +295,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public void removeSelectedKeyframes()
-    {
-        for (UISheet sheet : this.getSheets())
-        {
+    public void removeSelectedKeyframes() {
+        for (UISheet sheet : this.getSheets()) {
             sheet.removeSelectedKeyframes();
         }
 
@@ -365,20 +306,15 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.which == Selection.KEYFRAME;
     }
 
     @Override
-    public void doubleClick(int mouseX, int mouseY)
-    {
-        if (this.which == Selection.NOT_SELECTED)
-        {
+    public void doubleClick(int mouseX, int mouseY) {
+        if (this.which == Selection.NOT_SELECTED) {
             this.addCurrent(mouseX, mouseY);
-        }
-        else if (this.which == Selection.KEYFRAME && !this.isMultipleSelected())
-        {
+        } else if (this.which == Selection.KEYFRAME && !this.isMultipleSelected()) {
             this.removeCurrent();
         }
     }
@@ -386,22 +322,18 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     /* Mouse input handling */
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
+    public boolean subMouseClicked(UIContext context) {
         List<UISheet> sheets = this.getSheets();
         int sheetCount = sheets.size();
 
-        if (this.area.isInside(context) && context.mouseButton == 0 && sheetCount > 0)
-        {
+        if (this.area.isInside(context) && context.mouseButton == 0 && sheetCount > 0) {
             int h = (this.area.h - TOP_MARGIN) / sheetCount;
             int y = this.area.ey() - h * sheetCount;
 
-            for (UISheet sheet : sheets)
-            {
+            for (UISheet sheet : sheets) {
                 Area editArea = this.setupEditArea(y, h);
 
-                if (editArea.isInside(context))
-                {
+                if (editArea.isInside(context)) {
                     this.editSheet(this.current == null ? sheet : null);
 
                     return true;
@@ -414,20 +346,17 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         return super.subMouseClicked(context);
     }
 
-    private Area setupEditArea(int y, int h)
-    {
+    private Area setupEditArea(int y, int h) {
         this.editArea.set(this.area.x, y, 10, h);
 
         return this.editArea;
     }
 
     @Override
-    protected void duplicateKeyframe(UIContext context, int mouseX, int mouseY)
-    {
+    protected void duplicateKeyframe(UIContext context, int mouseX, int mouseY) {
         long offset = (long) this.fromGraphX(mouseX);
 
-        for (UISheet sheet : this.getSheets())
-        {
+        for (UISheet sheet : this.getSheets()) {
             sheet.duplicate(offset);
         }
 
@@ -435,15 +364,13 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    protected boolean pickKeyframe(UIContext context, int mouseX, int mouseY, boolean shift)
-    {
+    protected boolean pickKeyframe(UIContext context, int mouseX, int mouseY, boolean shift) {
         return this.current == null
             ? this.pickKeyframeDopeSheet(context, mouseX, mouseY, shift)
             : this.pickKeyframeGraph(context, mouseX, mouseY, shift);
     }
 
-    private boolean pickKeyframeDopeSheet(UIContext context, int mouseX, int mouseY, boolean shift)
-    {
+    private boolean pickKeyframeDopeSheet(UIContext context, int mouseX, int mouseY, boolean shift) {
         List<UISheet> sheets = this.getSheets();
         int sheetCount = sheets.size();
         int h = (this.area.h - TOP_MARGIN) / sheetCount;
@@ -452,66 +379,51 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         boolean finished = false;
         boolean isMultiSelect = this.isMultipleSelected();
 
-        for (UISheet sheet : sheets)
-        {
+        for (UISheet sheet : sheets) {
             int index = 0;
             int count = sheet.channel.getKeyframes().size();
             Keyframe prev = null;
 
-            for (Keyframe frame : sheet.channel.getKeyframes())
-            {
+            for (Keyframe frame : sheet.channel.getKeyframes()) {
                 boolean left = prev != null && prev.getInterpolation().isBezier() && this.isInside(this.toGraphX(frame.getTick() - frame.getLx()), y + h / 2, mouseX, mouseY);
                 boolean right = frame.getInterpolation().isBezier() && this.isInside(this.toGraphX(frame.getTick() + frame.getRx()), y + h / 2, mouseX, mouseY) && index != count - 1;
                 boolean point = this.isInside(this.toGraphX(frame.getTick()), alt ? mouseY : y + h / 2, mouseX, mouseY);
 
-                if (left || right || point)
-                {
+                if (left || right || point) {
                     int key = sheet.selected.indexOf(index);
 
-                    if (!shift && key == -1 && !alt)
-                    {
+                    if (!shift && key == -1 && !alt) {
                         this.clearSelection();
                     }
 
                     Selection which = left ? Selection.LEFT_HANDLE : (right ? Selection.RIGHT_HANDLE : Selection.KEYFRAME);
 
-                    if (!shift || which == this.which)
-                    {
+                    if (!shift || which == this.which) {
                         this.which = which;
 
-                        if (shift && isMultiSelect && key != -1)
-                        {
+                        if (shift && isMultiSelect && key != -1) {
                             sheet.selected.remove(key);
                             frame = this.getCurrent();
-                        }
-                        else if (key == -1)
-                        {
+                        } else if (key == -1) {
                             sheet.selected.add(index);
                             frame = isMultiSelect ? this.getCurrent() : frame;
-                        }
-                        else
-                        {
+                        } else {
                             frame = this.getCurrent();
                         }
 
                         this.setKeyframe(frame);
                     }
 
-                    if (frame != null)
-                    {
+                    if (frame != null) {
                         this.lastT = left ? frame.getTick() - frame.getLx() : (right ? frame.getTick() + frame.getRx() : frame.getTick());
                         this.lastV = left ? frame.getValue() + frame.getLy() : (right ? frame.getValue() + frame.getRy() : frame.getValue());
                     }
 
-                    if (alt)
-                    {
-                        if (frame != null)
-                        {
+                    if (alt) {
+                        if (frame != null) {
                             finished = true;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         return true;
                     }
                 }
@@ -526,54 +438,43 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         return finished;
     }
 
-    private boolean pickKeyframeGraph(UIContext context, int mouseX, int mouseY, boolean shift)
-    {
+    private boolean pickKeyframeGraph(UIContext context, int mouseX, int mouseY, boolean shift) {
         UISheet sheet = this.current;
         int index = 0;
         int count = sheet.channel.getKeyframes().size();
         Keyframe prev = null;
 
-        for (Keyframe frame : sheet.channel.getKeyframes())
-        {
+        for (Keyframe frame : sheet.channel.getKeyframes()) {
             boolean left = prev != null && prev.getInterpolation().isBezier() && this.isInsideTickValue(frame.getTick() - frame.getLx(), frame.getValue() + frame.getLy(), mouseX, mouseY);
             boolean right = frame.getInterpolation().isBezier() && this.isInsideTickValue(frame.getTick() + frame.getRx(), frame.getValue() + frame.getRy(), mouseX, mouseY) && index != count - 1;
             boolean point = this.isInsideTickValue(frame.getTick(), frame.getValue(), mouseX, mouseY);
 
-            if (left || right || point)
-            {
+            if (left || right || point) {
                 int key = sheet.selected.indexOf(index);
 
-                if (!shift && key == -1)
-                {
+                if (!shift && key == -1) {
                     this.clearSelection();
                 }
 
                 Selection which = left ? Selection.LEFT_HANDLE : (right ? Selection.RIGHT_HANDLE : Selection.KEYFRAME);
 
-                if (!shift || which == this.which)
-                {
+                if (!shift || which == this.which) {
                     this.which = which;
 
-                    if (shift && this.isMultipleSelected() && key != -1)
-                    {
+                    if (shift && this.isMultipleSelected() && key != -1) {
                         sheet.selected.remove(key);
                         frame = this.getCurrent();
-                    }
-                    else if (key == -1)
-                    {
+                    } else if (key == -1) {
                         sheet.selected.add(index);
                         frame = this.isMultipleSelected() ? this.getCurrent() : frame;
-                    }
-                    else
-                    {
+                    } else {
                         frame = this.getCurrent();
                     }
 
                     this.setKeyframe(frame);
                 }
 
-                if (frame != null)
-                {
+                if (frame != null) {
                     this.lastT = left ? frame.getTick() - frame.getLx() : (right ? frame.getTick() + frame.getRx() : frame.getTick());
                     this.lastV = left ? frame.getValue() + frame.getLy() : (right ? frame.getValue() + frame.getRy() : frame.getValue());
                 }
@@ -588,8 +489,7 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         return false;
     }
 
-    private boolean isInsideTickValue(double tick, double value, int mouseX, int mouseY)
-    {
+    private boolean isInsideTickValue(double tick, double value, int mouseX, int mouseY) {
         int x = this.toGraphX(tick);
         int y = this.toGraphY(value);
         double d = Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2);
@@ -598,18 +498,15 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    protected void setupScrolling(UIContext context, int mouseX, int mouseY)
-    {
+    protected void setupScrolling(UIContext context, int mouseX, int mouseY) {
         super.setupScrolling(context, mouseX, mouseY);
 
         this.lastV = this.scaleY.getShift();
     }
 
     @Override
-    protected void zoom(UIContext context, int scroll)
-    {
-        if (this.current == null)
-        {
+    protected void zoom(UIContext context, int scroll) {
+        if (this.current == null) {
             super.zoom(context, scroll);
 
             return;
@@ -620,30 +517,23 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         boolean none = !x && !y;
 
         /* Scaling X */
-        if (x && !y || none)
-        {
+        if (x && !y || none) {
             this.scaleX.zoomAnchor(Scale.getAnchorX(context, this.area), Math.copySign(this.scaleX.getZoomFactor(), scroll), MIN_ZOOM, MAX_ZOOM);
         }
 
         /* Scaling Y */
-        if (y && !x || none)
-        {
+        if (y && !x || none) {
             this.scaleY.zoomAnchor(Scale.getAnchorY(context, this.area), Math.copySign(this.scaleY.getZoomFactor(), scroll), MIN_ZOOM, MAX_ZOOM);
         }
     }
 
     @Override
-    protected void resetMouseReleased(UIContext context)
-    {
-        if (this.which == Selection.KEYFRAME)
-        {
-            if (this.sliding)
-            {
+    protected void resetMouseReleased(UIContext context) {
+        if (this.which == Selection.KEYFRAME) {
+            if (this.sliding) {
                 /* Resort after dragging the tick thing */
-                for (UISheet sheet : this.getSheets())
-                {
-                    if (!sheet.selected.isEmpty())
-                    {
+                for (UISheet sheet : this.getSheets()) {
+                    if (!sheet.selected.isEmpty()) {
                         sheet.sort();
                     }
                 }
@@ -652,10 +542,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
             }
         }
 
-        if (this.isGrabbing())
-        {
-            if (this.current == null)
-            {
+        if (this.isGrabbing()) {
+            if (this.current == null) {
                 /* Multi select */
                 Area area = this.getGrabbingArea(context);
                 List<UISheet> sheets = this.getSheets();
@@ -664,14 +552,11 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
                 int y = this.area.ey() - h * count;
                 int c = 0;
 
-                for (UISheet sheet : sheets)
-                {
+                for (UISheet sheet : sheets) {
                     int i = 0;
 
-                    for (Keyframe keyframe : sheet.channel.getKeyframes())
-                    {
-                        if (area.isInside(this.toGraphX(keyframe.getTick()), y + h / 2) && !sheet.selected.contains(i))
-                        {
+                    for (Keyframe keyframe : sheet.channel.getKeyframes()) {
+                        if (area.isInside(this.toGraphX(keyframe.getTick()), y + h / 2) && !sheet.selected.contains(i)) {
                             sheet.selected.add(i);
                             c++;
                         }
@@ -682,31 +567,25 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
                     y += h;
                 }
 
-                if (c > 0)
-                {
+                if (c > 0) {
                     this.which = Selection.KEYFRAME;
                     this.setKeyframe(this.getCurrent());
                 }
-            }
-            else
-            {
+            } else {
                 /* Multi select */
                 UISheet sheet = this.current;
                 Area area = this.getGrabbingArea(context);
                 KeyframeChannel channel = sheet.channel;
 
-                for (int i = 0, c = channel.getKeyframes().size(); i < c; i ++)
-                {
+                for (int i = 0, c = channel.getKeyframes().size(); i < c; i++) {
                     Keyframe keyframe = channel.get(i);
 
-                    if (area.isInside(this.toGraphX(keyframe.getTick()), this.toGraphY(keyframe.getValue())) && !sheet.selected.contains(i))
-                    {
+                    if (area.isInside(this.toGraphX(keyframe.getTick()), this.toGraphY(keyframe.getValue())) && !sheet.selected.contains(i)) {
                         sheet.selected.add(i);
                     }
                 }
 
-                if (!sheet.selected.isEmpty())
-                {
+                if (!sheet.selected.isEmpty()) {
                     this.which = Selection.KEYFRAME;
                     this.setKeyframe(this.getCurrent());
                 }
@@ -719,12 +598,10 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     /* Rendering */
 
     @Override
-    protected void renderGrid(UIContext context)
-    {
+    protected void renderGrid(UIContext context) {
         super.renderGrid(context);
 
-        if (this.current == null)
-        {
+        if (this.current == null) {
             return;
         }
 
@@ -739,12 +616,10 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         min -= min % mult + mult;
         max -= max % mult - mult;
 
-        for (int j = 0, c = (max - min) / mult; j < c; j++)
-        {
+        for (int j = 0, c = (max - min) / mult; j < c; j++) {
             int y = this.toGraphY(min + j * mult);
 
-            if (y > this.area.ey())
-            {
+            if (y > this.area.ey()) {
                 continue;
             }
 
@@ -754,34 +629,27 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    protected void renderGraph(UIContext context)
-    {
-        if (this.current == null)
-        {
+    protected void renderGraph(UIContext context) {
+        if (this.current == null) {
             this.renderDopeSheetGraph(context);
-        }
-        else
-        {
+        } else {
             this.renderGraphGraph(context, this.current);
         }
     }
 
-    private void renderDopeSheetGraph(UIContext context)
-    {
+    private void renderDopeSheetGraph(UIContext context) {
         /* Draw dope sheet */
         List<UISheet> sheets = this.getSheets();
         int sheetCount = sheets.size();
 
-        if (sheetCount == 0)
-        {
+        if (sheetCount == 0) {
             return;
         }
 
         int h = (this.area.h - TOP_MARGIN) / sheetCount;
         int y = this.area.ey() - h * sheetCount;
 
-        for (UISheet sheet : sheets)
-        {
+        for (UISheet sheet : sheets) {
             COLOR.set(sheet.color, false);
 
             LineBuilder line = new LineBuilder(0.75F);
@@ -796,24 +664,20 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
             int count = sheet.channel.getKeyframes().size();
             Keyframe prev = null;
 
-            for (Keyframe frame : sheet.channel.getKeyframes())
-            {
+            for (Keyframe frame : sheet.channel.getKeyframes()) {
                 boolean isPointHover = this.isInside(this.toGraphX(frame.getTick()), y + h / 2, context.mouseX, context.mouseY);
 
-                if (this.isGrabbing())
-                {
+                if (this.isGrabbing()) {
                     isPointHover = isPointHover || this.getGrabbingArea(context).isInside(this.toGraphX(frame.getTick()), y + h / 2);
                 }
 
                 this.renderRect(context, this.toGraphX(frame.getTick()), y + h / 2, 3, sheet.hasSelected(index) || isPointHover ? Colors.WHITE : sheet.color);
 
-                if (frame.getInterpolation().isBezier() && index != count - 1)
-                {
+                if (frame.getInterpolation().isBezier() && index != count - 1) {
                     this.renderRect(context, this.toGraphX(frame.getTick() + frame.getRx()), y + h / 2, 2, sheet.hasSelected(index) ? Colors.WHITE : sheet.color);
                 }
 
-                if (prev != null && prev.getInterpolation().isBezier())
-                {
+                if (prev != null && prev.getInterpolation().isBezier()) {
                     this.renderRect(context, this.toGraphX(frame.getTick() - frame.getLx()), y + h / 2, 2, sheet.hasSelected(index) ? Colors.WHITE : sheet.color);
                 }
 
@@ -824,17 +688,14 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
             index = 0;
             prev = null;
 
-            for (Keyframe frame : sheet.channel.getKeyframes())
-            {
+            for (Keyframe frame : sheet.channel.getKeyframes()) {
                 this.renderRect(context, this.toGraphX(frame.getTick()), y + h / 2, 2, this.which == Selection.KEYFRAME && sheet.hasSelected(index) ? Colors.ACTIVE : 0);
 
-                if (frame.getInterpolation().isBezier() && index != count - 1)
-                {
+                if (frame.getInterpolation().isBezier() && index != count - 1) {
                     this.renderRect(context, this.toGraphX(frame.getTick() + frame.getRx()), y + h / 2, 1, this.which == Selection.RIGHT_HANDLE && sheet.hasSelected(index) ? Colors.ACTIVE : 0);
                 }
 
-                if (prev != null && prev.getInterpolation().isBezier())
-                {
+                if (prev != null && prev.getInterpolation().isBezier()) {
                     this.renderRect(context, this.toGraphX(frame.getTick() - frame.getLx()), y + h / 2, 1, this.which == Selection.LEFT_HANDLE && sheet.hasSelected(index) ? Colors.ACTIVE : 0);
                 }
 
@@ -848,8 +709,7 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
 
             Area editArea = this.setupEditArea(y, h);
 
-            if (editArea.isInside(context))
-            {
+            if (editArea.isInside(context)) {
                 context.batcher.icon(Icons.EDIT, Colors.WHITE, this.area.x + 4, y + h / 2, 0F, 0.5F);
             }
 
@@ -857,10 +717,8 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         }
     }
 
-    private void renderGraphGraph(UIContext context, UISheet sheet)
-    {
-        if (sheet == null || sheet.channel == null || sheet.channel.isEmpty())
-        {
+    private void renderGraphGraph(UIContext context, UISheet sheet) {
+        if (sheet == null || sheet.channel == null || sheet.channel.isEmpty()) {
             return;
         }
 
@@ -879,52 +737,41 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         int count = channel.getKeyframes().size();
         Keyframe prev = null;
 
-        for (Keyframe frame : channel.getKeyframes())
-        {
-            if (prev != null)
-            {
+        for (Keyframe frame : channel.getKeyframes()) {
+            if (prev != null) {
                 int px = this.toGraphX(prev.getTick());
                 int fx = this.toGraphX(frame.getTick());
 
                 /* Main line */
-                if (prev.getInterpolation() == KeyframeInterpolation.LINEAR)
-                {
+                if (prev.getInterpolation() == KeyframeInterpolation.LINEAR) {
                     main.add(px, this.toGraphY(prev.getValue()))
                         .add(fx, this.toGraphY(frame.getValue()));
-                }
-                else
-                {
+                } else {
                     float seg = 10;
 
-                    if (prev.getInterpolation() == KeyframeInterpolation.BOUNCE || prev.getInterpolation() == KeyframeInterpolation.ELASTIC)
-                    {
+                    if (prev.getInterpolation() == KeyframeInterpolation.BOUNCE || prev.getInterpolation() == KeyframeInterpolation.ELASTIC) {
                         seg = 30;
                     }
 
-                    for (int i = 0; i < seg; i++)
-                    {
+                    for (int i = 0; i < seg; i++) {
                         main.add(px + (fx - px) * (i / seg), this.toGraphY(prev.interpolate(frame, i / seg)))
                             .add(px + (fx - px) * ((i + 1) / seg), this.toGraphY(prev.interpolate(frame, (i + 1) / seg)));
                     }
                 }
 
-                if (prev.getInterpolation().isBezier())
-                {
+                if (prev.getInterpolation().isBezier()) {
                     /* Left bezier handle */
                     lines.push()
                         .add(this.toGraphX(frame.getTick() - frame.getLx()), this.toGraphY(frame.getValue() + frame.getLy()))
                         .add(this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()));
                 }
-            }
-            else
-            {
+            } else {
                 /* Left edge line */
                 main.add(0, this.toGraphY(frame.getValue()))
                     .add(this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()));
             }
 
-            if (frame.getInterpolation().isBezier() && index != count - 1)
-            {
+            if (frame.getInterpolation().isBezier() && index != count - 1) {
                 /* Right bezier handle */
                 lines.push()
                     .add(this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()))
@@ -945,24 +792,20 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         index = 0;
         prev = null;
 
-        for (Keyframe frame : channel.getKeyframes())
-        {
+        for (Keyframe frame : channel.getKeyframes()) {
             boolean isPointHover = this.isInside(this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()), context.mouseX, context.mouseY);
 
-            if (this.isGrabbing())
-            {
+            if (this.isGrabbing()) {
                 isPointHover = isPointHover || this.getGrabbingArea(context).isInside(this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()));
             }
 
             this.renderRect(context, this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()), 3, sheet.hasSelected(index) || isPointHover ? Colors.WHITE : sheet.color);
 
-            if (frame.getInterpolation().isBezier() && index != count - 1)
-            {
+            if (frame.getInterpolation().isBezier() && index != count - 1) {
                 this.renderRect(context, this.toGraphX(frame.getTick() + frame.getRx()), this.toGraphY(frame.getValue() + frame.getRy()), 3, Colors.WHITE);
             }
 
-            if (prev != null && prev.getInterpolation().isBezier())
-            {
+            if (prev != null && prev.getInterpolation().isBezier()) {
                 this.renderRect(context, this.toGraphX(frame.getTick() - frame.getLx()), this.toGraphY(frame.getValue() + frame.getLy()), 3, Colors.WHITE);
             }
 
@@ -973,19 +816,16 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         index = 0;
         prev = null;
 
-        for (Keyframe frame : channel.getKeyframes())
-        {
+        for (Keyframe frame : channel.getKeyframes()) {
             boolean has = sheet.selected.contains(index);
 
             this.renderRect(context, this.toGraphX(frame.getTick()), this.toGraphY(frame.getValue()), 2, has && this.which == Selection.KEYFRAME ? Colors.ACTIVE : 0);
 
-            if (frame.getInterpolation().isBezier() && index != count - 1)
-            {
+            if (frame.getInterpolation().isBezier() && index != count - 1) {
                 this.renderRect(context, this.toGraphX(frame.getTick() + frame.getRx()), this.toGraphY(frame.getValue() + frame.getRy()), 2, has && this.which == Selection.RIGHT_HANDLE ? Colors.ACTIVE : 0);
             }
 
-            if (prev != null && prev.getInterpolation().isBezier())
-            {
+            if (prev != null && prev.getInterpolation().isBezier()) {
                 this.renderRect(context, this.toGraphX(frame.getTick() - frame.getLx()), this.toGraphY(frame.getValue() + frame.getLy()), 2, has && this.which == Selection.LEFT_HANDLE ? Colors.ACTIVE : 0);
             }
 
@@ -998,8 +838,7 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
 
         Area editArea = this.setupEditArea(y, h);
 
-        if (editArea.isInside(context))
-        {
+        if (editArea.isInside(context)) {
             context.batcher.icon(Icons.CLOSE, Colors.WHITE, this.area.x + 4, y + h / 2, 0F, 0.5F);
         }
     }
@@ -1007,49 +846,38 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     /* Handling dragging */
 
     @Override
-    protected void scrolling(int mouseX, int mouseY)
-    {
+    protected void scrolling(int mouseX, int mouseY) {
         super.scrolling(mouseX, mouseY);
 
-        if (this.current != null)
-        {
+        if (this.current != null) {
             this.scaleY.setShift((mouseY - this.lastY) / this.scaleY.getZoom() + this.lastV);
         }
     }
 
     @Override
-    protected Keyframe moving(UIContext context, int mouseX, int mouseY)
-    {
+    protected Keyframe moving(UIContext context, int mouseX, int mouseY) {
         return this.current == null
             ? this.movingDopeSheet(context, mouseX, mouseY)
             : this.movingGraph(context, mouseX, mouseY);
     }
 
-    private Keyframe movingDopeSheet(UIContext context, int mouseX, int mouseY)
-    {
+    private Keyframe movingDopeSheet(UIContext context, int mouseX, int mouseY) {
         Keyframe frame = this.getCurrent();
         double x = this.fromGraphX(mouseX);
 
-        if (this.which == Selection.NOT_SELECTED)
-        {
+        if (this.which == Selection.NOT_SELECTED) {
             this.moveNoKeyframe(context, x, 0);
-        }
-        else
-        {
-            if (this.isMultipleSelected())
-            {
+        } else {
+            if (this.isMultipleSelected()) {
                 int dx = mouseX - this.lastX;
                 int xx = this.toGraphX(this.lastT);
 
                 x = this.fromGraphX(xx + dx);
             }
 
-            if (this.which == Selection.LEFT_HANDLE)
-            {
+            if (this.which == Selection.LEFT_HANDLE) {
                 x = (int) -(x - frame.getTick());
-            }
-            else if (this.which == Selection.RIGHT_HANDLE)
-            {
+            } else if (this.which == Selection.RIGHT_HANDLE) {
                 x = (int) x - frame.getTick();
             }
 
@@ -1059,20 +887,15 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
         return frame;
     }
 
-    private Keyframe movingGraph(UIContext context, int mouseX, int mouseY)
-    {
+    private Keyframe movingGraph(UIContext context, int mouseX, int mouseY) {
         Keyframe frame = this.getCurrent();
         double x = this.fromGraphX(mouseX);
         double y = this.fromGraphY(mouseY);
 
-        if (this.which == Selection.NOT_SELECTED)
-        {
+        if (this.which == Selection.NOT_SELECTED) {
             this.moveNoKeyframe(context, x, y);
-        }
-        else
-        {
-            if (this.isMultipleSelected())
-            {
+        } else {
+            if (this.isMultipleSelected()) {
                 int dx = mouseX - this.lastX;
                 int dy = mouseY - this.lastY;
 
@@ -1086,13 +909,10 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
             if (Window.isShiftPressed()) x = this.lastT;
             if (Window.isCtrlPressed()) y = this.lastV;
 
-            if (this.which == Selection.LEFT_HANDLE)
-            {
+            if (this.which == Selection.LEFT_HANDLE) {
                 x = -(x - frame.getTick());
                 y = y - frame.getValue();
-            }
-            else if (this.which == Selection.RIGHT_HANDLE)
-            {
+            } else if (this.which == Selection.RIGHT_HANDLE) {
                 x = x - frame.getTick();
                 y = y - frame.getValue();
             }
@@ -1109,28 +929,22 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     /* Undo/redo */
 
     @Override
-    public FilmEditorUndo.KeyframeSelection createSelection()
-    {
+    public FilmEditorUndo.KeyframeSelection createSelection() {
         FilmEditorUndo.KeyframeSelection selection = super.createSelection();
         Keyframe keyframe = this.getCurrent();
         List<UISheet> sheets = this.getSheets();
 
-        for (UISheet sheet : sheets)
-        {
+        for (UISheet sheet : sheets) {
             selection.selected.add(new ArrayList<>(sheet.selected));
         }
 
-        if (keyframe != null)
-        {
+        if (keyframe != null) {
             main:
-            for (int i = 0; i < sheets.size(); i++)
-            {
+            for (int i = 0; i < sheets.size(); i++) {
                 UISheet sheet = sheets.get(i);
 
-                for (int j = 0; j < sheet.channel.getKeyframes().size(); j++)
-                {
-                    if (sheet.channel.getKeyframes().get(j) == keyframe)
-                    {
+                for (int j = 0; j < sheet.channel.getKeyframes().size(); j++) {
+                    if (sheet.channel.getKeyframes().get(j) == keyframe) {
                         selection.current.set(i, j);
 
                         break main;
@@ -1143,25 +957,22 @@ public class UIKeyframes extends UIBaseKeyframes<Keyframe>
     }
 
     @Override
-    public void applySelection(FilmEditorUndo.KeyframeSelection selection)
-    {
+    public void applySelection(FilmEditorUndo.KeyframeSelection selection) {
         super.applySelection(selection);
 
         this.clearSelection();
 
         List<UISheet> sheets = this.getSheets();
 
-        for (int i = 0; i < sheets.size(); i++)
-        {
-            if (CollectionUtils.inRange(selection.selected, i))
-            {
+        for (int i = 0; i < sheets.size(); i++) {
+            if (CollectionUtils.inRange(selection.selected, i)) {
                 sheets.get(i).selected.addAll(selection.selected.get(i));
             }
         }
 
         if (
             CollectionUtils.inRange(sheets, selection.current.x) &&
-            CollectionUtils.inRange(sheets.get(selection.current.x).channel.getKeyframes(), selection.current.y)
+                CollectionUtils.inRange(sheets.get(selection.current.x).channel.getKeyframes(), selection.current.y)
         ) {
             Keyframe keyframe = sheets.get(selection.current.x).channel.getKeyframes().get(selection.current.y);
 

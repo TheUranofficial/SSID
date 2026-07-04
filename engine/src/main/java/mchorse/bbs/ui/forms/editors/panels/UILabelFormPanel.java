@@ -17,8 +17,7 @@ import mchorse.bbs.utils.colors.Color;
 
 import java.util.Set;
 
-public class UILabelFormPanel extends UIFormPanel<LabelForm>
-{
+public class UILabelFormPanel extends UIFormPanel<LabelForm> {
     public UITextbox text;
     public UIButton font;
     public UIColor color;
@@ -34,8 +33,7 @@ public class UILabelFormPanel extends UIFormPanel<LabelForm>
     public UIColor background;
     public UITrackpad offset;
 
-    public UILabelFormPanel(UIForm editor)
-    {
+    public UILabelFormPanel(UIForm editor) {
         super(editor);
 
         this.text = new UITextbox(10000, (t) -> this.form.text.set(t));
@@ -74,8 +72,7 @@ public class UILabelFormPanel extends UIFormPanel<LabelForm>
     }
 
     @Override
-    public void startEdit(LabelForm form)
-    {
+    public void startEdit(LabelForm form) {
         super.startEdit(form);
 
         this.text.setText(form.text.get());
@@ -93,8 +90,7 @@ public class UILabelFormPanel extends UIFormPanel<LabelForm>
     }
 
     @Override
-    public void finishEdit()
-    {
+    public void finishEdit() {
         super.finishEdit();
 
         this.color.picker.removeFromParent();

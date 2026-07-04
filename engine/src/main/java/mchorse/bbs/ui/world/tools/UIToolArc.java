@@ -17,15 +17,13 @@ import org.joml.Vector3i;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UIToolArc extends UITool
-{
+public class UIToolArc extends UITool {
     private Set<Vector3i> blocks = new HashSet<>();
 
     private Vector3i initial;
     private Vector3i target;
 
-    public Set<Vector3i> calculate(Set<Vector3i> blocks, Vector3d control)
-    {
+    public Set<Vector3i> calculate(Set<Vector3i> blocks, Vector3d control) {
         blocks.clear();
 
         double d = (control.distance(this.initial.x, this.initial.y, this.initial.z) + control.distance(this.target.x, this.initial.y, this.target.z)) * 2D;
@@ -41,10 +39,8 @@ public class UIToolArc extends UITool
         rasterizer.setupRange(1F, 0.5F, -rasterizer.step);
         rasterizer.solve(rasterized);
 
-        for (int y = Math.min(this.initial.y, this.target.y), ey = Math.max(this.initial.y, this.target.y); y <= ey; y++)
-        {
-            for (Vector2i point : rasterized)
-            {
+        for (int y = Math.min(this.initial.y, this.target.y), ey = Math.max(this.initial.y, this.target.y); y <= ey; y++) {
+            for (Vector2i point : rasterized) {
                 blocks.add(new Vector3i(point.x, y, point.y));
             }
         }
@@ -52,14 +48,12 @@ public class UIToolArc extends UITool
         return blocks;
     }
 
-    public UIToolArc(UIWorldEditorPanel editor)
-    {
+    public UIToolArc(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.ARC, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_ARC, Direction.RIGHT);
@@ -68,44 +62,32 @@ public class UIToolArc extends UITool
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
-        if (mouseButton == 0)
-        {
+        if (mouseButton == 0) {
             this.target = this.initial = null;
         }
     }
 
     @Override
-    public void drag(RayTraceResult result)
-    {
+    public void drag(RayTraceResult result) {
         super.drag(result);
 
-        if (this.initial != null && this.target != null)
-        {
+        if (this.initial != null && this.target != null) {
             this.calculate(this.blocks, result.hit);
         }
     }
 
     @Override
-    public void end(RayTraceResult result)
-    {
-        if (this.lastMouseButton == 1)
-        {
-            if (this.initial == null)
-            {
+    public void end(RayTraceResult result) {
+        if (this.lastMouseButton == 1) {
+            if (this.initial == null) {
                 this.initial = new Vector3i(this.firstBlock);
-            }
-            else if (this.target == null)
-            {
+            } else if (this.target == null) {
                 this.target = new Vector3i(this.firstBlock);
-            }
-            else
-            {
-                for (Vector3i block : this.blocks)
-                {
+            } else {
+                for (Vector3i block : this.blocks) {
                     this.getProxy().setBlock(block.x, block.y, block.z, this.variantToPlace);
                 }
 
@@ -113,27 +95,23 @@ public class UIToolArc extends UITool
                 this.blocks.clear();
             }
         }
-        
+
         super.end(result);
     }
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         super.render(context, result);
 
-        if (this.initial != null)
-        {
+        if (this.initial != null) {
             Draw.renderBlockAABB(context, this.getProxy().getChunks(), this.initial.x, this.initial.y, this.initial.z);
         }
 
-        if (this.target != null)
-        {
+        if (this.target != null) {
             Draw.renderBlockAABB(context, this.getProxy().getChunks(), this.target.x, this.target.y, this.target.z);
         }
 
-        for (Vector3i block : this.blocks)
-        {
+        for (Vector3i block : this.blocks) {
             Draw.renderBlockAABB(context, this.getProxy().getChunks(), block.x, block.y, block.z);
         }
     }

@@ -4,13 +4,12 @@ import mchorse.bbs.core.Engine;
 
 /**
  * Bridge interface.
- *
+ * <p>
  * This interface provides all the necessary objects and resources may
  * be needed by the engine code, without coupling app code in the
  * game engine.
  */
-public interface IBridge
-{
+public interface IBridge {
     public Engine getEngine();
 
     public <T> T get(Class<T> apiInterface);

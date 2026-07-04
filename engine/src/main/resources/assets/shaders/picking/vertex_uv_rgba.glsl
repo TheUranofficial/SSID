@@ -10,8 +10,8 @@ uniform mat4 u_model;
 
 layout (std140) uniform u_matrices
 {
-mat4 u_projection;
-mat4 u_view;
+    mat4 u_projection;
+    mat4 u_view;
 };
 
 void main()

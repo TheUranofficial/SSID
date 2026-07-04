@@ -6,13 +6,11 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.ui.utils.UI;
 
-public abstract class UIMessageBarOverlayPanel extends UIMessageOverlayPanel
-{
+public abstract class UIMessageBarOverlayPanel extends UIMessageOverlayPanel {
     public UIButton confirm;
     public UIElement bar;
 
-    public UIMessageBarOverlayPanel(IKey title, IKey message)
-    {
+    public UIMessageBarOverlayPanel(IKey title, IKey message) {
         super(title, message);
 
         this.confirm = new UIButton(UIKeys.GENERAL_OK, (b) -> this.confirm());
@@ -25,8 +23,7 @@ public abstract class UIMessageBarOverlayPanel extends UIMessageOverlayPanel
     }
 
     @Override
-    public void confirm()
-    {
+    public void confirm() {
         this.close();
     }
 }

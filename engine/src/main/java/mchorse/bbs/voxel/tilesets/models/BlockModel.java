@@ -11,8 +11,7 @@ import mchorse.bbs.voxel.tilesets.geometry.BlockGeometry;
 import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import org.joml.Vector3i;
 
-public class BlockModel
-{
+public class BlockModel {
     private static Color temporary = new Color();
 
     public BlockModelFactory factory;
@@ -39,8 +38,7 @@ public class BlockModel
 
     public AABB collisionBox = new AABB(0, 0, 0, 1, 1, 1);
 
-    public static BlockModel air()
-    {
+    public static BlockModel air() {
         BlockModel model = new BlockModel();
 
         model.opaque = model.ao = model.collision = false;
@@ -48,8 +46,7 @@ public class BlockModel
         return model;
     }
 
-    public static BlockModel error()
-    {
+    public static BlockModel error() {
         BlockModel model = new BlockModel();
 
         model.ao = false;
@@ -57,8 +54,7 @@ public class BlockModel
         return model;
     }
 
-    public QuadGeometry createQuad(float nx, float ny, float nz)
-    {
+    public QuadGeometry createQuad(float nx, float ny, float nz) {
         QuadGeometry quadGeometry = new QuadGeometry(nx, ny, nz);
 
         quadGeometry.ao = !this.ignoreAO;
@@ -66,8 +62,7 @@ public class BlockModel
         return quadGeometry;
     }
 
-    public void copy(BlockModel model)
-    {
+    public void copy(BlockModel model) {
         this.collision = model.collision;
         this.opaque = model.opaque;
         this.ao = model.ao;
@@ -86,69 +81,56 @@ public class BlockModel
         this.collisionBox = model.collisionBox;
     }
 
-    public int build(VAOBuilder vao, VBOAttributes attributes, ChunkBuilder builder, IBlockVariant block, int index, int nx, int ny, int nz, Vector3i edge)
-    {
+    public int build(VAOBuilder vao, VBOAttributes attributes, ChunkBuilder builder, IBlockVariant block, int index, int nx, int ny, int nz, Vector3i edge) {
         temporary.copy(builder.color);
         builder.color.r *= this.color.r;
         builder.color.g *= this.color.g;
         builder.color.b *= this.color.b;
 
-        if (this.top != null && edge.y <= 0)
-        {
+        if (this.top != null && edge.y <= 0) {
             BlockModel model = builder.block(nx, ny + 1, nz).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.bottom, this.top, 0, -1, 0))
-            {
+            if (!model.opaque || !this.isOverlapping(model.bottom, this.top, 0, -1, 0)) {
                 index = this.top.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
 
-        if (this.bottom != null && edge.y >= 0)
-        {
+        if (this.bottom != null && edge.y >= 0) {
             BlockModel model = builder.block(nx, ny - 1, nz).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.top, this.bottom, 0, 1, 0))
-            {
+            if (!model.opaque || !this.isOverlapping(model.top, this.bottom, 0, 1, 0)) {
                 index = this.bottom.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
 
-        if (this.right != null && edge.x <= 0)
-        {
+        if (this.right != null && edge.x <= 0) {
             BlockModel model = builder.block(nx + 1, ny, nz).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.left, this.right, -1, 0, 0))
-            {
+            if (!model.opaque || !this.isOverlapping(model.left, this.right, -1, 0, 0)) {
                 index = this.right.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
 
-        if (this.left != null && edge.x >= 0)
-        {
+        if (this.left != null && edge.x >= 0) {
             BlockModel model = builder.block(nx - 1, ny, nz).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.right, this.left, 1, 0, 0))
-            {
+            if (!model.opaque || !this.isOverlapping(model.right, this.left, 1, 0, 0)) {
                 index = this.left.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
 
-        if (this.front != null && edge.z <= 0)
-        {
+        if (this.front != null && edge.z <= 0) {
             BlockModel model = builder.block(nx, ny, nz + 1).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.back, this.front, 0, 0, -1))
-            {
+            if (!model.opaque || !this.isOverlapping(model.back, this.front, 0, 0, -1)) {
                 index = this.front.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
 
-        if (this.back != null && edge.z >= 0)
-        {
+        if (this.back != null && edge.z >= 0) {
             BlockModel model = builder.block(nx, ny, nz - 1).getModel();
 
-            if (!model.opaque || !this.isOverlapping(model.front, this.back, 0, 0, 1))
-            {
+            if (!model.opaque || !this.isOverlapping(model.front, this.back, 0, 0, 1)) {
                 index = this.back.build(nx, ny, nz, index, block, builder, vao, attributes);
             }
         }
@@ -160,18 +142,15 @@ public class BlockModel
         return index;
     }
 
-    private boolean isOverlapping(BlockGeometry target, BlockGeometry geometry, float x, float y, float z)
-    {
-        if (target == null || geometry == null)
-        {
+    private boolean isOverlapping(BlockGeometry target, BlockGeometry geometry, float x, float y, float z) {
+        if (target == null || geometry == null) {
             return false;
         }
 
         return target.isOverlapping(geometry, x, y, z);
     }
 
-    public void complete(BlockModelFactory factory)
-    {
+    public void complete(BlockModelFactory factory) {
         this.factory = factory;
 
         if (this.top != null) this.top.complete();

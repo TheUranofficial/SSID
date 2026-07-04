@@ -7,16 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class FramebufferManager implements IDisposable
-{
+public class FramebufferManager implements IDisposable {
     public final Map<Link, Framebuffer> framebuffers = new HashMap<>();
 
-    public Framebuffer getFramebuffer(Link key, Consumer<Framebuffer> setup)
-    {
+    public Framebuffer getFramebuffer(Link key, Consumer<Framebuffer> setup) {
         Framebuffer framebuffer = this.framebuffers.get(key);
 
-        if (framebuffer == null)
-        {
+        if (framebuffer == null) {
             framebuffer = new Framebuffer();
 
             setup.accept(framebuffer);
@@ -28,10 +25,8 @@ public class FramebufferManager implements IDisposable
     }
 
     @Override
-    public void delete()
-    {
-        for (Framebuffer framebuffer : this.framebuffers.values())
-        {
+    public void delete() {
+        for (Framebuffer framebuffer : this.framebuffers.values()) {
             framebuffer.delete();
         }
 

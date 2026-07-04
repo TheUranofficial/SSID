@@ -18,16 +18,14 @@ import mchorse.bbs.utils.resources.Pixels;
 
 import java.io.File;
 
-public class UITextureEditor extends UIPixelsEditor
-{
+public class UITextureEditor extends UIPixelsEditor {
     public UIElement savebar;
     public UIIcon save;
 
     private Link texture;
     private boolean dirty;
 
-    public UITextureEditor()
-    {
+    public UITextureEditor() {
         super();
 
         this.savebar = new UIElement();
@@ -39,36 +37,30 @@ public class UITextureEditor extends UIPixelsEditor
         this.add(this.savebar);
     }
 
-    public Link getTexture()
-    {
+    public Link getTexture() {
         return this.texture;
     }
 
-    public boolean isDirty()
-    {
+    public boolean isDirty() {
         return this.dirty;
     }
 
-    public void dirty()
-    {
+    public void dirty() {
         this.setDirty(true);
     }
 
-    public void setDirty(boolean dirty)
-    {
+    public void setDirty(boolean dirty) {
         this.dirty = dirty;
 
         this.save.both(dirty ? Icons.SAVE : Icons.SAVED);
     }
 
     @Override
-    protected void wasChanged()
-    {
+    protected void wasChanged() {
         this.dirty();
     }
 
-    private void saveTexture()
-    {
+    private void saveTexture() {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_EXPORT,
             UIKeys.TEXTURES_SAVE,
@@ -80,12 +72,10 @@ public class UITextureEditor extends UIPixelsEditor
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 
-    private void saveTexture(String path)
-    {
+    private void saveTexture(String path) {
         Link link = Link.create(path);
 
-        if (!link.source.equals("assets") || !link.path.endsWith(".png"))
-        {
+        if (!link.source.equals("assets") || !link.path.endsWith(".png")) {
             this.getContext().notify(UIKeys.TEXTURES_SAVE_WRONG_PATH, Colors.RED | Colors.A100);
 
             return;
@@ -93,15 +83,13 @@ public class UITextureEditor extends UIPixelsEditor
 
         File file = BBS.getAssetsPath(link.path);
 
-        if (path.contains("/"))
-        {
+        if (path.contains("/")) {
             file.getParentFile().mkdirs();
         }
 
         Pixels pixels = this.getPixels();
 
-        try
-        {
+        try {
             PNGEncoder.writeToFile(pixels, file);
             UIMessageFolderOverlayPanel panel = new UIMessageFolderOverlayPanel(
                 UIKeys.TEXTURES_EXPORT_OVERLAY_TITLE,
@@ -114,26 +102,21 @@ public class UITextureEditor extends UIPixelsEditor
             UIOverlay.addOverlay(this.getContext(), panel);
 
             this.setDirty(false);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
             this.getContext().notify(UIKeys.TEXTURES_EXPORT_OVERLAY_ERROR.format(file.getName()), Colors.RED | Colors.A100);
         }
     }
 
-    public void fillTexture(Link texture)
-    {
-        if (this.getPixels() != null)
-        {
+    public void fillTexture(Link texture) {
+        if (this.getPixels() != null) {
             this.getPixels().delete();
         }
 
         this.texture = texture;
 
-        if (texture != null)
-        {
+        if (texture != null) {
             Texture t = BBS.getTextures().getTexture(texture);
 
             this.fillPixels(Pixels.fromTexture(t));
@@ -142,8 +125,7 @@ public class UITextureEditor extends UIPixelsEditor
     }
 
     @Override
-    protected Texture getRenderTexture(UIContext context)
-    {
+    protected Texture getRenderTexture(UIContext context) {
         return this.isEditing() ? super.getRenderTexture(context) : context.render.getTextures().getTexture(this.texture);
     }
 }

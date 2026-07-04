@@ -2,8 +2,7 @@ package mchorse.bbs.ui.utils.icons;
 
 import mchorse.bbs.resources.Link;
 
-public class Icon
-{
+public class Icon {
     public final Link texture;
     public final String id;
     public final int x;
@@ -13,13 +12,11 @@ public class Icon
     public int textureW = 256;
     public int textureH = 256;
 
-    public Icon(Link texture, String id, int x, int y)
-    {
+    public Icon(Link texture, String id, int x, int y) {
         this(texture, id, x, y, 16, 16);
     }
 
-    public Icon(Link texture, String id, int x, int y, int w, int h)
-    {
+    public Icon(Link texture, String id, int x, int y, int w, int h) {
         this.texture = texture;
         this.id = id;
         this.x = x;
@@ -28,8 +25,7 @@ public class Icon
         this.h = h;
     }
 
-    public Icon(Link texture, String id, int x, int y, int w, int h, int textureW, int textureH)
-    {
+    public Icon(Link texture, String id, int x, int y, int w, int h, int textureW, int textureH) {
         this(texture, id, x, y, w, h);
 
         this.textureW = textureW;

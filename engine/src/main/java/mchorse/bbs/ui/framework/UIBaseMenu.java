@@ -29,8 +29,7 @@ import java.util.StringJoiner;
 /**
  * Base class for GUI screens using this framework
  */
-public abstract class UIBaseMenu implements ITickable, IKeyHandler
-{
+public abstract class UIBaseMenu implements ITickable, IKeyHandler {
     private static InputRenderer inputRenderer = new InputRenderer();
 
     private UIRootElement root;
@@ -44,8 +43,7 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
 
     public final IBridge bridge;
 
-    public UIBaseMenu(IBridge bridge)
-    {
+    public UIBaseMenu(IBridge bridge) {
         this.bridge = bridge;
 
         this.context = new UIContext(this);
@@ -65,35 +63,30 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
 
     public abstract Link getMenuId();
 
-    public UIRootElement getRoot()
-    {
+    public UIRootElement getRoot() {
         return this.root;
     }
 
-    public boolean canPause()
-    {
+    public boolean canPause() {
         return true;
     }
 
-    public boolean canRefresh()
-    {
+    public boolean canRefresh() {
         return true;
     }
 
-    public void onOpen(UIBaseMenu oldMenu)
-    {}
+    public void onOpen(UIBaseMenu oldMenu) {
+    }
 
-    public void onClose(UIBaseMenu nextMenu)
-    {}
+    public void onClose(UIBaseMenu nextMenu) {
+    }
 
     @Override
-    public void update()
-    {
+    public void update() {
         this.context.update();
     }
 
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         this.width = width;
         this.height = height;
 
@@ -105,17 +98,15 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
         this.context.popViewport();
     }
 
-    protected void viewportSet()
-    {}
+    protected void viewportSet() {
+    }
 
-    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton)
-    {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         boolean result = false;
 
         this.context.setMouse(mouseX, mouseY, mouseButton);
 
-        if (this.root.isEnabled())
-        {
+        if (this.root.isEnabled()) {
             this.context.pushViewport(this.viewport);
             result = this.root.mouseClicked(this.context);
             this.context.popViewport();
@@ -124,14 +115,12 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
         return result;
     }
 
-    public boolean mouseScrolled(int x, int y, int scroll)
-    {
+    public boolean mouseScrolled(int x, int y, int scroll) {
         boolean result = false;
 
         this.context.setMouseWheel(x, y, scroll);
 
-        if (this.root.isEnabled())
-        {
+        if (this.root.isEnabled()) {
             this.context.pushViewport(this.viewport);
             result = this.root.mouseScrolled(this.context);
             this.context.popViewport();
@@ -140,14 +129,12 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
         return result;
     }
 
-    public boolean mouseReleased(int mouseX, int mouseY, int mouseButton)
-    {
+    public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
         boolean result = false;
 
         this.context.setMouse(mouseX, mouseY, mouseButton);
 
-        if (this.root.isEnabled())
-        {
+        if (this.root.isEnabled()) {
             this.context.pushViewport(this.viewport);
             result = this.root.mouseReleased(this.context);
             this.context.popViewport();
@@ -157,22 +144,18 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
     }
 
     @Override
-    public boolean handleKey(int key, int scanCode, int action, int mods)
-    {
-        if (action == GLFW.GLFW_PRESS)
-        {
+    public boolean handleKey(int key, int scanCode, int action, int mods) {
+        if (action == GLFW.GLFW_PRESS) {
             inputRenderer.keyPressed(this.context, key);
         }
 
         this.context.setKeyEvent(key, scanCode, action);
 
-        if (this.root.isEnabled() && this.root.keyPressed(this.context))
-        {
+        if (this.root.isEnabled() && this.root.keyPressed(this.context)) {
             return true;
         }
 
-        if (this.context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+        if (this.context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.closeMenu();
 
             return true;
@@ -182,12 +165,10 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
     }
 
     @Override
-    public void handleTextInput(int key)
-    {
+    public void handleTextInput(int key) {
         this.context.setKeyTyped((char) key);
 
-        if (this.root.isEnabled())
-        {
+        if (this.root.isEnabled()) {
             this.root.textInput(this.context);
         }
     }
@@ -195,30 +176,25 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
     /**
      * This method is called when this screen is about to get closed
      */
-    protected void closeMenu()
-    {
+    protected void closeMenu() {
         this.bridge.get(IBridgeMenu.class).closeMenu();
     }
 
-    public void closeThisMenu()
-    {
+    public void closeThisMenu() {
         this.closeMenu();
     }
 
-    public void renderDefaultBackground()
-    {
+    public void renderDefaultBackground() {
         this.context.batcher.box(0, 0, this.width, this.height, Colors.A50);
     }
 
-    public void renderMenu(UIRenderingContext context, int mouseX, int mouseY)
-    {
+    public void renderMenu(UIRenderingContext context, int mouseX, int mouseY) {
         this.context.resetMatrix();
         this.context.setMouse(mouseX, mouseY);
 
         this.preRenderMenu(context);
 
-        if (this.root.isVisible())
-        {
+        if (this.root.isVisible()) {
             this.context.reset();
             this.context.pushViewport(this.viewport);
 
@@ -228,19 +204,16 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
             this.context.postRender();
         }
 
-        if (this.main.isVisible())
-        {
+        if (this.main.isVisible()) {
             inputRenderer.render(this, mouseX, mouseY);
         }
 
-        if (context.isDebug())
-        {
+        if (context.isDebug()) {
             this.renderDebugInfo(context);
         }
     }
 
-    protected void renderDebugInfo(UIRenderingContext context)
-    {
+    protected void renderDebugInfo(UIRenderingContext context) {
         Engine engine = this.bridge.getEngine();
         String text = "FPS: " + engine.lastFPS + "\n";
         Vector3d position = this.bridge.get(IBridgeCamera.class).getCamera().position;
@@ -248,8 +221,7 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
         text += Math.floor(position.x) + ", " + Math.floor(position.y) + ", " + Math.floor(position.z) + "\n";
         text += "Entities: " + this.bridge.get(IBridgeWorld.class).getWorld().entities.size();
 
-        if (engine.joystick.isPresent())
-        {
+        if (engine.joystick.isPresent()) {
             text += "\nJoystick: ";
 
             StringJoiner axesJoiner = new StringJoiner(", ");
@@ -258,15 +230,13 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
             GLFWGamepadState state = engine.joystick.getUpdatedState();
             FloatBuffer axes = state.axes();
 
-            while (axes.position() < axes.limit())
-            {
+            while (axes.position() < axes.limit()) {
                 axesJoiner.add(String.valueOf(Math.round(axes.get() * 100F) / 100F));
             }
 
             ByteBuffer buttons = state.buttons();
 
-            while (buttons.position() < buttons.limit())
-            {
+            while (buttons.position() < buttons.limit()) {
                 buttonJoiner.add(String.valueOf(buttons.get()));
             }
 
@@ -277,26 +247,23 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
         FontRenderer font = context.getFont();
         int y = 7;
 
-        for (String line : text.split("\n"))
-        {
+        for (String line : text.split("\n")) {
             context.batcher.textCard(font, line, 7, y, Colors.WHITE, BBSSettings.primaryColor(Colors.A100));
 
             y += font.getHeight() + 7;
         }
     }
 
-    protected void preRenderMenu(UIRenderingContext context)
-    {}
+    protected void preRenderMenu(UIRenderingContext context) {
+    }
 
-    public void renderInWorld(RenderingContext context)
-    {}
+    public void renderInWorld(RenderingContext context) {
+    }
 
-    public static class UIRootElement extends UIElement implements IViewport
-    {
+    public static class UIRootElement extends UIElement implements IViewport {
         private UIContext context;
 
-        public UIRootElement(UIContext context)
-        {
+        public UIRootElement(UIContext context) {
             super();
 
             this.context = context;
@@ -304,20 +271,17 @@ public abstract class UIBaseMenu implements ITickable, IKeyHandler
             this.markContainer();
         }
 
-        public UIContext getContext()
-        {
+        public UIContext getContext() {
             return this.context;
         }
 
         @Override
-        public void apply(IViewportStack stack)
-        {
+        public void apply(IViewportStack stack) {
             stack.pushViewport(this.area);
         }
 
         @Override
-        public void unapply(IViewportStack stack)
-        {
+        public void unapply(IViewportStack stack) {
             stack.popViewport();
         }
     }

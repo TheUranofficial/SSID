@@ -8,8 +8,7 @@ import mchorse.bbs.utils.math.Interpolation;
 
 import java.util.Objects;
 
-public abstract class BaseProperty <T> implements IFormProperty<T>
-{
+public abstract class BaseProperty<T> implements IFormProperty<T> {
     protected Form form;
     protected String key;
     protected T value;
@@ -22,68 +21,57 @@ public abstract class BaseProperty <T> implements IFormProperty<T>
 
     protected boolean canAnimate = true;
 
-    public BaseProperty(Form form, String key, T value)
-    {
+    public BaseProperty(Form form, String key, T value) {
         this.form = form;
         this.key = key;
         this.value = value;
     }
 
-    public void cantAnimate()
-    {
+    public void cantAnimate() {
         this.canAnimate = false;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return this.key;
     }
 
     @Override
-    public Form getForm()
-    {
+    public Form getForm() {
         return this.form;
     }
 
     @Override
-    public void set(T value)
-    {
+    public void set(T value) {
         this.value = value;
 
         this.ticks = -1;
     }
 
     @Override
-    public T get()
-    {
+    public T get() {
         return this.value;
     }
 
     @Override
-    public T get(float transition)
-    {
+    public T get(float transition) {
         return this.value;
     }
 
     @Override
-    public T getLast()
-    {
+    public T getLast() {
         return this.lastValue;
     }
 
     @Override
-    public void update()
-    {
-        if (this.ticks >= 0 && this.playing)
-        {
+    public void update() {
+        if (this.ticks >= 0 && this.playing) {
             this.ticks -= 1;
         }
     }
 
     @Override
-    public void tween(T newValue, T oldValue, int duration, IInterpolation interpolation, int offset, boolean playing)
-    {
+    public void tween(T newValue, T oldValue, int duration, IInterpolation interpolation, int offset, boolean playing) {
         this.lastValue = oldValue;
         this.value = newValue;
 
@@ -95,16 +83,13 @@ public abstract class BaseProperty <T> implements IFormProperty<T>
     }
 
     @Override
-    public boolean isTweening()
-    {
+    public boolean isTweening() {
         return this.ticks > 0;
     }
 
     @Override
-    public float getTweenFactor(float transition)
-    {
-        if (!this.isTweening())
-        {
+    public float getTweenFactor(float transition) {
+        if (!this.isTweening()) {
             return 1;
         }
 
@@ -112,35 +97,29 @@ public abstract class BaseProperty <T> implements IFormProperty<T>
     }
 
     @Override
-    public float getTweenFactorInterpolated(float transition)
-    {
+    public float getTweenFactorInterpolated(float transition) {
         float factor = this.getTweenFactor(transition);
 
         return this.interpolation == null ? factor : this.interpolation.interpolate(0F, 1F, factor);
     }
 
     @Override
-    public boolean canCreateChannel()
-    {
+    public boolean canCreateChannel() {
         return false;
     }
 
     @Override
-    public GenericKeyframeChannel createChannel(String key)
-    {
+    public GenericKeyframeChannel createChannel(String key) {
         return null;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof BaseProperty)
-        {
+        if (obj instanceof BaseProperty) {
             BaseProperty baseValue = (BaseProperty) obj;
 
             return Objects.equals(this.value, baseValue.value);
@@ -150,10 +129,8 @@ public abstract class BaseProperty <T> implements IFormProperty<T>
     }
 
     @Override
-    public void fromData(MapType data)
-    {
-        if (data.has(this.getKey()))
-        {
+    public void fromData(MapType data) {
+        if (data.has(this.getKey())) {
             this.propertyFromData(data, this.getKey());
         }
     }

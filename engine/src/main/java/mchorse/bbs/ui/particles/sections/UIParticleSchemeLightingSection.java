@@ -26,8 +26,7 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.Arrays;
 
-public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
-{
+public class UIParticleSchemeLightingSection extends UIParticleSchemeSection {
     public UICirculate mode;
     public UIColor color;
     public UIButton r;
@@ -47,8 +46,7 @@ public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
     private Tint[] cache = new Tint[3];
     private int previous;
 
-    public UIParticleSchemeLightingSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeLightingSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.mode = new UICirculate((b) -> this.changeMode(b.getValue()));
@@ -121,23 +119,17 @@ public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
         this.fields.add(UI.row(5, 0, 20, label, this.mode));
     }
 
-    private void changeMode(int value)
-    {
-        if (this.cache[this.previous] == null)
-        {
+    private void changeMode(int value) {
+        if (this.cache[this.previous] == null) {
             this.cache[this.previous] = this.component.color;
         }
 
         Tint cached = this.cache[value];
 
-        if (cached == null)
-        {
-            if (value == 2)
-            {
+        if (cached == null) {
+            if (value == 2) {
                 cached = new Gradient();
-            }
-            else
-            {
+            } else {
                 cached = new Solid();
             }
 
@@ -152,27 +144,22 @@ public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
         this.previous = value;
     }
 
-    private void setGradientColor(int color)
-    {
+    private void setGradientColor(int color) {
         this.gradientEditor.setColor(color);
     }
 
-    private MolangExpression set(MolangExpression expression, float value)
-    {
-        if (expression == MolangParser.ZERO || expression == MolangParser.ONE)
-        {
+    private MolangExpression set(MolangExpression expression, float value) {
+        if (expression == MolangParser.ZERO || expression == MolangParser.ONE) {
             return new MolangValue(null, new Constant(value));
         }
 
-        if (!(expression instanceof MolangValue))
-        {
+        if (!(expression instanceof MolangValue)) {
             expression = new MolangValue(null, new Constant(0));
         }
 
         MolangValue v = (MolangValue) expression;
 
-        if (!(v.expression instanceof Constant))
-        {
+        if (!(v.expression instanceof Constant)) {
             v.expression = new Constant(0);
         }
 
@@ -182,32 +169,25 @@ public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_LIGHTING_TITLE;
     }
 
-    private Solid getSolid()
-    {
+    private Solid getSolid() {
         return (Solid) this.component.color;
     }
 
     @Override
-    public void beforeSave(ParticleScheme scheme)
-    {
-        if (this.lighting.getValue())
-        {
+    public void beforeSave(ParticleScheme scheme) {
+        if (this.lighting.getValue()) {
             scheme.getOrCreate(ParticleComponentAppearanceLighting.class);
-        }
-        else
-        {
+        } else {
             scheme.remove(ParticleComponentAppearanceLighting.class);
         }
     }
 
     @Override
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         super.setScheme(scheme);
 
         Arrays.fill(this.cache, null);
@@ -215,59 +195,46 @@ public class UIParticleSchemeLightingSection extends UIParticleSchemeSection
         this.component = scheme.getOrCreate(ParticleComponentAppearanceTinting.class);
         this.lighting.setValue(scheme.get(ParticleComponentAppearanceLighting.class) != null);
 
-        if (this.component.color instanceof Solid)
-        {
+        if (this.component.color instanceof Solid) {
             Solid solid = this.getSolid();
 
-            if (solid.isConstant())
-            {
+            if (solid.isConstant()) {
                 this.setMode(0);
-            }
-            else
-            {
+            } else {
                 this.setMode(1);
             }
-        }
-        else if (this.component.color instanceof Gradient)
-        {
+        } else if (this.component.color instanceof Gradient) {
             this.setMode(2);
         }
 
         this.fillData();
     }
 
-    private void setMode(int value)
-    {
+    private void setMode(int value) {
         this.previous = value;
 
         this.mode.setValue(value);
     }
 
-    public void fillData()
-    {
+    public void fillData() {
         this.gradientEditor.removeFromParent();
         this.gradient.removeFromParent();
         this.color.removeFromParent();
         this.color.picker.removeFromParent();
         this.channels.removeFromParent();
 
-        if (this.mode.getValue() == 0)
-        {
+        if (this.mode.getValue() == 0) {
             Solid solid = (Solid) this.component.color;
 
             this.color.picker.color.set((float) solid.r.get(), (float) solid.g.get(), (float) solid.b.get(), (float) solid.a.get());
 
             this.fields.add(this.color);
-        }
-        else if (this.mode.getValue() == 2)
-        {
+        } else if (this.mode.getValue() == 2) {
             this.gradientEditor.setGradient((Gradient) this.component.color);
 
             this.fields.add(this.gradientEditor);
             this.fields.add(this.gradient);
-        }
-        else
-        {
+        } else {
             this.fields.add(this.channels);
         }
 

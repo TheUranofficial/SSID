@@ -3,8 +3,7 @@ package mchorse.bbs.ui.utils.resizers;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.Area;
 
-public interface IResizer
-{
+public interface IResizer {
     public void preApply(Area area);
 
     public void apply(Area area);

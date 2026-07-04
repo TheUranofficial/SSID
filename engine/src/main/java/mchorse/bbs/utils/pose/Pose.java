@@ -10,20 +10,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Pose implements IMapSerializable
-{
+public class Pose implements IMapSerializable {
     private static Set<String> keys = new HashSet<>();
 
     public boolean staticPose;
 
     public final Map<String, PoseTransform> transforms = new HashMap<>();
 
-    public PoseTransform get(String name)
-    {
+    public PoseTransform get(String name) {
         PoseTransform transform = this.transforms.get(name);
 
-        if (transform == null)
-        {
+        if (transform == null) {
             transform = new PoseTransform();
 
             this.transforms.put(name, transform);
@@ -32,29 +29,22 @@ public class Pose implements IMapSerializable
         return transform;
     }
 
-    public void apply(Model model)
-    {
-        if (this.transforms.isEmpty())
-        {
+    public void apply(Model model) {
+        if (this.transforms.isEmpty()) {
             return;
         }
 
-        for (Map.Entry<String, PoseTransform> entry : this.transforms.entrySet())
-        {
+        for (Map.Entry<String, PoseTransform> entry : this.transforms.entrySet()) {
             PoseTransform transform = entry.getValue();
             ModelGroup group = model.getGroup(entry.getKey());
 
-            if (this.staticPose)
-            {
+            if (this.staticPose) {
                 group.current.copy(group.initial);
-            }
-            else if (transform.fix > 0F)
-            {
+            } else if (transform.fix > 0F) {
                 group.current.lerp(group.initial, transform.fix);
             }
 
-            if (group != null)
-            {
+            if (group != null) {
                 group.current.translate.add(transform.translate);
                 group.current.scale.add(transform.scale).sub(1, 1, 1);
                 group.current.rotate.add(
@@ -72,23 +62,19 @@ public class Pose implements IMapSerializable
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof Pose)
-        {
+        if (obj instanceof Pose) {
             Pose pose = (Pose) obj;
 
             keys.clear();
             keys.addAll(this.transforms.keySet());
             keys.addAll(pose.transforms.keySet());
 
-            for (String key : keys)
-            {
+            for (String key : keys) {
                 Transform a = this.transforms.get(key);
                 Transform b = pose.transforms.get(key);
 
@@ -103,8 +89,7 @@ public class Pose implements IMapSerializable
         return false;
     }
 
-    public Pose copy()
-    {
+    public Pose copy() {
         Pose pose = new Pose();
 
         pose.copy(this);
@@ -112,42 +97,34 @@ public class Pose implements IMapSerializable
         return pose;
     }
 
-    public void copy(Pose pose)
-    {
+    public void copy(Pose pose) {
         this.staticPose = pose.staticPose;
 
         this.transforms.clear();
 
-        if (pose.transforms.isEmpty())
-        {
+        if (pose.transforms.isEmpty()) {
             return;
         }
 
-        for (Map.Entry<String, PoseTransform> entry : pose.transforms.entrySet())
-        {
-            if (!entry.getValue().isDefault())
-            {
+        for (Map.Entry<String, PoseTransform> entry : pose.transforms.entrySet()) {
+            if (!entry.getValue().isDefault()) {
                 this.transforms.put(entry.getKey(), (PoseTransform) entry.getValue().copy());
             }
         }
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putBool("static", this.staticPose);
 
-        if (this.transforms.isEmpty())
-        {
+        if (this.transforms.isEmpty()) {
             return;
         }
 
         MapType pose = new MapType();
 
-        for (Map.Entry<String, PoseTransform> entry : this.transforms.entrySet())
-        {
-            if (!entry.getValue().isDefault())
-            {
+        for (Map.Entry<String, PoseTransform> entry : this.transforms.entrySet()) {
+            if (!entry.getValue().isDefault()) {
                 pose.put(entry.getKey(), entry.getValue().toData());
             }
         }
@@ -156,28 +133,24 @@ public class Pose implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.staticPose = data.getBool("static");
         this.transforms.clear();
 
         MapType pose = data.getMap("pose");
 
-        for (String key : pose.keys())
-        {
+        for (String key : pose.keys()) {
             PoseTransform transform = new PoseTransform();
 
             transform.fromData(pose.getMap(key));
 
-            if (!transform.isDefault())
-            {
+            if (!transform.isDefault()) {
                 this.transforms.put(key, transform);
             }
         }
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.transforms.isEmpty();
     }
 }

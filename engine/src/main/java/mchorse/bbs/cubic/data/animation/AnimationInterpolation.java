@@ -9,26 +9,21 @@ import mchorse.bbs.utils.math.Interpolations;
 
 import java.util.Objects;
 
-public enum AnimationInterpolation
-{
-    LINEAR("linear", Interpolation.LINEAR), HERMITE("catmullrom", null)
-    {
+public enum AnimationInterpolation {
+    LINEAR("linear", Interpolation.LINEAR), HERMITE("catmullrom", null) {
         @Override
-        public double interpolate(AnimationVector vector, MolangHelper.Component component, Axis axis, double factor)
-        {
+        public double interpolate(AnimationVector vector, MolangHelper.Component component, Axis axis, double factor) {
             double start = MolangHelper.getValue(vector.getStart(axis), component, axis);
             double destination = MolangHelper.getValue(vector.getEnd(axis), component, axis);
 
             double pre = start;
             double post = destination;
 
-            if (vector.prev != null)
-            {
+            if (vector.prev != null) {
                 pre = MolangHelper.getValue(vector.prev.getStart(axis), component, axis);
             }
 
-            if (vector.next != null)
-            {
+            if (vector.next != null) {
                 post = MolangHelper.getValue(vector.next.getEnd(axis), component, axis);
             }
 
@@ -51,12 +46,9 @@ public enum AnimationInterpolation
     public final String name;
     public final IInterpolation interp;
 
-    public static AnimationInterpolation byName(String easing)
-    {
-        for (AnimationInterpolation interp : values())
-        {
-            if (Objects.equals(interp.name, easing))
-            {
+    public static AnimationInterpolation byName(String easing) {
+        for (AnimationInterpolation interp : values()) {
+            if (Objects.equals(interp.name, easing)) {
                 return interp;
             }
         }
@@ -64,22 +56,18 @@ public enum AnimationInterpolation
         return LINEAR;
     }
 
-    private AnimationInterpolation(String name, IInterpolation interp)
-    {
+    private AnimationInterpolation(String name, IInterpolation interp) {
         this.name = name;
         this.interp = interp;
     }
 
-    private AnimationInterpolation()
-    {
+    private AnimationInterpolation() {
         this.name = null;
         this.interp = null;
     }
 
-    public double interpolate(AnimationVector vector, MolangHelper.Component component, Axis axis, double factor)
-    {
-        if (vector.next != null && vector.next.interp != null && vector.next.interp.interp != null)
-        {
+    public double interpolate(AnimationVector vector, MolangHelper.Component component, Axis axis, double factor) {
+        if (vector.next != null && vector.next.interp != null && vector.next.interp.interp != null) {
             factor = vector.next.interp.interp.interpolate(0, 1, factor);
         }
 

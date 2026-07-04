@@ -10,15 +10,13 @@ import mchorse.bbs.utils.colors.Colors;
 /**
  * General purpose overlay list editor of generic data
  */
-public abstract class UIEditorOverlayPanel <T> extends UIOverlayPanel
-{
+public abstract class UIEditorOverlayPanel<T> extends UIOverlayPanel {
     public UIList<T> list;
     public UIScrollView editor;
 
     protected T item;
 
-    public UIEditorOverlayPanel(IKey title)
-    {
+    public UIEditorOverlayPanel(IKey title) {
         super(title);
 
         this.list = this.createList();
@@ -26,8 +24,7 @@ public abstract class UIEditorOverlayPanel <T> extends UIOverlayPanel
         {
             menu.action(Icons.ADD, this.getAddLabel(), this::addItem);
 
-            if (!this.list.getList().isEmpty())
-            {
+            if (!this.list.getList().isEmpty()) {
                 menu.action(Icons.REMOVE, this.getRemoveLabel(), Colors.NEGATIVE, this::removeItem);
             }
         });
@@ -43,27 +40,23 @@ public abstract class UIEditorOverlayPanel <T> extends UIOverlayPanel
 
     protected abstract UIList<T> createList();
 
-    protected IKey getAddLabel()
-    {
+    protected IKey getAddLabel() {
         return IKey.EMPTY;
     }
 
-    protected IKey getRemoveLabel()
-    {
+    protected IKey getRemoveLabel() {
         return IKey.EMPTY;
     }
 
-    protected void addItem()
-    {
+    protected void addItem() {
         this.addNewItem();
         this.list.update();
     }
 
-    protected void addNewItem()
-    {}
+    protected void addNewItem() {
+    }
 
-    protected void removeItem()
-    {
+    protected void removeItem() {
         int index = this.list.getIndex();
 
         this.list.getList().remove(index);
@@ -75,18 +68,15 @@ public abstract class UIEditorOverlayPanel <T> extends UIOverlayPanel
         this.list.update();
     }
 
-    protected void pickItem(T item, boolean select)
-    {
+    protected void pickItem(T item, boolean select) {
         this.item = item;
 
         this.editor.setVisible(item != null);
 
-        if (item != null)
-        {
+        if (item != null) {
             this.fillData(item);
 
-            if (select)
-            {
+            if (select) {
                 this.list.setCurrentScroll(item);
             }
 

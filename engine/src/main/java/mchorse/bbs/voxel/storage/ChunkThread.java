@@ -8,12 +8,11 @@ import java.util.Stack;
 
 /**
  * Abstract chunk thread
- *
+ * <p>
  * Subclasses are responsible for running a dedicated worker responsible for asynchronously
  * loading chunks in the world.
  */
-public abstract class ChunkThread implements Runnable
-{
+public abstract class ChunkThread implements Runnable {
     protected Stack<Vector3i> load = new Stack<>();
     protected Stack<ChunkCell> save = new Stack<>();
 
@@ -23,33 +22,27 @@ public abstract class ChunkThread implements Runnable
 
     private Thread thread;
 
-    public ChunkThread(World world)
-    {
+    public ChunkThread(World world) {
         this.world = world;
     }
 
     /**
      * Start chunk thread
      */
-    public void start()
-    {
-        if (this.thread == null)
-        {
+    public void start() {
+        if (this.thread == null) {
             this.thread = new Thread(this, "Chunk Generator");
 
             this.thread.start();
         }
     }
 
-    public void stop(boolean saveAll)
-    {
+    public void stop(boolean saveAll) {
         this.stop = true;
         this.saveAll = saveAll;
 
-        for (ChunkCell cell : this.world.chunks.getCells())
-        {
-            if (cell.unsaved)
-            {
+        for (ChunkCell cell : this.world.chunks.getCells()) {
+            if (cell.unsaved) {
                 this.addToSave(cell);
             }
         }
@@ -59,52 +52,41 @@ public abstract class ChunkThread implements Runnable
      * Add a chunk coordinates that much be read from file or generated
      * asynchronously by thread.
      */
-    public void addToLoad(int cx, int cy, int cz)
-    {
+    public void addToLoad(int cx, int cy, int cz) {
         this.load.add(new Vector3i(cx, cy, cz));
     }
 
     /**
      * Add a chunk cell that much be saved (because being unloaded).
      */
-    public void addToSave(ChunkCell cell)
-    {
-        if (cell != null)
-        {
+    public void addToSave(ChunkCell cell) {
+        if (cell != null) {
             this.save.add(cell);
         }
     }
 
-    public boolean isIdling()
-    {
+    public boolean isIdling() {
         return this.load.isEmpty();
     }
 
-    public boolean isSaving()
-    {
+    public boolean isSaving() {
         return !this.save.isEmpty();
     }
 
     @Override
-    public void run()
-    {
-        while (!this.stop)
-        {
-            if (!this.save.isEmpty())
-            {
+    public void run() {
+        while (!this.stop) {
+            if (!this.save.isEmpty()) {
                 this.saveCell(this.save.pop());
             }
 
-            if (this.isIdling())
-            {
-                try
-                {
+            if (this.isIdling()) {
+                try {
                     Thread.sleep(20);
 
                     continue;
+                } catch (Exception e) {
                 }
-                catch (Exception e)
-                {}
             }
 
             this.load(this.load.pop());
@@ -118,8 +100,7 @@ public abstract class ChunkThread implements Runnable
     /**
      * Save next chunk cell in the stack.
      */
-    protected void saveCell(ChunkCell cell)
-    {
+    protected void saveCell(ChunkCell cell) {
         cell.removed = true;
 
         this.world.save(cell);
@@ -128,16 +109,11 @@ public abstract class ChunkThread implements Runnable
     /**
      * Save remaining chunks that weren't saved yet (or all chunks in the world).
      */
-    protected void saveRemaining(boolean all)
-    {
-        if (all)
-        {
+    protected void saveRemaining(boolean all) {
+        if (all) {
             this.world.saveAll(false);
-        }
-        else
-        {
-            while (!this.save.isEmpty())
-            {
+        } else {
+            while (!this.save.isEmpty()) {
                 this.world.save(this.save.pop());
             }
         }
@@ -146,18 +122,15 @@ public abstract class ChunkThread implements Runnable
     /**
      * Load a chunk cell at given XYZ chunk coordinates.
      */
-    protected void load(Vector3i entry)
-    {
+    protected void load(Vector3i entry) {
         int s = this.world.chunks.s;
         ChunkCell cell = this.world.chunks.getCell(entry.x * s, entry.y * s, entry.z * s, true);
 
-        if (cell == null || cell.generated)
-        {
+        if (cell == null || cell.generated) {
             return;
         }
 
-        if (!this.world.read(cell))
-        {
+        if (!this.world.read(cell)) {
             this.generate(cell, this.world);
         }
 

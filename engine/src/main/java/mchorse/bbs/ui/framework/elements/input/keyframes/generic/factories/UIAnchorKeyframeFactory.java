@@ -22,13 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.Anchor>
-{
+public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.Anchor> {
     private UIButton actor;
     private UIButton attachment;
 
-    public UIAnchorKeyframeFactory(GenericKeyframe<AnchorProperty.Anchor> keyframe, UIPropertyEditor editor)
-    {
+    public UIAnchorKeyframeFactory(GenericKeyframe<AnchorProperty.Anchor> keyframe, UIPropertyEditor editor) {
         super(keyframe, editor);
 
         this.actor = new UIButton(UIKeys.GENERIC_KEYFRAMES_ANCHOR_PICK_ACTOR, (b) -> this.displayActors());
@@ -37,8 +35,7 @@ public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.An
         this.add(this.actor, this.attachment);
     }
 
-    private void displayActors()
-    {
+    private void displayActors() {
         this.getContext().replaceContextMenu((menu) ->
         {
             UIFilmPanel panel = this.getPanel();
@@ -46,40 +43,33 @@ public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.An
 
             menu.action(Icons.CLOSE, UIKeys.GENERAL_NONE, Colors.NEGATIVE, () -> this.setActor(-1));
 
-            for (int i = 0; i < panel.getController().entities.size(); i++)
-            {
+            for (int i = 0; i < panel.getController().entities.size(); i++) {
                 Entity entity = panel.getController().entities.get(i);
                 Form form = entity.get(FormComponent.class).form;
                 final int actor = i;
                 IKey label = IKey.raw(i + (form == null ? "" : " - " + form.getIdOrName()));
 
-                if (actor == value)
-                {
+                if (actor == value) {
                     menu.action(Icons.CLOSE, label, BBSSettings.primaryColor(0), () -> this.setActor(actor));
-                }
-                else
-                {
+                } else {
                     menu.action(Icons.CLOSE, label, () -> this.setActor(actor));
                 }
             }
         });
     }
 
-    private void displayAttachments()
-    {
+    private void displayAttachments() {
         UIFilmPanel panel = this.getPanel();
         int index = this.keyframe.getValue().actor;
 
-        if (!CollectionUtils.inRange(panel.getController().entities, index))
-        {
+        if (!CollectionUtils.inRange(panel.getController().entities, index)) {
             return;
         }
 
         Entity entity = panel.getController().entities.get(index);
         Form form = entity.get(FormComponent.class).form;
 
-        if (form == null)
-        {
+        if (form == null) {
             return;
         }
 
@@ -92,8 +82,7 @@ public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.An
 
         attachments.sort(String::compareToIgnoreCase);
 
-        if (attachments.isEmpty())
-        {
+        if (attachments.isEmpty()) {
             return;
         }
 
@@ -101,36 +90,29 @@ public class UIAnchorKeyframeFactory extends UIKeyframeFactory<AnchorProperty.An
 
         this.getContext().replaceContextMenu((menu) ->
         {
-            for (String attachment : attachments)
-            {
-                if (attachment.equals(value))
-                {
+            for (String attachment : attachments) {
+                if (attachment.equals(value)) {
                     menu.action(Icons.LIMB, IKey.raw(attachment), BBSSettings.primaryColor(0), () -> this.setAttachment(attachment));
-                }
-                else
-                {
+                } else {
                     menu.action(Icons.LIMB, IKey.raw(attachment), () -> this.setAttachment(attachment));
                 }
             }
         });
     }
 
-    private void setActor(int actor)
-    {
+    private void setActor(int actor) {
         this.keyframe.getValue().actor = actor;
 
         this.editor.setValue(this.keyframe.getValue());
     }
 
-    private void setAttachment(String attachment)
-    {
+    private void setAttachment(String attachment) {
         this.keyframe.getValue().attachment = attachment;
 
         this.editor.setValue(this.keyframe.getValue());
     }
 
-    private UIFilmPanel getPanel()
-    {
+    private UIFilmPanel getPanel() {
         return this.getContext().menu.getRoot().getChildren(UIFilmPanel.class).get(0);
     }
 }

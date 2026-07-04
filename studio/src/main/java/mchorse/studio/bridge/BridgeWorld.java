@@ -10,33 +10,27 @@ import mchorse.studio.StudioEngine;
 
 import java.io.File;
 
-public class BridgeWorld extends BaseBridge implements IBridgeWorld
-{
-    public BridgeWorld(StudioEngine engine)
-    {
+public class BridgeWorld extends BaseBridge implements IBridgeWorld {
+    public BridgeWorld(StudioEngine engine) {
         super(engine);
     }
 
     @Override
-    public World getWorld()
-    {
+    public World getWorld() {
         return this.engine.world;
     }
 
     @Override
-    public boolean loadWorld(String world)
-    {
+    public boolean loadWorld(String world) {
         File worldFolder = BBS.getGamePath("worlds/" + world);
 
-        if (!worldFolder.isDirectory())
-        {
+        if (!worldFolder.isDirectory()) {
             return false;
         }
 
         WorldMetadata metadata = WorldMetadata.fromFile(worldFolder);
 
-        if (this.engine.world != null)
-        {
+        if (this.engine.world != null) {
             this.engine.world.delete();
             this.engine.world = null;
         }

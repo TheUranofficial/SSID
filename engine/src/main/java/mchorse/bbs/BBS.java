@@ -3,63 +3,26 @@ package mchorse.bbs;
 import mchorse.bbs.audio.SoundManager;
 import mchorse.bbs.bridge.IBridge;
 import mchorse.bbs.camera.clips.ClipFactoryData;
-import mchorse.bbs.camera.clips.converters.DollyToKeyframeConverter;
-import mchorse.bbs.camera.clips.converters.DollyToPathConverter;
-import mchorse.bbs.camera.clips.converters.IdleConverter;
-import mchorse.bbs.camera.clips.converters.IdleToDollyConverter;
-import mchorse.bbs.camera.clips.converters.IdleToKeyframeConverter;
-import mchorse.bbs.camera.clips.converters.IdleToPathConverter;
-import mchorse.bbs.camera.clips.converters.PathToDollyConverter;
-import mchorse.bbs.camera.clips.converters.PathToKeyframeConverter;
+import mchorse.bbs.camera.clips.converters.*;
 import mchorse.bbs.camera.clips.misc.AudioClip;
 import mchorse.bbs.camera.clips.misc.SubtitleClip;
 import mchorse.bbs.camera.clips.misc.VoicelineClip;
-import mchorse.bbs.camera.clips.modifiers.AngleClip;
-import mchorse.bbs.camera.clips.modifiers.DragClip;
-import mchorse.bbs.camera.clips.modifiers.LookClip;
-import mchorse.bbs.camera.clips.modifiers.MathClip;
-import mchorse.bbs.camera.clips.modifiers.OrbitClip;
-import mchorse.bbs.camera.clips.modifiers.RemapperClip;
-import mchorse.bbs.camera.clips.modifiers.ShakeClip;
-import mchorse.bbs.camera.clips.modifiers.TranslateClip;
-import mchorse.bbs.camera.clips.overwrite.CircularClip;
-import mchorse.bbs.camera.clips.overwrite.DollyClip;
-import mchorse.bbs.camera.clips.overwrite.IdleClip;
-import mchorse.bbs.camera.clips.overwrite.KeyframeClip;
-import mchorse.bbs.camera.clips.overwrite.PathClip;
+import mchorse.bbs.camera.clips.modifiers.*;
+import mchorse.bbs.camera.clips.overwrite.*;
 import mchorse.bbs.core.Engine;
 import mchorse.bbs.cubic.model.ModelManager;
-import mchorse.bbs.events.register.RegisterCoreEvent;
-import mchorse.bbs.events.register.RegisterFactoriesEvent;
-import mchorse.bbs.events.register.RegisterFormsEvent;
-import mchorse.bbs.events.register.RegisterL10nEvent;
-import mchorse.bbs.events.register.RegisterSettingsEvent;
+import mchorse.bbs.events.register.*;
 import mchorse.bbs.forms.FormArchitect;
 import mchorse.bbs.forms.categories.FormCategory;
 import mchorse.bbs.forms.categories.ModelFormCategory;
 import mchorse.bbs.forms.categories.ParticleFormCategory;
 import mchorse.bbs.forms.categories.RecentFormCategory;
-import mchorse.bbs.forms.forms.BillboardForm;
-import mchorse.bbs.forms.forms.BlockForm;
-import mchorse.bbs.forms.forms.CameraForm;
-import mchorse.bbs.forms.forms.ExtrudedForm;
-import mchorse.bbs.forms.forms.LabelForm;
-import mchorse.bbs.forms.forms.LightForm;
-import mchorse.bbs.forms.forms.ModelForm;
-import mchorse.bbs.forms.forms.ParticleForm;
-import mchorse.bbs.forms.forms.StructureForm;
+import mchorse.bbs.forms.forms.*;
 import mchorse.bbs.graphics.FramebufferManager;
 import mchorse.bbs.graphics.RenderingContext;
 import mchorse.bbs.graphics.shaders.ShaderManager;
 import mchorse.bbs.graphics.text.FontManager;
-import mchorse.bbs.graphics.text.format.BoldFontFormat;
-import mchorse.bbs.graphics.text.format.ColorFontFormat;
-import mchorse.bbs.graphics.text.format.IFontFormat;
-import mchorse.bbs.graphics.text.format.ItalicFontFormat;
-import mchorse.bbs.graphics.text.format.RainbowFontFormat;
-import mchorse.bbs.graphics.text.format.ResetFontFormat;
-import mchorse.bbs.graphics.text.format.ShakeFontFormat;
-import mchorse.bbs.graphics.text.format.WaveFontFormat;
+import mchorse.bbs.graphics.text.format.*;
 import mchorse.bbs.graphics.texture.TextureManager;
 import mchorse.bbs.graphics.vao.VAOManager;
 import mchorse.bbs.l10n.L10n;
@@ -71,38 +34,11 @@ import mchorse.bbs.settings.Settings;
 import mchorse.bbs.settings.SettingsBuilder;
 import mchorse.bbs.settings.SettingsManager;
 import mchorse.bbs.ui.UIKeys;
-import mchorse.bbs.ui.film.clips.UIAngleClip;
-import mchorse.bbs.ui.film.clips.UIAudioClip;
-import mchorse.bbs.ui.film.clips.UICircularClip;
-import mchorse.bbs.ui.film.clips.UIDollyClip;
-import mchorse.bbs.ui.film.clips.UIDragClip;
-import mchorse.bbs.ui.film.clips.UIIdleClip;
-import mchorse.bbs.ui.film.clips.UIKeyframeClip;
-import mchorse.bbs.ui.film.clips.UILookClip;
-import mchorse.bbs.ui.film.clips.UIMathClip;
-import mchorse.bbs.ui.film.clips.UIOrbitClip;
-import mchorse.bbs.ui.film.clips.UIPathClip;
-import mchorse.bbs.ui.film.clips.UIRemapperClip;
-import mchorse.bbs.ui.film.clips.UIShakeClip;
-import mchorse.bbs.ui.film.clips.UISubtitleClip;
-import mchorse.bbs.ui.film.clips.UITranslateClip;
-import mchorse.bbs.ui.film.clips.UIVoicelineClip;
+import mchorse.bbs.ui.film.clips.*;
 import mchorse.bbs.ui.font.format.UIBaseFontFormat;
 import mchorse.bbs.ui.font.format.UIColorFontFormat;
-import mchorse.bbs.ui.forms.editors.forms.UIBillboardForm;
-import mchorse.bbs.ui.forms.editors.forms.UIBlockForm;
-import mchorse.bbs.ui.forms.editors.forms.UICameraForm;
-import mchorse.bbs.ui.forms.editors.forms.UIExtrudedForm;
-import mchorse.bbs.ui.forms.editors.forms.UILabelForm;
-import mchorse.bbs.ui.forms.editors.forms.UILightForm;
-import mchorse.bbs.ui.forms.editors.forms.UIModelForm;
-import mchorse.bbs.ui.forms.editors.forms.UIParticleForm;
-import mchorse.bbs.ui.forms.editors.forms.UIStructureForm;
-import mchorse.bbs.ui.tileset.panels.UIModelBlockCombined;
-import mchorse.bbs.ui.tileset.panels.UIModelBlockEach;
-import mchorse.bbs.ui.tileset.panels.UIModelBlockFactory;
-import mchorse.bbs.ui.tileset.panels.UIModelBlockVertical;
-import mchorse.bbs.ui.tileset.panels.UIModelBlockWithCollision;
+import mchorse.bbs.ui.forms.editors.forms.*;
+import mchorse.bbs.ui.tileset.panels.*;
 import mchorse.bbs.ui.utils.icons.Icon;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.utils.keys.KeybindSettings;
@@ -118,16 +54,7 @@ import mchorse.bbs.voxel.generation.Generator;
 import mchorse.bbs.voxel.generation.GeneratorDefault;
 import mchorse.bbs.voxel.generation.GeneratorFlat;
 import mchorse.bbs.voxel.generation.GeneratorVoid;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelAll;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelCombined;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelCrop;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelEach;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelFactoryData;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelPlant;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelSlab;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelStair;
-import mchorse.bbs.voxel.tilesets.factory.BlockModelVertical;
+import mchorse.bbs.voxel.tilesets.factory.*;
 import mchorse.bbs.world.entities.components.BasicComponent;
 import mchorse.bbs.world.entities.components.CollisionComponent;
 import mchorse.bbs.world.entities.components.Component;
@@ -142,8 +69,7 @@ import java.util.function.Consumer;
 /**
  * BBS's global god object.
  */
-public class BBS
-{
+public class BBS {
     public static final EventBus events = EventBus.builder()
         .logNoSubscriberMessages(false)
         .sendNoSubscriberEvent(false)
@@ -183,26 +109,22 @@ public class BBS
 
     /* Getters */
 
-    public static Engine getEngine()
-    {
+    public static Engine getEngine() {
         return engine;
     }
 
-    public static IBridge getEngineAsBridge()
-    {
+    public static IBridge getEngineAsBridge() {
         return engine instanceof IBridge ? (IBridge) engine : null;
     }
 
     /**
      * Main folder, where all the other folders are located.
      */
-    public static File getGameFolder()
-    {
+    public static File getGameFolder() {
         return gameFolder;
     }
 
-    public static File getGamePath(String path)
-    {
+    public static File getGamePath(String path) {
         return new File(gameFolder, path);
     }
 
@@ -210,13 +132,11 @@ public class BBS
      * Assets folder within game's folder. It's used to store any assets that can
      * be loaded by {@link #provider}.
      */
-    public static File getAssetsFolder()
-    {
+    public static File getAssetsFolder() {
         return assetsFolder;
     }
 
-    public static File getAssetsPath(String path)
-    {
+    public static File getAssetsPath(String path) {
         return new File(assetsFolder, path);
     }
 
@@ -224,13 +144,11 @@ public class BBS
      * Config folder within game's folder. It's used to store any configuration
      * files.
      */
-    public static File getConfigFolder()
-    {
+    public static File getConfigFolder() {
         return configFolder;
     }
 
-    public static File getConfigPath(String path)
-    {
+    public static File getConfigPath(String path) {
         return new File(configFolder, path);
     }
 
@@ -239,126 +157,102 @@ public class BBS
      * quests, dialogues, states, player data, etc. anything related to game
      * basically.
      */
-    public static File getDataFolder()
-    {
+    public static File getDataFolder() {
         return dataFolder;
     }
 
-    public static File getDataPath(String path)
-    {
+    public static File getDataPath(String path) {
         return new File(dataFolder, path);
     }
 
-    public static File getExportFolder()
-    {
+    public static File getExportFolder() {
         return getGamePath("export");
     }
 
-    public static AssetProvider getProvider()
-    {
+    public static AssetProvider getProvider() {
         return provider;
     }
 
-    public static VAOManager getVAOs()
-    {
+    public static VAOManager getVAOs() {
         return vaos;
     }
 
-    public static ShaderManager getShaders()
-    {
+    public static ShaderManager getShaders() {
         return shaders;
     }
 
-    public static TextureManager getTextures()
-    {
+    public static TextureManager getTextures() {
         return textures;
     }
 
-    public static SoundManager getSounds()
-    {
+    public static SoundManager getSounds() {
         return sounds;
     }
 
-    public static SettingsManager getConfigs()
-    {
+    public static SettingsManager getConfigs() {
         return configs;
     }
 
-    public static FontManager getFonts()
-    {
+    public static FontManager getFonts() {
         return fonts;
     }
 
-    public static FramebufferManager getFramebuffers()
-    {
+    public static FramebufferManager getFramebuffers() {
         return framebuffers;
     }
 
-    public static FormArchitect getForms()
-    {
+    public static FormArchitect getForms() {
         return forms;
     }
 
-    public static ModelManager getModels()
-    {
+    public static ModelManager getModels() {
         return models;
     }
 
-    public static RenderingContext getRender()
-    {
+    public static RenderingContext getRender() {
         return render;
     }
 
-    public static L10n getL10n()
-    {
+    public static L10n getL10n() {
         return l10n;
     }
 
-    public static StructureManager getStructures()
-    {
+    public static StructureManager getStructures() {
         return structures;
     }
 
-    public static MapFactory<WorldObject, Class<? extends UIWorldObject>> getFactoryWorldObjects()
-    {
+    public static MapFactory<WorldObject, Class<? extends UIWorldObject>> getFactoryWorldObjects() {
         return factoryWorldObjects;
     }
 
-    public static MapFactory<Clip, ClipFactoryData> getFactoryCameraClips()
-    {
+    public static MapFactory<Clip, ClipFactoryData> getFactoryCameraClips() {
         return factoryCameraClips;
     }
 
-    public static MapFactory<Clip, ClipFactoryData> getFactoryScreenplayClips()
-    {
+    public static MapFactory<Clip, ClipFactoryData> getFactoryScreenplayClips() {
         return factoryScreenplayClips;
     }
 
-    public static MapFactory<BlockModelFactory, BlockModelFactoryData> getFactoryBlockModels()
-    {
+    public static MapFactory<BlockModelFactory, BlockModelFactoryData> getFactoryBlockModels() {
         return factoryBlockModels;
     }
 
-    public static MapFactory<Generator, Void> getFactoryGenerators()
-    {
+    public static MapFactory<Generator, Void> getFactoryGenerators() {
         return factoryGenerators;
     }
 
-    public static MapFactory<Component, Class<? extends UIEntityComponent>> getFactoryEntityComponents()
-    {
+    public static MapFactory<Component, Class<? extends UIEntityComponent>> getFactoryEntityComponents() {
         return factoryEntityComponents;
     }
 
-    public static MapFactory<IFontFormat, Class<? extends UIBaseFontFormat>> getFactoryFontFormats()
-    {
+    public static MapFactory<IFontFormat, Class<? extends UIBaseFontFormat>> getFactoryFontFormats() {
         return factoryFontFormats;
     }
 
     /**
      * Register core services
      */
-    public static void registerCore(Engine theEngine, File gameDirectory)
-    {
+    public static void registerCore(Engine theEngine, File gameDirectory) {
         engine = theEngine;
         gameFolder = gameDirectory;
         assetsFolder = new File(gameDirectory, "assets");
@@ -381,8 +275,7 @@ public class BBS
     /**
      * Register foundation services
      */
-    public static void registerFoundation()
-    {
+    public static void registerFoundation() {
         configs = new SettingsManager();
         models = new ModelManager(provider);
         l10n = new L10n();
@@ -393,8 +286,7 @@ public class BBS
         setupConfigs(configFolder);
     }
 
-    private static void setupConfigs(File destination)
-    {
+    private static void setupConfigs(File destination) {
         destination.mkdirs();
 
         KeybindSettings.registerClasses();
@@ -406,8 +298,7 @@ public class BBS
         configs.reload();
     }
 
-    public static void setupConfig(Icon icon, String id, File destination, Consumer<SettingsBuilder> registerer)
-    {
+    public static void setupConfig(Icon icon, String id, File destination, Consumer<SettingsBuilder> registerer) {
         SettingsBuilder builder = new SettingsBuilder(icon, id, destination);
         Settings settings = builder.getConfig();
 
@@ -416,8 +307,7 @@ public class BBS
         configs.modules.put(settings.getId(), settings);
     }
 
-    private static void setupForms(FormArchitect forms)
-    {
+    private static void setupForms(FormArchitect forms) {
         FormCategory extra = new FormCategory(UIKeys.FORMS_CATEGORIES_EXTRA);
         BillboardForm billboard = new BillboardForm();
         LabelForm label = new LabelForm();
@@ -447,8 +337,7 @@ public class BBS
         events.post(new RegisterFormsEvent(forms));
     }
 
-    private static void setupL10n(L10n l10n)
-    {
+    private static void setupL10n(L10n l10n) {
         l10n.registerOne((lang) -> Link.assets("strings/" + lang + ".json"));
 
         events.post(new RegisterL10nEvent(l10n));
@@ -457,8 +346,7 @@ public class BBS
     /**
      * Register factories
      */
-    public static void registerFactories()
-    {
+    public static void registerFactories() {
         /* Register world objects */
         factoryWorldObjects = new MapFactory<WorldObject, Class<? extends UIWorldObject>>()
             .register(Link.bbs("prop"), PropObject.class, UIPropWorldObject.class);
@@ -544,15 +432,13 @@ public class BBS
         events.post(new RegisterFactoriesEvent());
     }
 
-    public static void initialize() throws Exception
-    {
+    public static void initialize() throws Exception {
         l10n.reload();
 
         sounds.init();
     }
 
-    public static void terminate()
-    {
+    public static void terminate() {
         forms.writeUserCategories();
 
         vaos.delete();

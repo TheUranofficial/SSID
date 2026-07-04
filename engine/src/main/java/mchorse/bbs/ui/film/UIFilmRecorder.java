@@ -12,15 +12,13 @@ import mchorse.bbs.ui.utils.UIUtils;
 import mchorse.bbs.utils.recording.VideoRecorder;
 import org.lwjgl.glfw.GLFW;
 
-public class UIFilmRecorder extends UIElement
-{
+public class UIFilmRecorder extends UIElement {
     public UIFilmPanel editor;
 
     private UIExit exit = new UIExit(this);
     private int end;
 
-    public UIFilmRecorder(UIFilmPanel editor)
-    {
+    public UIFilmRecorder(UIFilmPanel editor) {
         super();
 
         this.editor = editor;
@@ -28,49 +26,39 @@ public class UIFilmRecorder extends UIElement
         this.noCulling();
     }
 
-    public boolean isRecording()
-    {
+    public boolean isRecording() {
         return this.getRecorder().isRecording();
     }
 
-    private UIContext getUIContext()
-    {
+    private UIContext getUIContext() {
         return this.editor.getContext();
     }
 
-    private VideoRecorder getRecorder()
-    {
+    private VideoRecorder getRecorder() {
         return this.getUIContext().menu.bridge.get(IBridgeVideoScreenshot.class).getVideoRecorder();
     }
 
-    private boolean isRunning()
-    {
+    private boolean isRunning() {
         return this.editor.isRunning();
     }
 
-    public void openMovies()
-    {
+    public void openMovies() {
         UIUtils.openFolder(this.getRecorder().movies);
     }
 
-    public void startRecording(int duration, Framebuffer framebuffer)
-    {
+    public void startRecording(int duration, Framebuffer framebuffer) {
         VideoRecorder recorder = this.getRecorder();
         UIContext context = this.getUIContext();
 
-        if (this.isRunning() || recorder.isRecording() || duration <= 0)
-        {
+        if (this.isRunning() || recorder.isRecording() || duration <= 0) {
             return;
         }
 
         this.end = duration;
 
-        try
-        {
+        try {
             recorder.startRecording(framebuffer.getMainTexture());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             UIOverlay.addOverlay(context, new UIMessageOverlayPanel(UIKeys.GENERAL_ERROR, IKey.raw(e.getMessage())));
 
             return;
@@ -84,22 +72,18 @@ public class UIFilmRecorder extends UIElement
         context.menu.getRoot().add(this.exit);
     }
 
-    public void stop()
-    {
+    public void stop() {
         UIContext context = this.getUIContext();
 
         context.render.postRunnable(this.exit::removeFromParent);
 
-        if (this.getRecorder().isRecording())
-        {
-            try
-            {
+        if (this.getRecorder().isRecording()) {
+            try {
                 this.getRecorder().stopRecording();
+            } catch (Exception e) {
             }
-            catch (Exception e) {}
 
-            if (this.isRunning())
-            {
+            if (this.isRunning()) {
                 this.editor.togglePlayback();
             }
 
@@ -109,37 +93,30 @@ public class UIFilmRecorder extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
         int ticks = this.editor.getCursor();
 
-        if (!this.getRecorder().isRecording())
-        {
+        if (!this.getRecorder().isRecording()) {
             return;
         }
 
-        if (!this.isRunning() || ticks >= this.end)
-        {
+        if (!this.isRunning() || ticks >= this.end) {
             this.stop();
         }
     }
 
-    public static class UIExit extends UIElement
-    {
+    public static class UIExit extends UIElement {
         private UIFilmRecorder recorder;
 
-        public UIExit(UIFilmRecorder recorder)
-        {
+        public UIExit(UIFilmRecorder recorder) {
             this.recorder = recorder;
         }
 
         @Override
-        protected boolean subKeyPressed(UIContext context)
-        {
-            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-            {
+        protected boolean subKeyPressed(UIContext context) {
+            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 this.recorder.stop();
 
                 return true;

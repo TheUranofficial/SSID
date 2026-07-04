@@ -13,8 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ConversionThread implements Runnable
-{
+public class ConversionThread implements Runnable {
     private IBridge bridge;
     private WorldMetadata oldMetadata;
     private WorldMetadata newMetadata;
@@ -22,8 +21,7 @@ public class ConversionThread implements Runnable
     private Consumer<ConversionProgress> callback;
     private ConversionProgress progress = new ConversionProgress();
 
-    public ConversionThread(IBridge bridge, WorldMetadata oldMetadata, WorldMetadata newMetadata, Consumer<ConversionProgress> callback)
-    {
+    public ConversionThread(IBridge bridge, WorldMetadata oldMetadata, WorldMetadata newMetadata, Consumer<ConversionProgress> callback) {
         this.bridge = bridge;
         this.oldMetadata = oldMetadata;
         this.newMetadata = newMetadata;
@@ -33,10 +31,8 @@ public class ConversionThread implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             ChunkFactory oldFactory = this.oldMetadata.createFactory().conversion();
             ChunkStorage oldStorage = oldFactory.createStorage();
             World oldWorld = new World(this.bridge, oldFactory, null);
@@ -64,8 +60,7 @@ public class ConversionThread implements Runnable
             File newFolder = newStorage.getFolder();
             File temp = new File(oldFolder.getParentFile(), "_chunks");
 
-            while (temp.exists())
-            {
+            while (temp.exists()) {
                 temp = new File(temp.getParentFile(), "_" + temp.getName());
             }
 
@@ -75,9 +70,7 @@ public class ConversionThread implements Runnable
             this.postProgress("Done!");
             this.sleep(3000);
             this.postProgress("", true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
             this.postProgress("Chunk conversion failed with error message: " + e.getMessage());
@@ -86,13 +79,11 @@ public class ConversionThread implements Runnable
         }
     }
 
-    private void loadChunks(ChunkStorage oldStorage, World oldWorld)
-    {
+    private void loadChunks(ChunkStorage oldStorage, World oldWorld) {
         int i = 0;
         List<ChunkCell> chunkCells = oldStorage.getCells(oldWorld.chunks);
 
-        for (ChunkCell cell : chunkCells)
-        {
+        for (ChunkCell cell : chunkCells) {
             oldStorage.read(oldWorld, cell);
 
             ChunkCell oldCell = oldWorld.chunks.getCell(cell.bounds.x, cell.bounds.y, cell.bounds.z, true);
@@ -101,28 +92,22 @@ public class ConversionThread implements Runnable
 
             i += 1;
 
-            if (i % 10 == 0)
-            {
+            if (i % 10 == 0) {
                 this.postProgress("Loaded " + i + "/" + chunkCells.size() + " chunk files...");
             }
         }
     }
 
-    private void copyBlocks(World oldWorld, World newWorld)
-    {
+    private void copyBlocks(World oldWorld, World newWorld) {
         int i = 0;
         ChunkCell[] cells = oldWorld.chunks.getCells();
 
-        for (ChunkCell cell : cells)
-        {
+        for (ChunkCell cell : cells) {
             AABBi bounds = cell.bounds;
 
-            for (int x = 0; x < bounds.w; x++)
-            {
-                for (int y = 0; y < bounds.h; y++)
-                {
-                    for (int z = 0; z < bounds.d; z++)
-                    {
+            for (int x = 0; x < bounds.w; x++) {
+                for (int y = 0; y < bounds.h; y++) {
+                    for (int z = 0; z < bounds.d; z++) {
                         int wx = bounds.x + x;
                         int wy = bounds.y + y;
                         int wz = bounds.z + z;
@@ -134,55 +119,45 @@ public class ConversionThread implements Runnable
 
             i += 1;
 
-            if (i % 10 == 0)
-            {
+            if (i % 10 == 0) {
                 this.postProgress("Copied " + i + "/" + cells.length + " chunks...");
             }
         }
 
         newWorld.entities = oldWorld.entities;
 
-        for (Entity entity : newWorld.entities)
-        {
+        for (Entity entity : newWorld.entities) {
             entity.setWorld(newWorld);
         }
     }
 
-    private void saveNewChunks(ChunkStorage newStorage, World newWorld)
-    {
+    private void saveNewChunks(ChunkStorage newStorage, World newWorld) {
         ChunkCell[] newCells = newWorld.chunks.getCells();
         int i = 0;
 
-        for (ChunkCell cell : newCells)
-        {
+        for (ChunkCell cell : newCells) {
             newStorage.save(newWorld, cell);
 
             i += 1;
 
-            if (i % 10 == 0)
-            {
+            if (i % 10 == 0) {
                 this.postProgress("Saved " + i + "/" + newCells.length + " chunks...");
             }
         }
     }
 
-    private void sleep(long millis)
-    {
-        try
-        {
+    private void sleep(long millis) {
+        try {
             Thread.sleep(millis);
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
     }
 
-    private void postProgress(String message)
-    {
+    private void postProgress(String message) {
         this.postProgress(message, false);
     }
 
-    private void postProgress(String message, boolean finished)
-    {
+    private void postProgress(String message, boolean finished) {
         this.progress.message = message;
         this.progress.finished = finished;
 

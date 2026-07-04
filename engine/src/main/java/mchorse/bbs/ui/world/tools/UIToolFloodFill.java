@@ -15,13 +15,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-public class UIToolFloodFill extends UITool
-{
+public class UIToolFloodFill extends UITool {
     public UITrackpad radius;
     public UIToggle up;
 
-    public UIToolFloodFill(UIWorldEditorPanel editor)
-    {
+    public UIToolFloodFill(UIWorldEditorPanel editor) {
         super(editor);
 
         this.radius = new UITrackpad();
@@ -35,8 +33,7 @@ public class UIToolFloodFill extends UITool
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.BUCKET, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_FLOOD, Direction.RIGHT);
@@ -45,15 +42,13 @@ public class UIToolFloodFill extends UITool
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
         this.floodFill(result);
     }
 
-    private void floodFill(RayTraceResult result)
-    {
+    private void floodFill(RayTraceResult result) {
         Vector3i block = new Vector3i(result.block);
         Set<Vector3i> checked = new HashSet<>();
         Stack<Vector3i> toCheck = new Stack<>();
@@ -63,12 +58,10 @@ public class UIToolFloodFill extends UITool
         block.add(result.normal);
         toCheck.add(block);
 
-        while (!toCheck.isEmpty())
-        {
+        while (!toCheck.isEmpty()) {
             Vector3i p = toCheck.pop();
 
-            if (!this.canTraverseFurther(p, block, checked, radius))
-            {
+            if (!this.canTraverseFurther(p, block, checked, radius)) {
                 continue;
             }
 
@@ -92,8 +85,7 @@ public class UIToolFloodFill extends UITool
         }
     }
 
-    private boolean canTraverseFurther(Vector3i block, Vector3i origin, Set<Vector3i> checked, int radius)
-    {
+    private boolean canTraverseFurther(Vector3i block, Vector3i origin, Set<Vector3i> checked, int radius) {
         int distance = Math.abs(origin.x - block.x) + Math.abs(origin.y - block.y) + Math.abs(origin.z - block.z);
 
         return distance <= radius && !this.editor.getProxy().getChunks().hasBlock(block.x, block.y, block.z) && !checked.contains(block);

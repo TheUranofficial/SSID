@@ -7,19 +7,14 @@ import mchorse.bbs.ui.framework.elements.utils.Batcher2D;
 import mchorse.bbs.utils.StringUtils;
 import mchorse.bbs.utils.colors.Colors;
 
-public class AudioRenderer
-{
-    public static void renderAll(Batcher2D batcher, int x, int y, int w, int h, int sw, int sh)
-    {
-        if (!BBSSettings.audioWaveformVisible.get())
-        {
+public class AudioRenderer {
+    public static void renderAll(Batcher2D batcher, int x, int y, int w, int h, int sw, int sh) {
+        if (!BBSSettings.audioWaveformVisible.get()) {
             return;
         }
 
-        for (SoundPlayer file : BBS.getSounds().getPlayers())
-        {
-            if (file.getBuffer().getWaveform() != null && !file.isStopped())
-            {
+        for (SoundPlayer file : BBS.getSounds().getPlayers()) {
+            if (file.getBuffer().getWaveform() != null && !file.isStopped()) {
                 renderWaveform(batcher, file, x, y, w, h, sw, sh);
 
                 y -= h + 5;
@@ -27,10 +22,8 @@ public class AudioRenderer
         }
     }
 
-    public static void renderWaveform(Batcher2D batcher, SoundPlayer file, int x, int y, int w, int h, int sw, int sh)
-    {
-        if (file == null || file.getBuffer().getWaveform() == null)
-        {
+    public static void renderWaveform(Batcher2D batcher, SoundPlayer file, int x, int y, int w, int h, int sw, int sh) {
+        if (file == null || file.getBuffer().getWaveform() == null) {
             return;
         }
 
@@ -47,8 +40,7 @@ public class AudioRenderer
 
         Waveform wave = file.getBuffer().getWaveform();
 
-        if (!wave.isCreated())
-        {
+        if (!wave.isCreated()) {
             wave.render(null);
         }
 
@@ -60,14 +52,12 @@ public class AudioRenderer
         /* Draw the waveform */
         int runningOffset = waveW - offset;
 
-        if (runningOffset > 0)
-        {
+        if (runningOffset > 0) {
             wave.render(batcher, Colors.WHITE, x + half, y, half, h, playback, playback + duration / 2);
         }
 
         /* Draw the passed waveform */
-        if (offset > 0)
-        {
+        if (offset > 0) {
             int color = Colors.COLOR.set(brightness, brightness, brightness, 1F).getARGBColor();
 
             wave.render(batcher, color, x, y, half, h, playback - duration / 2, playback);
@@ -79,13 +69,11 @@ public class AudioRenderer
 
         FontRenderer fontRenderer = batcher.getContext().getFont();
 
-        if (BBSSettings.audioWaveformFilename.get())
-        {
+        if (BBSSettings.audioWaveformFilename.get()) {
             batcher.textCard(fontRenderer, file.getBuffer().getId().toString(), x + 8, y + h / 2 - 4, 0xffffff, 0x99000000);
         }
 
-        if (BBSSettings.audioWaveformTime.get())
-        {
+        if (BBSSettings.audioWaveformTime.get()) {
             int tick = (int) Math.floor(playback * 20);
             int seconds = tick / 20;
             int milliseconds = (int) (tick % 20 == 0 ? 0 : tick % 20 * 5D);

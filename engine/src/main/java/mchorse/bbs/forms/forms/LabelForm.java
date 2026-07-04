@@ -1,17 +1,11 @@
 package mchorse.bbs.forms.forms;
 
-import mchorse.bbs.forms.properties.BooleanProperty;
-import mchorse.bbs.forms.properties.ColorProperty;
-import mchorse.bbs.forms.properties.FloatProperty;
-import mchorse.bbs.forms.properties.IntegerProperty;
-import mchorse.bbs.forms.properties.LinkProperty;
-import mchorse.bbs.forms.properties.StringProperty;
+import mchorse.bbs.forms.properties.*;
 import mchorse.bbs.forms.renderers.FormRenderer;
 import mchorse.bbs.forms.renderers.LabelFormRenderer;
 import mchorse.bbs.utils.colors.Color;
 
-public class LabelForm extends Form
-{
+public class LabelForm extends Form {
     public final StringProperty text = new StringProperty(this, "text", "Hello, World!");
     public final LinkProperty font = new LinkProperty(this, "font", null);
     public final ColorProperty color = new ColorProperty(this, "color", Color.white());
@@ -30,8 +24,7 @@ public class LabelForm extends Form
     public final ColorProperty background = new ColorProperty(this, "background", new Color(0, 0, 0, 0));
     public final FloatProperty offset = new FloatProperty(this, "offset", 3F);
 
-    public LabelForm()
-    {
+    public LabelForm() {
         super();
 
         this.font.cantAnimate();
@@ -51,14 +44,12 @@ public class LabelForm extends Form
     }
 
     @Override
-    protected FormRenderer createRenderer()
-    {
+    protected FormRenderer createRenderer() {
         return new LabelFormRenderer(this);
     }
 
     @Override
-    public String getDefaultDisplayName()
-    {
+    public String getDefaultDisplayName() {
         return this.text.get();
     }
 }

@@ -1,19 +1,17 @@
 package mchorse.bbs.ui.framework.elements.overlay;
 
+import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
-import mchorse.bbs.l10n.keys.IKey;
 
 import java.util.function.Consumer;
 
-public class UINumberOverlayPanel extends UIMessageBarOverlayPanel
-{
+public class UINumberOverlayPanel extends UIMessageBarOverlayPanel {
     public UITrackpad value;
 
     public Consumer<Double> callback;
 
-    public UINumberOverlayPanel(IKey title, IKey message, Consumer<Double> callback)
-    {
+    public UINumberOverlayPanel(IKey title, IKey message, Consumer<Double> callback) {
         super(title, message);
 
         this.callback = callback;
@@ -23,20 +21,17 @@ public class UINumberOverlayPanel extends UIMessageBarOverlayPanel
     }
 
     @Override
-    protected void onAdd(UIElement parent)
-    {
+    protected void onAdd(UIElement parent) {
         super.onAdd(parent);
 
         parent.getContext().focus(this.value);
     }
 
     @Override
-    public void confirm()
-    {
+    public void confirm() {
         super.confirm();
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(this.value.getValue());
         }
     }

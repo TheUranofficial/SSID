@@ -1,9 +1,7 @@
 package mchorse.bbs.ui.framework.elements.utils;
 
-public interface ITextColoring
-{
-    public default void setColor(int color)
-    {
+public interface ITextColoring {
+    public default void setColor(int color) {
         this.setColor(color, true);
     }
 

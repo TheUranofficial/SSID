@@ -8,8 +8,7 @@ import mchorse.bbs.ui.utils.Area;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Glyph implements IMapSerializable
-{
+public class Glyph implements IMapSerializable {
     public char character;
     public int advance;
     public int offsetX;
@@ -18,25 +17,21 @@ public class Glyph implements IMapSerializable
     public boolean emoji;
     public List<Kerning> kernings = new ArrayList<>();
 
-    private static void parseKernings(MapType data, List<Kerning> kernings)
-    {
-        for (String key : data.keys())
-        {
+    private static void parseKernings(MapType data, List<Kerning> kernings) {
+        for (String key : data.keys()) {
             kernings.add(new Kerning((char) Integer.parseInt(key), data.getInt(key)));
         }
     }
 
-    public Glyph()
-    {}
+    public Glyph() {
+    }
 
-    public Glyph(int x, int y, int w, int h)
-    {
+    public Glyph(int x, int y, int w, int h) {
         this.tile.set(x, y, w, h);
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         ListType offset = data.getList("offset");
         ListType tile = data.getList("tile");
 
@@ -46,8 +41,7 @@ public class Glyph implements IMapSerializable
         this.tile.set(tile.getInt(0), tile.getInt(1), tile.getInt(2), tile.getInt(3));
         this.emoji = data.getBool("emoji");
 
-        if (data.has("kerning"))
-        {
+        if (data.has("kerning")) {
             this.kernings.clear();
 
             parseKernings(data.getMap("kerning"), this.kernings);
@@ -55,8 +49,7 @@ public class Glyph implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType offset = new ListType();
         ListType tile = new ListType();
 
@@ -72,12 +65,10 @@ public class Glyph implements IMapSerializable
         data.putInt("advance", this.advance);
         data.putBool("emoji", this.emoji);
 
-        if (this.kernings != null)
-        {
+        if (this.kernings != null) {
             MapType kernings = new MapType(false);
 
-            for (Kerning kerning : this.kernings)
-            {
+            for (Kerning kerning : this.kernings) {
                 kernings.putInt(String.valueOf((int) kerning.right), kerning.kerning);
             }
 

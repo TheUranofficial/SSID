@@ -10,40 +10,32 @@ import java.util.Set;
 /**
  * Folder based manager
  */
-public abstract class FolderManager <T extends ValueGroup> implements IManager<T>
-{
+public abstract class FolderManager<T extends ValueGroup> implements IManager<T> {
     protected File folder;
     protected long lastCheck;
 
-    public FolderManager(File folder)
-    {
-        if (folder != null)
-        {
+    public FolderManager(File folder) {
+        if (folder != null) {
             this.folder = folder;
             this.folder.mkdirs();
         }
     }
 
-    public File getFolder()
-    {
+    public File getFolder() {
         return this.folder;
     }
 
     @Override
-    public boolean exists(String name)
-    {
+    public boolean exists(String name) {
         return this.getFile(name).exists();
     }
 
     @Override
-    public boolean rename(String from, String to)
-    {
+    public boolean rename(String from, String to) {
         File file = this.getFile(from);
 
-        if (file != null && file.exists())
-        {
-            if (file.renameTo(this.getFile(to)))
-            {
+        if (file != null && file.exists()) {
+            if (file.renameTo(this.getFile(to))) {
                 return true;
             }
         }
@@ -52,8 +44,7 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
     }
 
     @Override
-    public boolean delete(String name)
-    {
+    public boolean delete(String name) {
         File file = this.getFile(name);
 
         return file != null && file.delete();
@@ -62,12 +53,10 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
     /**
      * Add a folder.
      */
-    public boolean addFolder(String path)
-    {
+    public boolean addFolder(String path) {
         File folder = this.getFolder(this.normalizePath(path));
 
-        if (folder.exists())
-        {
+        if (folder.exists()) {
             return false;
         }
 
@@ -77,17 +66,14 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
     /**
      * Rename given folder to another name. From and to arguments expect trailing slashes!
      */
-    public boolean renameFolder(String from, String to)
-    {
+    public boolean renameFolder(String from, String to) {
         from = this.normalizePath(from);
         to = this.normalizePath(to);
 
         File folder = this.getFolder(from);
 
-        if (folder.isDirectory())
-        {
-            if (folder.renameTo(this.getFolder(to)))
-            {
+        if (folder.isDirectory()) {
+            if (folder.renameTo(this.getFolder(to))) {
                 return true;
             }
         }
@@ -98,14 +84,11 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
     /**
      * Delete given folder. It only works if the folder is empty.
      */
-    public boolean deleteFolder(String path)
-    {
+    public boolean deleteFolder(String path) {
         File folder = this.getFolder(this.normalizePath(path));
 
-        if (folder.isDirectory())
-        {
-            if (folder.delete())
-            {
+        if (folder.isDirectory()) {
+            if (folder.delete()) {
                 return true;
             }
         }
@@ -113,18 +96,15 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
         return false;
     }
 
-    private String normalizePath(String path)
-    {
+    private String normalizePath(String path) {
         return path.endsWith("/") ? path : path + "/";
     }
 
     @Override
-    public Collection<String> getKeys()
-    {
+    public Collection<String> getKeys() {
         Set<String> set = new HashSet<>();
 
-        if (this.folder == null)
-        {
+        if (this.folder == null) {
             return set;
         }
 
@@ -133,59 +113,45 @@ public abstract class FolderManager <T extends ValueGroup> implements IManager<T
         return set;
     }
 
-    private void recursiveFind(Set<String> set, File folder, String prefix)
-    {
-        for (File file : folder.listFiles())
-        {
+    private void recursiveFind(Set<String> set, File folder, String prefix) {
+        for (File file : folder.listFiles()) {
             String name = file.getName();
 
-            if (file.isFile() && this.isData(file))
-            {
+            if (file.isFile() && this.isData(file)) {
                 set.add(prefix + name.substring(0, name.lastIndexOf(".")));
-            }
-            else if (file.isDirectory())
-            {
+            } else if (file.isDirectory()) {
                 File[] files = file.listFiles();
 
-                if (files == null || files.length == 0)
-                {
+                if (files == null || files.length == 0) {
                     set.add(prefix + name + "/");
-                }
-                else
-                {
+                } else {
                     this.recursiveFind(set, file, prefix + name + "/");
                 }
             }
         }
     }
 
-    protected boolean isData(File file)
-    {
+    protected boolean isData(File file) {
         return file.getName().endsWith(this.getExtension());
     }
 
-    public File getFile(String name)
-    {
-        if (this.folder == null)
-        {
+    public File getFile(String name) {
+        if (this.folder == null) {
             return null;
         }
 
         return new File(this.folder, name + this.getExtension());
     }
 
-    public File getFolder(String path)
-    {
-        if (this.folder == null)
-        {
+    public File getFolder(String path) {
+        if (this.folder == null) {
             return null;
         }
 
         return new File(this.folder, path);
     }
 
-    protected String getExtension()
-    {
+    protected String getExtension() {
         return ".json";
     }
 }

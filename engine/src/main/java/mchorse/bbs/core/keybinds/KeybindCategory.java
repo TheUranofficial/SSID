@@ -9,18 +9,17 @@ import java.util.function.Supplier;
 
 /**
  * Keybind category
- * 
+ * <p>
  * This class is responsible for handling keybinds
  */
-public class KeybindCategory implements IKeyHandler
-{
+public class KeybindCategory implements IKeyHandler {
     /**
-     * Identifier of the category 
+     * Identifier of the category
      */
     public final String id;
 
     /**
-     * List of keybinds 
+     * List of keybinds
      */
     public List<Keybind> keybinds = new ArrayList<>();
 
@@ -29,49 +28,38 @@ public class KeybindCategory implements IKeyHandler
      */
     private Supplier<Boolean> active;
 
-    public KeybindCategory(String id)
-    {
+    public KeybindCategory(String id) {
         this.id = id;
     }
 
-    public KeybindCategory active(Supplier<Boolean> active)
-    {
+    public KeybindCategory active(Supplier<Boolean> active) {
         this.active = active;
 
         return this;
     }
 
-    public void add(Keybind key)
-    {
+    public void add(Keybind key) {
         this.keybinds.add(key);
     }
 
-    public void resetKeybinds()
-    {
-        for (Keybind keybind : this.keybinds)
-        {
+    public void resetKeybinds() {
+        for (Keybind keybind : this.keybinds) {
             keybind.reset();
         }
     }
 
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return this.active == null || this.active.get();
     }
 
     @Override
-    public boolean handleKey(int key, int scancode, int action, int mods)
-    {
-        for (Keybind keybind : this.keybinds)
-        {
-            if (keybind.isDown(key))
-            {
+    public boolean handleKey(int key, int scancode, int action, int mods) {
+        for (Keybind keybind : this.keybinds) {
+            if (keybind.isDown(key)) {
                 keybind.apply(action == GLFW.GLFW_RELEASE);
 
                 return true;
-            }
-            else if (action == GLFW.GLFW_RELEASE && keybind.combo.getMainKey() == key)
-            {
+            } else if (action == GLFW.GLFW_RELEASE && keybind.combo.getMainKey() == key) {
                 return true;
             }
         }
@@ -80,6 +68,6 @@ public class KeybindCategory implements IKeyHandler
     }
 
     @Override
-    public void handleTextInput(int key)
-    {}
+    public void handleTextInput(int key) {
+    }
 }

@@ -14,8 +14,7 @@ import mchorse.bbs.utils.DataPath;
 
 import java.util.function.Consumer;
 
-public abstract class UICRUDOverlayPanel extends UIOverlayPanel
-{
+public abstract class UICRUDOverlayPanel extends UIOverlayPanel {
     public UIIcon add;
     public UIIcon dupe;
     public UIIcon rename;
@@ -25,8 +24,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     protected Consumer<String> callback;
 
-    public UICRUDOverlayPanel(IKey title, Consumer<String> callback)
-    {
+    public UICRUDOverlayPanel(IKey title, Consumer<String> callback) {
         super(title);
 
         this.callback = callback;
@@ -39,8 +37,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
         this.names = new UISearchList<>(new UIDataPathList((list) ->
         {
-            if (this.callback != null)
-            {
+            if (this.callback != null) {
                 this.callback.accept(list.get(0).toString());
             }
         }));
@@ -54,8 +51,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     /* CRUD */
 
-    protected void addNewData(UIIcon element)
-    {
+    protected void addNewData(UIIcon element) {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_ADD,
             UIKeys.PANELS_MODALS_ADD,
@@ -69,8 +65,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     protected abstract void addNewData(String name);
 
-    protected void addNewFolder()
-    {
+    protected void addNewFolder() {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.PANELS_MODALS_ADD_FOLDER_TITLE,
             UIKeys.PANELS_MODALS_ADD_FOLDER,
@@ -84,8 +79,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     protected abstract void addNewFolder(String path);
 
-    protected void dupeData(UIIcon element)
-    {
+    protected void dupeData(UIIcon element) {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_DUPE,
             UIKeys.PANELS_MODALS_DUPE,
@@ -100,18 +94,15 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     protected abstract void dupeData(String name);
 
-    protected void renameData(UIIcon element)
-    {
+    protected void renameData(UIIcon element) {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_RENAME,
             UIKeys.PANELS_MODALS_RENAME,
             (str) -> this.renameData(this.namesList.getPath(str).toString())
         );
 
-        if (this.namesList.isFolderSelected())
-        {
-            if (this.namesList.getCurrentFirst().equals("../"))
-            {
+        if (this.namesList.isFolderSelected()) {
+            if (this.namesList.getCurrentFirst().equals("../")) {
                 return;
             }
 
@@ -132,8 +123,7 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
 
     protected abstract void renameFolder(String name);
 
-    protected void removeData(UIIcon element)
-    {
+    protected void removeData(UIIcon element) {
         UIConfirmOverlayPanel panel = new UIConfirmOverlayPanel(
             UIKeys.GENERAL_REMOVE,
             UIKeys.PANELS_MODALS_REMOVE,
@@ -143,10 +133,8 @@ public abstract class UICRUDOverlayPanel extends UIOverlayPanel
             }
         );
 
-        if (this.namesList.isFolderSelected())
-        {
-            if (this.namesList.getCurrentFirst().equals("../"))
-            {
+        if (this.namesList.isFolderSelected()) {
+            if (this.namesList.getCurrentFirst().equals("../")) {
                 return;
             }
 

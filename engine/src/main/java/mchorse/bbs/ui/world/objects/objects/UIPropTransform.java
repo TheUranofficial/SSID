@@ -10,17 +10,16 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.input.UITransform;
 import mchorse.bbs.utils.Axis;
 import mchorse.bbs.utils.Timer;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.pose.Transform;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class UIPropTransform extends UITransform
-{
+public class UIPropTransform extends UITransform {
     private static final double[] CURSOR_X = new double[1];
     private static final double[] CURSOR_Y = new double[1];
 
@@ -34,16 +33,14 @@ public class UIPropTransform extends UITransform
     private Vector3f cache = new Vector3f();
     private Timer checker = new Timer(30);
 
-    public UIPropTransform()
-    {}
+    public UIPropTransform() {
+    }
 
-    public UIPropTransform(Consumer<Transform> callback)
-    {
+    public UIPropTransform(Consumer<Transform> callback) {
         this.callback = callback;
     }
 
-    public UIPropTransform enableHotkeys()
-    {
+    public UIPropTransform enableHotkeys() {
         IKey category = UIKeys.TRANSFORMS_KEYS_CATEGORY;
         Supplier<Boolean> active = () -> this.editing;
 
@@ -57,13 +54,11 @@ public class UIPropTransform extends UITransform
         return this;
     }
 
-    public Transform getTransform()
-    {
+    public Transform getTransform() {
         return this.transform;
     }
 
-    public void setTransform(Transform transform)
-    {
+    public void setTransform(Transform transform) {
         this.transform = transform;
 
         this.fillT(transform.translate.x, transform.translate.y, transform.translate.z);
@@ -72,8 +67,7 @@ public class UIPropTransform extends UITransform
         this.fillR2(MathUtils.toDeg(transform.rotate2.x), MathUtils.toDeg(transform.rotate2.y), MathUtils.toDeg(transform.rotate2.z));
     }
 
-    private void enableMode(int mode)
-    {
+    private void enableMode(int mode) {
         this.editing = true;
         this.mode = mode;
 
@@ -83,76 +77,60 @@ public class UIPropTransform extends UITransform
         this.cache.set(this.getValue());
     }
 
-    private Vector3f getValue()
-    {
-        if (this.mode == 1)
-        {
+    private Vector3f getValue() {
+        if (this.mode == 1) {
             return this.transform.scale;
-        }
-        else if (this.mode == 2)
-        {
+        } else if (this.mode == 2) {
             return this.transform.rotate;
         }
 
         return this.transform.translate;
     }
 
-    private void disable()
-    {
+    private void disable() {
         this.editing = false;
     }
 
     @Override
-    public void setT(double x, double y, double z)
-    {
+    public void setT(double x, double y, double z) {
         this.transform.translate.set((float) x, (float) y, (float) z);
         this.submit();
     }
 
     @Override
-    public void setS(double x, double y, double z)
-    {
+    public void setS(double x, double y, double z) {
         this.transform.scale.set((float) x, (float) y, (float) z);
         this.submit();
     }
 
     @Override
-    public void setR(double x, double y, double z)
-    {
+    public void setR(double x, double y, double z) {
         this.transform.rotate.set(MathUtils.toRad((float) x), MathUtils.toRad((float) y), MathUtils.toRad((float) z));
         this.submit();
     }
 
     @Override
-    public void setR2(double x, double y, double z)
-    {
+    public void setR2(double x, double y, double z) {
         this.transform.rotate2.set(MathUtils.toRad((float) x), MathUtils.toRad((float) y), MathUtils.toRad((float) z));
         this.submit();
     }
 
-    private void submit()
-    {
-        if (this.callback != null)
-        {
+    private void submit() {
+        if (this.callback != null) {
             this.callback.accept(this.transform);
         }
     }
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
-        if (this.editing)
-        {
-            if (context.mouseButton == 0)
-            {
+    protected boolean subMouseClicked(UIContext context) {
+        if (this.editing) {
+            if (context.mouseButton == 0) {
                 this.disable();
                 this.submit();
                 this.setTransform(this.transform);
 
                 return true;
-            }
-            else if (context.mouseButton == 1)
-            {
+            } else if (context.mouseButton == 1) {
                 this.disable();
                 this.getValue().set(this.cache);
                 this.submit();
@@ -166,21 +144,16 @@ public class UIPropTransform extends UITransform
     }
 
     @Override
-    protected boolean subKeyPressed(UIContext context)
-    {
-        if (this.editing)
-        {
-            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-            {
+    protected boolean subKeyPressed(UIContext context) {
+        if (this.editing) {
+            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 this.disable();
                 this.getValue().set(this.cache);
                 this.submit();
                 this.setTransform(this.transform);
 
                 return true;
-            }
-            else if (context.isPressed(GLFW.GLFW_KEY_ENTER))
-            {
+            } else if (context.isPressed(GLFW.GLFW_KEY_ENTER)) {
                 this.disable();
                 this.submit();
                 this.setTransform(this.transform);
@@ -193,10 +166,8 @@ public class UIPropTransform extends UITransform
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.editing && this.checker.isTime())
-        {
+    public void render(UIContext context) {
+        if (this.editing && this.checker.isTime()) {
             /* UIContext.mouseX can't be used because when cursor is outside of window
              * its position stops being updated. That's why it has to be queried manually
              * through GLFW...
@@ -210,22 +181,17 @@ public class UIPropTransform extends UITransform
             int border = 5;
             int borderPadding = border + 1;
 
-            if (rawX <= border)
-            {
+            if (rawX <= border) {
                 Window.moveCursor(Window.width - borderPadding, BBS.getEngine().mouse.y);
 
                 this.lastX = context.menu.width - (int) (borderPadding / fx);
                 this.checker.mark();
-            }
-            else if (rawX >= Window.width - border)
-            {
+            } else if (rawX >= Window.width - border) {
                 Window.moveCursor(borderPadding, BBS.getEngine().mouse.y);
 
                 this.lastX = (int) (borderPadding / fx);
                 this.checker.mark();
-            }
-            else
-            {
+            } else {
                 int dx = context.mouseX - this.lastX;
                 Vector3f vector = this.getValue();
                 boolean all = Window.isAltPressed();
@@ -244,8 +210,7 @@ public class UIPropTransform extends UITransform
 
         super.render(context);
 
-        if (this.editing)
-        {
+        if (this.editing) {
             String label = UIKeys.TRANSFORMS_EDITING.get();
             int x = this.area.mx(context.font.getWidth(label));
             int y = this.area.my(context.font.getHeight());

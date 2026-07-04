@@ -2,8 +2,7 @@ package mchorse.bbs.voxel.blocks;
 
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 
-public interface IBlockVariant
-{
+public interface IBlockVariant {
     /**
      * Get block variant identifier
      */

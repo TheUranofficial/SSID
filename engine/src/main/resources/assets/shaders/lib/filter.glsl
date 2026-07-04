@@ -32,7 +32,7 @@ vec3 get(int x, int y)
 /* Apparently, filter is a reserved word in GLSL */
 vec3 execute()
 {
-    #{filter}
+    #{ filter }
 }
 
 void main()

@@ -14,8 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIRecordOverlayPanel extends UIMessageOverlayPanel
-{
+public class UIRecordOverlayPanel extends UIMessageOverlayPanel {
     public UIIcon all;
     public UIIcon left;
     public UIIcon right;
@@ -28,8 +27,7 @@ public class UIRecordOverlayPanel extends UIMessageOverlayPanel
 
     private Consumer<List<String>> callback;
 
-    public UIRecordOverlayPanel(IKey title, IKey message, Consumer<List<String>> callback)
-    {
+    public UIRecordOverlayPanel(IKey title, IKey message, Consumer<List<String>> callback) {
         super(title, message);
 
         this.callback = callback;
@@ -70,12 +68,10 @@ public class UIRecordOverlayPanel extends UIMessageOverlayPanel
         this.keys().register(Keys.RECORDING_GROUP_POS_ROT, this.posRot::clickItself);
     }
 
-    private void submit(List<String> groups)
-    {
+    private void submit(List<String> groups) {
         this.close();
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(groups);
         }
     }

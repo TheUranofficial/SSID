@@ -10,8 +10,7 @@ import java.util.function.Supplier;
 /**
  * Keybind class
  */
-public class Keybind
-{
+public class Keybind {
     private IKey label;
     private IKey category;
 
@@ -20,116 +19,92 @@ public class Keybind
     public boolean inside;
     public Supplier<Boolean> active;
 
-    public Keybind(KeyCombo combo, Runnable callback)
-    {
+    public Keybind(KeyCombo combo, Runnable callback) {
         this.combo = combo;
         this.callback = callback;
     }
 
-    public Keybind inside()
-    {
+    public Keybind inside() {
         this.inside = true;
 
         return this;
     }
 
-    public Keybind active(Supplier<Boolean> active)
-    {
+    public Keybind active(Supplier<Boolean> active) {
         this.active = active;
 
         return this;
     }
 
-    public Keybind label(IKey label)
-    {
+    public Keybind label(IKey label) {
         this.label = label;
 
         return this;
     }
 
-    public Keybind category(IKey category)
-    {
+    public Keybind category(IKey category) {
         this.category = category;
 
         return this;
     }
 
-    public int getScore()
-    {
+    public int getScore() {
         return this.combo.keys.size();
     }
 
-    public IKey getLabel()
-    {
+    public IKey getLabel() {
         return this.label == null ? this.combo.label : this.label;
     }
 
-    public IKey getCategory()
-    {
+    public IKey getCategory() {
         return this.category == null ? this.combo.category : this.category;
     }
 
-    public String getKeyCombo()
-    {
+    public String getKeyCombo() {
         return this.combo.getKeyCombo();
     }
 
-    public boolean check(int keyCode, KeyAction keyAction, boolean inside)
-    {
-        if (keyAction == KeyAction.REPEAT && !this.combo.repeatable)
-        {
+    public boolean check(int keyCode, KeyAction keyAction, boolean inside) {
+        if (keyAction == KeyAction.REPEAT && !this.combo.repeatable) {
             return false;
         }
 
-        if (keyCode != this.combo.getMainKey())
-        {
+        if (keyCode != this.combo.getMainKey()) {
             return false;
         }
 
-        for (int i = 1; i < this.combo.keys.size(); i++)
-        {
-            if (!this.isKeyDown(this.combo.keys.get(i)))
-            {
+        for (int i = 1; i < this.combo.keys.size(); i++) {
+            if (!this.isKeyDown(this.combo.keys.get(i))) {
                 return false;
             }
         }
 
-        if (this.inside)
-        {
+        if (this.inside) {
             return inside;
         }
 
         return true;
     }
 
-    protected boolean isKeyDown(int key)
-    {
-        if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT)
-        {
+    protected boolean isKeyDown(int key) {
+        if (key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT) {
             return Window.isShiftPressed();
-        }
-        else if (key == GLFW.GLFW_KEY_LEFT_CONTROL || key == GLFW.GLFW_KEY_RIGHT_CONTROL)
-        {
+        } else if (key == GLFW.GLFW_KEY_LEFT_CONTROL || key == GLFW.GLFW_KEY_RIGHT_CONTROL) {
             return Window.isCtrlPressed();
-        }
-        else if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT)
-        {
+        } else if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
             return Window.isAltPressed();
         }
 
         return Window.isKeyPressed(key);
     }
 
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return this.active == null || this.active.get();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof Keybind)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof Keybind) {
             Keybind keybind = (Keybind) obj;
 
             return Objects.equals(this.combo.keys, keybind.combo.keys) && this.inside == keybind.inside;

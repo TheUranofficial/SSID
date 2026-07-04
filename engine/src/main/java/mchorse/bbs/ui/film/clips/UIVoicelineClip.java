@@ -23,8 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIVoicelineClip extends UIClip<VoicelineClip>
-{
+public class UIVoicelineClip extends UIClip<VoicelineClip> {
     public UITextbox content;
     public UIIcon generate;
     public UIIcon voice;
@@ -32,14 +31,12 @@ public class UIVoicelineClip extends UIClip<VoicelineClip>
     public UIIcon folder;
     public UIIcon uuid;
 
-    public UIVoicelineClip(VoicelineClip clip, IUIClipsDelegate editor)
-    {
+    public UIVoicelineClip(VoicelineClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.content = new UITextbox(10000, (t) -> this.clip.content.set(t));
@@ -67,47 +64,37 @@ public class UIVoicelineClip extends UIClip<VoicelineClip>
         this.uuid.w(0).tooltip(UIKeys.CAMERA_PANELS_VOICE_UUID);
     }
 
-    private void generate()
-    {
+    private void generate() {
         this.generateTTS(Collections.singletonList(this.clip), null);
     }
 
-    public void generateTTS(List<VoicelineClip> actions, Consumer<List<VoicelineClip>> callback)
-    {
+    public void generateTTS(List<VoicelineClip> actions, Consumer<List<VoicelineClip>> callback) {
         ElevenLabsAPI.generateStandard(this.getContext(), UIFilmPanel.getVoiceLines().getFolder(), actions, (result) ->
         {
-            if (callback != null && result.status == ElevenLabsResult.Status.SUCCESS)
-            {
+            if (callback != null && result.status == ElevenLabsResult.Status.SUCCESS) {
                 callback.accept(actions);
             }
         });
     }
 
-    private void pickVoice()
-    {
+    private void pickVoice() {
         this.getContext().replaceContextMenu((menu) ->
         {
-            for (ElevenLabsVoice voice : ElevenLabsAPI.getVoices().values())
-            {
-                if (!voice.isAllowed())
-                {
+            for (ElevenLabsVoice voice : ElevenLabsAPI.getVoices().values()) {
+                if (!voice.isAllowed()) {
                     continue;
                 }
 
                 String name = voice.name;
                 int color = BBSSettings.elevenVoiceColors.getColor(name) & 0xffffff;
 
-                if (name.equalsIgnoreCase(this.clip.voice.get()))
-                {
+                if (name.equalsIgnoreCase(this.clip.voice.get())) {
                     color = BBSSettings.primaryColor(0);
                 }
 
-                if (color != 0xffffff)
-                {
+                if (color != 0xffffff) {
                     menu.action(Icons.VOICE, IKey.raw(name), color, () -> this.setVoice(name));
-                }
-                else
-                {
+                } else {
                     menu.action(Icons.VOICE, IKey.raw(name), () -> this.setVoice(name));
                 }
             }
@@ -116,26 +103,21 @@ public class UIVoicelineClip extends UIClip<VoicelineClip>
         });
     }
 
-    private void setVoice(String voice)
-    {
+    private void setVoice(String voice) {
         this.clip.voice.set(voice);
     }
 
-    private void pickVariant()
-    {
+    private void pickVariant() {
         File folder = this.getFolder();
 
-        if (!folder.exists())
-        {
+        if (!folder.exists()) {
             return;
         }
 
         this.getContext().replaceContextMenu((m) ->
         {
-            for (File file : folder.listFiles())
-            {
-                if (!file.getName().endsWith(".wav"))
-                {
+            for (File file : folder.listFiles()) {
+                if (!file.getName().endsWith(".wav")) {
                     continue;
                 }
 
@@ -147,14 +129,12 @@ public class UIVoicelineClip extends UIClip<VoicelineClip>
         });
     }
 
-    private File getFolder()
-    {
+    private File getFolder() {
         return new File(UIFilmPanel.getVoiceLines().getFolder(), this.clip.uuid.get());
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.C_CLIP.get("bbs:voice_line")).marginTop(12), this.content);
@@ -162,8 +142,7 @@ public class UIVoicelineClip extends UIClip<VoicelineClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.content.setText(this.clip.content.get());

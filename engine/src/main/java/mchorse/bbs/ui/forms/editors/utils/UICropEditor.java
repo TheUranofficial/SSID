@@ -14,8 +14,7 @@ import org.joml.Vector4f;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UICropEditor extends UICanvasEditor
-{
+public class UICropEditor extends UICanvasEditor {
     public UITrackpad left;
     public UITrackpad right;
     public UITrackpad top;
@@ -29,8 +28,7 @@ public class UICropEditor extends UICanvasEditor
     private float originalX;
     private float originalY;
 
-    public UICropEditor()
-    {
+    public UICropEditor() {
         super();
 
         this.left = new UITrackpad((value) -> this.crop.x = value.floatValue());
@@ -45,16 +43,14 @@ public class UICropEditor extends UICanvasEditor
         this.editor.add(this.left, this.right, this.top, this.bottom);
     }
 
-    public void fill(Link texture, Vector4f crop)
-    {
+    public void fill(Link texture, Vector4f crop) {
         this.texture = texture;
         this.crop = crop;
 
         this.fillFields();
     }
 
-    private void fillFields()
-    {
+    private void fillFields() {
         this.left.setValue(this.crop.x);
         this.right.setValue(this.crop.z);
         this.top.setValue(this.crop.y);
@@ -62,8 +58,7 @@ public class UICropEditor extends UICanvasEditor
     }
 
     @Override
-    protected void startDragging(UIContext context)
-    {
+    protected void startDragging(UIContext context) {
         super.startDragging(context);
 
         this.handle = -1;
@@ -77,33 +72,24 @@ public class UICropEditor extends UICanvasEditor
         areas.put(2, new Vector2f(area.ex(), area.ey()));
         areas.put(3, new Vector2f(area.x, area.ey()));
 
-        for (Map.Entry<Integer, Vector2f> entry : areas.entrySet())
-        {
+        for (Map.Entry<Integer, Vector2f> entry : areas.entrySet()) {
             float dx = entry.getValue().x - context.mouseX;
             float dy = entry.getValue().y - context.mouseY;
             float d = dx * dx + dy * dy;
 
-            if (d < 25)
-            {
+            if (d < 25) {
                 this.handle = entry.getKey();
 
-                if (this.handle == 0)
-                {
+                if (this.handle == 0) {
                     this.originalX = this.crop.x;
                     this.originalY = this.crop.y;
-                }
-                else if (this.handle == 1)
-                {
+                } else if (this.handle == 1) {
                     this.originalX = this.crop.z;
                     this.originalY = this.crop.y;
-                }
-                else if (this.handle == 2)
-                {
+                } else if (this.handle == 2) {
                     this.originalX = this.crop.z;
                     this.originalY = this.crop.w;
-                }
-                else if (this.handle == 3)
-                {
+                } else if (this.handle == 3) {
                     this.originalX = this.crop.x;
                     this.originalY = this.crop.w;
                 }
@@ -112,35 +98,26 @@ public class UICropEditor extends UICanvasEditor
     }
 
     @Override
-    protected void dragging(UIContext context)
-    {
+    protected void dragging(UIContext context) {
         super.dragging(context);
 
-        if (this.dragging && this.mouse == 0 && this.handle >= 0)
-        {
+        if (this.dragging && this.mouse == 0 && this.handle >= 0) {
             float dx = (context.mouseX - this.lastX) / (float) this.scaleX.getZoom();
             float dy = (context.mouseY - this.lastY) / (float) this.scaleY.getZoom();
 
             if (Window.isShiftPressed()) dx = 0;
             if (Window.isCtrlPressed()) dy = 0;
 
-            if (this.handle == 0)
-            {
+            if (this.handle == 0) {
                 this.crop.x = Math.round(this.originalX + dx);
                 this.crop.y = Math.round(this.originalY + dy);
-            }
-            else if (this.handle == 1)
-            {
+            } else if (this.handle == 1) {
                 this.crop.z = Math.round(this.originalX - dx);
                 this.crop.y = Math.round(this.originalY + dy);
-            }
-            else if (this.handle == 2)
-            {
+            } else if (this.handle == 2) {
                 this.crop.z = Math.round(this.originalX - dx);
                 this.crop.w = Math.round(this.originalY - dy);
-            }
-            else if (this.handle == 3)
-            {
+            } else if (this.handle == 3) {
                 this.crop.x = Math.round(this.originalX + dx);
                 this.crop.w = Math.round(this.originalY - dy);
             }
@@ -150,16 +127,14 @@ public class UICropEditor extends UICanvasEditor
     }
 
     @Override
-    protected void renderCanvasFrame(UIContext context)
-    {
+    protected void renderCanvasFrame(UIContext context) {
         Area area = this.calculate(-this.w / 2, -this.h / 2, this.w / 2, this.h / 2);
 
         context.batcher.fullTexturedBox(context.render.getTextures().getTexture(this.texture), area.x, area.y, area.w, area.h);
     }
 
     @Override
-    protected void renderForeground(UIContext context)
-    {
+    protected void renderForeground(UIContext context) {
         Area area = this.calculateCropArea();
 
         context.batcher.normalizedBox(area.x, area.y, area.ex(), area.ey(), Colors.setA(Colors.ACTIVE, 0.25F));
@@ -171,14 +146,12 @@ public class UICropEditor extends UICanvasEditor
         this.drawHandle(context, 3, new Vector2f(area.x, area.ey()));
     }
 
-    private void drawHandle(UIContext context, int handle, Vector2f position)
-    {
+    private void drawHandle(UIContext context, int handle, Vector2f position) {
         int x = (int) position.x;
         int y = (int) position.y;
         int color = Colors.WHITE;
 
-        if (this.handle == handle)
-        {
+        if (this.handle == handle) {
             color = Colors.setA(Colors.ACTIVE, 1F);
         }
 
@@ -186,8 +159,7 @@ public class UICropEditor extends UICanvasEditor
         context.batcher.box(x - 2, y - 2, x + 2, y + 2, Colors.A100);
     }
 
-    private Area calculateCropArea()
-    {
+    private Area calculateCropArea() {
         return this.calculate(
             (int) (-this.w / 2 + this.crop.x),
             (int) (-this.h / 2 + this.crop.y),

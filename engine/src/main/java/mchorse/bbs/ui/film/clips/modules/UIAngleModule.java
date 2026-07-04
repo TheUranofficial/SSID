@@ -11,12 +11,11 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 
 /**
  * Angle GUI module
- *
+ * <p>
  * This class unifies four trackpads into one object which edits a {@link Angle},
  * and makes it way easier to reuse in other classes.
  */
-public class UIAngleModule extends UIAbstractModule
-{
+public class UIAngleModule extends UIAbstractModule {
     public UITrackpad yaw;
     public UITrackpad pitch;
     public UITrackpad roll;
@@ -24,8 +23,7 @@ public class UIAngleModule extends UIAbstractModule
 
     public ValueAngle angle;
 
-    public UIAngleModule(IUIClipsDelegate editor)
-    {
+    public UIAngleModule(IUIClipsDelegate editor) {
         super(editor);
 
         this.yaw = new UITrackpad((v) -> BaseValue.edit(this.angle, (value) -> value.get().yaw = v.floatValue()));
@@ -44,15 +42,13 @@ public class UIAngleModule extends UIAbstractModule
         this.add(UIClip.label(UIKeys.CAMERA_PANELS_ANGLE), this.yaw, this.pitch, this.roll, this.fov);
     }
 
-    public UIAngleModule contextMenu()
-    {
+    public UIAngleModule contextMenu() {
         this.context((menu) -> UICameraUtils.angleContextMenu(menu, this.editor, this.angle));
 
         return this;
     }
 
-    public void fill(ValueAngle angle)
-    {
+    public void fill(ValueAngle angle) {
         this.angle = angle;
 
         this.yaw.setValue(angle.get().yaw);

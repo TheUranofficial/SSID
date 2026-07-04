@@ -6,30 +6,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShaderRepository
-{
+public class ShaderRepository {
     private Map<VBOAttributes, Shader> shaders = new HashMap<>();
 
-    public void clear()
-    {
+    public void clear() {
         this.shaders.clear();
     }
 
-    public void register(Shader shader)
-    {
+    public void register(Shader shader) {
         this.shaders.put(shader.attributes, shader);
     }
 
     /**
      * Get shader for attribute layout.
      */
-    public Shader get(VBOAttributes attributes)
-    {
+    public Shader get(VBOAttributes attributes) {
         return this.shaders.get(attributes);
     }
 
-    public Collection<Shader> getAll()
-    {
+    public Collection<Shader> getAll() {
         return this.shaders.values();
     }
 }

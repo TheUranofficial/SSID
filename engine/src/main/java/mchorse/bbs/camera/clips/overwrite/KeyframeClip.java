@@ -9,12 +9,11 @@ import mchorse.bbs.utils.keyframes.KeyframeChannel;
 
 /**
  * Keyframe fixture
- * 
- * This fixture provides a much flexible control over camera, allowing setting 
+ * <p>
+ * This fixture provides a much flexible control over camera, allowing setting
  * up different transitions between points with different easing.
  */
-public class KeyframeClip extends CameraClip
-{
+public class KeyframeClip extends CameraClip {
     public final KeyframeChannel x = new KeyframeChannel("x");
     public final KeyframeChannel y = new KeyframeChannel("y");
     public final KeyframeChannel z = new KeyframeChannel("z");
@@ -25,21 +24,18 @@ public class KeyframeClip extends CameraClip
 
     public KeyframeChannel[] channels;
 
-    public KeyframeClip()
-    {
+    public KeyframeClip() {
         super();
 
-        this.channels = new KeyframeChannel[] {this.x, this.y, this.z, this.yaw, this.pitch, this.roll, this.fov};
+        this.channels = new KeyframeChannel[]{this.x, this.y, this.z, this.yaw, this.pitch, this.roll, this.fov};
 
-        for (KeyframeChannel channel : this.channels)
-        {
+        for (KeyframeChannel channel : this.channels) {
             this.add(channel);
         }
     }
 
     @Override
-    public void fromCamera(Camera camera)
-    {
+    public void fromCamera(Camera camera) {
         Position pos = new Position(camera);
 
         this.x.insert(0, pos.point.x);
@@ -52,8 +48,7 @@ public class KeyframeClip extends CameraClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         float t = context.relativeTick + context.transition;
 
         if (!this.x.isEmpty()) position.point.x = this.x.interpolate(t);
@@ -66,18 +61,15 @@ public class KeyframeClip extends CameraClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new KeyframeClip();
     }
 
     @Override
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         super.breakDownClip(original, offset);
 
-        for (KeyframeChannel channel : this.channels)
-        {
+        for (KeyframeChannel channel : this.channels) {
             channel.moveX(-offset);
         }
     }

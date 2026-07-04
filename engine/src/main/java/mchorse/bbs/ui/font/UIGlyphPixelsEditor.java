@@ -8,8 +8,7 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.resources.Pixels;
 
-public class UIGlyphPixelsEditor extends UIPixelsEditor
-{
+public class UIGlyphPixelsEditor extends UIPixelsEditor {
     public UITrackpad advance;
     public UITrackpad offsetX;
     public UITrackpad offsetY;
@@ -20,8 +19,7 @@ public class UIGlyphPixelsEditor extends UIPixelsEditor
 
     private GlyphData data;
 
-    public UIGlyphPixelsEditor()
-    {
+    public UIGlyphPixelsEditor() {
         this.advance = new UITrackpad((v) -> this.data.glyph.advance = v.intValue()).integer();
         this.offsetX = new UITrackpad((v) -> this.data.glyph.offsetX = v.intValue()).integer();
         this.offsetY = new UITrackpad((v) -> this.data.glyph.offsetY = v.intValue()).integer();
@@ -45,8 +43,7 @@ public class UIGlyphPixelsEditor extends UIPixelsEditor
         this.editor.add(this.emoji, this.kernings);
     }
 
-    private void updatePixels()
-    {
+    private void updatePixels() {
         Pixels pixels = Pixels.fromSize((int) this.width.getValue(), (int) this.height.getValue());
         Pixels oldPixels = this.data.pixels;
 
@@ -62,8 +59,7 @@ public class UIGlyphPixelsEditor extends UIPixelsEditor
         this.secondary.setColor(Colors.A100);
     }
 
-    public void fillGlyph(GlyphData data)
-    {
+    public void fillGlyph(GlyphData data) {
         this.data = data;
 
         this.advance.setValue(data.glyph.advance);

@@ -8,13 +8,11 @@ import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeInitializationSection extends UIParticleSchemeComponentSection<ParticleComponentInitialization>
-{
+public class UIParticleSchemeInitializationSection extends UIParticleSchemeComponentSection<ParticleComponentInitialization> {
     public UIButton create;
     public UIButton update;
 
-    public UIParticleSchemeInitializationSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeInitializationSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.create = new UIButton(UIKeys.SNOWSTORM_INITIALIZATION_CREATION, (b) -> this.editMoLang("initialization.create", (str) -> this.component.creation = this.parse(str, this.component.creation), this.component.creation));
@@ -26,14 +24,12 @@ public class UIParticleSchemeInitializationSection extends UIParticleSchemeCompo
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_INITIALIZATION_TITLE;
     }
 
     @Override
-    protected ParticleComponentInitialization getComponent(ParticleScheme scheme)
-    {
+    protected ParticleComponentInitialization getComponent(ParticleScheme scheme) {
         return this.scheme.getOrCreate(ParticleComponentInitialization.class);
     }
 }

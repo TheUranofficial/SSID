@@ -8,31 +8,22 @@ import mchorse.bbs.utils.IOUtils;
 import mchorse.bbs.utils.Pair;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class L10nUtils
-{
+public class L10nUtils {
     public static final Link LAZY = Link.assets("lazy.json");
 
-    public static String analyzeStrings(L10n l10n)
-    {
+    public static String analyzeStrings(L10n l10n) {
         Map<String, LangKey> strings = l10n.getStrings();
         StringBuilder builder = new StringBuilder();
 
         /* Calculate per language file count of strings */
         Map<Link, Integer> perFile = new HashMap<>();
 
-        for (LangKey value : strings.values())
-        {
+        for (LangKey value : strings.values()) {
             Link origin = value.getOrigin();
 
-            if (origin == null)
-            {
+            if (origin == null) {
                 continue;
             }
 
@@ -41,12 +32,10 @@ public class L10nUtils
             perFile.put(origin, count + 1);
         }
 
-        if (!perFile.isEmpty())
-        {
+        if (!perFile.isEmpty()) {
             builder.append("Language strings per file:\n");
 
-            for (Map.Entry<Link, Integer> entry : perFile.entrySet())
-            {
+            for (Map.Entry<Link, Integer> entry : perFile.entrySet()) {
                 builder.append("- ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
         }
@@ -55,16 +44,13 @@ public class L10nUtils
         List<LangKey> missing = findMissing(strings);
         List<LangKey> surplus = findSurplus(strings);
 
-        if (!missing.isEmpty())
-        {
+        if (!missing.isEmpty()) {
             builder.append("\nMissing strings (" + missing.size() + "):\n");
 
-            for (LangKey key : missing)
-            {
+            for (LangKey key : missing) {
                 builder.append("- ").append(key.content);
 
-                if (!key.key.isEmpty())
-                {
+                if (!key.key.isEmpty()) {
                     builder.append(" - ").append(key.key);
                 }
 
@@ -72,16 +58,13 @@ public class L10nUtils
             }
         }
 
-        if (!surplus.isEmpty())
-        {
+        if (!surplus.isEmpty()) {
             builder.append("\nSurplus strings (" + surplus.size() + "):\n");
 
-            for (LangKey key : surplus)
-            {
+            for (LangKey key : surplus) {
                 builder.append("- ").append(key.content);
 
-                if (!key.key.isEmpty())
-                {
+                if (!key.key.isEmpty()) {
                     builder.append(" - ").append(key.key);
                 }
 
@@ -98,14 +81,11 @@ public class L10nUtils
     /**
      * Find language keys that aren't used by the system
      */
-    public static List<LangKey> findSurplus(Map<String, LangKey> strings)
-    {
+    public static List<LangKey> findSurplus(Map<String, LangKey> strings) {
         List<LangKey> surplus = new ArrayList<>();
 
-        for (LangKey key : strings.values())
-        {
-            if (!key.wasRequested)
-            {
+        for (LangKey key : strings.values()) {
+            if (!key.wasRequested) {
                 surplus.add(key);
             }
         }
@@ -118,14 +98,11 @@ public class L10nUtils
     /**
      * Find language keys that are missing in the given language map
      */
-    public static List<LangKey> findMissing(Map<String, LangKey> strings)
-    {
+    public static List<LangKey> findMissing(Map<String, LangKey> strings) {
         List<LangKey> missing = new ArrayList<>();
 
-        for (LangKey key : strings.values())
-        {
-            if (key.getOrigin() == null)
-            {
+        for (LangKey key : strings.values()) {
+            if (key.getOrigin() == null) {
                 missing.add(key);
             }
         }
@@ -135,36 +112,30 @@ public class L10nUtils
         return missing;
     }
 
-    public static void compile(File export, Map<String, LangKey> strings)
-    {
+    public static void compile(File export, Map<String, LangKey> strings) {
         Map<Link, List<LangKey>> keysPerFile = new HashMap<>();
 
         export.mkdirs();
 
-        for (LangKey key : strings.values())
-        {
+        for (LangKey key : strings.values()) {
             Link origin = key.getOrigin() == null ? LAZY : key.getOrigin();
 
             keysPerFile.computeIfAbsent(origin, (k) -> new ArrayList<>()).add(key);
         }
 
-        for (List<LangKey> list : keysPerFile.values())
-        {
+        for (List<LangKey> list : keysPerFile.values()) {
             sortList(list);
         }
 
         List<LangKey> surplus = findSurplus(strings);
 
-        for (Map.Entry<Link, List<LangKey>> entry : keysPerFile.entrySet())
-        {
+        for (Map.Entry<Link, List<LangKey>> entry : keysPerFile.entrySet()) {
             Link key = entry.getKey();
             File file = new File(export, "lang." + key.source + "_" + key.path.replaceAll("/", "."));
             MapType out = new MapType(false);
 
-            for (LangKey k : entry.getValue())
-            {
-                if (surplus.contains(k))
-                {
+            for (LangKey k : entry.getValue()) {
+                if (surplus.contains(k)) {
                     continue;
                 }
 
@@ -175,21 +146,18 @@ public class L10nUtils
         }
     }
 
-    public static void sortList(List<LangKey> list)
-    {
+    public static void sortList(List<LangKey> list) {
         Map<String, List<LangKey>> prefixes = new HashMap<>();
         List<String> ordered = new ArrayList<>();
 
-        for (LangKey key : list)
-        {
+        for (LangKey key : list) {
             String k = key.key;
             int endIndex = k.lastIndexOf('.');
 
             String prefix = endIndex == -1 ? k : k.substring(0, endIndex);
             List<LangKey> keys = prefixes.get(prefix);
 
-            if (keys == null)
-            {
+            if (keys == null) {
                 keys = new ArrayList<>();
 
                 prefixes.put(prefix, keys);
@@ -199,8 +167,7 @@ public class L10nUtils
             keys.add(key);
         }
 
-        for (List<LangKey> keys : prefixes.values())
-        {
+        for (List<LangKey> keys : prefixes.values()) {
             keys.sort(Comparator.comparing(a -> a.key));
         }
 
@@ -209,12 +176,10 @@ public class L10nUtils
             String[] aSplits = a.split("\\.");
             String[] bSplits = b.split("\\.");
 
-            for (int i = 0, c = Math.min(aSplits.length, bSplits.length); i < c; i++)
-            {
+            for (int i = 0, c = Math.min(aSplits.length, bSplits.length); i < c; i++) {
                 int diff = aSplits[i].compareTo(bSplits[i]);
 
-                if (diff != 0)
-                {
+                if (diff != 0) {
                     return diff;
                 }
             }
@@ -224,30 +189,24 @@ public class L10nUtils
 
         list.clear();
 
-        for (String prefix : ordered)
-        {
+        for (String prefix : ordered) {
             list.addAll(prefixes.get(prefix));
         }
     }
 
-    public static List<Pair<String, String>> readAdditionalLanguages(File file)
-    {
-        if (file.isFile())
-        {
-            try
-            {
+    public static List<Pair<String, String>> readAdditionalLanguages(File file) {
+        if (file.isFile()) {
+            try {
                 MapType mapType = DataToString.mapFromString(IOUtils.readText(file));
                 List<Pair<String, String>> additionalLanguages = new ArrayList<>();
 
-                for (String key : mapType.keys())
-                {
+                for (String key : mapType.keys()) {
                     additionalLanguages.add(new Pair<>(mapType.getString(key), key));
                 }
 
                 return additionalLanguages;
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
 
         return Collections.emptyList();

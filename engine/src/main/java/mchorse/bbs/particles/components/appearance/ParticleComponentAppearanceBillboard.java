@@ -12,15 +12,11 @@ import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.world.World;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 
-public class ParticleComponentAppearanceBillboard extends ParticleComponentBase implements IComponentParticleRender
-{
+import java.lang.Math;
+
+public class ParticleComponentAppearanceBillboard extends ParticleComponentBase implements IComponentParticleRender {
     /* Options */
     public MolangExpression sizeW = MolangParser.ZERO;
     public MolangExpression sizeH = MolangParser.ZERO;
@@ -54,7 +50,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
 
     private Matrix4f transform = new Matrix4f();
     private Matrix4f rotation = new Matrix4f();
-    private Vector4f[] vertices = new Vector4f[] {
+    private Vector4f[] vertices = new Vector4f[]{
         new Vector4f(0, 0, 0, 1),
         new Vector4f(0, 0, 0, 1),
         new Vector4f(0, 0, 0, 1),
@@ -62,12 +58,11 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
     };
     private Vector3f vector = new Vector3f();
 
-    public ParticleComponentAppearanceBillboard()
-    {}
+    public ParticleComponentAppearanceBillboard() {
+    }
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         ListType size = new ListType();
         MapType uv = new MapType();
 
@@ -78,8 +73,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         uv.putInt("texture_width", this.textureWidth);
         uv.putInt("texture_height", this.textureHeight);
 
-        if (!this.flipbook && !MolangExpression.isZero(this.uvX) || !MolangExpression.isZero(this.uvY))
-        {
+        if (!this.flipbook && !MolangExpression.isZero(this.uvX) || !MolangExpression.isZero(this.uvY)) {
             ListType uvs = new ListType();
 
             uvs.add(this.uvX.toData());
@@ -88,8 +82,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
             uv.put("uv", uvs);
         }
 
-        if (!this.flipbook && !MolangExpression.isZero(this.uvW) || !MolangExpression.isZero(this.uvH))
-        {
+        if (!this.flipbook && !MolangExpression.isZero(this.uvW) || !MolangExpression.isZero(this.uvH)) {
             ListType uvs = new ListType();
 
             uvs.add(this.uvW.toData());
@@ -99,12 +92,10 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         }
 
         /* Adding "flipbook" properties to "uv" */
-        if (this.flipbook)
-        {
+        if (this.flipbook) {
             MapType flipbook = new MapType();
 
-            if (!MolangExpression.isZero(this.uvX) || !MolangExpression.isZero(this.uvY))
-            {
+            if (!MolangExpression.isZero(this.uvX) || !MolangExpression.isZero(this.uvY)) {
                 ListType base = new ListType();
 
                 base.add(this.uvX.toData());
@@ -113,8 +104,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
                 flipbook.put("base_UV", base);
             }
 
-            if (!MolangExpression.isZero(this.uvW) || !MolangExpression.isZero(this.uvH))
-            {
+            if (!MolangExpression.isZero(this.uvW) || !MolangExpression.isZero(this.uvH)) {
                 ListType uvSize = new ListType();
 
                 uvSize.add(this.uvW.toData());
@@ -123,8 +113,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
                 flipbook.put("size_UV", uvSize);
             }
 
-            if (this.stepX != 0 || this.stepY != 0)
-            {
+            if (this.stepX != 0 || this.stepY != 0) {
                 ListType step = new ListType();
 
                 step.addFloat(this.stepX);
@@ -148,104 +137,85 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType map = data.asMap();
 
-        if (map.has("size", BaseType.TYPE_LIST))
-        {
+        if (map.has("size", BaseType.TYPE_LIST)) {
             ListType size = map.getList("size");
 
-            if (size.size() >= 2)
-            {
+            if (size.size() >= 2) {
                 this.sizeW = parser.parseData(size.get(0));
                 this.sizeH = parser.parseData(size.get(1));
             }
         }
 
-        if (map.has("facing_camera_mode"))
-        {
+        if (map.has("facing_camera_mode")) {
             this.facing = CameraFacing.fromString(map.getString("facing_camera_mode"));
         }
 
-        if (map.has("uv", BaseType.TYPE_MAP))
-        {
+        if (map.has("uv", BaseType.TYPE_MAP)) {
             this.parseUv(map.getMap("uv"), parser);
         }
 
         return super.fromData(map, parser);
     }
 
-    private void parseUv(MapType data, MolangParser parser) throws MolangException
-    {
+    private void parseUv(MapType data, MolangParser parser) throws MolangException {
         if (data.has("texture_width")) this.textureWidth = data.getInt("texture_width");
         if (data.has("texture_height")) this.textureHeight = data.getInt("texture_height");
 
-        if (data.has("uv", BaseType.TYPE_LIST))
-        {
+        if (data.has("uv", BaseType.TYPE_LIST)) {
             ListType uv = data.getList("uv");
 
-            if (uv.size() >= 2)
-            {
+            if (uv.size() >= 2) {
                 this.uvX = parser.parseData(uv.get(0));
                 this.uvY = parser.parseData(uv.get(1));
             }
         }
 
-        if (data.has("uv_size", BaseType.TYPE_LIST))
-        {
+        if (data.has("uv_size", BaseType.TYPE_LIST)) {
             ListType uv = data.getList("uv_size");
 
-            if (uv.size() >= 2)
-            {
+            if (uv.size() >= 2) {
                 this.uvW = parser.parseData(uv.get(0));
                 this.uvH = parser.parseData(uv.get(1));
             }
         }
 
-        if (data.has("flipbook", BaseType.TYPE_MAP))
-        {
+        if (data.has("flipbook", BaseType.TYPE_MAP)) {
             this.flipbook = true;
 
             this.parseFlipbook(data.getMap("flipbook"), parser);
         }
     }
 
-    private void parseFlipbook(MapType flipbook, MolangParser parser) throws MolangException
-    {
-        if (flipbook.has("base_UV", BaseType.TYPE_LIST))
-        {
+    private void parseFlipbook(MapType flipbook, MolangParser parser) throws MolangException {
+        if (flipbook.has("base_UV", BaseType.TYPE_LIST)) {
             ListType uv = flipbook.getList("base_UV");
 
-            if (uv.size() >= 2)
-            {
+            if (uv.size() >= 2) {
                 this.uvX = parser.parseData(uv.get(0));
                 this.uvY = parser.parseData(uv.get(1));
             }
         }
 
-        if (flipbook.has("size_UV", BaseType.TYPE_LIST))
-        {
+        if (flipbook.has("size_UV", BaseType.TYPE_LIST)) {
             ListType uv = flipbook.getList("size_UV");
 
-            if (uv.size() >= 2)
-            {
+            if (uv.size() >= 2) {
                 this.uvW = parser.parseData(uv.get(0));
                 this.uvH = parser.parseData(uv.get(1));
             }
         }
 
-        if (flipbook.has("step_UV", BaseType.TYPE_LIST))
-        {
+        if (flipbook.has("step_UV", BaseType.TYPE_LIST)) {
             ListType uv = flipbook.getList("step_UV");
 
-            if (uv.size() >= 2)
-            {
+            if (uv.size() >= 2) {
                 this.stepX = uv.getFloat(0);
                 this.stepY = uv.getFloat(1);
             }
@@ -258,12 +228,11 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
     }
 
     @Override
-    public void preRender(ParticleEmitter emitter, float transition)
-    {}
+    public void preRender(ParticleEmitter emitter, float transition) {
+    }
 
     @Override
-    public void render(ParticleEmitter emitter, Particle particle, VAOBuilder builder, float transition)
-    {
+    public void render(ParticleEmitter emitter, Particle particle, VAOBuilder builder, float transition) {
         this.calculateUVs(particle, emitter, transition);
 
         /* Render the particle */
@@ -272,8 +241,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         double pz = Interpolations.lerp(particle.prevPosition.z, particle.position.z, transition);
         float angle = Interpolations.lerp(particle.prevRotation, particle.rotation, transition);
 
-        if (particle.relativePosition && particle.relativeRotation)
-        {
+        if (particle.relativePosition && particle.relativeRotation) {
             this.vector.set((float) px, (float) py, (float) pz);
             emitter.rotation.transform(this.vector);
 
@@ -294,8 +262,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         double entityZ = emitter.cZ;
         boolean lookAt = this.facing == CameraFacing.LOOKAT_XYZ || this.facing == CameraFacing.LOOKAT_Y;
 
-        if (lookAt)
-        {
+        if (lookAt) {
             double dX = entityX - px;
             double dY = entityY - py;
             double dZ = entityZ - pz;
@@ -316,17 +283,14 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.vertices[3].set(-this.w / 2, this.h / 2, 0, 1);
         this.transform.identity();
 
-        if (this.facing == CameraFacing.ROTATE_XYZ || this.facing == CameraFacing.LOOKAT_XYZ)
-        {
+        if (this.facing == CameraFacing.ROTATE_XYZ || this.facing == CameraFacing.LOOKAT_XYZ) {
             this.rotation.identity();
             this.rotation.rotateY(entityYaw / 180 * (float) Math.PI);
             this.transform.mul(this.rotation);
             this.rotation.identity();
             this.rotation.rotateX(entityPitch / 180 * (float) Math.PI);
             this.transform.mul(this.rotation);
-        }
-        else if (this.facing == CameraFacing.ROTATE_Y || this.facing == CameraFacing.LOOKAT_Y)
-        {
+        } else if (this.facing == CameraFacing.ROTATE_Y || this.facing == CameraFacing.LOOKAT_Y) {
             this.rotation.identity();
             this.rotation.rotateY(entityYaw / 180 * (float) Math.PI);
             this.transform.mul(this.rotation);
@@ -340,15 +304,13 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.build(builder, particle);
     }
 
-    private void build(VAOBuilder builder, Particle particle)
-    {
+    private void build(VAOBuilder builder, Particle particle) {
         float u1 = this.u1 / (float) this.textureWidth;
         float u2 = this.u2 / (float) this.textureWidth;
         float v1 = this.v1 / (float) this.textureHeight;
         float v2 = this.v2 / (float) this.textureHeight;
 
-        for (Vector4f vertex : this.vertices)
-        {
+        for (Vector4f vertex : this.vertices) {
             this.transform.transform(vertex);
         }
 
@@ -360,8 +322,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.writeVertex(builder, this.vertices[0], u2, v2, particle);
     }
 
-    private void writeVertex(VAOBuilder builder, Vector4f vertex, float u, float v, Particle particle)
-    {
+    private void writeVertex(VAOBuilder builder, Vector4f vertex, float u, float v, Particle particle) {
         builder.xyz(vertex.x, vertex.y, vertex.z)
             .normal(0, 1F, 0)
             .uv(u, v)
@@ -370,8 +331,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
     }
 
     @Override
-    public void renderUI(Particle particle, VAOBuilder builder, float transition)
-    {
+    public void renderUI(Particle particle, VAOBuilder builder, float transition) {
         this.calculateUVs(particle, null, transition);
 
         this.w = this.h = 0.5F;
@@ -392,15 +352,13 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.buildUI(builder, particle);
     }
 
-    private void buildUI(VAOBuilder builder, Particle particle)
-    {
+    private void buildUI(VAOBuilder builder, Particle particle) {
         float u1 = this.u1 / (float) this.textureWidth;
         float u2 = this.u2 / (float) this.textureWidth;
         float v1 = this.v1 / (float) this.textureHeight;
         float v2 = this.v2 / (float) this.textureHeight;
 
-        for (Vector4f vertex : this.vertices)
-        {
+        for (Vector4f vertex : this.vertices) {
             this.transform.transform(vertex);
         }
 
@@ -412,15 +370,13 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.writeVertexUI(builder, this.vertices[2], u2, v2, particle);
     }
 
-    private void writeVertexUI(VAOBuilder builder, Vector4f vertex, float u, float v, Particle particle)
-    {
+    private void writeVertexUI(VAOBuilder builder, Vector4f vertex, float u, float v, Particle particle) {
         builder.xy(vertex.x, vertex.y)
             .uv(u, v)
             .rgba(particle.r, particle.g, particle.b, particle.a);
     }
 
-    public void calculateUVs(Particle particle, ParticleEmitter emitter, float transition)
-    {
+    public void calculateUVs(Particle particle, ParticleEmitter emitter, float transition) {
         /* Update particle's UVs and size */
         this.w = (float) this.sizeW.get() * 2.25F;
         this.h = (float) this.sizeH.get() * 2.25F;
@@ -430,25 +386,21 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         float w = (float) this.uvW.get();
         float h = (float) this.uvH.get();
 
-        if (this.flipbook)
-        {
+        if (this.flipbook) {
             int index = (int) (particle.getAge(transition) * this.fps);
             int max = (int) this.maxFrame.get();
 
-            if (this.stretchFPS)
-            {
+            if (this.stretchFPS) {
                 float lifetime = particle.lifetime <= 0 ? 0 : (particle.age + transition) / particle.lifetime;
 
                 index = (int) (lifetime * max);
             }
 
-            if (this.loop && max != 0)
-            {
+            if (this.loop && max != 0) {
                 index = index % max;
             }
 
-            if (index > max)
-            {
+            if (index > max) {
                 index = max;
             }
 
@@ -461,13 +413,10 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.u2 = u + w;
         this.v2 = v + h;
 
-        if (emitter == null || emitter.lit || emitter.world == null)
-        {
+        if (emitter == null || emitter.lit || emitter.world == null) {
             this.lx = 1F;
             this.ly = 0F;
-        }
-        else
-        {
+        } else {
             Vector3d pos = particle.getGlobalPosition(emitter);
             Vector2f lighting = emitter.world.getLighting(pos.x, pos.y, pos.z);
 
@@ -477,6 +426,6 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
     }
 
     @Override
-    public void postRender(ParticleEmitter emitter, float transition)
-    {}
+    public void postRender(ParticleEmitter emitter, float transition) {
+    }
 }

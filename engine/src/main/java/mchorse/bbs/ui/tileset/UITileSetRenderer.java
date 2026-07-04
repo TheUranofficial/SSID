@@ -10,18 +10,13 @@ import mchorse.bbs.ui.framework.elements.utils.UIModelRenderer;
 import mchorse.bbs.utils.AABB;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
-import org.joml.Intersectionf;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
-import org.joml.Vector4i;
+import org.joml.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UITileSetRenderer extends UIModelRenderer
-{
+public class UITileSetRenderer extends UIModelRenderer {
     private UITileSetEditorPanel editor;
     private Consumer<BlockModelFactory> callback;
     private BlockModelFactory selected;
@@ -29,8 +24,7 @@ public class UITileSetRenderer extends UIModelRenderer
     private BlockModelFactory lastHovered;
     private Vector3i blockPosition = new Vector3i();
 
-    public UITileSetRenderer(UITileSetEditorPanel editor, Consumer<BlockModelFactory> callback)
-    {
+    public UITileSetRenderer(UITileSetEditorPanel editor, Consumer<BlockModelFactory> callback) {
         super();
 
         this.editor = editor;
@@ -42,18 +36,15 @@ public class UITileSetRenderer extends UIModelRenderer
         this.grid = false;
     }
 
-    public Vector3i getBlockPosition(int index)
-    {
+    public Vector3i getBlockPosition(int index) {
         return this.blockPosition.set((index % 16) * 2, index / 16 * 4, 0);
     }
 
-    public void setSelected(BlockModelFactory selected)
-    {
+    public void setSelected(BlockModelFactory selected) {
         this.selected = selected;
     }
 
-    public BlockModelFactory getHoverBlock(UIContext context)
-    {
+    public BlockModelFactory getHoverBlock(UIContext context) {
         Vector3f direction = this.camera.getMouseDirection(context.mouseX, context.mouseY, this.area);
         Vector2f intersection = new Vector2f();
         Vector3f p0 = new Vector3f((float) this.camera.position.x, (float) this.camera.position.y, (float) this.camera.position.z);
@@ -61,19 +52,16 @@ public class UITileSetRenderer extends UIModelRenderer
 
         List<Vector4i> intersected = new ArrayList<>();
 
-        for (int i = 0, c = this.editor.getBlockSet().factories.size(); i < c; i++)
-        {
+        for (int i = 0, c = this.editor.getBlockSet().factories.size(); i < c; i++) {
             BlockModelFactory factory = this.editor.getBlockSet().factories.get(i);
             Vector3i p = this.getBlockPosition(i);
 
-            if (Intersectionf.intersectLineSegmentAab(p0, p1, new Vector3f(p.x, p.y, p.z - (factory.models.list.size() - 1) * 2), new Vector3f(p.x + 1, p.y + 1, p.z + 1), intersection) != Intersectionf.OUTSIDE)
-            {
+            if (Intersectionf.intersectLineSegmentAab(p0, p1, new Vector3f(p.x, p.y, p.z - (factory.models.list.size() - 1) * 2), new Vector3f(p.x + 1, p.y + 1, p.z + 1), intersection) != Intersectionf.OUTSIDE) {
                 intersected.add(new Vector4i(p.x, p.y, p.z, i));
             }
         }
 
-        if (!intersected.isEmpty())
-        {
+        if (!intersected.isEmpty()) {
             intersected.sort((a, b) ->
             {
                 double ad = this.camera.position.distance(a.x, a.y, a.z);
@@ -89,10 +77,8 @@ public class UITileSetRenderer extends UIModelRenderer
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 1 && this.callback != null)
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 1 && this.callback != null) {
             this.callback.accept(this.getHoverBlock(context));
 
             return true;
@@ -102,12 +88,10 @@ public class UITileSetRenderer extends UIModelRenderer
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
-        if (this.lastHovered != null)
-        {
+        if (this.lastHovered != null) {
             String label = this.lastHovered.toString();
 
             context.batcher.textCard(context.font, label, context.mouseX - context.font.getWidth(label) / 2 + 4, context.mouseY - 12);
@@ -115,8 +99,7 @@ public class UITileSetRenderer extends UIModelRenderer
     }
 
     @Override
-    protected void renderUserModel(UIContext context)
-    {
+    protected void renderUserModel(UIContext context) {
         ChunkBuilder blockBuilder = this.editor.getBlockBuilder();
         Shader shader = context.render.getShaders().get(blockBuilder.getAttributes());
         VAOBuilder builder = context.render.getVAO().setup(shader, VAO.INDICES);
@@ -128,28 +111,22 @@ public class UITileSetRenderer extends UIModelRenderer
         blockBuilder.resetIndex();
         builder.begin();
 
-        for (int i = 0, ic = blockBuilder.models.factories.size(); i < ic; i++)
-        {
+        for (int i = 0, ic = blockBuilder.models.factories.size(); i < ic; i++) {
             BlockModelFactory block = blockBuilder.models.factories.get(i);
 
-            if (block == hover)
-            {
+            if (block == hover) {
                 blockBuilder.color.set(0.25F, 0.75F, 1F, 1F);
-            }
-            else if (block != this.selected)
-            {
+            } else if (block != this.selected) {
                 blockBuilder.color.set(0.65F, 0.65F, 0.65F, 1F);
             }
 
-            if (block == this.selected)
-            {
+            if (block == this.selected) {
                 selectedIndex = i;
             }
 
             Vector3i p = this.getBlockPosition(i);
 
-            for (int j = 0, jc = block.variants.size(); j < jc; j++)
-            {
+            for (int j = 0, jc = block.variants.size(); j < jc; j++) {
                 blockBuilder.buildBlock(block.variants.get(j), p.x, p.y, p.z - j * 2, builder, blockBuilder.getAttributes());
             }
 
@@ -158,8 +135,7 @@ public class UITileSetRenderer extends UIModelRenderer
 
         builder.render();
 
-        if (selectedIndex >= 0)
-        {
+        if (selectedIndex >= 0) {
             AABB aabb = this.selected.collisionBox;
             Vector3i p = this.getBlockPosition(selectedIndex);
 

@@ -5,8 +5,7 @@ import mchorse.bbs.settings.values.ValueGroup;
 import mchorse.bbs.settings.values.ValueInt;
 import mchorse.bbs.settings.values.ValueString;
 
-public abstract class Clip extends ValueGroup
-{
+public abstract class Clip extends ValueGroup {
     public final ValueBoolean enabled = new ValueBoolean("enabled", true);
     public final ValueString title = new ValueString("title", "");
     public final ValueInt layer = new ValueInt("layer", 0, 0, Integer.MAX_VALUE);
@@ -14,8 +13,7 @@ public abstract class Clip extends ValueGroup
     public final ValueInt duration = new ValueInt("duration", 1, 1, Integer.MAX_VALUE);
     public final Envelope envelope = new Envelope("envelope");
 
-    public Clip()
-    {
+    public Clip() {
         super("");
 
         this.add(this.enabled);
@@ -26,20 +24,17 @@ public abstract class Clip extends ValueGroup
         this.add(this.envelope);
     }
 
-    public boolean isGlobal()
-    {
+    public boolean isGlobal() {
         return false;
     }
 
-    public boolean isInside(int tick)
-    {
+    public boolean isInside(int tick) {
         int offset = this.tick.get();
 
         return tick >= offset && tick < offset + this.duration.get();
     }
 
-    public Clip copy()
-    {
+    public Clip copy() {
         Clip clip = this.create();
 
         clip.copy(this);
@@ -52,12 +47,10 @@ public abstract class Clip extends ValueGroup
     /**
      * Breakdown this fixture into another piece starting at given offset
      */
-    public Clip breakDown(int offset)
-    {
+    public Clip breakDown(int offset) {
         int duration = this.duration.get();
 
-        if (offset <= 0 || offset >= duration)
-        {
+        if (offset <= 0 || offset >= duration) {
             return null;
         }
 
@@ -69,8 +62,7 @@ public abstract class Clip extends ValueGroup
         return clip;
     }
 
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         this.envelope.breakDown(original, offset);
     }
 }

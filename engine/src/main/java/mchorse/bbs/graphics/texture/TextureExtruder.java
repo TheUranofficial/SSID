@@ -14,26 +14,20 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TextureExtruder
-{
+public class TextureExtruder {
     private Map<Link, VAO> extruded = new HashMap<>();
 
-    public void delete(Link key)
-    {
+    public void delete(Link key) {
         VAO vao = this.extruded.remove(key);
 
-        if (vao != null)
-        {
+        if (vao != null) {
             vao.delete();
         }
     }
 
-    public void deleteAll()
-    {
-        for (VAO vao : this.extruded.values())
-        {
-            if (vao != null)
-            {
+    public void deleteAll() {
+        for (VAO vao : this.extruded.values()) {
+            if (vao != null) {
                 vao.delete();
             }
         }
@@ -41,26 +35,20 @@ public class TextureExtruder
         this.extruded.clear();
     }
 
-    public VAO get(Link key)
-    {
-        if (this.extruded.containsKey(key))
-        {
+    public VAO get(Link key) {
+        if (this.extruded.containsKey(key)) {
             return this.extruded.get(key);
         }
 
         Pixels pixels = null;
 
-        try
-        {
+        try {
             pixels = BBS.getTextures().getPixels(key);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (pixels == null)
-        {
+        if (pixels == null) {
             this.extruded.put(key, null);
 
             return null;
@@ -74,8 +62,7 @@ public class TextureExtruder
         return vao;
     }
 
-    private VAO generate(Pixels pixels)
-    {
+    private VAO generate(Pixels pixels) {
         ByteBuffer buffer = MemoryUtil.memAlloc(this.countBytes(pixels, 6 * VBOAttributes.VERTEX_NORMAL_UV_RGBA.getBytes()));
         VAO vao = new VAO().register(VBOAttributes.VERTEX_NORMAL_UV_RGBA);
         VAOBuilder builder = BBS.getRender().getVAO().setup(vao, null).buffer(buffer);
@@ -110,12 +97,9 @@ public class TextureExtruder
             0F, 0F, -1F
         );
 
-        for (int i = 0; i < pixels.width; i++)
-        {
-            for (int j = 0; j < pixels.height; j++)
-            {
-                if (this.hasPixel(pixels, i, j))
-                {
+        for (int i = 0; i < pixels.width; i++) {
+            for (int j = 0; j < pixels.height; j++) {
+                if (this.hasPixel(pixels, i, j)) {
                     this.generateNeighbors(pixels, builder, i, j, i, j, d);
                 }
             }
@@ -127,15 +111,13 @@ public class TextureExtruder
         return vao;
     }
 
-    private void generateNeighbors(Pixels pixels, VAOBuilder builder, int i, int j, int x, int y, float d)
-    {
+    private void generateNeighbors(Pixels pixels, VAOBuilder builder, int i, int j, int x, int y, float d) {
         float w = pixels.width;
         float h = pixels.height;
         float u = (x + 0.5F) / w;
         float v = (y + 0.5F) / h;
 
-        if (!this.hasPixel(pixels, x - 1, y) || i == 0)
-        {
+        if (!this.hasPixel(pixels, x - 1, y) || i == 0) {
             Draw.fillTexturedNormalQuad(builder,
                 i / w - 0.5F, -(j + 1) / h + 0.5F, -d,
                 i / w - 0.5F, -j / h + 0.5F, -d,
@@ -147,8 +129,7 @@ public class TextureExtruder
             );
         }
 
-        if (!this.hasPixel(pixels, x + 1, y) || i == 15)
-        {
+        if (!this.hasPixel(pixels, x + 1, y) || i == 15) {
             Draw.fillTexturedNormalQuad(builder,
                 (i + 1) / w - 0.5F, -(j + 1) / h + 0.5F, d,
                 (i + 1) / w - 0.5F, -j / h + 0.5F, d,
@@ -160,8 +141,7 @@ public class TextureExtruder
             );
         }
 
-        if (!this.hasPixel(pixels, x, y - 1) || j == 0)
-        {
+        if (!this.hasPixel(pixels, x, y - 1) || j == 0) {
             Draw.fillTexturedNormalQuad(builder,
                 (i + 1) / w - 0.5F, -j / h + 0.5F, d,
                 i / w - 0.5F, -j / h + 0.5F, d,
@@ -173,8 +153,7 @@ public class TextureExtruder
             );
         }
 
-        if (!this.hasPixel(pixels, x, y + 1) || j == 15)
-        {
+        if (!this.hasPixel(pixels, x, y + 1) || j == 15) {
             Draw.fillTexturedNormalQuad(builder,
                 (i + 1) / w - 0.5F, -(j + 1) / h + 0.5F, -d,
                 i / w - 0.5F, -(j + 1) / h + 0.5F, -d,
@@ -190,17 +169,13 @@ public class TextureExtruder
     /**
      * Calculate how many bytes will given extruded picture will occupy.
      */
-    private int countBytes(Pixels pixels, int size)
-    {
+    private int countBytes(Pixels pixels, int size) {
         /* Front and back faces don't require extrusion */
         int bytes = size * 2;
 
-        for (int i = 0; i < pixels.width; i++)
-        {
-            for (int j = 0; j < pixels.height; j++)
-            {
-                if (this.hasPixel(pixels, i, j))
-                {
+        for (int i = 0; i < pixels.width; i++) {
+            for (int j = 0; j < pixels.height; j++) {
+                if (this.hasPixel(pixels, i, j)) {
                     if (!this.hasPixel(pixels, i - 1, j) || i == 0) bytes += size;
                     if (!this.hasPixel(pixels, i + 1, j) || i == 15) bytes += size;
                     if (!this.hasPixel(pixels, i, j - 1) || j == 0) bytes += size;
@@ -212,8 +187,7 @@ public class TextureExtruder
         return bytes;
     }
 
-    private boolean hasPixel(Pixels pixels, int x, int y)
-    {
+    private boolean hasPixel(Pixels pixels, int x, int y) {
         Color pixel = pixels.getColor(x, y);
 
         return pixel != null && pixel.a >= 1;

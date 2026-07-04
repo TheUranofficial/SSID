@@ -5,19 +5,16 @@ import mchorse.bbs.ui.film.IUIClipsDelegate;
 import mchorse.bbs.ui.film.clips.modules.UIPointModule;
 import mchorse.bbs.ui.film.clips.widgets.UIBitToggle;
 
-public class UITranslateClip extends UIClip<TranslateClip>
-{
+public class UITranslateClip extends UIClip<TranslateClip> {
     public UIPointModule point;
     public UIBitToggle active;
 
-    public UITranslateClip(TranslateClip clip, IUIClipsDelegate editor)
-    {
+    public UITranslateClip(TranslateClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.point = new UIPointModule(this.editor);
@@ -25,16 +22,14 @@ public class UITranslateClip extends UIClip<TranslateClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(this.point.marginTop(12), this.active);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.point.fill(this.clip.translate);

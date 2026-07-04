@@ -4,16 +4,13 @@ import mchorse.bbs.voxel.tilesets.geometry.CombinedGeometry;
 import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 
-public class BlockModelCrop extends BlockModelFactory
-{
-    public BlockModelCrop()
-    {
+public class BlockModelCrop extends BlockModelFactory {
+    public BlockModelCrop() {
         this.opaque = this.ao = this.collision = false;
     }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         BlockModel model = this.createModel();
 
         float firstRow = 0.333F;

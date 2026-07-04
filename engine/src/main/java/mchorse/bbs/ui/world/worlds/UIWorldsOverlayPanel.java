@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UIWorldsOverlayPanel extends UIOverlayPanel
-{
+public class UIWorldsOverlayPanel extends UIOverlayPanel {
     public UIWorldMetadataList worlds;
 
     public UIIcon create;
@@ -44,8 +43,7 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
 
     private IBridge bridge;
 
-    public UIWorldsOverlayPanel(IBridge bridge)
-    {
+    public UIWorldsOverlayPanel(IBridge bridge) {
         super(UIKeys.WORLD_WORLDS);
 
         this.bridge = bridge;
@@ -72,8 +70,7 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         this.rebuild();
     }
 
-    public void rebuild()
-    {
+    public void rebuild() {
         World world = this.bridge.get(IBridgeWorld.class).getWorld();
 
         this.worldsFolder = world.folder.getParentFile();
@@ -81,10 +78,8 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
 
         this.currentWorld = this.bridge.get(IBridgeWorld.class).getWorld().folder.getName();
 
-        for (File file : this.worldsFolder.listFiles())
-        {
-            if (file.isDirectory() && this.getMetadataFile(file.getName()).isFile())
-            {
+        for (File file : this.worldsFolder.listFiles()) {
+            if (file.isDirectory() && this.getMetadataFile(file.getName()).isFile()) {
                 this.worlds.add(this.readMetadata(file.getName()));
             }
         }
@@ -92,8 +87,7 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         this.pickWorld(this.worlds.getById(this.currentWorld), true);
     }
 
-    private void pickWorld(WorldMetadata world, boolean select)
-    {
+    private void pickWorld(WorldMetadata world, boolean select) {
         boolean enabled = !this.currentWorld.equals(world.getId());
 
         this.load.setEnabled(enabled);
@@ -101,19 +95,16 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         this.convert.setEnabled(enabled);
         this.remove.setEnabled(enabled);
 
-        if (select)
-        {
+        if (select) {
             this.worlds.setCurrentScroll(world);
         }
     }
 
-    private void createWorld(UIIcon b)
-    {
+    private void createWorld(UIIcon b) {
         Set<String> existing = new HashSet<>();
         WorldMetadata metadata = new WorldMetadata(null);
 
-        for (WorldMetadata m : this.worlds.getList())
-        {
+        for (WorldMetadata m : this.worlds.getList()) {
             existing.add(m.getId());
         }
 
@@ -126,47 +117,38 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         overlay.setMetadata(metadata);
     }
 
-    private void openWorldFolder(UIIcon b)
-    {
+    private void openWorldFolder(UIIcon b) {
         UIUtils.openFolder(new File(this.worldsFolder, this.worlds.getCurrentFirst().getId()));
     }
 
-    private void createWorld(UIWorldMetadataOverlayPanel panel)
-    {
+    private void createWorld(UIWorldMetadataOverlayPanel panel) {
         String id = panel.id.getText();
         File metadata = this.getMetadataFile(id);
 
-        if (!metadata.exists())
-        {
+        if (!metadata.exists()) {
             metadata.getParentFile().mkdirs();
 
-            try
-            {
+            try {
                 IOUtils.writeText(metadata, DataToString.toString(panel.getMetadata().toData(), true));
 
                 this.rebuild();
                 this.pickWorld(this.worlds.getById(id), true);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void loadWorld(UIIcon b)
-    {
+    private void loadWorld(UIIcon b) {
         this.bridge.get(IBridgeWorld.class).loadWorld(this.worlds.getCurrentFirst().getId());
 
         this.close();
     }
 
-    private void editWorld(UIIcon b)
-    {
+    private void editWorld(UIIcon b) {
         WorldMetadata metadata = this.readMetadata();
 
-        if (metadata != null)
-        {
+        if (metadata != null) {
             UIEditWorldMetadataOverlayPanel overlay = new UIEditWorldMetadataOverlayPanel(this.bridge.get(IBridgeWorld.class).getChunkBuilder().models, this::editWorld);
 
             UIOverlay.addOverlay(this.getContext(), overlay, 240, 240);
@@ -175,24 +157,18 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         }
     }
 
-    private void editWorld(UIWorldMetadataOverlayPanel panel)
-    {
-        try
-        {
+    private void editWorld(UIWorldMetadataOverlayPanel panel) {
+        try {
             IOUtils.writeText(this.getMetadataFile(), DataToString.toString(panel.getMetadata().toData(), true));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void convertWorld(UIIcon b)
-    {
+    private void convertWorld(UIIcon b) {
         WorldMetadata metadata = this.readMetadata();
 
-        if (metadata != null)
-        {
+        if (metadata != null) {
             UIConvertWorldMetadataOverlayPanel overlay = new UIConvertWorldMetadataOverlayPanel(this.bridge.get(IBridgeWorld.class).getChunkBuilder().models, this::convertWorld);
 
             UIOverlay.addOverlay(this.getContext(), overlay, 240, 240);
@@ -200,29 +176,23 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         }
     }
 
-    private void convertWorld(UIWorldMetadataOverlayPanel panel)
-    {
+    private void convertWorld(UIWorldMetadataOverlayPanel panel) {
         WorldMetadata oldMetadata = this.readMetadata();
         WorldMetadata newMetadata = panel.getMetadata();
 
-        if (oldMetadata != null && newMetadata != null)
-        {
+        if (oldMetadata != null && newMetadata != null) {
             UIMessageOverlayPanel message = new UIMessageOverlayPanel(UIKeys.WORLDS_CONVERTING, IKey.EMPTY);
 
             new ConversionThread(this.bridge, oldMetadata, newMetadata, (progress) ->
             {
                 message.setMessage(IKey.raw(progress.message));
 
-                if (progress.finished)
-                {
+                if (progress.finished) {
                     message.close();
 
-                    try
-                    {
+                    try {
                         IOUtils.writeText(this.getMetadataFile(), DataToString.toString(newMetadata.toData(), true));
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -232,12 +202,10 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         }
     }
 
-    private void removeWorld(UIIcon b)
-    {
+    private void removeWorld(UIIcon b) {
         WorldMetadata world = this.worlds.getCurrentFirst();
 
-        if (world.getId().equals(this.currentWorld))
-        {
+        if (world.getId().equals(this.currentWorld)) {
             return;
         }
 
@@ -245,8 +213,7 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         IKey description = UIKeys.WORLDS_REMOVE_MODAL_WARNING_1;
         UIConfirmOverlayPanel panel = new UIConfirmOverlayPanel(title, description, (firstResult) ->
         {
-            if (!firstResult)
-            {
+            if (!firstResult) {
                 return;
             }
 
@@ -254,8 +221,7 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
             IKey descriptions = UIKeys.WORLDS_REMOVE_MODAL_WARNING_2;
             UIConfirmOverlayPanel panel2 = new UIConfirmOverlayPanel(title2, descriptions, (secondResult) ->
             {
-                if (!secondResult)
-                {
+                if (!secondResult) {
                     return;
                 }
 
@@ -270,40 +236,32 @@ public class UIWorldsOverlayPanel extends UIOverlayPanel
         UIOverlay.addOverlay(this.getContext(), panel, 240, 140);
     }
 
-    private File getMetadataFile()
-    {
+    private File getMetadataFile() {
         return this.getMetadataFile(this.worlds.getCurrentFirst().getId());
     }
 
-    private File getMetadataFile(String world)
-    {
+    private File getMetadataFile(String world) {
         return new File(this.worldsFolder, world + "/metadata.json");
     }
 
-    private WorldMetadata readMetadata()
-    {
+    private WorldMetadata readMetadata() {
         return this.readMetadata(this.worlds.getCurrentFirst().getId());
     }
 
-    private WorldMetadata readMetadata(String world)
-    {
-        try
-        {
+    private WorldMetadata readMetadata(String world) {
+        try {
             File metadataFile = this.getMetadataFile(world);
             String string = IOUtils.readText(metadataFile);
             MapType data = DataToString.mapFromString(string);
 
-            if (data != null)
-            {
+            if (data != null) {
                 WorldMetadata metadata = new WorldMetadata(metadataFile.getParentFile());
 
                 metadata.fromData(data);
 
                 return metadata;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -3,12 +3,7 @@ package mchorse.studio;
 import mchorse.bbs.BBS;
 import mchorse.bbs.BBSData;
 import mchorse.bbs.BBSSettings;
-import mchorse.bbs.bridge.IBridge;
-import mchorse.bbs.bridge.IBridgeCamera;
-import mchorse.bbs.bridge.IBridgeMenu;
-import mchorse.bbs.bridge.IBridgeRender;
-import mchorse.bbs.bridge.IBridgeVideoScreenshot;
-import mchorse.bbs.bridge.IBridgeWorld;
+import mchorse.bbs.bridge.*;
 import mchorse.bbs.camera.controller.CameraController;
 import mchorse.bbs.core.Engine;
 import mchorse.bbs.core.keybinds.Keybind;
@@ -41,11 +36,7 @@ import mchorse.bbs.utils.recording.VideoRecorder;
 import mchorse.bbs.utils.resources.Pixels;
 import mchorse.bbs.utils.watchdog.WatchDog;
 import mchorse.bbs.world.World;
-import mchorse.studio.bridge.BridgeCamera;
-import mchorse.studio.bridge.BridgeMenu;
-import mchorse.studio.bridge.BridgeRender;
-import mchorse.studio.bridge.BridgeVideoRecorder;
-import mchorse.studio.bridge.BridgeWorld;
+import mchorse.studio.bridge.*;
 import mchorse.studio.settings.StudioSettings;
 import mchorse.studio.ui.KeysApp;
 import mchorse.studio.ui.UIKeysApp;
@@ -62,8 +53,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StudioEngine extends Engine implements IBridge, IFileDropListener
-{
+public class StudioEngine extends Engine implements IBridge, IFileDropListener {
     /* Game */
     public StudioRenderer renderer;
     public UIScreen screen;
@@ -80,8 +70,7 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
 
     private Map<Class, Object> apis = new HashMap<>();
 
-    public StudioEngine(Studio game)
-    {
+    public StudioEngine(Studio game) {
         super();
 
         this.apis.put(IBridgeCamera.class, new BridgeCamera(this));
@@ -118,53 +107,42 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     }
 
     @Subscribe
-    public void registerSettings(RegisterSettingsEvent event)
-    {
+    public void registerSettings(RegisterSettingsEvent event) {
         event.register(Icons.BUCKET, "studio", StudioSettings::register);
     }
 
     @Subscribe
-    public void registerL10n(RegisterL10nEvent event)
-    {
+    public void registerL10n(RegisterL10nEvent event) {
         this.reloadSupportedLanguages();
 
         event.l10n.registerOne((lang) -> Studio.link("strings/" + lang + ".json"));
     }
 
     @Subscribe
-    public void reloadL10n(L10nReloadEvent event)
-    {
+    public void reloadL10n(L10nReloadEvent event) {
         File export = UILanguageEditorOverlayPanel.getLangEditorFolder();
         File[] files = export.listFiles();
 
-        if (files == null)
-        {
+        if (files == null) {
             return;
         }
 
-        for (File file : files)
-        {
-            if (file.isFile() && file.getName().endsWith(".json"))
-            {
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".json")) {
                 this.overwriteLanguage(event.l10n, file);
             }
         }
     }
 
     @Subscribe
-    public void registerKeybindsClasses(RegisterKeybindsClassesEvent event)
-    {
+    public void registerKeybindsClasses(RegisterKeybindsClassesEvent event) {
         event.register(KeysApp.class);
     }
 
-    private void overwriteLanguage(L10n l10n, File file)
-    {
-        try
-        {
+    private void overwriteLanguage(L10n l10n, File file) {
+        try {
             l10n.overwrite(DataToString.mapFromString(IOUtils.readText(file)));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -172,8 +150,7 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     /**
      * Register miscellaneous stuff
      */
-    private void registerMiscellaneous()
-    {
+    private void registerMiscellaneous() {
         File studio = BBS.getGamePath("studio");
 
         studio.mkdirs();
@@ -183,15 +160,11 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
 
         File file = BBS.getGamePath("assets.dat");
 
-        if (file.isFile())
-        {
-            try
-            {
+        if (file.isFile()) {
+            try {
                 BBS.getProvider().register(new DataSourcePack(file.toURI().toURL()));
                 System.out.println("Loaded packed assets from assets.dat!");
-            }
-            catch (MalformedURLException e)
-            {
+            } catch (MalformedURLException e) {
                 System.err.println("Failed to load packed assets.dat!");
                 e.printStackTrace();
             }
@@ -208,8 +181,7 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     /**
      * Register keybinds
      */
-    private void registerKeybinds()
-    {
+    private void registerKeybinds() {
         KeybindCategory global = new KeybindCategory("global");
         Keybind screenshot = new Keybind("screenshot", () -> this.screenshot.take(Window.isAltPressed()));
         Keybind fullscreen = new Keybind("fullscreen", this::toggleFullScreen);
@@ -225,14 +197,10 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
         {
             UIBaseMenu currentMenu = this.screen.menu;
 
-            if (currentMenu == null)
-            {
+            if (currentMenu == null) {
                 this.screen.showMenu(new UIUtilityMenu(this));
-            }
-            else
-            {
-                if (UIOverlay.has(currentMenu.context))
-                {
+            } else {
+                if (UIOverlay.has(currentMenu.context)) {
                     return;
                 }
 
@@ -248,8 +216,7 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     /* Engine implementation */
 
     @Override
-    public void init() throws Exception
-    {
+    public void init() throws Exception {
         super.init();
 
         Studio.PROFILER.endBegin("window_icon");
@@ -272,15 +239,12 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
         this.registerSettingsCallbacks();
     }
 
-    private void updateWindowIcon()
-    {
-        if (OS.CURRENT == OS.MACOS)
-        {
+    private void updateWindowIcon() {
+        if (OS.CURRENT == OS.MACOS) {
             return;
         }
 
-        try
-        {
+        try {
             Pixels pixels48 = Pixels.fromPNGStream(BBS.getProvider().getAsset(Link.assets("textures/icons/icon_48.png")));
             Pixels pixels32 = Pixels.fromPNGStream(BBS.getProvider().getAsset(Link.assets("textures/icons/icon_32.png")));
             Pixels pixels16 = Pixels.fromPNGStream(BBS.getProvider().getAsset(Link.assets("textures/icons/icon_16.png")));
@@ -290,16 +254,13 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
             pixels48.delete();
             pixels32.delete();
             pixels16.delete();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.err.println("Failed to register window icons!");
             e.printStackTrace();
         }
     }
 
-    private void registerSettingsCallbacks()
-    {
+    private void registerSettingsCallbacks() {
         StudioSettings.renderFrameRate.postCallback((v) -> this.frameRate = ((ValueInt) v).get());
         StudioSettings.renderVsync.postCallback((v) -> Window.setVSync(((ValueBoolean) v).get()));
         StudioSettings.renderQuality.postCallback((v) -> BBS.getEngine().needsResize());
@@ -312,14 +273,12 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
         BBSSettings.userIntefaceScale.postCallback((v) -> BBS.getEngine().needsResize());
     }
 
-    private void reloadSupportedLanguages()
-    {
+    private void reloadSupportedLanguages() {
         BBS.getL10n().reloadSupportedLanguages(L10nUtils.readAdditionalLanguages(BBS.getAssetsPath("lang_editor/languages.json")));
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         super.delete();
 
         this.screen.delete();
@@ -332,43 +291,36 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     }
 
     @Override
-    public boolean handleKey(int key, int scancode, int action, int mods)
-    {
+    public boolean handleKey(int key, int scancode, int action, int mods) {
         return this.keys.keybinds.handleKey(key, scancode, action, mods)
             || this.screen.handleKey(key, scancode, action, mods);
     }
 
     @Override
-    public void handleTextInput(int key)
-    {
+    public void handleTextInput(int key) {
         this.screen.handleTextInput(key);
     }
 
     @Override
-    public void handleMouse(int button, int action, int mode)
-    {
+    public void handleMouse(int button, int action, int mode) {
         this.screen.handleMouse(button, action, mode);
     }
 
     @Override
-    public void handleScroll(double x, double y)
-    {
+    public void handleScroll(double x, double y) {
         this.screen.handleScroll(x, y);
     }
 
     @Override
-    public boolean handleGamepad(int button, int action)
-    {
+    public boolean handleGamepad(int button, int action) {
         return false;
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
 
-        if (!this.screen.isPaused())
-        {
+        if (!this.screen.isPaused()) {
             this.world.update();
             this.cameraController.tick();
         }
@@ -382,8 +334,7 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     }
 
     @Override
-    public void render(float transition)
-    {
+    public void render(float transition) {
         super.render(transition);
 
         float worldTransition = this.screen.isPaused() ? 0 : transition;
@@ -400,12 +351,10 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     }
 
     @Override
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         GLStates.resetViewport();
 
-        if (this.video.isRecording())
-        {
+        if (this.video.isRecording()) {
             this.video.stopRecording();
         }
 
@@ -417,22 +366,19 @@ public class StudioEngine extends Engine implements IBridge, IFileDropListener
     /* IBridge implementation */
 
     @Override
-    public Engine getEngine()
-    {
+    public Engine getEngine() {
         return this;
     }
 
     @Override
-    public <T> T get(Class<T> apiInterface)
-    {
+    public <T> T get(Class<T> apiInterface) {
         return apiInterface.cast(this.apis.get(apiInterface));
     }
 
     /* IFileDropListener implementation */
 
     @Override
-    public void acceptFilePaths(String[] paths)
-    {
+    public void acceptFilePaths(String[] paths) {
         this.screen.acceptFilePaths(paths);
     }
 }

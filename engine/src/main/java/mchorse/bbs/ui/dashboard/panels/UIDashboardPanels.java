@@ -18,8 +18,7 @@ import mchorse.bbs.utils.colors.Colors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIDashboardPanels extends UIElement
-{
+public class UIDashboardPanels extends UIElement {
     public List<UIDashboardPanel> panels = new ArrayList<>();
     public UIDashboardPanel panel;
 
@@ -27,16 +26,14 @@ public class UIDashboardPanels extends UIElement
     public UIElement pinned;
     public UIScrollView panelButtons;
 
-    public static void renderHighlight(Batcher2D batcher, Area area)
-    {
+    public static void renderHighlight(Batcher2D batcher, Area area) {
         int color = BBSSettings.primaryColor.get();
 
         batcher.box(area.x, area.ey() - 2, area.ex(), area.ey(), Colors.A100 | color);
         batcher.gradientVBox(area.x, area.y, area.ex(), area.ey() - 2, color, Colors.A75 | color);
     }
 
-    public UIDashboardPanels()
-    {
+    public UIDashboardPanels() {
         this.taskBar = new UIElement();
         this.taskBar.relative(this).y(1F, -20).w(1F).h(20);
         this.pinned = new UIElement();
@@ -47,10 +44,8 @@ public class UIDashboardPanels extends UIElement
         this.panelButtons.scroll.scrollSpeed = 5;
         this.panelButtons.preRender((context) ->
         {
-            for (int i = 0, c = this.panels.size(); i < c; i++)
-            {
-                if (this.panel == this.panels.get(i))
-                {
+            for (int i = 0, c = this.panels.size(); i < c; i++) {
+                if (this.panel == this.panels.get(i)) {
                     renderHighlight(context.batcher, ((UIIcon) this.panelButtons.getChildren().get(i)).area);
                 }
             }
@@ -60,12 +55,9 @@ public class UIDashboardPanels extends UIElement
         this.add(this.taskBar);
     }
 
-    public <T> T getPanel(Class<T> clazz)
-    {
-        for (UIDashboardPanel panel : this.panels)
-        {
-            if (panel.getClass() == clazz)
-            {
+    public <T> T getPanel(Class<T> clazz) {
+        for (UIDashboardPanel panel : this.panels) {
+            if (panel.getClass() == clazz) {
                 return (T) panel;
             }
         }
@@ -73,33 +65,26 @@ public class UIDashboardPanels extends UIElement
         return null;
     }
 
-    public boolean isFlightSupported()
-    {
+    public boolean isFlightSupported() {
         return this.panel instanceof IFlightSupported;
     }
 
-    public void open()
-    {
-        for (UIDashboardPanel panel : this.panels)
-        {
+    public void open() {
+        for (UIDashboardPanel panel : this.panels) {
             panel.open();
         }
     }
 
-    public void close()
-    {
-        for (UIDashboardPanel panel : this.panels)
-        {
+    public void close() {
+        for (UIDashboardPanel panel : this.panels) {
             panel.close();
         }
     }
 
-    public void setPanel(UIDashboardPanel panel)
-    {
+    public void setPanel(UIDashboardPanel panel) {
         UIDashboardPanel lastPanel = this.panel;
 
-        if (this.panel != null)
-        {
+        if (this.panel != null) {
             this.panel.disappear();
             this.panel.removeFromParent();
         }
@@ -108,8 +93,7 @@ public class UIDashboardPanels extends UIElement
 
         this.getEvents().emit(new PanelEvent(this, lastPanel, panel));
 
-        if (this.panel != null)
-        {
+        if (this.panel != null) {
             this.setPanelPlacement(panel);
 
             this.panel.appear();
@@ -118,13 +102,11 @@ public class UIDashboardPanels extends UIElement
         }
     }
 
-    private void setPanelPlacement(UIDashboardPanel panel)
-    {
+    private void setPanelPlacement(UIDashboardPanel panel) {
         panel.resetFlex().relative(this).w(1F).h(1F, -20);
     }
 
-    public UIIcon registerPanel(UIDashboardPanel panel, IKey tooltip, Icon icon)
-    {
+    public UIIcon registerPanel(UIDashboardPanel panel, IKey tooltip, Icon icon) {
         UIIcon button = new UIIcon(icon, (b) -> this.setPanel(panel));
 
         button.tooltip(tooltip, Direction.TOP);
@@ -135,8 +117,7 @@ public class UIDashboardPanels extends UIElement
         return button;
     }
 
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         Area area = this.taskBar.area;
         Area a = this.pinned.area;
 
@@ -144,13 +125,11 @@ public class UIDashboardPanels extends UIElement
         context.batcher.box(a.ex() + 2, a.y + 3, a.ex() + 3, a.ey() - 3, 0x44ffffff);
     }
 
-    public static class PanelEvent extends UIEvent<UIDashboardPanels>
-    {
+    public static class PanelEvent extends UIEvent<UIDashboardPanels> {
         public final UIDashboardPanel lastPanel;
         public final UIDashboardPanel panel;
 
-        public PanelEvent(UIDashboardPanels element, UIDashboardPanel lastPanel, UIDashboardPanel panel)
-        {
+        public PanelEvent(UIDashboardPanels element, UIDashboardPanel lastPanel, UIDashboardPanel panel) {
             super(element);
 
             this.lastPanel = lastPanel;

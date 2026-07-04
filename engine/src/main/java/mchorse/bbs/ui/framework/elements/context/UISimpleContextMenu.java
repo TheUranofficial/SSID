@@ -4,20 +4,17 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.input.list.UIList;
 import mchorse.bbs.ui.utils.context.ContextAction;
 
-public class UISimpleContextMenu extends UIContextMenu
-{
+public class UISimpleContextMenu extends UIContextMenu {
     public UIList<ContextAction> actions;
 
     private ContextAction action;
 
-    public UISimpleContextMenu()
-    {
+    public UISimpleContextMenu() {
         super();
 
         this.actions = new UIActionList((action) ->
         {
-            if (action.get(0).runnable != null)
-            {
+            if (action.get(0).runnable != null) {
                 this.action = action.get(0);
             }
         });
@@ -27,18 +24,15 @@ public class UISimpleContextMenu extends UIContextMenu
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.actions.getList().isEmpty();
     }
 
     @Override
-    public void setMouse(UIContext context)
-    {
+    public void setMouse(UIContext context) {
         int w = 100;
 
-        for (ContextAction action : this.actions.getList())
-        {
+        for (ContextAction action : this.actions.getList()) {
             w = Math.max(action.getWidth(context.font), w);
         }
 
@@ -46,10 +40,8 @@ public class UISimpleContextMenu extends UIContextMenu
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
-        if (this.action != null)
-        {
+    public boolean subMouseReleased(UIContext context) {
+        if (this.action != null) {
             this.action.runnable.run();
             this.removeFromParent();
 
@@ -59,14 +51,12 @@ public class UISimpleContextMenu extends UIContextMenu
         return super.subMouseReleased(context);
     }
 
-    public void pick(int index)
-    {
+    public void pick(int index) {
         this.actions.setIndex(index);
 
         ContextAction action = this.actions.getCurrentFirst();
 
-        if (action != null && action.runnable != null)
-        {
+        if (action != null && action.runnable != null) {
             action.runnable.run();
             this.removeFromParent();
         }

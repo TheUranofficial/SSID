@@ -9,18 +9,15 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 import java.util.HashSet;
 import java.util.function.Consumer;
 
-public class UIConvertWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel
-{
-    public UIConvertWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback)
-    {
+public class UIConvertWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel {
+    public UIConvertWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback) {
         super(blocks, callback, new HashSet<>());
 
         this.submit.label = UIKeys.WORLDS_METADATA_CONVERT;
     }
 
     @Override
-    protected void rebuild()
-    {
+    protected void rebuild() {
         int color = Colors.A50 | BBSSettings.primaryColor.get();
 
         this.view.removeAll();
@@ -28,8 +25,7 @@ public class UIConvertWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPa
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_CHUNK_SIZE).marginTop(6), this.chunkSize);
         this.view.add(this.compress, this.column.marginBottom(12));
 
-        if (this.column.getValue())
-        {
+        if (this.column.getValue()) {
             this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_OPTIONS).background(color));
             this.view.add(UI.row(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_BASE, 20).labelAnchor(0, 0.5F), this.columnBase));
             this.view.add(UI.row(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_HEIGHT, 20).labelAnchor(0, 0.5F), this.columnHeight).marginBottom(12));
@@ -40,14 +36,12 @@ public class UIConvertWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPa
     }
 
     @Override
-    protected boolean cannotSubmitWorldId()
-    {
+    protected boolean cannotSubmitWorldId() {
         return false;
     }
 
     @Override
-    protected boolean cannotSubmitWithEmptyGeneratorValues()
-    {
+    protected boolean cannotSubmitWithEmptyGeneratorValues() {
         return false;
     }
 }

@@ -7,23 +7,18 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
-public class ProjectionViewUBO extends UBO
-{
-    public ProjectionViewUBO(int unit)
-    {
+public class ProjectionViewUBO extends UBO {
+    public ProjectionViewUBO(int unit) {
         super(unit);
     }
 
     @Override
-    protected long size()
-    {
+    protected long size() {
         return 128;
     }
 
-    public void updateProjection(Matrix4f projection)
-    {
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
+    public void updateProjection(Matrix4f projection) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(16);
 
             projection.get(buffer);
@@ -34,10 +29,8 @@ public class ProjectionViewUBO extends UBO
         }
     }
 
-    public void updateView(Matrix4f view)
-    {
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
+    public void updateView(Matrix4f view) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(16);
 
             view.get(buffer);
@@ -48,10 +41,8 @@ public class ProjectionViewUBO extends UBO
         }
     }
 
-    public void update(Matrix4f projection, Matrix4f view)
-    {
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
+    public void update(Matrix4f projection, Matrix4f view) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(32);
 
             projection.get(0, buffer);

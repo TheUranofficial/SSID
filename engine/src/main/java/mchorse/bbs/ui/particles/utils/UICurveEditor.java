@@ -19,8 +19,7 @@ import mchorse.bbs.ui.utils.icons.Icons;
 
 import java.util.Map;
 
-public class UICurveEditor extends UIElement
-{
+public class UICurveEditor extends UIElement {
     private UIParticleSchemeSection section;
 
     public UILabel name;
@@ -33,8 +32,7 @@ public class UICurveEditor extends UIElement
 
     private ParticleCurve particleCurve;
 
-    public UICurveEditor(UIParticleSchemeSection section)
-    {
+    public UICurveEditor(UIParticleSchemeSection section) {
         this.section = section;
 
         this.name = UI.label(IKey.EMPTY, 20).labelAnchor(0, 0.5F).background();
@@ -44,8 +42,7 @@ public class UICurveEditor extends UIElement
         this.delete.tooltip(UIKeys.SNOWSTORM_CURVES_REMOVE);
         this.type = new UICirculate((b) -> this.changeType(b.getValue()));
 
-        for (ParticleCurveType type : ParticleCurveType.values())
-        {
+        for (ParticleCurveType type : ParticleCurveType.values()) {
             this.type.addLabel(UIKeys.C_CURVE_TYPE.get(type.id));
         }
 
@@ -61,24 +58,21 @@ public class UICurveEditor extends UIElement
         this.add(this.curve, UI.row(this.input, this.range));
     }
 
-    private void rename(UIIcon b)
-    {
+    private void rename(UIIcon b) {
         String oldName = this.particleCurve.variable.getName();
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_RENAME,
             UIKeys.SNOWSTORM_CURVES_RENAME_OVERLAY,
             (newName) ->
             {
-                if (newName.isEmpty() || newName.contains(" "))
-                {
+                if (newName.isEmpty() || newName.contains(" ")) {
                     return;
                 }
 
                 Map<String, ParticleCurve> curves = this.section.getScheme().curves;
                 MolangParser parser = this.section.getScheme().parser;
 
-                if (!parser.variables.containsKey(newName))
-                {
+                if (!parser.variables.containsKey(newName)) {
                     parser.variables.put(newName, new Variable(newName, 0));
                 }
 
@@ -94,22 +88,19 @@ public class UICurveEditor extends UIElement
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 
-    private void remove(UIIcon b)
-    {
+    private void remove(UIIcon b) {
         this.removeFromParent();
         this.section.getScheme().curves.remove(this.particleCurve.variable.getName());
         this.section.getEditor().resize();
         this.section.dirty();
     }
 
-    private void changeType(int value)
-    {
+    private void changeType(int value) {
         this.particleCurve.type = ParticleCurveType.values()[value];
         this.section.dirty();
     }
 
-    public void fill(ParticleCurve curve)
-    {
+    public void fill(ParticleCurve curve) {
         this.particleCurve = curve;
 
         this.name.label = IKey.raw(curve.variable.getName());

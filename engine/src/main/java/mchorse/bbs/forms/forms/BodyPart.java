@@ -4,15 +4,14 @@ import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.forms.FormUtils;
 import mchorse.bbs.graphics.RenderingContext;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.math.IInterpolation;
+import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.world.entities.Entity;
 import mchorse.bbs.world.entities.architect.EntityArchitect;
 
 import java.util.Objects;
 
-public class BodyPart implements IMapSerializable
-{
+public class BodyPart implements IMapSerializable {
     /**
      * This body part's owner.
      */
@@ -27,45 +26,36 @@ public class BodyPart implements IMapSerializable
 
     private Entity entity = EntityArchitect.createDummy();
 
-    void setManager(BodyPartManager manager)
-    {
+    void setManager(BodyPartManager manager) {
         this.manager = manager;
 
-        if (this.form != null)
-        {
+        if (this.form != null) {
             this.form.setParent(manager == null ? null : manager.getOwner());
         }
     }
 
-    public Form getForm()
-    {
+    public Form getForm() {
         return this.form;
     }
 
-    public void setForm(Form form)
-    {
-        if (this.form != null)
-        {
+    public void setForm(Form form) {
+        if (this.form != null) {
             this.form.setParent(null);
         }
 
         this.form = form;
 
-        if (this.form != null && this.manager != null)
-        {
+        if (this.form != null && this.manager != null) {
             this.form.setParent(this.manager.getOwner());
         }
     }
 
-    public Transform getTransform()
-    {
+    public Transform getTransform() {
         return this.transform;
     }
 
-    public void render(Entity target, RenderingContext context)
-    {
-        if (this.form == null || !this.enabled)
-        {
+    public void render(Entity target, RenderingContext context) {
+        if (this.form == null || !this.enabled) {
             return;
         }
 
@@ -77,16 +67,13 @@ public class BodyPart implements IMapSerializable
         context.stack.pop();
     }
 
-    public void update(Entity target)
-    {
-        if (this.form != null)
-        {
+    public void update(Entity target) {
+        if (this.form != null) {
             this.form.update(this.useTarget ? target : this.entity);
         }
     }
 
-    public BodyPart copy()
-    {
+    public BodyPart copy() {
         BodyPart part = new BodyPart();
 
         part.fromData(this.toData());
@@ -94,10 +81,8 @@ public class BodyPart implements IMapSerializable
         return part;
     }
 
-    public void tween(BodyPart part, int duration, IInterpolation interpolation, int offset, boolean playing)
-    {
-        if (this.form != null && part.form != null)
-        {
+    public void tween(BodyPart part, int duration, IInterpolation interpolation, int offset, boolean playing) {
+        if (this.form != null && part.form != null) {
             this.form.tween(part.form, duration, interpolation, offset, playing);
         }
 
@@ -108,15 +93,12 @@ public class BodyPart implements IMapSerializable
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof BodyPart)
-        {
+        if (obj instanceof BodyPart) {
             BodyPart bodyPart = (BodyPart) obj;
 
             return Objects.equals(this.form, bodyPart.form)
@@ -130,10 +112,8 @@ public class BodyPart implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
-        if (this.form != null)
-        {
+    public void toData(MapType data) {
+        if (this.form != null) {
             data.put("form", FormUtils.toData(this.form));
         }
 
@@ -144,10 +124,8 @@ public class BodyPart implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
-        if (data.has("form"))
-        {
+    public void fromData(MapType data) {
+        if (data.has("form")) {
             this.setForm(FormUtils.fromData(data.getMap("form")));
         }
 

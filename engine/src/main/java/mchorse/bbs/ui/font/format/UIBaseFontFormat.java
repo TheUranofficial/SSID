@@ -8,15 +8,13 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 import mchorse.bbs.ui.framework.elements.utils.UILabel;
 
-public class UIBaseFontFormat <T extends BaseFontFormat> extends UIElement
-{
+public class UIBaseFontFormat<T extends BaseFontFormat> extends UIElement {
     public UILabel name;
     public UITextbox control;
 
     protected T format;
 
-    public UIBaseFontFormat()
-    {
+    public UIBaseFontFormat() {
         super();
 
         this.name = new UILabel(IKey.EMPTY).labelAnchor(0F, 0.5F);
@@ -28,8 +26,7 @@ public class UIBaseFontFormat <T extends BaseFontFormat> extends UIElement
         this.add(this.name, this.control);
     }
 
-    public void fill(T format)
-    {
+    public void fill(T format) {
         this.format = format;
 
         this.name.label = UIKeys.C_FONT_FORMAT.get(BBS.getFactoryFontFormats().getType(format).toString());

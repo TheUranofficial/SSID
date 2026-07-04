@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UIClipsPanel extends UIElement implements IUIClipsDelegate
-{
+public class UIClipsPanel extends UIElement implements IUIClipsDelegate {
     private static Map<Class, Integer> scrolls = new HashMap<>();
 
     public UIClips clips;
@@ -28,8 +27,7 @@ public class UIClipsPanel extends UIElement implements IUIClipsDelegate
     private IFactory<Clip, ClipFactoryData> factory;
     private UIClip panel;
 
-    public UIClipsPanel(UIFilmPanel panel, IFactory<Clip, ClipFactoryData> factory)
-    {
+    public UIClipsPanel(UIFilmPanel panel, IFactory<Clip, ClipFactoryData> factory) {
         this.filmPanel = panel;
         this.factory = factory;
         this.clips = new UIClips(this, factory);
@@ -38,67 +36,52 @@ public class UIClipsPanel extends UIElement implements IUIClipsDelegate
         this.add(this.clips);
     }
 
-    public void open()
-    {
-        if (this.panel != null)
-        {
+    public void open() {
+        if (this.panel != null) {
             this.panel.cameraEditorWasOpened();
         }
     }
 
-    public void handleUndo(IUndo<ValueGroup> undo, boolean redo)
-    {
-        if (this.panel != null)
-        {
+    public void handleUndo(IUndo<ValueGroup> undo, boolean redo) {
+        if (this.panel != null) {
             this.panel.handleUndo(undo, redo);
         }
     }
 
-    public void editClip(Position position)
-    {
-        if (this.panel != null)
-        {
+    public void editClip(Position position) {
+        if (this.panel != null) {
             this.panel.editClip(position);
         }
     }
 
     @Override
-    public Film getFilm()
-    {
+    public Film getFilm() {
         return this.filmPanel.getFilm();
     }
 
     @Override
-    public Camera getCamera()
-    {
+    public Camera getCamera() {
         return this.filmPanel.getCamera();
     }
 
     @Override
-    public Clip getClip()
-    {
+    public Clip getClip() {
         return this.panel == null ? null : this.panel.clip;
     }
 
     @Override
-    public void pickClip(Clip clip)
-    {
-        if (this.panel != null)
-        {
-            if (this.panel.clip == clip)
-            {
+    public void pickClip(Clip clip) {
+        if (this.panel != null) {
+            if (this.panel.clip == clip) {
                 this.panel.fillData();
 
                 return;
-            }
-            else
-            {
+            } else {
                 this.panel.removeFromParent();
             }
         }
 
-        if (clip == null)
-        {
+        if (clip == null) {
             this.panel = null;
 
             this.clips.w(1F, 0);
@@ -108,10 +91,8 @@ public class UIClipsPanel extends UIElement implements IUIClipsDelegate
             return;
         }
 
-        try
-        {
-            if (this.panel != null)
-            {
+        try {
+            if (this.panel != null) {
                 scrolls.put(this.panel.getClass(), this.panel.panels.scroll.scroll);
             }
 
@@ -127,19 +108,15 @@ public class UIClipsPanel extends UIElement implements IUIClipsDelegate
 
             Integer scroll = scrolls.get(this.filmPanel.getClass());
 
-            if (scroll != null)
-            {
+            if (scroll != null) {
                 this.panel.panels.scroll.scroll = scroll;
                 this.panel.panels.scroll.clamp();
             }
 
-            if (!this.filmPanel.isFlightDisabled())
-            {
+            if (!this.filmPanel.isFlightDisabled()) {
                 this.setCursor(clip.tick.get());
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -148,91 +125,75 @@ public class UIClipsPanel extends UIElement implements IUIClipsDelegate
     }
 
     @Override
-    public int getCursor()
-    {
+    public int getCursor() {
         return this.filmPanel.getCursor();
     }
 
     @Override
-    public void setCursor(int tick)
-    {
+    public void setCursor(int tick) {
         this.filmPanel.setCursor(tick);
     }
 
     @Override
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return this.filmPanel.isRunning();
     }
 
     @Override
-    public void togglePlayback()
-    {
+    public void togglePlayback() {
         this.filmPanel.togglePlayback();
     }
 
     @Override
-    public boolean canUseKeybinds()
-    {
+    public boolean canUseKeybinds() {
         return this.filmPanel.canUseKeybinds();
     }
 
     @Override
-    public void fillData()
-    {
-        if (this.panel != null)
-        {
+    public void fillData() {
+        if (this.panel != null) {
             this.panel.fillData();
         }
     }
 
     @Override
-    public void embedView(UIElement element)
-    {
+    public void embedView(UIElement element) {
         this.clips.embedView(element);
     }
 
     @Override
-    public void markLastUndoNoMerging()
-    {
+    public void markLastUndoNoMerging() {
         this.filmPanel.markLastUndoNoMerging();
     }
 
     @Override
-    public <T extends BaseValue> void editMultiple(T property, Consumer<T> consumer)
-    {
+    public <T extends BaseValue> void editMultiple(T property, Consumer<T> consumer) {
         String path = property.getRelativePath(this.getClip());
 
-        for (Clip clip : this.clips.getClipsFromSelection())
-        {
+        for (Clip clip : this.clips.getClipsFromSelection()) {
             BaseValue value = clip.getRecursively(path);
 
-            if (value != null && value.getClass() == property.getClass())
-            {
+            if (value != null && value.getClass() == property.getClass()) {
                 consumer.accept((T) value);
             }
         }
     }
 
     @Override
-    public void editMultiple(ValueInt property, int value)
-    {
+    public void editMultiple(ValueInt property, int value) {
         int difference = value - property.get();
         List<Clip> clips = this.clips.getClipsFromSelection();
 
-        for (Clip clip : clips)
-        {
+        for (Clip clip : clips) {
             ValueInt clipValue = (ValueInt) clip.get(property.getId());
             int newValue = clipValue.get() + difference;
 
-            if (newValue < clipValue.getMin() || newValue > clipValue.getMax())
-            {
+            if (newValue < clipValue.getMin() || newValue > clipValue.getMax()) {
                 return;
             }
         }
 
-        for (Clip clip : clips)
-        {
+        for (Clip clip : clips) {
             ValueInt clipValue = (ValueInt) clip.get(property.getId());
 
             clipValue.set(clipValue.get() + difference);

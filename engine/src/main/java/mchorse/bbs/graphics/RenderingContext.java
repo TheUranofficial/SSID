@@ -13,8 +13,7 @@ import mchorse.bbs.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenderingContext
-{
+public class RenderingContext {
     private boolean debug;
     private float transition;
     private int pass;
@@ -37,129 +36,103 @@ public class RenderingContext
 
     private List<Runnable> scheduledRunnables = new ArrayList<>();
 
-    public void setup(FontRenderer font, VAOManager vaos, TextureManager textures)
-    {
+    public void setup(FontRenderer font, VAOManager vaos, TextureManager textures) {
         this.font = font;
         this.vao = new VAOBuilder(vaos);
         this.textures = textures;
     }
 
-    public int getPass()
-    {
+    public int getPass() {
         return this.pass;
     }
 
-    public void setPass(int pass)
-    {
+    public void setPass(int pass) {
         this.pass = pass;
     }
 
-    public boolean isDebug()
-    {
+    public boolean isDebug() {
         return this.debug;
     }
 
-    public void setDebug(boolean debug)
-    {
+    public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
-    public float getTransition()
-    {
+    public float getTransition() {
         return this.transition;
     }
 
-    public void setTransition(float transition)
-    {
+    public void setTransition(float transition) {
         this.transition = transition;
     }
 
-    public MatrixStack getStack()
-    {
+    public MatrixStack getStack() {
         return this.stack;
     }
 
-    public Camera getCamera()
-    {
+    public Camera getCamera() {
         return this.camera;
     }
 
-    public void setCamera(Camera camera)
-    {
+    public void setCamera(Camera camera) {
         this.camera = camera;
     }
 
-    public World getWorld()
-    {
+    public World getWorld() {
         return this.world;
     }
 
-    public void setWorld(World world)
-    {
+    public void setWorld(World world) {
         this.world = world;
     }
 
-    public ProjectionViewUBO getUBO()
-    {
+    public ProjectionViewUBO getUBO() {
         return this.ubo;
     }
 
-    public void setUBO(ProjectionViewUBO ubo)
-    {
+    public void setUBO(ProjectionViewUBO ubo) {
         this.ubo = ubo;
     }
 
-    public FontRenderer getFont()
-    {
+    public FontRenderer getFont() {
         return this.font;
     }
 
-    public VAOBuilder getVAO()
-    {
+    public VAOBuilder getVAO() {
         return this.vao;
     }
 
-    public TextureManager getTextures()
-    {
+    public TextureManager getTextures() {
         return this.textures;
     }
 
-    public void setShaders(ShaderRepository shaders)
-    {
+    public void setShaders(ShaderRepository shaders) {
         this.active = shaders;
     }
 
-    public ShaderRepository getShaders()
-    {
+    public ShaderRepository getShaders() {
         return this.active == null ? this.shaders : this.active;
     }
 
-    public ShaderRepository getMainShaders()
-    {
+    public ShaderRepository getMainShaders() {
         return this.shaders;
     }
 
-    public LightsUBO getLights()
-    {
+    public LightsUBO getLights() {
         return this.lights;
     }
 
-    public void postRunnable(Runnable runnable)
-    {
-        if (runnable != null)
-        {
+    public void postRunnable(Runnable runnable) {
+        if (runnable != null) {
             this.scheduledRunnables.add(runnable);
         }
     }
 
-    public void runRunnables()
-    {
-        for (int i = 0; i < this.scheduledRunnables.size(); i++)
-        {
+    public void runRunnables() {
+        for (int i = 0; i < this.scheduledRunnables.size(); i++) {
             Runnable runnable = i < this.scheduledRunnables.size() ? this.scheduledRunnables.get(i) : null;
 
-            if (runnable != null)
-            {
+            if (runnable != null) {
                 runnable.run();
             }
         }

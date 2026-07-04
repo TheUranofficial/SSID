@@ -20,8 +20,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockModelCombined extends BlockModelFactory
-{
+public class BlockModelCombined extends BlockModelFactory {
     private static Vector4f vector = new Vector4f();
 
     public List<ModelCube> cubes = new ArrayList<>();
@@ -29,21 +28,17 @@ public class BlockModelCombined extends BlockModelFactory
     public boolean rotations;
 
     @Override
-    public void compile()
-    {
-        for (int i = 0, c = this.rotations ? 4 : 1; i < c; i++)
-        {
+    public void compile() {
+        for (int i = 0, c = this.rotations ? 4 : 1; i < c; i++) {
             this.models.add(i, this.createModel(i));
         }
     }
 
-    private BlockModel createModel(int rotation)
-    {
+    private BlockModel createModel(int rotation) {
         BlockModel model = this.createModel();
         CombinedGeometry combined = new CombinedGeometry();
 
-        for (ModelCube cube : this.cubes)
-        {
+        for (ModelCube cube : this.cubes) {
             cube.generateQuads(256, 256);
 
             MatrixStack stack = new MatrixStack();
@@ -51,8 +46,7 @@ public class BlockModelCombined extends BlockModelFactory
             stack.translate(this.offset);
             stack.rotateY(MathUtils.PI / 2F * rotation);
 
-            for (ModelQuad quad : cube.quads)
-            {
+            for (ModelQuad quad : cube.quads) {
                 stack.push();
                 CubicCubeRenderer.moveToPivot(stack, cube.pivot);
                 CubicCubeRenderer.rotate(stack, cube.rotate);
@@ -77,8 +71,7 @@ public class BlockModelCombined extends BlockModelFactory
                 geometry.p3.set(this.applyTransform(stack, p3.vertex));
                 geometry.p4.set(this.applyTransform(stack, p4.vertex));
 
-                if (cube.size.x == 0 || cube.size.z == 0)
-                {
+                if (cube.size.x == 0 || cube.size.z == 0) {
                     geometry.n.set(0, 1, 0);
                 }
 
@@ -94,8 +87,7 @@ public class BlockModelCombined extends BlockModelFactory
         return model;
     }
 
-    private Vector3f applyTransform(MatrixStack stack, Vector3f vector)
-    {
+    private Vector3f applyTransform(MatrixStack stack, Vector3f vector) {
         BlockModelCombined.vector.set(vector, 1);
 
         stack.getModelMatrix().transform(BlockModelCombined.vector);
@@ -104,18 +96,15 @@ public class BlockModelCombined extends BlockModelFactory
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
         data.remove("all");
 
-        if (!this.cubes.isEmpty())
-        {
+        if (!this.cubes.isEmpty()) {
             ListType cubesList = new ListType();
 
-            for (ModelCube cube : this.cubes)
-            {
+            for (ModelCube cube : this.cubes) {
                 cubesList.add(cube.toData());
             }
 
@@ -127,14 +116,11 @@ public class BlockModelCombined extends BlockModelFactory
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         super.fromData(data);
 
-        if (data.has("cubes"))
-        {
-            for (BaseType cubeBase : data.getList("cubes"))
-            {
+        if (data.has("cubes")) {
+            for (BaseType cubeBase : data.getList("cubes")) {
                 ModelCube cube = new ModelCube();
 
                 cube.fromData((MapType) cubeBase);

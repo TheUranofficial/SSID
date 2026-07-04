@@ -9,10 +9,8 @@ import mchorse.bbs.voxel.processor.CylinderProcessor;
 import mchorse.bbs.voxel.processor.Processor;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 
-public class UIToolCylinder extends UIToolProcessorPainter
-{
-    public UIToolCylinder(UIWorldEditorPanel editor)
-    {
+public class UIToolCylinder extends UIToolProcessorPainter {
+    public UIToolCylinder(UIWorldEditorPanel editor) {
         super(editor);
 
         this.size = 5;
@@ -20,8 +18,7 @@ public class UIToolCylinder extends UIToolProcessorPainter
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.CYLINDER, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_CYLINDER, Direction.RIGHT);
@@ -30,8 +27,7 @@ public class UIToolCylinder extends UIToolProcessorPainter
     }
 
     @Override
-    protected Processor createProcessor(RayTraceResult result)
-    {
+    protected Processor createProcessor(RayTraceResult result) {
         return new CylinderProcessor(this.variantToPlace, false).collect();
     }
 }

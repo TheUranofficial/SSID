@@ -17,8 +17,7 @@ import mchorse.bbs.world.WorldSettings;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
-public class UIWorldSettings extends UIElement
-{
+public class UIWorldSettings extends UIElement {
     public UIToggle terrain;
     public UIToggle sky;
     public UIToggle fog;
@@ -45,8 +44,7 @@ public class UIWorldSettings extends UIElement
 
     private WorldSettings settings;
 
-    public UIWorldSettings(WorldSettings settings)
-    {
+    public UIWorldSettings(WorldSettings settings) {
         this.settings = settings;
 
         this.terrain = new UIToggle(UIKeys.WORLD_SETTINGS_TERRAIN, (b) -> this.settings.terrain = b.getValue());
@@ -130,16 +128,14 @@ public class UIWorldSettings extends UIElement
         this.column().vertical().stretch();
     }
 
-    private int getColor(Matrix3f skySunrise, int row)
-    {
+    private int getColor(Matrix3f skySunrise, int row) {
         Vector3f vector = skySunrise.getColumn(row, new Vector3f());
         Color color = new Color(vector.x, vector.y, vector.z);
 
         return color.getRGBColor();
     }
 
-    private void setColor(int c, Matrix3f matrix, int row)
-    {
+    private void setColor(int c, Matrix3f matrix, int row) {
         Color color = new Color().set(c, false);
 
         matrix.setColumn(row, new Vector3f(color.r, color.g, color.b));

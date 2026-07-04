@@ -3,12 +3,10 @@ package mchorse.bbs.ui.font.format;
 import mchorse.bbs.graphics.text.format.ColorFontFormat;
 import mchorse.bbs.ui.framework.elements.input.UIColor;
 
-public class UIColorFontFormat extends UIBaseFontFormat<ColorFontFormat>
-{
+public class UIColorFontFormat extends UIBaseFontFormat<ColorFontFormat> {
     public UIColor color;
 
-    public UIColorFontFormat()
-    {
+    public UIColorFontFormat() {
         super();
 
         this.color = new UIColor((c) -> this.format.setColor(c));
@@ -18,8 +16,7 @@ public class UIColorFontFormat extends UIBaseFontFormat<ColorFontFormat>
     }
 
     @Override
-    public void fill(ColorFontFormat format)
-    {
+    public void fill(ColorFontFormat format) {
         super.fill(format);
 
         this.color.setColor(this.format.getColor());

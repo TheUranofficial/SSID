@@ -2,16 +2,15 @@ package mchorse.bbs.math;
 
 /**
  * Math expression interface
- * 
- * This interface provides only one method which is used by all 
- * mathematical related classes. The point of this interface is to 
- * provide generalized abstract method for computing/fetching some value 
+ * <p>
+ * This interface provides only one method which is used by all
+ * mathematical related classes. The point of this interface is to
+ * provide generalized abstract method for computing/fetching some value
  * from different mathematical classes.
  */
-public interface IExpression
-{
+public interface IExpression {
     /**
-     * Get computed or stored value 
+     * Get computed or stored value
      */
     public IExpression get();
 

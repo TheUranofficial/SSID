@@ -5,15 +5,13 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 
-public class UIKerning extends UIElement
-{
+public class UIKerning extends UIElement {
     public UITrackpad character;
     public UITrackpad amount;
 
     private Kerning kerning;
 
-    public UIKerning(Kerning kerning)
-    {
+    public UIKerning(Kerning kerning) {
         this.kerning = kerning;
 
         this.character = new UITrackpad((v) -> this.setCharacter(v.intValue())).limit(1).integer();
@@ -28,13 +26,11 @@ public class UIKerning extends UIElement
         this.amount.setValue(kerning.kerning);
     }
 
-    public Kerning getKerning()
-    {
+    public Kerning getKerning() {
         return this.kerning;
     }
 
-    private void setCharacter(int character)
-    {
+    private void setCharacter(int character) {
         this.kerning.right = (char) character;
 
         this.character.tooltip(UIKeys.FONT_EDITOR_KERNING_CHARACTER.format(Character.getName(character).toLowerCase()));

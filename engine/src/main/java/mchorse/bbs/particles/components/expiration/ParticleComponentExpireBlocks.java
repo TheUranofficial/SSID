@@ -13,17 +13,14 @@ import org.joml.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ParticleComponentExpireBlocks extends ParticleComponentBase
-{
+public abstract class ParticleComponentExpireBlocks extends ParticleComponentBase {
     public List<Byte> blocks = new ArrayList<>();
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         ListType list = new ListType();
 
-        for (Byte block : this.blocks)
-        {
+        for (Byte block : this.blocks) {
             list.addString(block.toString());
         }
 
@@ -31,30 +28,23 @@ public abstract class ParticleComponentExpireBlocks extends ParticleComponentBas
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isList())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isList()) {
             return super.fromData(data, parser);
         }
 
-        for (BaseType value : data.asList())
-        {
-            try
-            {
+        for (BaseType value : data.asList()) {
+            try {
                 this.blocks.add(Byte.parseByte(value.asString()));
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
 
         return super.fromData(data, parser);
     }
 
-    public IBlockVariant getBlock(ParticleEmitter emitter, Particle particle)
-    {
-        if (emitter.world == null)
-        {
+    public IBlockVariant getBlock(ParticleEmitter emitter, Particle particle) {
+        if (emitter.world == null) {
             return null;
         }
 

@@ -7,19 +7,16 @@ import mchorse.bbs.ui.film.clips.widgets.UIBitToggle;
 import mchorse.bbs.ui.film.utils.UITextboxHelp;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIMathClip extends UIClip<MathClip>
-{
+public class UIMathClip extends UIClip<MathClip> {
     public UITextboxHelp expression;
     public UIBitToggle active;
 
-    public UIMathClip(MathClip clip, IUIClipsDelegate editor)
-    {
+    public UIMathClip(MathClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.expression = new UITextboxHelp(1000, (str) ->
@@ -33,16 +30,14 @@ public class UIMathClip extends UIClip<MathClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_EXPRESSION).marginTop(12), this.expression, this.active);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.expression.setText(this.clip.expression.toString());

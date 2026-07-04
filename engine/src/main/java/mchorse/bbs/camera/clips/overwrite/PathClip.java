@@ -24,11 +24,10 @@ import java.util.List;
 
 /**
  * Path camera fixture
- *
+ * <p>
  * This fixture is responsible for making smooth camera movements.
  */
-public class PathClip extends CameraClip
-{
+public class PathClip extends CameraClip {
     public static final Vector2d VECTOR = new Vector2d();
 
     /**
@@ -41,15 +40,14 @@ public class PathClip extends CameraClip
 
     public final ValueBoolean circularAutoCenter = new ValueBoolean("circularAutoCenter", true);
     public final ValueDouble circularX = new ValueDouble("circularX", 0D);
-    public final ValueDouble circularZ = new ValueDouble("circularZ",0D);
+    public final ValueDouble circularZ = new ValueDouble("circularZ", 0D);
 
     /* Speed related cache data */
     private float lastTick;
     private Point lastPoint = new Point(0, 0, 0);
     private Point tmpPoint = new Point(0, 0, 0);
 
-    public PathClip()
-    {
+    public PathClip() {
         super();
 
         this.add(this.points);
@@ -61,54 +59,45 @@ public class PathClip extends CameraClip
         this.add(this.circularZ);
     }
 
-    public Position getPoint(int index)
-    {
+    public Position getPoint(int index) {
         int size = this.size();
 
-        if (size == 0)
-        {
+        if (size == 0) {
             return new Position(0, 0, 0, 0, 0);
         }
 
-        if (index >= size)
-        {
+        if (index >= size) {
             return this.points.get(size - 1);
         }
 
-        if (index < 0)
-        {
+        if (index < 0) {
             return this.points.get(0);
         }
 
         return this.points.get(index);
     }
 
-    public int size()
-    {
+    public int size() {
         return this.points.size();
     }
 
     /**
-     * Return the frame for point at the index   
+     * Return the frame for point at the index
      */
-    public int getTickForPoint(int index)
-    {
+    public int getTickForPoint(int index) {
         return (int) ((index / (float) (this.size() - 1)) * this.duration.get());
     }
 
     @Override
-    public void fromCamera(Camera camera)
-    {
+    public void fromCamera(Camera camera) {
         this.points.add(new Position(camera));
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         int duration = this.duration.get();
 
-        if (this.points.size() == 0 || duration == 0)
-        {
+        if (this.points.size() == 0 || duration == 0) {
             return;
         }
 
@@ -126,10 +115,9 @@ public class PathClip extends CameraClip
     }
 
     /**
-     * Apply point 
+     * Apply point
      */
-    private void applyPoint(Point point, int index, float progress)
-    {
+    private void applyPoint(Point point, int index, float progress) {
         double x = 0, y = 0, z = 0;
 
         Position p0 = this.getPoint(index - 1);
@@ -140,36 +128,26 @@ public class PathClip extends CameraClip
         /* Interpolating the position */
         InterpolationType interp = this.interpolationPoint.get();
 
-        if (interp == InterpolationType.CUBIC)
-        {
+        if (interp == InterpolationType.CUBIC) {
             x = Interpolations.cubic(p0.point.x, p1.point.x, p2.point.x, p3.point.x, progress);
             y = Interpolations.cubic(p0.point.y, p1.point.y, p2.point.y, p3.point.y, progress);
             z = Interpolations.cubic(p0.point.z, p1.point.z, p2.point.z, p3.point.z, progress);
-        }
-        else if (interp == InterpolationType.HERMITE)
-        {
+        } else if (interp == InterpolationType.HERMITE) {
             x = Interpolations.cubicHermite(p0.point.x, p1.point.x, p2.point.x, p3.point.x, progress);
             y = Interpolations.cubicHermite(p0.point.y, p1.point.y, p2.point.y, p3.point.y, progress);
             z = Interpolations.cubicHermite(p0.point.z, p1.point.z, p2.point.z, p3.point.z, progress);
-        }
-        else if (interp == InterpolationType.CIRCULAR)
-        {
+        } else if (interp == InterpolationType.CIRCULAR) {
             int size = this.size();
 
-            if (index >= size)
-            {
+            if (index >= size) {
                 x = p2.point.x;
                 y = p2.point.y;
                 z = p2.point.z;
-            }
-            else if (index < 0)
-            {
+            } else if (index < 0) {
                 x = p1.point.x;
                 y = p1.point.y;
                 z = p1.point.z;
-            }
-            else
-            {
+            } else {
                 Vector2d center = this.getCenter();
 
                 double mx = center.x;
@@ -189,9 +167,7 @@ public class PathClip extends CameraClip
                 y = Interpolations.cubicHermite(p0.point.y, p1.point.y, p2.point.y, p3.point.y, progress);
                 z = mz + Math.sin(a) * d;
             }
-        }
-        else if (interp.interp != null)
-        {
+        } else if (interp.interp != null) {
             Interpolation func = interp.function;
 
             x = func.interpolate(p1.point.x, p2.point.x, progress);
@@ -202,25 +178,20 @@ public class PathClip extends CameraClip
         point.set(x, y, z);
     }
 
-    private Vector2d calculateCircular(double mx, double mz, int index)
-    {
+    private Vector2d calculateCircular(double mx, double mz, int index) {
         int size = this.size();
 
         double a = 0;
         double d = 0;
         double lastA = 0;
 
-        if (index < 0)
-        {
+        if (index < 0) {
             index = 0;
-        }
-        else if (index >= size)
-        {
+        } else if (index >= size) {
             index = size - 1;
         }
 
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             Position p = this.points.get(i);
 
             double dx = p.point.x - mx;
@@ -229,20 +200,17 @@ public class PathClip extends CameraClip
             d = Math.sqrt(dx * dx + dz * dz);
             a = Math.atan2(dz, dx) / Math.PI * 180;
 
-            if (a < 0)
-            {
+            if (a < 0) {
                 a = 360 + a;
             }
 
             double originalA = a;
 
-            if (Math.abs(a - lastA) > 180)
-            {
+            if (Math.abs(a - lastA) > 180) {
                 a = Interpolations.normalizeYaw(lastA, a);
             }
 
-            if (i == index)
-            {
+            if (i == index) {
                 break;
             }
 
@@ -252,26 +220,20 @@ public class PathClip extends CameraClip
         return new Vector2d(a, d);
     }
 
-    public Vector2d getCenter()
-    {
-        if (this.circularAutoCenter.get())
-        {
+    public Vector2d getCenter() {
+        if (this.circularAutoCenter.get()) {
             this.calculateCenter(VECTOR);
-        }
-        else
-        {
+        } else {
             VECTOR.set(this.circularX.get(), this.circularZ.get());
         }
 
         return VECTOR;
     }
 
-    public Vector2d calculateCenter(Vector2d vector)
-    {
+    public Vector2d calculateCenter(Vector2d vector) {
         vector.set(0, 0);
 
-        for (int i = 0; i < this.size(); i++)
-        {
+        for (int i = 0; i < this.size(); i++) {
             Position position = this.points.get(i);
 
             vector.x += position.point.x;
@@ -285,10 +247,9 @@ public class PathClip extends CameraClip
     }
 
     /**
-     * Apply angle  
+     * Apply angle
      */
-    private void applyAngle(Angle angle, int index, float progress)
-    {
+    private void applyAngle(Angle angle, int index, float progress) {
         float yaw, pitch, roll, fov;
 
         Position p0 = this.getPoint(index - 1);
@@ -299,22 +260,17 @@ public class PathClip extends CameraClip
         /* Interpolating the angle */
         InterpolationType interp = this.interpolationAngle.get();
 
-        if (interp == InterpolationType.CUBIC)
-        {
+        if (interp == InterpolationType.CUBIC) {
             yaw = Interpolations.cubic(p0.angle.yaw, p1.angle.yaw, p2.angle.yaw, p3.angle.yaw, progress);
             pitch = Interpolations.cubic(p0.angle.pitch, p1.angle.pitch, p2.angle.pitch, p3.angle.pitch, progress);
             roll = Interpolations.cubic(p0.angle.roll, p1.angle.roll, p2.angle.roll, p3.angle.roll, progress);
             fov = Interpolations.cubic(p0.angle.fov, p1.angle.fov, p2.angle.fov, p3.angle.fov, progress);
-        }
-        else if (interp == InterpolationType.HERMITE)
-        {
+        } else if (interp == InterpolationType.HERMITE) {
             yaw = (float) Interpolations.cubicHermite(p0.angle.yaw, p1.angle.yaw, p2.angle.yaw, p3.angle.yaw, progress);
             pitch = (float) Interpolations.cubicHermite(p0.angle.pitch, p1.angle.pitch, p2.angle.pitch, p3.angle.pitch, progress);
             roll = (float) Interpolations.cubicHermite(p0.angle.roll, p1.angle.roll, p2.angle.roll, p3.angle.roll, progress);
             fov = (float) Interpolations.cubicHermite(p0.angle.fov, p1.angle.fov, p2.angle.fov, p3.angle.fov, progress);
-        }
-        else
-        {
+        } else {
             Interpolation func = interp.function == null ? Interpolation.LINEAR : interp.function;
 
             yaw = func.interpolate(p1.angle.yaw, p2.angle.yaw, progress);
@@ -327,18 +283,15 @@ public class PathClip extends CameraClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new PathClip();
     }
 
     @Override
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         super.breakDownClip(original, offset);
 
-        if (this.points.size() < 2)
-        {
+        if (this.points.size() < 2) {
             return;
         }
 
@@ -354,15 +307,13 @@ public class PathClip extends CameraClip
         List<Position> oP = new ArrayList<>();
         List<Position> tP = new ArrayList<>();
 
-        for (int i = 0; i < originalPoints; i++)
-        {
+        for (int i = 0; i < originalPoints; i++) {
             oP.add(path.points.get(i).copy());
         }
 
         oP.add(position.copy());
 
-        for (int i = this.points.size() - 1; i > thisPoints; i--)
-        {
+        for (int i = this.points.size() - 1; i > thisPoints; i--) {
             tP.add(this.points.get(i).copy());
         }
 

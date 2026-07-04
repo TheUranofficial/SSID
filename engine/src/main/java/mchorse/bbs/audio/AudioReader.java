@@ -5,16 +5,11 @@ import mchorse.bbs.audio.wav.WaveReader;
 import mchorse.bbs.resources.AssetProvider;
 import mchorse.bbs.resources.Link;
 
-public class AudioReader
-{
-    public static Wave read(AssetProvider provider, Link link) throws Exception
-    {
-        if (link.path.endsWith(".wav"))
-        {
+public class AudioReader {
+    public static Wave read(AssetProvider provider, Link link) throws Exception {
+        if (link.path.endsWith(".wav")) {
             return new WaveReader().read(provider.getAsset(link));
-        }
-        else if (link.path.endsWith(".ogg"))
-        {
+        } else if (link.path.endsWith(".ogg")) {
             return VorbisReader.read(link, provider.getAsset(link));
         }
 

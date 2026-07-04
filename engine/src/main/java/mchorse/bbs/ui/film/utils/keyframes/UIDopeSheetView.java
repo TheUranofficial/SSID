@@ -9,41 +9,34 @@ import mchorse.bbs.utils.keyframes.Keyframe;
 
 import java.util.function.Consumer;
 
-public class UIDopeSheetView extends UIKeyframes
-{
+public class UIDopeSheetView extends UIKeyframes {
     public IUIClipsDelegate editor;
 
     private UICameraDopeSheetEditor keyframeEditor;
     private boolean relative = true;
 
-    public UIDopeSheetView(UICameraDopeSheetEditor keyframeEditor, Consumer<Keyframe> callback)
-    {
+    public UIDopeSheetView(UICameraDopeSheetEditor keyframeEditor, Consumer<Keyframe> callback) {
         super(callback);
 
         this.keyframeEditor = keyframeEditor;
     }
 
-    public UIDopeSheetView absolute()
-    {
+    public UIDopeSheetView absolute() {
         this.relative = false;
 
         return this;
     }
 
-    public long getClipOffset()
-    {
-        if (this.editor == null || this.editor.getClip() == null || !this.relative)
-        {
+    public long getClipOffset() {
+        if (this.editor == null || this.editor.getClip() == null || !this.relative) {
             return 0;
         }
 
         return this.editor.getClip().tick.get();
     }
 
-    public int getOffset()
-    {
-        if (this.editor == null)
-        {
+    public int getOffset() {
+        if (this.editor == null) {
             return 0;
         }
 
@@ -51,10 +44,8 @@ public class UIDopeSheetView extends UIKeyframes
     }
 
     @Override
-    protected void moveNoKeyframe(UIContext context, double x, double y)
-    {
-        if (this.editor != null)
-        {
+    protected void moveNoKeyframe(UIContext context, double x, double y) {
+        if (this.editor != null) {
             long offset = this.getClipOffset();
 
             this.editor.setCursor((int) (x + offset));
@@ -62,10 +53,8 @@ public class UIDopeSheetView extends UIKeyframes
     }
 
     @Override
-    protected void renderCursor(UIContext context)
-    {
-        if (this.editor != null)
-        {
+    protected void renderCursor(UIContext context) {
+        if (this.editor != null) {
             int cx = this.toGraphX(this.getOffset());
             String label = TimeUtils.formatTime(this.getOffset()) + "/" + TimeUtils.formatTime(this.duration);
 

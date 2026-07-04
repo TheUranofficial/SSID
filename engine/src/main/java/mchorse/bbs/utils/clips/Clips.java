@@ -6,33 +6,24 @@ import mchorse.bbs.data.types.ListType;
 import mchorse.bbs.settings.values.ValueGroup;
 import mchorse.bbs.utils.factory.IFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class Clips extends ValueGroup
-{
+public class Clips extends ValueGroup {
     private static Map<Integer, Clip> clipMap = new HashMap<>();
 
     private List<Clip> clips = new ArrayList<>();
     private IFactory<Clip, ClipFactoryData> factory;
 
-    public Clips(String id, IFactory<Clip, ClipFactoryData> factory)
-    {
+    public Clips(String id, IFactory<Clip, ClipFactoryData> factory) {
         super(id);
 
         this.factory = factory;
     }
 
-    public int getTopLayer()
-    {
+    public int getTopLayer() {
         int layer = 0;
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             layer = Math.max(layer, clip.layer.get());
         }
 
@@ -42,29 +33,23 @@ public class Clips extends ValueGroup
     /**
      * Calculate total duration of this camera work.
      */
-    public int calculateDuration()
-    {
+    public int calculateDuration() {
         int max = 0;
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             max = Math.max(max, clip.tick.get() + clip.duration.get());
         }
 
         return max;
     }
 
-    public Clip get(int index)
-    {
+    public Clip get(int index) {
         return index >= 0 && index < this.clips.size() ? this.clips.get(index) : null;
     }
 
-    public Clip getClipAt(int tick, int layer)
-    {
-        for (Clip clip : this.clips)
-        {
-            if (clip.isInside(tick) && clip.layer.get() == layer)
-            {
+    public Clip getClipAt(int tick, int layer) {
+        for (Clip clip : this.clips) {
+            if (clip.isInside(tick) && clip.layer.get() == layer) {
                 return clip;
             }
         }
@@ -72,21 +57,17 @@ public class Clips extends ValueGroup
         return null;
     }
 
-    public List<Clip> getClips(int tick)
-    {
+    public List<Clip> getClips(int tick) {
         return this.getClips(tick, Integer.MAX_VALUE);
     }
 
-    public List<Clip> getClips(int tick, int maxLayer)
-    {
+    public List<Clip> getClips(int tick, int maxLayer) {
         clipMap.clear();
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             boolean isGlobal = clip.isGlobal() && maxLayer == Integer.MAX_VALUE;
 
-            if ((clip.isInside(tick) || isGlobal) && clip.layer.get() < maxLayer)
-            {
+            if ((clip.isInside(tick) || isGlobal) && clip.layer.get() < maxLayer) {
                 clipMap.put(clip.layer.get(), clip);
             }
         }
@@ -105,13 +86,11 @@ public class Clips extends ValueGroup
      *
      * @return index of a clip in the thing
      */
-    public int getIndex(Clip clip)
-    {
+    public int getIndex(Clip clip) {
         return this.clips.indexOf(clip);
     }
 
-    public void addClip(Clip clip)
-    {
+    public void addClip(Clip clip) {
         this.preNotifyParent();
 
         this.clips.add(clip);
@@ -120,8 +99,7 @@ public class Clips extends ValueGroup
         this.postNotifyParent();
     }
 
-    public void remove(Clip clip)
-    {
+    public void remove(Clip clip) {
         this.preNotifyParent();
 
         this.clips.remove(clip);
@@ -132,12 +110,10 @@ public class Clips extends ValueGroup
 
     /* New value methods */
 
-    public void sync()
-    {
+    public void sync() {
         this.removeAll();
 
-        for (int i = 0, c = this.clips.size(); i < c; i++)
-        {
+        for (int i = 0, c = this.clips.size(); i < c; i++) {
             Clip clip = this.clips.get(i);
 
             clip.setId(String.valueOf(i));
@@ -145,29 +121,23 @@ public class Clips extends ValueGroup
         }
     }
 
-    public List<Clip> get()
-    {
+    public List<Clip> get() {
         return Collections.unmodifiableList(this.clips);
     }
 
-    public int findNextTick(int tick)
-    {
+    public int findNextTick(int tick) {
         int output = Integer.MAX_VALUE;
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             int left = clip.tick.get() - tick;
             int right = left + clip.duration.get();
 
             int a = Math.max(left, 0);
             int b = Math.max(right, 0);
 
-            if (a > 0)
-            {
+            if (a > 0) {
                 output = Math.min(output, a);
-            }
-            else if (b > 0)
-            {
+            } else if (b > 0) {
                 output = Math.min(output, b);
             }
         }
@@ -175,24 +145,19 @@ public class Clips extends ValueGroup
         return tick + (output != Integer.MAX_VALUE ? output : 0);
     }
 
-    public int findPreviousTick(int tick)
-    {
+    public int findPreviousTick(int tick) {
         int output = Integer.MIN_VALUE;
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             int left = clip.tick.get() - tick;
             int right = left + clip.duration.get();
 
             int a = Math.min(left, -0);
             int b = Math.min(right, -0);
 
-            if (b < -0)
-            {
+            if (b < -0) {
                 output = Math.max(output, b);
-            }
-            else if (a < -0)
-            {
+            } else if (a < -0) {
                 output = Math.max(output, a);
             }
         }
@@ -203,12 +168,10 @@ public class Clips extends ValueGroup
     /* Value implementation */
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         ListType list = new ListType();
 
-        for (Clip clip : this.clips)
-        {
+        for (Clip clip : this.clips) {
             list.add(this.factory.toData(clip));
         }
 
@@ -216,21 +179,17 @@ public class Clips extends ValueGroup
     }
 
     @Override
-    public void fromData(BaseType base)
-    {
+    public void fromData(BaseType base) {
         this.clips.clear();
 
-        for (BaseType type : base.asList())
-        {
-            if (!type.isMap())
-            {
+        for (BaseType type : base.asList()) {
+            if (!type.isMap()) {
                 continue;
             }
 
             Clip clip = this.factory.fromData(type.asMap());
 
-            if (clip != null)
-            {
+            if (clip != null) {
                 this.clips.add(clip);
             }
         }

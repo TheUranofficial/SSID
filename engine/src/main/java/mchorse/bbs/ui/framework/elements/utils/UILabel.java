@@ -7,8 +7,7 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Supplier;
 
-public class UILabel extends UIElement implements ITextColoring
-{
+public class UILabel extends UIElement implements ITextColoring {
     public IKey label;
     public int color;
     public boolean textShadow = true;
@@ -17,13 +16,11 @@ public class UILabel extends UIElement implements ITextColoring
     public int background;
     public Supplier<Integer> backgroundColor;
 
-    public UILabel(IKey label)
-    {
+    public UILabel(IKey label) {
         this(label, Colors.WHITE);
     }
 
-    public UILabel(IKey label, int color)
-    {
+    public UILabel(IKey label, int color) {
         super();
 
         this.label = label;
@@ -31,45 +28,38 @@ public class UILabel extends UIElement implements ITextColoring
     }
 
     @Override
-    public void setColor(int color, boolean shadow)
-    {
+    public void setColor(int color, boolean shadow) {
         this.color(color, shadow);
     }
 
-    public UILabel color(int color)
-    {
+    public UILabel color(int color) {
         return this.color(color, true);
     }
 
-    public UILabel color(int color, boolean textShadow)
-    {
+    public UILabel color(int color, boolean textShadow) {
         this.textShadow = textShadow;
         this.color = color;
 
         return this;
     }
 
-    public UILabel background()
-    {
+    public UILabel background() {
         return this.background(Colors.A50);
     }
 
-    public UILabel background(int color)
-    {
+    public UILabel background(int color) {
         this.background = color;
 
         return this;
     }
 
-    public UILabel background(Supplier<Integer> color)
-    {
+    public UILabel background(Supplier<Integer> color) {
         this.backgroundColor = color;
 
         return this;
     }
 
-    public UILabel labelAnchor(float x, float y)
-    {
+    public UILabel labelAnchor(float x, float y) {
         this.anchorX = x;
         this.anchorY = y;
 
@@ -77,8 +67,7 @@ public class UILabel extends UIElement implements ITextColoring
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         String label = context.font.limitToWidth(this.label.get(), this.area.w - 4);
         int x = this.area.x(this.anchorX, context.font.getWidth(label));
         int y = this.area.y(this.anchorY, context.font.getHeight());

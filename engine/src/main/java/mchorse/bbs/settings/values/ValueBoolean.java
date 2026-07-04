@@ -11,21 +11,17 @@ import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueBoolean extends BaseValueBasic<Boolean> implements IValueUIProvider
-{
-    public ValueBoolean(String id)
-    {
+public class ValueBoolean extends BaseValueBasic<Boolean> implements IValueUIProvider {
+    public ValueBoolean(String id) {
         this(id, false);
     }
 
-    public ValueBoolean(String id, boolean defaultValue)
-    {
+    public ValueBoolean(String id, boolean defaultValue) {
         super(id, defaultValue);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UIToggle toggle = UIValueFactory.booleanUI(this, null);
 
         toggle.resetFlex();
@@ -34,23 +30,19 @@ public class ValueBoolean extends BaseValueBasic<Boolean> implements IValueUIPro
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new ByteType(this.value);
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (data.isNumeric())
-        {
+    public void fromData(BaseType data) {
+        if (data.isNumeric()) {
             this.value = data.asNumeric().boolValue();
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Boolean.toString(this.value);
     }
 }

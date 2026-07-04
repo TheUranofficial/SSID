@@ -11,8 +11,7 @@ import mchorse.bbs.particles.emitter.ParticleEmitter;
 import mchorse.bbs.world.World;
 import mchorse.bbs.world.entities.Entity;
 
-public class ParticleForm extends Form
-{
+public class ParticleForm extends Form {
     public StringProperty effect = new StringProperty(this, "effect", null);
     public BooleanProperty paused = new BooleanProperty(this, "paused", false);
     public LinkProperty texture = new LinkProperty(this, "texture", null);
@@ -20,8 +19,7 @@ public class ParticleForm extends Form
     private ParticleEmitter emitter;
     private boolean checked;
 
-    public ParticleForm()
-    {
+    public ParticleForm() {
         super();
 
         this.effect.cantAnimate();
@@ -31,22 +29,18 @@ public class ParticleForm extends Form
         this.register(this.texture);
     }
 
-    public ParticleEmitter getEmitter()
-    {
+    public ParticleEmitter getEmitter() {
         return this.emitter;
     }
 
-    public void ensureEmitter(World world)
-    {
-        if (this.checked)
-        {
+    public void ensureEmitter(World world) {
+        if (this.checked) {
             return;
         }
 
         ParticleScheme scheme = BBSData.getParticles().load(this.effect.get());
 
-        if (scheme != null)
-        {
+        if (scheme != null) {
             this.emitter = new ParticleEmitter();
             this.emitter.setScheme(scheme);
             this.emitter.setWorld(world);
@@ -55,36 +49,31 @@ public class ParticleForm extends Form
         this.checked = true;
     }
 
-    public void setEffect(String effect)
-    {
+    public void setEffect(String effect) {
         this.effect.set(effect);
         this.emitter = null;
         this.checked = false;
     }
 
     @Override
-    protected FormRenderer createRenderer()
-    {
+    protected FormRenderer createRenderer() {
         return new ParticleFormRenderer(this);
     }
 
     @Override
-    public String getDefaultDisplayName()
-    {
+    public String getDefaultDisplayName() {
         String effect = this.effect.get();
 
         return effect == null || effect.isEmpty() ? "none" : effect.toString();
     }
 
     @Override
-    public void update(Entity entity)
-    {
+    public void update(Entity entity) {
         super.update(entity);
 
         this.ensureEmitter(entity.world);
 
-        if (this.emitter != null)
-        {
+        if (this.emitter != null) {
             this.emitter.paused = this.paused.get();
 
             this.emitter.update();

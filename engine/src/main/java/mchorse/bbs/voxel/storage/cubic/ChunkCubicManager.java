@@ -6,35 +6,29 @@ import mchorse.bbs.voxel.storage.data.ChunkCell;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 import org.joml.Vector3i;
 
-public class ChunkCubicManager extends ChunkArrayManager
-{
-    public ChunkCubicManager(BlockSet models, int x, int y, int z, int w, int h, int d)
-    {
+public class ChunkCubicManager extends ChunkArrayManager {
+    public ChunkCubicManager(BlockSet models, int x, int y, int z, int w, int h, int d) {
         super(models, x, y, z, w, h, d);
 
         this.chunks = new ChunkCubicCell[this.w * this.h * this.d];
     }
 
     @Override
-    public ChunkCell[] getCells()
-    {
+    public ChunkCell[] getCells() {
         return this.chunks;
     }
 
     @Override
-    public ChunkCell getCell(int x, int y, int z, boolean create)
-    {
+    public ChunkCell getCell(int x, int y, int z, boolean create) {
         int i = this.getGlobalIndex(x, y, z);
 
-        if (i < 0 || i >= this.w * this.h * this.d)
-        {
+        if (i < 0 || i >= this.w * this.h * this.d) {
             return null;
         }
 
         ChunkCell cell = this.chunks[i];
 
-        if (cell == null && create)
-        {
+        if (cell == null && create) {
             int ix = MathUtils.toChunk(x, this.s);
             int iy = MathUtils.toChunk(y, this.s);
             int iz = MathUtils.toChunk(z, this.s);
@@ -50,20 +44,17 @@ public class ChunkCubicManager extends ChunkArrayManager
     }
 
     @Override
-    public ChunkCell createCell(int x, int y, int z)
-    {
+    public ChunkCell createCell(int x, int y, int z) {
         return new ChunkCubicCell(this, x, y, z);
     }
 
     @Override
-    public int getGlobalIndex(int x, int y, int z)
-    {
+    public int getGlobalIndex(int x, int y, int z) {
         x -= this.x * this.s;
         y -= this.y * this.s;
         z -= this.z * this.s;
 
-        if (x < 0 || x >= this.w * this.s || y < 0 || y >= this.h * this.s || z < 0 || z >= this.d * this.s)
-        {
+        if (x < 0 || x >= this.w * this.s || y < 0 || y >= this.h * this.s || z < 0 || z >= this.d * this.s) {
             return -1;
         }
 
@@ -71,10 +62,8 @@ public class ChunkCubicManager extends ChunkArrayManager
     }
 
     @Override
-    public Vector3i getVectorFromIndex(int i, Vector3i vector)
-    {
-        if (i < 0 || i >= this.chunks.length)
-        {
+    public Vector3i getVectorFromIndex(int i, Vector3i vector) {
+        if (i < 0 || i >= this.chunks.length) {
             return null;
         }
 

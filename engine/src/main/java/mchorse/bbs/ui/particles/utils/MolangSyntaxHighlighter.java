@@ -5,10 +5,8 @@ import mchorse.bbs.ui.framework.elements.input.text.highlighting.BaseSyntaxHighl
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class MolangSyntaxHighlighter extends BaseSyntaxHighlighter
-{
-    public MolangSyntaxHighlighter()
-    {
+public class MolangSyntaxHighlighter extends BaseSyntaxHighlighter {
+    public MolangSyntaxHighlighter() {
         super();
 
         this.primaryKeywords = new HashSet<>(Arrays.asList("return"));

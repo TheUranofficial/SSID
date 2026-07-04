@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElement
-{
+public abstract class UIKeyframesEditor<T extends UIKeyframes> extends UIElement {
     public UIElement frameButtons;
     public UITrackpad tick;
     public UITrackpad value;
@@ -42,16 +41,14 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
     private KeyframeEasing e = KeyframeEasing.IN;
     private IAxisConverter converter;
 
-    public UIKeyframesEditor()
-    {
+    public UIKeyframesEditor() {
         super();
 
         InterpolationTooltip tooltip = new InterpolationTooltip(0F, 0F, () ->
         {
             Keyframe keyframe = this.keyframes.getCurrent();
 
-            if (keyframe == null)
-            {
+            if (keyframe == null) {
                 return null;
             }
 
@@ -97,16 +94,14 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
             menu.action(Icons.FULLSCREEN, UIKeys.KEYFRAMES_CONTEXT_SELECT_ALL, this::selectAll);
             menu.action(Icons.MINIMIZE, UIKeys.KEYFRAMES_CONTEXT_SIMPLIFY, this::simplify);
 
-            if (this.keyframes.which != Selection.NOT_SELECTED)
-            {
+            if (this.keyframes.which != Selection.NOT_SELECTED) {
                 menu.action(Icons.REMOVE, UIKeys.KEYFRAMES_CONTEXT_REMOVE, this::removeSelectedKeyframes);
                 menu.action(Icons.COPY, UIKeys.KEYFRAMES_CONTEXT_COPY, this::copyKeyframes);
             }
 
             Map<String, List<Keyframe>> pasted = this.parseKeyframes();
 
-            if (pasted != null)
-            {
+            if (pasted != null) {
                 UIContext context = this.getContext();
                 final Map<String, List<Keyframe>> keyframes = pasted;
                 double offset = this.keyframes.scaleX.from(context.mouseX);
@@ -125,8 +120,7 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
         {
             Map<String, List<Keyframe>> pasted = this.parseKeyframes();
 
-            if (pasted != null)
-            {
+            if (pasted != null) {
                 UIContext context = this.getContext();
                 final Map<String, List<Keyframe>> keyframes = pasted;
                 double offset = this.keyframes.scaleX.from(context.mouseX);
@@ -142,23 +136,19 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
 
     protected abstract T createElement();
 
-    protected void toggleInterpolation()
-    {
+    protected void toggleInterpolation() {
         this.interp.clickItself();
     }
 
-    protected void toggleEasing()
-    {
+    protected void toggleEasing() {
         this.easing.clickItself(this.getContext(), Window.isShiftPressed() ? 1 : 0);
     }
 
-    public void setConverter(IAxisConverter converter)
-    {
+    public void setConverter(IAxisConverter converter) {
         this.converter = converter;
         this.keyframes.setConverter(converter);
 
-        if (converter != null)
-        {
+        if (converter != null) {
             converter.updateField(this.tick);
         }
 
@@ -166,30 +156,23 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
+    public boolean subMouseClicked(UIContext context) {
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
-        if (this.area.isInside(mouseX, mouseY))
-        {
+        if (this.area.isInside(mouseX, mouseY)) {
             /* On double-click add or remove a keyframe */
-            if (context.mouseButton == 0)
-            {
+            if (context.mouseButton == 0) {
                 long time = System.currentTimeMillis();
 
-                if (time - this.clickTimer < 175)
-                {
+                if (time - this.clickTimer < 175) {
                     this.clicks++;
 
-                    if (this.clicks >= 1)
-                    {
+                    if (this.clicks >= 1) {
                         this.clicks = 0;
                         this.doubleClick(mouseX, mouseY);
                     }
-                }
-                else
-                {
+                } else {
                     this.clicks = 0;
                 }
 
@@ -203,23 +186,19 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
     /**
      * Parse keyframes from clipboard
      */
-    private Map<String, List<Keyframe>> parseKeyframes()
-    {
+    private Map<String, List<Keyframe>> parseKeyframes() {
         MapType data = Window.getClipboardMap("_CopyKeyframes");
 
-        if (data == null)
-        {
+        if (data == null) {
             return null;
         }
 
         Map<String, List<Keyframe>> temp = new HashMap<>();
 
-        for (String key : data.keys())
-        {
+        for (String key : data.keys()) {
             ListType list = data.getList(key);
 
-            for (int i = 0, c = list.size(); i < c; i++)
-            {
+            for (int i = 0, c = list.size(); i < c; i++) {
                 List<Keyframe> keyframes = temp.computeIfAbsent(key, k -> new ArrayList<>());
                 Keyframe keyframe = new Keyframe("");
 
@@ -234,27 +213,22 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
     /**
      * Copy keyframes to clipboard
      */
-    private void copyKeyframes()
-    {
+    private void copyKeyframes() {
         MapType keyframes = new MapType();
 
-        for (UISheet sheet : this.keyframes.getSheets())
-        {
+        for (UISheet sheet : this.keyframes.getSheets()) {
             int c = sheet.getSelectedCount();
 
-            if (c > 0)
-            {
+            if (c > 0) {
                 ListType list = new ListType();
 
-                for (int i = 0; i < c; i++)
-                {
+                for (int i = 0; i < c; i++) {
                     Keyframe keyframe = sheet.channel.get(sheet.selected.get(i));
 
                     list.add(keyframe.toData());
                 }
 
-                if (!list.isEmpty())
-                {
+                if (!list.isEmpty()) {
                     keyframes.put(sheet.id, list);
                 }
             }
@@ -266,19 +240,16 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
     /**
      * Paste copied keyframes to clipboard
      */
-    protected void pasteKeyframes(Map<String, List<Keyframe>> keyframes, long offset, int mouseY)
-    {
+    protected void pasteKeyframes(Map<String, List<Keyframe>> keyframes, long offset, int mouseY) {
         List<UISheet> sheets = this.keyframes.getSheets();
 
         this.keyframes.clearSelection();
 
-        if (keyframes.size() == 1)
-        {
+        if (keyframes.size() == 1) {
             UISheet current = this.keyframes.getSheet(mouseY);
 
-            if (current == null)
-            {
-                current =  sheets.get(0);
+            if (current == null) {
+                current = sheets.get(0);
             }
 
             this.pasteKeyframesTo(current, keyframes.get(keyframes.keySet().iterator().next()), offset);
@@ -286,12 +257,9 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
             return;
         }
 
-        for (Map.Entry<String, List<Keyframe>> entry : keyframes.entrySet())
-        {
-            for (UISheet sheet : sheets)
-            {
-                if (!sheet.id.equals(entry.getKey()))
-                {
+        for (Map.Entry<String, List<Keyframe>> entry : keyframes.entrySet()) {
+            for (UISheet sheet : sheets) {
+                if (!sheet.id.equals(entry.getKey())) {
                     continue;
                 }
 
@@ -300,13 +268,11 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
         }
     }
 
-    private void pasteKeyframesTo(UISheet sheet, List<Keyframe> keyframes, long offset)
-    {
+    private void pasteKeyframesTo(UISheet sheet, List<Keyframe> keyframes, long offset) {
         long firstX = keyframes.get(0).getTick();
         List<Keyframe> toSelect = new ArrayList<>();
 
-        for (Keyframe keyframe : keyframes)
-        {
+        for (Keyframe keyframe : keyframes) {
             keyframe.setTick(keyframe.getTick() - firstX + offset);
 
             int index = sheet.channel.insert(keyframe.getTick(), keyframe.getValue());
@@ -316,8 +282,7 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
             toSelect.add(inserted);
         }
 
-        for (Keyframe select : toSelect)
-        {
+        for (Keyframe select : toSelect) {
             sheet.selected.add(sheet.channel.getKeyframes().indexOf(select));
         }
 
@@ -327,26 +292,21 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
         this.keyframes.setKeyframe(this.keyframes.getCurrent());
     }
 
-    protected void doubleClick(int mouseX, int mouseY)
-    {
+    protected void doubleClick(int mouseX, int mouseY) {
         this.keyframes.doubleClick(mouseX, mouseY);
         this.fillData(this.keyframes.getCurrent());
     }
 
-    public void resetView()
-    {
+    public void resetView() {
         this.keyframes.resetView();
     }
 
-    public void selectAll()
-    {
+    public void selectAll() {
         this.keyframes.selectAll();
     }
 
-    public void simplify()
-    {
-        for (UISheet sheet : this.keyframes.getSheets())
-        {
+    public void simplify() {
+        for (UISheet sheet : this.keyframes.getSheets()) {
             BaseValue.edit(sheet.channel, (channel) ->
             {
                 channel.simplify();
@@ -355,34 +315,28 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
         }
     }
 
-    public void removeSelectedKeyframes()
-    {
+    public void removeSelectedKeyframes() {
         this.keyframes.removeSelectedKeyframes();
     }
 
-    public void setTick(double tick)
-    {
+    public void setTick(double tick) {
         this.keyframes.setTick(this.converter == null ? tick : this.converter.from(tick), false);
     }
 
-    public void setValue(double value)
-    {
+    public void setValue(double value) {
         this.keyframes.setValue(value, false);
     }
 
-    public void changeEasing()
-    {
+    public void changeEasing() {
         this.keyframes.setEasing(this.e);
     }
 
-    public void fillData(Keyframe frame)
-    {
+    public void fillData(Keyframe frame) {
         boolean show = frame != null && this.keyframes.which != Selection.NOT_SELECTED;
 
         this.frameButtons.setVisible(show);
 
-        if (!show)
-        {
+        if (!show) {
             return;
         }
 
@@ -395,28 +349,23 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
         this.e = frame.getEasing();
     }
 
-    public void select(List<List<Integer>> selection, Vector2i selected)
-    {
+    public void select(List<List<Integer>> selection, Vector2i selected) {
         int i = 0;
         boolean deselect = true;
 
-        for (UISheet sheet : this.keyframes.getSheets())
-        {
+        for (UISheet sheet : this.keyframes.getSheets()) {
             List<Integer> sheetSelection = CollectionUtils.inRange(selection, i) ? selection.get(i) : null;
 
-            if (sheetSelection != null)
-            {
+            if (sheetSelection != null) {
                 sheet.selected.clear();
                 sheet.selected.addAll(sheetSelection);
                 this.keyframes.which = Selection.KEYFRAME;
             }
 
-            if (i == selected.x)
-            {
+            if (i == selected.x) {
                 Keyframe keyframe = sheet.channel.get(selected.y);
 
-                if (keyframe != null)
-                {
+                if (keyframe != null) {
                     this.fillData(keyframe);
 
                     deselect = false;
@@ -426,8 +375,7 @@ public abstract class UIKeyframesEditor <T extends UIKeyframes> extends UIElemen
             i += 1;
         }
 
-        if (deselect)
-        {
+        if (deselect) {
             this.fillData(null);
         }
     }

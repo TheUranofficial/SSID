@@ -17,14 +17,12 @@ import org.joml.Vector3i;
 
 import java.util.function.Consumer;
 
-public class UISchematicRenderer extends UIModelRenderer
-{
+public class UISchematicRenderer extends UIModelRenderer {
     private ChunkDisplay display;
     private Consumer<Vector3i> callback;
     private RayTraceResult result = new RayTraceResult();
 
-    public UISchematicRenderer(ChunkDisplay display, Consumer<Vector3i> callback)
-    {
+    public UISchematicRenderer(ChunkDisplay display, Consumer<Vector3i> callback) {
         this.display = display;
         this.callback = callback;
 
@@ -35,12 +33,9 @@ public class UISchematicRenderer extends UIModelRenderer
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (context.mouseButton == 1 && this.result.type == RayTraceType.BLOCK)
-        {
-            if (this.callback != null)
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (context.mouseButton == 1 && this.result.type == RayTraceType.BLOCK) {
+            if (this.callback != null) {
                 this.callback.accept(this.result.block);
             }
 
@@ -51,8 +46,7 @@ public class UISchematicRenderer extends UIModelRenderer
     }
 
     @Override
-    protected void renderUserModel(UIContext context)
-    {
+    protected void renderUserModel(UIContext context) {
         ChunkBuilder chunkBuilder = this.getContext().menu.bridge.get(IBridgeWorld.class).getChunkBuilder();
         Shader shader = context.render.getShaders().get(chunkBuilder.getAttributes());
         MatrixStack stack = context.render.getStack();
@@ -66,8 +60,7 @@ public class UISchematicRenderer extends UIModelRenderer
 
         RayTracer.trace(this.result, this.display.chunk, this.camera.position, mouseDirection, 64);
 
-        if (!this.result.type.isMissed())
-        {
+        if (!this.result.type.isMissed()) {
             Draw.renderBlockAABB(context.render, this.display.chunk, this.result.block.x, this.result.block.y, this.result.block.z);
         }
     }

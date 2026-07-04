@@ -6,36 +6,29 @@ import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.clips.ClipContext;
 import mchorse.bbs.utils.math.Interpolations;
 
-public abstract class CameraClip extends Clip
-{
-    public void shutdown(ClipContext context)
-    {}
+public abstract class CameraClip extends Clip {
+    public void shutdown(ClipContext context) {
+    }
 
-    public void fromCamera(Camera camera)
-    {}
+    public void fromCamera(Camera camera) {
+    }
 
-    public void applyLast(ClipContext context, Position position)
-    {
+    public void applyLast(ClipContext context, Position position) {
         int duration = this.duration.get();
 
         this.applyClip(context.setup(this.tick.get() + duration, duration, 0, 0), position);
     }
 
-    public void apply(ClipContext context, Position position)
-    {
-        if (!this.enabled.get())
-        {
+    public void apply(ClipContext context, Position position) {
+        if (!this.enabled.get()) {
             return;
         }
 
         float factor = this.envelope.factorEnabled(this.duration.get(), context.relativeTick + context.transition);
 
-        if (factor == 1)
-        {
+        if (factor == 1) {
             this.applyClip(context, position);
-        }
-        else
-        {
+        } else {
             Position temporary = new Position();
 
             temporary.set(position);

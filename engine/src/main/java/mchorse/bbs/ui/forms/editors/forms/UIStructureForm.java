@@ -5,10 +5,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.panels.UIStructureFormPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UIStructureForm extends UIForm<StructureForm>
-{
-    public UIStructureForm()
-    {
+public class UIStructureForm extends UIForm<StructureForm> {
+    public UIStructureForm() {
         super();
 
         this.defaultPanel = new UIStructureFormPanel(this);

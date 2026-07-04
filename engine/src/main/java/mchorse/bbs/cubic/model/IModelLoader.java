@@ -8,21 +8,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface IModelLoader
-{
-    public static Link getLink(Link link, Collection<Link> links, String suffix)
-    {
+public interface IModelLoader {
+    public static Link getLink(Link link, Collection<Link> links, String suffix) {
         return getLink(link, links, (l) -> l.path.endsWith(suffix));
     }
 
-    public static Link getLink(Link link, Collection<Link> links, Predicate<Link> predicate)
-    {
-        if (!links.contains(link))
-        {
-            for (Link l : links)
-            {
-                if (predicate.test(l))
-                {
+    public static Link getLink(Link link, Collection<Link> links, Predicate<Link> predicate) {
+        if (!links.contains(link)) {
+            for (Link l : links) {
+                if (predicate.test(l)) {
                     return l;
                 }
             }
@@ -31,19 +25,15 @@ public interface IModelLoader
         return link;
     }
 
-    public static List<Link> getLinks(Collection<Link> links, String suffix)
-    {
+    public static List<Link> getLinks(Collection<Link> links, String suffix) {
         return getLinks(links, (l) -> l.path.endsWith(suffix));
     }
 
-    public static List<Link> getLinks(Collection<Link> links, Predicate<Link> predicate)
-    {
+    public static List<Link> getLinks(Collection<Link> links, Predicate<Link> predicate) {
         List<Link> newLinks = new ArrayList<>();
 
-        for (Link l : links)
-        {
-            if (predicate.test(l))
-            {
+        for (Link l : links) {
+            if (predicate.test(l)) {
                 newLinks.add(l);
             }
         }

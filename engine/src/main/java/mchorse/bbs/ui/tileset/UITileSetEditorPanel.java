@@ -4,7 +4,6 @@ import mchorse.bbs.BBS;
 import mchorse.bbs.bridge.IBridgeWorld;
 import mchorse.bbs.data.DataToString;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.utils.factory.MapFactory;
 import mchorse.bbs.graphics.texture.Texture;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.Keys;
@@ -21,6 +20,7 @@ import mchorse.bbs.ui.tileset.panels.UIModelBlockFactory;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.IOUtils;
 import mchorse.bbs.utils.colors.Colors;
+import mchorse.bbs.utils.factory.MapFactory;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
@@ -31,8 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UITileSetEditorPanel extends UIDashboardPanel
-{
+public class UITileSetEditorPanel extends UIDashboardPanel {
     public UIElement editor;
     public UIElement iconBar;
     public UITileSetRenderer renderer;
@@ -48,8 +47,7 @@ public class UITileSetEditorPanel extends UIDashboardPanel
 
     private boolean dirty;
 
-    public UITileSetEditorPanel(UIDashboard dashboard)
-    {
+    public UITileSetEditorPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.editor = new UIElement();
@@ -74,33 +72,28 @@ public class UITileSetEditorPanel extends UIDashboardPanel
         /* Register panels */
         MapFactory<BlockModelFactory, BlockModelFactoryData> factory = BBS.getFactoryBlockModels();
 
-        for (Link key : factory.getKeys())
-        {
+        for (Link key : factory.getKeys()) {
             this.panels.put(factory.getTypeClass(key), factory.getData(key).panel.apply(this));
         }
 
         this.keys().register(Keys.OPEN_DATA_MANAGER, this.edit::clickItself);
     }
 
-    public ChunkBuilder getBlockBuilder()
-    {
+    public ChunkBuilder getBlockBuilder() {
         return this.blockBuilder;
     }
 
-    public BlockSet getBlockSet()
-    {
+    public BlockSet getBlockSet() {
         return this.blockSet;
     }
 
-    private void openAtlasPicker()
-    {
+    private void openAtlasPicker() {
         BlockSet blockSet = this.getBlockSet();
         UITexturePicker.open(this.editor, blockSet.atlas, (l) ->
         {
             Texture texture = BBS.getTextures().getTexture(l);
 
-            if (texture != null)
-            {
+            if (texture != null) {
                 blockSet.atlas = l;
                 blockSet.atlasWidth = texture.width;
                 blockSet.atlasHeight = texture.height;
@@ -110,53 +103,43 @@ public class UITileSetEditorPanel extends UIDashboardPanel
         });
     }
 
-    private void save()
-    {
+    private void save() {
         this.dirty = false;
 
         this.blockSet.rebuild();
         this.save.both(Icons.SAVED);
         this.dashboard.bridge.get(IBridgeWorld.class).getWorld().chunks.rebuild();
 
-        try
-        {
+        try {
             MapType map = this.blockSet.toData();
 
             IOUtils.writeText(BBS.getAssetsPath(this.blockSet.id.path), DataToString.toString(map, true));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void dirty()
-    {
+    public void dirty() {
         this.dirty = true;
 
         this.save.both(Icons.SAVE);
     }
 
-    public void selectBlock(BlockModelFactory current)
-    {
-        if (this.panel != null && this.panel.model == current)
-        {
+    public void selectBlock(BlockModelFactory current) {
+        if (this.panel != null && this.panel.model == current) {
             return;
         }
 
-        if (this.panel != null)
-        {
+        if (this.panel != null) {
             this.panel.removeFromParent();
         }
 
         this.renderer.setSelected(current);
 
-        if (current != null)
-        {
+        if (current != null) {
             this.panel = this.panels.get(current.getClass());
 
-            if (this.panel != null)
-            {
+            if (this.panel != null) {
                 this.panel.relative(this).x(1F, -220).y(0).w(200).h(1F);
                 this.panel.fill(current);
                 this.panel.resize();
@@ -168,16 +151,13 @@ public class UITileSetEditorPanel extends UIDashboardPanel
             Vector3i p = this.renderer.getBlockPosition(i);
 
             this.renderer.setPosition(p.x + 0.5F, p.y + 0.5F, p.z + 0.5F);
-        }
-        else
-        {
+        } else {
             this.panel = null;
         }
     }
 
     @Override
-    public void open()
-    {
+    public void open() {
         super.open();
 
         this.blockBuilder = dashboard.bridge.get(IBridgeWorld.class).getChunkBuilder();
@@ -185,20 +165,17 @@ public class UITileSetEditorPanel extends UIDashboardPanel
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         super.close();
 
-        if (this.dirty)
-        {
+        if (this.dirty) {
             this.dirty = false;
 
             this.dashboard.bridge.get(IBridgeWorld.class).getWorld().chunks.rebuild();
         }
     }
 
-    private void renderBackground(UIContext context)
-    {
+    private void renderBackground(UIContext context) {
         this.iconBar.area.render(context.batcher, Colors.A50);
         context.batcher.gradientHBox(this.iconBar.area.x - 6, this.iconBar.area.y, this.iconBar.area.x, this.iconBar.area.ey(), 0, Colors.A12);
     }

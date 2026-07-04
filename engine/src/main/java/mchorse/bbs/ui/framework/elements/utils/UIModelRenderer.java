@@ -22,11 +22,10 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * Model renderer GUI element
- *
+ * <p>
  * This base class can be used for full screen model viewer.
  */
-public abstract class UIModelRenderer extends UIElement
-{
+public abstract class UIModelRenderer extends UIElement {
     private static boolean rendering;
     private static Vector3d vec = new Vector3d();
     private static Matrix3d mat = new Matrix3d();
@@ -51,18 +50,15 @@ public abstract class UIModelRenderer extends UIElement
 
     private long tick;
 
-    public static boolean isRendering()
-    {
+    public static boolean isRendering() {
         return rendering;
     }
 
-    public static void disableRenderingFlag()
-    {
+    public static void disableRenderingFlag() {
         rendering = false;
     }
 
-    public UIModelRenderer()
-    {
+    public UIModelRenderer() {
         super();
 
         this.entity = EntityArchitect.createDummy();
@@ -70,54 +66,44 @@ public abstract class UIModelRenderer extends UIElement
         this.reset();
     }
 
-    public void setRotation(float yaw, float pitch)
-    {
+    public void setRotation(float yaw, float pitch) {
         this.camera.rotation.y = MathUtils.toRad(yaw);
         this.camera.rotation.x = MathUtils.toRad(pitch);
     }
 
-    public void setPosition(float x, float y, float z)
-    {
+    public void setPosition(float x, float y, float z) {
         this.pos.set(x, y, z);
     }
 
-    public void setDistance(float distance)
-    {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 
-    public void setEntity(Entity entity)
-    {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return this.entity;
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.distance = 2;
         this.setPosition(0, 1, 0);
         this.setRotation(0, 0);
     }
 
-    public boolean isDragging()
-    {
+    public boolean isDragging() {
         return this.dragging != 0;
     }
 
-    public boolean isDraggingPosition()
-    {
+    public boolean isDraggingPosition() {
         return this.dragging == 2;
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (!this.isDragging() && this.area.isInside(context) && (context.mouseButton == 0 || context.mouseButton == 2))
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (!this.isDragging() && this.area.isInside(context) && (context.mouseButton == 0 || context.mouseButton == 2)) {
             this.dragging = Window.isShiftPressed() || context.mouseButton == 2 ? 2 : 1;
             this.lastX = context.mouseX;
             this.lastY = context.mouseY;
@@ -134,10 +120,8 @@ public abstract class UIModelRenderer extends UIElement
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
-        if (this.area.isInside(context) && !this.isDragging())
-        {
+    public boolean subMouseScrolled(UIContext context) {
+        if (this.area.isInside(context) && !this.isDragging()) {
             this.distance += Math.copySign(this.getZoomFactor(), -context.mouseWheel);
             this.distance = MathUtils.clamp(this.distance, 0, 100);
         }
@@ -145,8 +129,7 @@ public abstract class UIModelRenderer extends UIElement
         return super.subMouseScrolled(context);
     }
 
-    protected float getZoomFactor()
-    {
+    protected float getZoomFactor() {
         if (this.distance < 1) return 0.05F;
         if (this.distance > 30) return 5F;
         if (this.distance > 10) return 1F;
@@ -156,16 +139,14 @@ public abstract class UIModelRenderer extends UIElement
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.dragging = 0;
 
         return super.subMouseReleased(context);
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.updateLogic(context);
 
         Camera camera = context.render.getCamera();
@@ -184,20 +165,17 @@ public abstract class UIModelRenderer extends UIElement
         super.render(context);
     }
 
-    private void updateLogic(UIContext context)
-    {
+    private void updateLogic(UIContext context) {
         long tick = context.getTick();
         long i = tick - this.tick;
 
-        if (i > 10)
-        {
+        if (i > 10) {
             i = 10;
         }
 
-        while (i > 0)
-        {
+        while (i > 0) {
             this.update();
-            i --;
+            i--;
         }
 
         this.tick = tick;
@@ -206,8 +184,7 @@ public abstract class UIModelRenderer extends UIElement
     /**
      * Update logic
      */
-    protected void update()
-    {
+    protected void update() {
         this.timer += 1;
         this.entity.basic.ticks = this.timer;
     }
@@ -215,8 +192,7 @@ public abstract class UIModelRenderer extends UIElement
     /**
      * Draw currently edited model
      */
-    private void renderModel(UIContext context)
-    {
+    private void renderModel(UIContext context) {
         GLStates.setupDepthFunction3D();
 
         this.setupPosition(context);
@@ -230,8 +206,7 @@ public abstract class UIModelRenderer extends UIElement
         stack.push();
         stack.translateRelative(this.camera, 0, 0, 0);
 
-        if (this.grid)
-        {
+        if (this.grid) {
             this.renderGrid(context);
         }
 
@@ -247,17 +222,13 @@ public abstract class UIModelRenderer extends UIElement
         GLStates.setupDepthFunction2D();
     }
 
-    protected void setupPosition(UIContext context)
-    {
+    protected void setupPosition(UIContext context) {
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
-        if (this.isDragging())
-        {
-            if (this.isDraggingPosition())
-            {
-                if (this.lastX != context.mouseX || this.lastY != context.mouseY)
-                {
+        if (this.isDragging()) {
+            if (this.isDraggingPosition()) {
+                if (this.lastX != context.mouseX || this.lastY != context.mouseY) {
                     Vector3d newPoint = this.calculateOnPlane(context);
 
                     this.pos.set(this.cachedPos);
@@ -267,9 +238,7 @@ public abstract class UIModelRenderer extends UIElement
                     this.lastX = mouseX;
                     this.lastY = mouseY;
                 }
-            }
-            else
-            {
+            } else {
                 this.camera.rotation.y -= MathUtils.toRad(this.lastX - mouseX);
                 this.camera.rotation.x -= MathUtils.toRad(this.lastY - mouseY);
 
@@ -288,8 +257,7 @@ public abstract class UIModelRenderer extends UIElement
         this.camera.position.z += vec.z;
     }
 
-    private Vector3d calculateOnPlane(UIContext context)
-    {
+    private Vector3d calculateOnPlane(UIContext context) {
         Vector3d vector = new Vector3d();
         Vector3d origin = new Vector3d(this.cachedCamera.position).sub(this.cachedPos);
         Vector3d destination = new Vector3d(this.cachedCamera.getMouseDirection(context.mouseX, context.mouseY, this.area)).mul(this.distance * 2).add(origin);
@@ -298,16 +266,14 @@ public abstract class UIModelRenderer extends UIElement
         return vector;
     }
 
-    private void rotateVector(Vector3d vec)
-    {
+    private void rotateVector(Vector3d vec) {
         mat.identity().rotateX(this.camera.rotation.x);
         mat.transform(vec);
         mat.identity().rotateY(MathUtils.PI - this.camera.rotation.y);
         mat.transform(vec);
     }
 
-    protected void setupViewport(UIContext context)
-    {
+    protected void setupViewport(UIContext context) {
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
         float rx = (float) Math.round(Window.width / (double) context.menu.width);
@@ -334,37 +300,28 @@ public abstract class UIModelRenderer extends UIElement
      * Render block of grass under the model (which signify where
      * located the ground below the model)
      */
-    protected void renderGrid(UIContext context)
-    {
+    protected void renderGrid(UIContext context) {
         Shader shader = context.render.getShaders().get(VBOAttributes.VERTEX_RGBA);
         VAOBuilder builder = context.render.getVAO().setup(shader);
 
         CommonShaderAccess.setModelView(shader, context.render.stack);
         builder.begin();
 
-        for (int x = 0; x <= 10; x ++)
-        {
-            if (x == 0)
-            {
+        for (int x = 0; x <= 10; x++) {
+            if (x == 0) {
                 builder.xyz(x - 5, 0, -5).rgba(0F, 0F, 1F, 1F);
                 builder.xyz(x - 5, 0, 5).rgba(0F, 0F, 1F, 1F);
-            }
-            else
-            {
+            } else {
                 builder.xyz(x - 5, 0, -5).rgba(0.25F, 0.25F, 0.25F, 1F);
                 builder.xyz(x - 5, 0, 5).rgba(0.25F, 0.25F, 0.25F, 1F);
             }
         }
 
-        for (int x = 0; x <= 10; x ++)
-        {
-            if (x == 0)
-            {
+        for (int x = 0; x <= 10; x++) {
+            if (x == 0) {
                 builder.xyz(-5, 0, x - 5).rgba(1F, 0F, 0F, 1F);
                 builder.xyz(5, 0, x - 5).rgba(1F, 0F, 0F, 1F);
-            }
-            else
-            {
+            } else {
                 builder.xyz(-5, 0, x - 5).rgba(0.25F, 0.25F, 0.25F, 1F);
                 builder.xyz(5, 0, x - 5).rgba(0.25F, 0.25F, 0.25F, 1F);
             }

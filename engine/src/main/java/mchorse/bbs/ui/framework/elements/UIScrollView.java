@@ -9,22 +9,19 @@ import java.util.function.Consumer;
 
 /**
  * Scroll area GUI class
- * 
+ * <p>
  * This bad boy allows to scroll stuff
  */
-public class UIScrollView extends UIElement implements IViewport
-{
+public class UIScrollView extends UIElement implements IViewport {
     public ScrollArea scroll;
 
     public Consumer<UIContext> preRenderCallback;
 
-    public UIScrollView()
-    {
+    public UIScrollView() {
         this(ScrollDirection.VERTICAL);
     }
 
-    public UIScrollView(ScrollDirection direction)
-    {
+    public UIScrollView(ScrollDirection direction) {
         super();
 
         this.scroll = new ScrollArea(this.area, 0);
@@ -32,37 +29,28 @@ public class UIScrollView extends UIElement implements IViewport
         this.scroll.scrollSpeed = 20;
     }
 
-    public UIScrollView preRender(Consumer<UIContext> callback)
-    {
+    public UIScrollView preRender(Consumer<UIContext> callback) {
         this.preRenderCallback = callback;
 
         return this;
     }
 
     @Override
-    public void apply(IViewportStack stack)
-    {
+    public void apply(IViewportStack stack) {
         stack.pushViewport(this.area);
 
-        if (this.scroll.direction == ScrollDirection.VERTICAL)
-        {
+        if (this.scroll.direction == ScrollDirection.VERTICAL) {
             stack.shiftY(this.scroll.scroll);
-        }
-        else
-        {
+        } else {
             stack.shiftX(this.scroll.scroll);
         }
     }
 
     @Override
-    public void unapply(IViewportStack stack)
-    {
-        if (this.scroll.direction == ScrollDirection.VERTICAL)
-        {
+    public void unapply(IViewportStack stack) {
+        if (this.scroll.direction == ScrollDirection.VERTICAL) {
             stack.shiftY(-this.scroll.scroll);
-        }
-        else
-        {
+        } else {
             stack.shiftX(-this.scroll.scroll);
         }
 
@@ -70,28 +58,23 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         this.scroll.clamp();
     }
 
     @Override
-    protected boolean childrenMouseClicked(UIContext context)
-    {
-        if (!this.area.isInside(context))
-        {
-            if (context.isFocused() && this.isDescendant((UIElement) context.activeElement))
-            {
+    protected boolean childrenMouseClicked(UIContext context) {
+        if (!this.area.isInside(context)) {
+            if (context.isFocused() && this.isDescendant((UIElement) context.activeElement)) {
                 context.unfocus();
             }
 
             return false;
         }
 
-        if (this.scroll.mouseClicked(context))
-        {
+        if (this.scroll.mouseClicked(context)) {
             return true;
         }
 
@@ -103,12 +86,9 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    protected boolean childrenMouseScrolled(UIContext context)
-    {
-        if (!this.area.isInside(context))
-        {
-            if (context.isFocused() && this.isDescendant((UIElement) context.activeElement))
-            {
+    protected boolean childrenMouseScrolled(UIContext context) {
+        if (!this.area.isInside(context)) {
+            if (context.isFocused() && this.isDescendant((UIElement) context.activeElement)) {
                 context.unfocus();
             }
 
@@ -119,8 +99,7 @@ public class UIScrollView extends UIElement implements IViewport
         boolean result = super.childrenMouseScrolled(context);
         this.unapply(context);
 
-        if (result)
-        {
+        if (result) {
             return true;
         }
 
@@ -128,8 +107,7 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    protected boolean childrenMouseReleased(UIContext context)
-    {
+    protected boolean childrenMouseReleased(UIContext context) {
         this.scroll.mouseReleased(context);
 
         this.apply(context);
@@ -140,8 +118,7 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    protected boolean childrenKeyPressed(UIContext context)
-    {
+    protected boolean childrenKeyPressed(UIContext context) {
         this.apply(context);
         boolean result = super.childrenKeyPressed(context);
         this.unapply(context);
@@ -150,8 +127,7 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    protected boolean childrenTextInput(UIContext context)
-    {
+    protected boolean childrenTextInput(UIContext context) {
         this.apply(context);
         boolean result = super.childrenTextInput(context);
         this.unapply(context);
@@ -160,8 +136,7 @@ public class UIScrollView extends UIElement implements IViewport
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         UIElement lastTooltip = context.tooltip.element;
 
         this.scroll.drag(context.mouseX, context.mouseY);
@@ -181,20 +156,17 @@ public class UIScrollView extends UIElement implements IViewport
         context.batcher.unclip(context);
 
         /* Clear tooltip in case if it was set outside of scroll area within the scroll */
-        if (!this.area.isInside(context) && context.tooltip.element != lastTooltip)
-        {
+        if (!this.area.isInside(context) && context.tooltip.element != lastTooltip) {
             context.tooltip.set(context, null);
         }
     }
 
-    protected void preRender(UIContext context)
-    {
-        if (this.preRenderCallback != null)
-        {
+    protected void preRender(UIContext context) {
+        if (this.preRenderCallback != null) {
             this.preRenderCallback.accept(context);
         }
     }
 
-    protected void postRender(UIContext context)
-    {}
+    protected void postRender(UIContext context) {
+    }
 }

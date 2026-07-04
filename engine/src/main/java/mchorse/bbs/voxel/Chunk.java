@@ -11,13 +11,12 @@ import java.util.Arrays;
 
 /**
  * Chunk class
- * 
+ * <p>
  * This class is responsible for storing chunk data
  */
-public class Chunk implements IBlockAccessor
-{
+public class Chunk implements IBlockAccessor {
     /**
-     * Array of block data 
+     * Array of block data
      */
     protected IBlockVariant[] data;
 
@@ -32,16 +31,14 @@ public class Chunk implements IBlockAccessor
      */
     private IBlockVariant defaultBlock;
 
-    public Chunk(int s, IBlockVariant defaultBlock)
-    {
+    public Chunk(int s, IBlockVariant defaultBlock) {
         this(s, s, s, defaultBlock);
     }
 
     /**
-     * Initialize empty chunk data 
+     * Initialize empty chunk data
      */
-    public Chunk(int w, int h, int d, IBlockVariant defaultBlock)
-    {
+    public Chunk(int w, int h, int d, IBlockVariant defaultBlock) {
         this.w = w;
         this.h = h;
         this.d = d;
@@ -56,28 +53,23 @@ public class Chunk implements IBlockAccessor
     /**
      * Get data array (don't modify)
      */
-    public IBlockVariant[] getData()
-    {
+    public IBlockVariant[] getData() {
         return this.data;
     }
 
     /**
      * Set block at given coordinates
      */
-    public void setBlock(int x, int y, int z, IBlockVariant block)
-    {
-        if (this.isOutside(x, y, z))
-        {
+    public void setBlock(int x, int y, int z, IBlockVariant block) {
+        if (this.isOutside(x, y, z)) {
             return;
         }
 
         this.data[x + y * this.w + z * this.w * this.h] = block;
     }
 
-    public void setLighting(int x, int y, int z, int level)
-    {
-        if (this.isOutside(x, y, z))
-        {
+    public void setLighting(int x, int y, int z, int level) {
+        if (this.isOutside(x, y, z)) {
             return;
         }
 
@@ -85,37 +77,31 @@ public class Chunk implements IBlockAccessor
     }
 
     @Override
-    public boolean hasBlock(int x, int y, int z)
-    {
+    public boolean hasBlock(int x, int y, int z) {
         return !this.isOutside(x, y, z) && !this.getBlock(x, y, z).isAir();
     }
 
     /**
-     * Get block at given coordinate 
+     * Get block at given coordinate
      */
     @Override
-    public IBlockVariant getBlock(int x, int y, int z)
-    {
+    public IBlockVariant getBlock(int x, int y, int z) {
         return this.isOutside(x, y, z) ? this.defaultBlock : this.data[x + y * this.w + z * this.w * this.h];
     }
 
-    public int getLighting(int x, int y, int z)
-    {
+    public int getLighting(int x, int y, int z) {
         return this.isOutside(x, y, z) ? 0 : this.lighting[x + y * this.w + z * this.w * this.h];
     }
 
-    public boolean isOutside(int x, int y, int z)
-    {
+    public boolean isOutside(int x, int y, int z) {
         return x < 0 || y < 0 || z < 0 || x >= this.w || y >= this.h || z >= this.d;
     }
 
-    public BaseType toData()
-    {
+    public BaseType toData() {
         int length = this.data.length;
         short[] shorts = new short[length];
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             shorts[i] = (short) this.data[i].getGlobalId();
         }
 
@@ -127,20 +113,15 @@ public class Chunk implements IBlockAccessor
         return data;
     }
 
-    public void fromData(BaseType data, BlockSet set)
-    {
-        if (BaseType.is(data, BaseType.TYPE_SHORT_ARRAY))
-        {
+    public void fromData(BaseType data, BlockSet set) {
+        if (BaseType.is(data, BaseType.TYPE_SHORT_ARRAY)) {
             this.fromData(((ShortArrayType) data).value, set);
-        }
-        else if (data.isMap())
-        {
+        } else if (data.isMap()) {
             MapType map = data.asMap();
 
             byte[] lighting = map.getByteArray("lighting");
 
-            if (lighting.length == this.lighting.length)
-            {
+            if (lighting.length == this.lighting.length) {
                 this.lighting = lighting;
             }
 
@@ -148,12 +129,10 @@ public class Chunk implements IBlockAccessor
         }
     }
 
-    private void fromData(short[] shorts, BlockSet set)
-    {
+    private void fromData(short[] shorts, BlockSet set) {
         int length = shorts.length;
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             this.data[i] = set.get(shorts[i]);
         }
     }

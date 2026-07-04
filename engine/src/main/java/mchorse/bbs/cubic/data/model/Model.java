@@ -2,16 +2,9 @@ package mchorse.bbs.cubic.data.model;
 
 import mchorse.bbs.math.molang.MolangParser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class Model
-{
+public class Model {
     public int textureWidth;
     public int textureHeight;
 
@@ -26,22 +19,18 @@ public class Model
     private List<ModelGroup> orderedGroups = new ArrayList<>();
     private int nextIndex;
 
-    public Model(MolangParser parser)
-    {
+    public Model(MolangParser parser) {
         this.parser = parser;
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         this.fillGroups(this.topGroups);
 
         this.orderedGroups = Collections.unmodifiableList(this.orderedGroups);
     }
 
-    private void fillGroups(List<ModelGroup> groups)
-    {
-        for (ModelGroup group : groups)
-        {
+    private void fillGroups(List<ModelGroup> groups) {
+        for (ModelGroup group : groups) {
             this.namedGroups.put(group.id, group);
             this.orderedGroups.add(group);
 
@@ -52,23 +41,19 @@ public class Model
         }
     }
 
-    public List<ModelGroup> getOrderedGroups()
-    {
+    public List<ModelGroup> getOrderedGroups() {
         return this.orderedGroups;
     }
 
-    public Set<String> getAllGroupKeys()
-    {
+    public Set<String> getAllGroupKeys() {
         return this.namedGroups.keySet();
     }
 
-    public Collection<ModelGroup> getAllGroups()
-    {
+    public Collection<ModelGroup> getAllGroups() {
         return this.namedGroups.values();
     }
 
-    public ModelGroup getGroup(String id)
-    {
+    public ModelGroup getGroup(String id) {
         return this.namedGroups.get(id);
     }
 }

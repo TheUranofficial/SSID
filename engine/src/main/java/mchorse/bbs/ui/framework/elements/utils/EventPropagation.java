@@ -1,6 +1,5 @@
 package mchorse.bbs.ui.framework.elements.utils;
 
-public enum EventPropagation
-{
+public enum EventPropagation {
     PASS, BLOCK, BLOCK_INSIDE;
 }

@@ -28,8 +28,7 @@ import mchorse.studio.ui.KeysApp;
 import mchorse.studio.ui.UIKeysApp;
 import org.lwjgl.opengl.GL11;
 
-public class UIWelcomeMenu extends UIBaseMenu
-{
+public class UIWelcomeMenu extends UIBaseMenu {
     private static final Link KEYBOARD = Studio.link("textures/keyboard.png");
 
     private static final int WELCOME = 0;
@@ -66,8 +65,7 @@ public class UIWelcomeMenu extends UIBaseMenu
     private int counter;
     private LinkDescription description;
 
-    public UIWelcomeMenu(IBridge bridge)
-    {
+    public UIWelcomeMenu(IBridge bridge) {
         super(bridge);
 
         this.title = UI.label(IKey.EMPTY).background().labelAnchor(0.5F, 0.5F);
@@ -99,8 +97,7 @@ public class UIWelcomeMenu extends UIBaseMenu
 
         this.keys.add(this.keyF1, this.keyF2, this.keyF3, this.keyF6, this.keyF9, this.keyF11, this.keyBackslash);
 
-        for (UITextureRect rect : this.keys.getChildren(UITextureRect.class))
-        {
+        for (UITextureRect rect : this.keys.getChildren(UITextureRect.class)) {
             rect.relative(this.keys).set(rect.rect.x, rect.rect.y, rect.rect.w, rect.rect.h);
         }
 
@@ -164,43 +161,34 @@ public class UIWelcomeMenu extends UIBaseMenu
     }
 
     @Override
-    public Link getMenuId()
-    {
+    public Link getMenuId() {
         return Studio.link("welcome");
     }
 
     @Override
-    public boolean canPause()
-    {
+    public boolean canPause() {
         return false;
     }
 
-    private void previous(UIIcon b)
-    {
+    private void previous(UIIcon b) {
         this.switchToPage(this.page - 1);
     }
 
-    private void next(UIIcon b)
-    {
-        if (this.page < LAST)
-        {
+    private void next(UIIcon b) {
+        if (this.page < LAST) {
             this.switchToPage(this.page + 1);
-        }
-        else
-        {
+        } else {
             StudioSettings.welcome.set(true);
 
             this.closeMenu();
         }
     }
 
-    private void pickDescription(Label<LinkDescription> description)
-    {
+    private void pickDescription(Label<LinkDescription> description) {
         this.description = description.value;
     }
 
-    public void switchToPage(int page)
-    {
+    public void switchToPage(int page) {
         this.page = page;
 
         this.previous.setVisible(page != WELCOME);
@@ -214,36 +202,25 @@ public class UIWelcomeMenu extends UIBaseMenu
         this.patrons.setVisible(page == PATRONS);
         this.patreon.setVisible(page == PATRONS);
 
-        if (this.page == WELCOME)
-        {
+        if (this.page == WELCOME) {
             this.counter = 0;
-        }
-        else if (this.page == KEYS)
-        {
+        } else if (this.page == KEYS) {
             this.title.label = UIKeysApp.WELCOME_SECTIONS_KEYS;
-        }
-        else if (this.page == FEATURES)
-        {
+        } else if (this.page == FEATURES) {
             this.title.label = UIKeysApp.WELCOME_SECTIONS_FEATURES;
             this.featureList.setIndex(0);
             this.featureList.scroll.scrollTo(0);
             this.pickDescription(this.featureList.getCurrentFirst());
-        }
-        else if (this.page == RESOURCES)
-        {
+        } else if (this.page == RESOURCES) {
             this.title.label = UIKeysApp.WELCOME_SECTIONS_RESOURCES;
-        }
-        else if (this.page == PATRONS)
-        {
+        } else if (this.page == PATRONS) {
             this.title.label = UIKeysApp.WELCOME_SECTIONS_PATRONS;
         }
     }
 
     @Override
-    protected void closeMenu()
-    {
-        if (this.page == LAST)
-        {
+    protected void closeMenu() {
+        if (this.page == LAST) {
             StudioEngine engine = (StudioEngine) this.bridge.getEngine();
 
             engine.screen.showMenu(engine.screen.getDashboard());
@@ -251,16 +228,14 @@ public class UIWelcomeMenu extends UIBaseMenu
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
 
         this.counter += 1;
     }
 
     @Override
-    protected void preRenderMenu(UIRenderingContext context)
-    {
+    protected void preRenderMenu(UIRenderingContext context) {
         this.renderDefaultBackground();
 
         FontRenderer font = context.getFont();
@@ -269,13 +244,11 @@ public class UIWelcomeMenu extends UIBaseMenu
 
         this.renderDropArea(this.next.area);
 
-        if (this.previous.isVisible())
-        {
+        if (this.previous.isVisible()) {
             this.renderDropArea(this.previous.area);
         }
 
-        if (this.page == WELCOME)
-        {
+        if (this.page == WELCOME) {
             String label = UIKeysApp.WELCOME_WELCOME_TITLE.get();
             float factor = Math.min((this.counter + context.getTransition()) / 25F, 1);
             float scale = Interpolation.EXP_OUT.interpolate(20, 4, factor);
@@ -293,15 +266,12 @@ public class UIWelcomeMenu extends UIBaseMenu
 
             ly = (int) Interpolation.EXP_OUT.interpolate(this.height * 1.5F, ly, factor);
 
-            for (String line : font.split(subtext, 320))
-            {
+            for (String line : font.split(subtext, 320)) {
                 context.batcher.textShadow(font, line, x - font.getWidth(line) / 2, ly);
 
                 ly += font.getHeight() * 2;
             }
-        }
-        else if (this.page == KEYS)
-        {
+        } else if (this.page == KEYS) {
             Texture texture = context.getTextures().getTexture(KEYBOARD);
             String label = UIKeysApp.WELCOME_KEYS_SUBTITLE.get();
             int tx = this.keys.area.x;
@@ -309,11 +279,8 @@ public class UIWelcomeMenu extends UIBaseMenu
 
             context.batcher.texturedBox(texture, Colors.GRAY, tx, ty, texture.width, texture.height, 0, 0);
             context.batcher.textShadow(font, label, x - font.getWidth(label) / 2, y + texture.height / 2 + 8);
-        }
-        else if (this.page == FEATURES)
-        {
-            if (this.description != null)
-            {
+        } else if (this.page == FEATURES) {
+            if (this.description != null) {
                 Texture texture = context.getTextures().getTexture(this.description.link, GL11.GL_LINEAR);
 
                 int ex = this.featureList.area.ex();
@@ -326,16 +293,13 @@ public class UIWelcomeMenu extends UIBaseMenu
                 int lx = ex + 8;
                 int ly = ey + 140 + 8;
 
-                for (String line : font.split(this.description.description.get(), this.features.area.w - this.featureList.area.w - 16))
-                {
+                for (String line : font.split(this.description.description.get(), this.features.area.w - this.featureList.area.w - 16)) {
                     context.batcher.textShadow(font, line, lx, ly);
 
                     ly += 12;
                 }
             }
-        }
-        else if (this.page == RESOURCES)
-        {
+        } else if (this.page == RESOURCES) {
             String label = UIKeysApp.WELCOME_RESOURCES_TITLE.get();
             float scale = 3;
 
@@ -350,8 +314,7 @@ public class UIWelcomeMenu extends UIBaseMenu
             String subtext = UIKeysApp.WELCOME_RESOURCES_SUBTITLE.get();
             int ly = y + 2 * font.getHeight() + 12;
 
-            for (String line : font.split(subtext, 320))
-            {
+            for (String line : font.split(subtext, 320)) {
                 context.batcher.textShadow(font, line, x - font.getWidth(line) / 2, ly);
 
                 ly += font.getHeight() * 2;
@@ -360,9 +323,7 @@ public class UIWelcomeMenu extends UIBaseMenu
             String tip = UIKeysApp.WELCOME_RESOURCES_TIP.get();
 
             context.batcher.textCard(font, tip, this.resources.area.mx(font.getWidth(tip)), this.resources.area.y + 26);
-        }
-        else if (this.page == PATRONS)
-        {
+        } else if (this.page == PATRONS) {
             String label = UIKeysApp.WELCOME_THANK_YOU.get();
             float scale = 4;
 
@@ -376,8 +337,7 @@ public class UIWelcomeMenu extends UIBaseMenu
         }
     }
 
-    private void renderDropArea(Area area)
-    {
+    private void renderDropArea(Area area) {
         boolean hover = area.isInside(this.context);
 
         int opaque = hover ? Colors.A50 | BBSSettings.primaryColor.get() : Colors.A50;
@@ -386,13 +346,11 @@ public class UIWelcomeMenu extends UIBaseMenu
         this.context.batcher.dropShadow(area.x + 4, area.y + 4, area.ex() - 4, area.ey() - 4, 4, opaque, shadow);
     }
 
-    public static class LinkDescription
-    {
+    public static class LinkDescription {
         public Link link;
         public IKey description;
 
-        public LinkDescription(Link link, IKey description)
-        {
+        public LinkDescription(Link link, IKey description) {
             this.link = link;
             this.description = description;
         }

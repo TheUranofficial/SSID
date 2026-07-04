@@ -20,11 +20,10 @@ import java.util.regex.Pattern;
 
 /**
  * Shader manager
- * 
- * This class is responsible for creating, managing and deleting shaders 
+ * <p>
+ * This class is responsible for creating, managing and deleting shaders
  */
-public class ShaderManager implements IDisposable, IWatchDogListener
-{
+public class ShaderManager implements IDisposable, IWatchDogListener {
     public static final Pattern pattern = Pattern.compile("^[\t ]*#import \\\"([\\w /_.:]+)\\\"\\s*$", Pattern.MULTILINE);
 
     public AssetProvider provider;
@@ -32,18 +31,15 @@ public class ShaderManager implements IDisposable, IWatchDogListener
 
     private Consumer<Boolean> reloadCallback;
 
-    public ShaderManager(AssetProvider provider)
-    {
+    public ShaderManager(AssetProvider provider) {
         this.provider = provider;
     }
 
-    public void setReloadCallback(Consumer<Boolean> callback)
-    {
+    public void setReloadCallback(Consumer<Boolean> callback) {
         this.reloadCallback = callback;
     }
 
-    public void buildShader(Shader program, Link linkToCode) throws Exception
-    {
+    public void buildShader(Shader program, Link linkToCode) throws Exception {
         ShaderParser parser = new ShaderParser();
         Set<Link> fetched = new HashSet<>();
         String code = this.fetchCode(linkToCode, fetched);
@@ -63,12 +59,10 @@ public class ShaderManager implements IDisposable, IWatchDogListener
     /**
      * Shared code for compiling a shader program's shader
      */
-    public int createShader(Shader shader, String shaderCode, int shaderType) throws Exception
-    {
+    public int createShader(Shader shader, String shaderCode, int shaderType) throws Exception {
         int shaderId = GL20.glCreateShader(shaderType);
 
-        if (shaderId == 0)
-        {
+        if (shaderId == 0) {
             throw new Exception("Error creating shader. Type: " + shaderType);
         }
 
@@ -77,20 +71,14 @@ public class ShaderManager implements IDisposable, IWatchDogListener
 
         String type = shaderType == GL20.GL_FRAGMENT_SHADER ? "fragment" : "vertex";
 
-        if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0)
-        {
+        if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
             throw new Exception("Error compiling shader code (" + shader.name + ", " + type + "): " + GL20.glGetShaderInfoLog(shaderId, 1024));
-        }
-        else
-        {
+        } else {
             String log = GL20.glGetShaderInfoLog(shaderId);
 
-            if (log.isEmpty())
-            {
+            if (log.isEmpty()) {
                 System.out.println("Shader \"" + shader.name + "\" (" + type + ") was compiled!");
-            }
-            else
-            {
+            } else {
                 System.out.println("Log for \"" + shader.name + "\" (" + type + "):\n" + log);
             }
         }
@@ -100,10 +88,8 @@ public class ShaderManager implements IDisposable, IWatchDogListener
         return shaderId;
     }
 
-    public String fetchCode(Link path, Set<Link> fetched)
-    {
-        try
-        {
+    public String fetchCode(Link path, Set<Link> fetched) {
+        try {
             String code = IOUtils.readText(this.provider.getAsset(path));
 
             return Rewriter.rewrite(pattern, code, (result) ->
@@ -113,33 +99,26 @@ public class ShaderManager implements IDisposable, IWatchDogListener
 
                 return this.fetchCode(link, fetched);
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return "";
     }
 
-    public void reload()
-    {
-        for (Shader shader : this.programs)
-        {
+    public void reload() {
+        for (Shader shader : this.programs) {
             shader.reload();
         }
 
-        if (this.reloadCallback != null)
-        {
+        if (this.reloadCallback != null) {
             this.reloadCallback.accept(true);
         }
     }
 
     @Override
-    public void delete()
-    {
-        for (Shader program : this.programs)
-        {
+    public void delete() {
+        for (Shader program : this.programs) {
             program.delete();
         }
 
@@ -147,32 +126,27 @@ public class ShaderManager implements IDisposable, IWatchDogListener
     }
 
     @Override
-    public void accept(Path path, WatchDogEvent event)
-    {
+    public void accept(Path path, WatchDogEvent event) {
         Link link = BBS.getProvider().getLink(path.toFile());
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
         Iterator<Shader> it = this.programs.iterator();
         int i = 0;
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Shader program = it.next();
 
-            if (program.name.equals(link) || program.getImported().contains(link))
-            {
+            if (program.name.equals(link) || program.getImported().contains(link)) {
                 program.reload();
 
                 i += 1;
             }
         }
 
-        if (this.reloadCallback != null && i > 0)
-        {
+        if (this.reloadCallback != null && i > 0) {
             this.reloadCallback.accept(false);
         }
     }

@@ -6,18 +6,16 @@ import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 import org.joml.Vector2i;
 
-public class BlockModelEach extends BlockModelVertical
-{
+public class BlockModelEach extends BlockModelVertical {
     public final Vector2i backUV = new Vector2i();
     public final Vector2i rightUV = new Vector2i();
     public final Vector2i leftUV = new Vector2i();
 
-    public BlockModelEach()
-    {}
+    public BlockModelEach() {
+    }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         super.compile();
 
         BlockModel model = this.models.list.get(0);
@@ -45,8 +43,7 @@ public class BlockModelEach extends BlockModelVertical
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
         data.remove("all");
@@ -57,16 +54,14 @@ public class BlockModelEach extends BlockModelVertical
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         super.fromData(data);
 
         this.backUV.set(DataStorageUtils.vector2iFromData(data.getList("back")));
         this.rightUV.set(DataStorageUtils.vector2iFromData(data.getList("right")));
         this.leftUV.set(DataStorageUtils.vector2iFromData(data.getList("left")));
 
-        if (data.has("front"))
-        {
+        if (data.has("front")) {
             this.allUV.set(DataStorageUtils.vector2iFromData(data.getList("front")));
         }
     }

@@ -11,8 +11,7 @@ import mchorse.bbs.utils.keyframes.KeyframeChannel;
 import mchorse.bbs.utils.math.Interpolations;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class Envelope extends ValueGroup
-{
+public class Envelope extends ValueGroup {
     public final ValueBoolean enabled = new ValueBoolean("enabled");
 
     public final ValueFloat fadeIn = new ValueFloat("fadeIn", 10F);
@@ -24,8 +23,7 @@ public class Envelope extends ValueGroup
     public final ValueBoolean keyframes = new ValueBoolean("keyframes");
     public final KeyframeChannel channel = new KeyframeChannel("channel");
 
-    public Envelope(String id)
-    {
+    public Envelope(String id) {
         super(id);
 
         this.add(this.enabled);
@@ -40,49 +38,38 @@ public class Envelope extends ValueGroup
         this.channel.insert(BBSSettings.getDefaultDuration(), 1);
     }
 
-    public float getStartX(int duration)
-    {
+    public float getStartX(int duration) {
         return 0;
     }
 
-    public float getStartDuration(int duration)
-    {
+    public float getStartDuration(int duration) {
         return this.fadeIn.get();
     }
 
-    public float getEndX(int duration)
-    {
+    public float getEndX(int duration) {
         return duration;
     }
 
-    public float getEndDuration(int duration)
-    {
+    public float getEndDuration(int duration) {
         return duration - this.fadeOut.get();
     }
 
-    public float factorEnabled(int duration, float tick)
-    {
-        if (!this.enabled.get())
-        {
+    public float factorEnabled(int duration, float tick) {
+        if (!this.enabled.get()) {
             return 1;
         }
 
         return this.factor(duration, tick);
     }
 
-    public float factor(int duration, float tick)
-    {
+    public float factor(int duration, float tick) {
         float envelope = 0;
 
-        if (this.keyframes.get())
-        {
-            if (!this.channel.isEmpty())
-            {
+        if (this.keyframes.get()) {
+            if (!this.channel.isEmpty()) {
                 envelope = MathUtils.clamp((float) this.channel.interpolate(tick), 0, 1);
             }
-        }
-        else
-        {
+        } else {
             float lowOut = this.fadeIn.get();
 
             envelope = Interpolations.envelope(tick, 0, lowOut, this.getEndDuration(duration), this.getEndX(duration));
@@ -92,8 +79,7 @@ public class Envelope extends ValueGroup
         return envelope;
     }
 
-    public void breakDown(Clip original, int offset)
-    {
+    public void breakDown(Clip original, int offset) {
         this.fadeIn.set(0F);
         original.envelope.fadeOut.set(0F);
 
@@ -101,16 +87,13 @@ public class Envelope extends ValueGroup
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
+    public void fromData(BaseType data) {
         super.fromData(data);
 
-        if (data.isMap())
-        {
+        if (data.isMap()) {
             MapType map = data.asMap();
 
-            if (map.has("interpolation"))
-            {
+            if (map.has("interpolation")) {
                 BaseType interpolation = map.get("interpolation");
 
                 this.pre.fromData(interpolation);

@@ -7,29 +7,24 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Consumer;
 
-public class UIDraggable extends UIElement
-{
+public class UIDraggable extends UIElement {
     private Consumer<UIContext> callback;
     private boolean dragging;
     private boolean hover;
 
-    public UIDraggable(Consumer<UIContext> callback)
-    {
+    public UIDraggable(Consumer<UIContext> callback) {
         this.callback = callback;
     }
 
-    public UIDraggable hoverOnly()
-    {
+    public UIDraggable hoverOnly() {
         this.hover = true;
 
         return this;
     }
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 0)
-        {
+    protected boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 0) {
             this.dragging = true;
 
             return true;
@@ -39,25 +34,21 @@ public class UIDraggable extends UIElement
     }
 
     @Override
-    protected boolean subMouseReleased(UIContext context)
-    {
+    protected boolean subMouseReleased(UIContext context) {
         this.dragging = false;
 
         return super.subMouseReleased(context);
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
-        if (!this.hover || this.area.isInside(context) || this.dragging)
-        {
+        if (!this.hover || this.area.isInside(context) || this.dragging) {
             ScrollArea.bar(context.batcher, this.area.x, this.area.y, this.area.ex(), this.area.ey(), Colors.A50);
         }
 
-        if (this.dragging && this.callback != null)
-        {
+        if (this.dragging && this.callback != null) {
             this.callback.accept(context);
         }
     }

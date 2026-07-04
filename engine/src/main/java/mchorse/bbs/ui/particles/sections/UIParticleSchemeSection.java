@@ -14,16 +14,14 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Consumer;
 
-public abstract class UIParticleSchemeSection extends UIElement
-{
+public abstract class UIParticleSchemeSection extends UIElement {
     public UILabel title;
     public UIElement fields;
 
     protected ParticleScheme scheme;
     protected UIParticleSchemePanel editor;
 
-    public UIParticleSchemeSection(UIParticleSchemePanel editor)
-    {
+    public UIParticleSchemeSection(UIParticleSchemePanel editor) {
         super();
 
         this.editor = editor;
@@ -35,76 +33,61 @@ public abstract class UIParticleSchemeSection extends UIElement
         this.add(this.title, this.fields);
     }
 
-    protected void resizeParent()
-    {
+    protected void resizeParent() {
         this.getParent().resize();
     }
 
-    public UIParticleSchemePanel getEditor()
-    {
+    public UIParticleSchemePanel getEditor() {
         return this.editor;
     }
 
-    public void dirty()
-    {
+    public void dirty() {
         this.editor.dirty();
     }
 
     public abstract IKey getTitle();
 
-    public void editMoLang(String id, Consumer<String> callback, MolangExpression expression)
-    {
+    public void editMoLang(String id, Consumer<String> callback, MolangExpression expression) {
         this.editor.editMoLang(id, callback, expression);
     }
 
-    public MolangExpression parse(String string, MolangExpression old)
-    {
-        if (string.isEmpty())
-        {
+    public MolangExpression parse(String string, MolangExpression old) {
+        if (string.isEmpty()) {
             return MolangParser.ZERO;
         }
 
-        try
-        {
+        try {
             MolangExpression expression = this.scheme.parser.parseExpression(string);
 
             this.editor.dirty();
 
             return expression;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return old;
     }
 
-    public ParticleScheme getScheme()
-    {
+    public ParticleScheme getScheme() {
         return this.scheme;
     }
 
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         this.scheme = scheme;
     }
 
-    public void beforeSave(ParticleScheme scheme)
-    {}
+    public void beforeSave(ParticleScheme scheme) {
+    }
 
     /**
      * Toggle visibility of the field section
      */
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.title.area.isInside(context))
-        {
-            if (this.fields.hasParent())
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.title.area.isInside(context)) {
+            if (this.fields.hasParent()) {
                 this.fields.removeFromParent();
-            }
-            else
-            {
+            } else {
                 this.add(this.fields);
             }
 

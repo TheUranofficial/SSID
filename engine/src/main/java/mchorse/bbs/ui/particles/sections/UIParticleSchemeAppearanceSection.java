@@ -13,8 +13,7 @@ import mchorse.bbs.ui.framework.elements.utils.UILabel;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeAppearanceSection extends UIParticleSchemeComponentSection<ParticleComponentAppearanceBillboard>
-{
+public class UIParticleSchemeAppearanceSection extends UIParticleSchemeComponentSection<ParticleComponentAppearanceBillboard> {
     public UICirculate mode;
     public UILabel modeLabel;
 
@@ -33,8 +32,7 @@ public class UIParticleSchemeAppearanceSection extends UIParticleSchemeComponent
     public UIToggle stretch;
     public UIToggle loop;
 
-    public UIParticleSchemeAppearanceSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeAppearanceSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.mode = new UICirculate((b) ->
@@ -107,12 +105,10 @@ public class UIParticleSchemeAppearanceSection extends UIParticleSchemeComponent
         this.fields.add(UI.row(this.uvX, this.uvY), UI.row(this.uvW, this.uvH));
     }
 
-    private void updateElements()
-    {
+    private void updateElements() {
         this.flipbook.removeFromParent();
 
-        if (this.component.flipbook)
-        {
+        if (this.component.flipbook) {
             this.fields.add(this.flipbook);
         }
 
@@ -120,20 +116,17 @@ public class UIParticleSchemeAppearanceSection extends UIParticleSchemeComponent
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_APPEARANCE_TITLE;
     }
 
     @Override
-    protected ParticleComponentAppearanceBillboard getComponent(ParticleScheme scheme)
-    {
+    protected ParticleComponentAppearanceBillboard getComponent(ParticleScheme scheme) {
         return scheme.getOrCreate(ParticleComponentAppearanceBillboard.class);
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         super.fillData();
 
         this.mode.setValue(this.component.flipbook ? 1 : 0);

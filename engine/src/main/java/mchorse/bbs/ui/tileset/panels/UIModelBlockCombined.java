@@ -15,15 +15,13 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.world.entities.UIVector3d;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelCombined;
 
-public class UIModelBlockCombined extends UIModelBlockFactory<BlockModelCombined>
-{
+public class UIModelBlockCombined extends UIModelBlockFactory<BlockModelCombined> {
     public UIVector3d offset;
     public UIToggle rotations;
     public UIButton copy;
     public UIButton paste;
 
-    public UIModelBlockCombined(UITileSetEditorPanel editor)
-    {
+    public UIModelBlockCombined(UITileSetEditorPanel editor) {
         super(editor);
 
         this.copy = new UIButton(UIKeys.TILE_SET_COMBINED_CONTEXT_COPY, this::copyData);
@@ -45,20 +43,17 @@ public class UIModelBlockCombined extends UIModelBlockFactory<BlockModelCombined
         this.addCollisionBoxFields();
     }
 
-    private void copyData(UIButton b)
-    {
+    private void copyData(UIButton b) {
         ListType list = new ListType();
 
-        for (ModelCube cube : this.model.cubes)
-        {
+        for (ModelCube cube : this.model.cubes) {
             list.add(cube.toData());
         }
 
         Window.setClipboard(DataToString.toString(list, true));
     }
 
-    private void pasteData(UIButton b)
-    {
+    private void pasteData(UIButton b) {
         UITextareaOverlayPanel panel = new UITextareaOverlayPanel(
             UIKeys.TILE_SET_COMBINED_PASTE_MODAL_TITLE,
             UIKeys.TILE_SET_COMBINED_PASTE_MODAL_DESCRIPTION,
@@ -68,19 +63,16 @@ public class UIModelBlockCombined extends UIModelBlockFactory<BlockModelCombined
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 
-    private void pasteData(String s)
-    {
+    private void pasteData(String s) {
         ListType list = DataToString.listFromString(s);
 
-        if (list == null)
-        {
+        if (list == null) {
             return;
         }
 
         this.model.cubes.clear();
 
-        for (BaseType base : list)
-        {
+        for (BaseType base : list) {
             ModelCube cube = new ModelCube();
 
             cube.fromData(base.asMap());
@@ -92,8 +84,7 @@ public class UIModelBlockCombined extends UIModelBlockFactory<BlockModelCombined
     }
 
     @Override
-    public void fill(BlockModelCombined model)
-    {
+    public void fill(BlockModelCombined model) {
         super.fill(model);
 
         this.offset.fill(model.offset);

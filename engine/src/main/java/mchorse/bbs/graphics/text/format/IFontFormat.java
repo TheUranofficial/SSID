@@ -3,8 +3,7 @@ package mchorse.bbs.graphics.text.format;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.graphics.text.FontRendererContext;
 
-public interface IFontFormat extends IMapSerializable
-{
+public interface IFontFormat extends IMapSerializable {
     public char getControlCharacter();
 
     public void setControlCharacter(String string);

@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataStorageContext
-{
+public class DataStorageContext {
     public final DataInputStream in;
     public final DataOutputStream out;
 
@@ -16,92 +15,73 @@ public class DataStorageContext
     private int index;
     private KeyType type = KeyType.BYTE;
 
-    public DataStorageContext(DataInputStream in)
-    {
+    public DataStorageContext(DataInputStream in) {
         this.in = in;
         this.out = null;
     }
 
-    public DataStorageContext(DataOutputStream out)
-    {
+    public DataStorageContext(DataOutputStream out) {
         this.in = null;
         this.out = out;
     }
 
-    public String getKey(int index)
-    {
+    public String getKey(int index) {
         return this.intMap == null ? null : this.intMap.get(index);
     }
 
-    public int getIndex(String key)
-    {
+    public int getIndex(String key) {
         return this.keyMap == null ? -1 : this.keyMap.get(key);
     }
 
-    public void put(String key)
-    {
-        if (this.keyMap == null)
-        {
+    public void put(String key) {
+        if (this.keyMap == null) {
             this.keyMap = new HashMap<>();
         }
 
-        if (!this.keyMap.containsKey(key))
-        {
+        if (!this.keyMap.containsKey(key)) {
             this.keyMap.put(key, this.index);
             this.index += 1;
         }
     }
 
-    public void read() throws IOException
-    {
+    public void read() throws IOException {
         this.intMap = new HashMap<>();
         this.type = KeyType.from(this.in.readByte());
 
         int c = this.type.read(this.in);
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             this.intMap.put(this.type.read(this.in), this.in.readUTF());
         }
     }
 
-    public String readKey() throws IOException
-    {
+    public String readKey() throws IOException {
         return this.getKey(this.type.read(this.in));
     }
 
-    public void write() throws IOException
-    {
-        if (this.keyMap == null)
-        {
+    public void write() throws IOException {
+        if (this.keyMap == null) {
             this.keyMap = new HashMap<>();
         }
 
-        if (this.keyMap.size() <= 256)
-        {
+        if (this.keyMap.size() <= 256) {
             this.type = KeyType.BYTE;
-        }
-        else if (this.keyMap.size() <= 65536)
-        {
+        } else if (this.keyMap.size() <= 65536) {
             this.type = KeyType.SHORT;
-        }
-        else
-        {
+        } else {
             this.type = KeyType.INT;
         }
 
         this.out.writeByte(this.type.type);
         this.type.write(this.out, this.keyMap.size());
 
-        for (Map.Entry<String, Integer> entry : this.keyMap.entrySet())
-        {
+        for (Map.Entry<String, Integer> entry : this.keyMap.entrySet()) {
             this.type.write(this.out, entry.getValue());
             this.out.writeUTF(entry.getKey());
         }
     }
 
-    public void writeIndex(String key) throws IOException
-    {
+    public void writeIndex(String key) throws IOException {
         this.type.write(this.out, this.getIndex(key));
     }
 }

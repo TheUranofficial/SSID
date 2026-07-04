@@ -22,26 +22,22 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class CubicModelRenderer
-{
+public class CubicModelRenderer {
     private CubicModel model;
 
     private VAO vaoModel;
     private CubicMatrixRenderer renderer;
     private MatrixStack stack = new MatrixStack();
 
-    public CubicModelRenderer(CubicModel model)
-    {
+    public CubicModelRenderer(CubicModel model) {
         this.model = model;
     }
 
-    public List<Matrix4f> getMatrices()
-    {
+    public List<Matrix4f> getMatrices() {
         return this.renderer.matrices;
     }
 
-    public void createVAO()
-    {
+    public void createVAO() {
         this.vaoModel = BBS.getVAOs().create();
         this.vaoModel.register(VBOAttributes.VERTEX_NORMAL_UV_RGBA_BONES);
 
@@ -63,16 +59,13 @@ public class CubicModelRenderer
         this.renderer = new CubicMatrixRenderer(model);
     }
 
-    public void applyTransforms()
-    {
+    public void applyTransforms() {
         this.stack.reset();
         CubicRenderer.processRenderModel(this.renderer, null, this.stack, this.model.model);
     }
 
-    public void renderVAO(RenderingContext context, Shader shader)
-    {
-        if (this.vaoModel == null)
-        {
+    public void renderVAO(RenderingContext context, Shader shader) {
+        if (this.vaoModel == null) {
             this.createVAO();
         }
 
@@ -81,19 +74,16 @@ public class CubicModelRenderer
         CommonShaderAccess.setBones(shader, this.renderer.matrices);
         shader.bind();
 
-        if (!this.model.culling)
-        {
+        if (!this.model.culling) {
             GLStates.cullFaces(false);
         }
 
-        if (this.model.overlap)
-        {
+        if (this.model.overlap) {
             Camera camera = context.getCamera();
             float units = -100000F;
 
             /* Some really weird code that makes overlapping work with models, in some cases */
-            if (camera != null)
-            {
+            if (camera != null) {
                 Vector4f temp4f = Vectors.TEMP_4F;
 
                 context.stack.getModelMatrix().transform(temp4f.set(0, 0, 0, 1F));
@@ -105,18 +95,15 @@ public class CubicModelRenderer
                 distance = 1F - distance;
                 distance = (float) Math.pow(distance, 40);
 
-                if (distance > 0.95F)
-                {
+                if (distance > 0.95F) {
                     units = -3000F;
-                }
-                else
-                {
+                } else {
                     units = -100F * distance;
                 }
             }
 
             GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-            GL11.glPolygonOffset( 1F, Math.min(units, -1F));
+            GL11.glPolygonOffset(1F, Math.min(units, -1F));
             GL11.glDepthFunc(GL11.GL_LEQUAL);
         }
 
@@ -124,27 +111,23 @@ public class CubicModelRenderer
         this.vaoModel.render(GL11.GL_TRIANGLES);
         this.vaoModel.unbindForRender();
 
-        if (this.model.overlap)
-        {
+        if (this.model.overlap) {
             GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
             GLStates.setupDepthFunction3D();
         }
 
-        if (!this.model.culling)
-        {
+        if (!this.model.culling) {
             GLStates.cullFaces(true);
         }
 
-        if (context.isDebug())
-        {
+        if (context.isDebug()) {
             this.stack.reset();
 
             this.renderAxes(context);
         }
     }
 
-    private void renderAxes(RenderingContext context)
-    {
+    private void renderAxes(RenderingContext context) {
         GLStates.depthTest(false);
 
         Shader shader = context.getShaders().get(VBOAttributes.VERTEX_RGBA);

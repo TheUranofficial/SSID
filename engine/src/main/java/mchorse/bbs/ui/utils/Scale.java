@@ -5,10 +5,9 @@ import mchorse.bbs.utils.math.Interpolations;
 import mchorse.bbs.utils.math.MathUtils;
 
 /**
- * This class represents a scale of an axis 
+ * This class represents a scale of an axis
  */
-public class Scale
-{
+public class Scale {
     protected double shift = 0;
     protected double zoom = 1;
     protected int mult = 1;
@@ -22,32 +21,27 @@ public class Scale
     protected double lockMin;
     protected double lockMax;
 
-    public static float getAnchorX(UIContext context, Area area)
-    {
+    public static float getAnchorX(UIContext context, Area area) {
         return (context.mouseX - area.x) / (float) area.w;
     }
 
-    public static float getAnchorY(UIContext context, Area area)
-    {
+    public static float getAnchorY(UIContext context, Area area) {
         return (context.mouseY - area.y) / (float) area.h;
     }
 
-    public Scale(Area area, ScrollDirection direction)
-    {
+    public Scale(Area area, ScrollDirection direction) {
         this(area);
 
         this.direction = direction;
     }
 
-    public Scale(Area area)
-    {
+    public Scale(Area area) {
         super();
 
         this.area = area;
     }
 
-    public Scale inverse()
-    {
+    public Scale inverse() {
         this.inverse = true;
 
         return this;
@@ -55,46 +49,38 @@ public class Scale
 
     /* Convenience methods */
 
-    public void set(double shift, double zoom)
-    {
+    public void set(double shift, double zoom) {
         this.setShift(shift);
         this.setZoom(zoom);
     }
 
-    public void anchor(float anchor)
-    {
+    public void anchor(float anchor) {
         this.anchor = anchor;
     }
 
-    public void lock(double min, double max)
-    {
+    public void lock(double min, double max) {
         this.lockViewport = true;
         this.lockMin = Math.min(min, max);
         this.lockMax = Math.max(min, max);
     }
 
-    public void unlock()
-    {
+    public void unlock() {
         this.lockViewport = false;
     }
 
-    public double getLockMin()
-    {
+    public double getLockMin() {
         return this.lockMin;
     }
 
-    public double getLockMax()
-    {
+    public double getLockMax() {
         return this.lockMax;
     }
 
-    public void calculateMultiplier()
-    {
+    public void calculateMultiplier() {
         this.mult = this.recalcMultiplier(this.getZoom());
     }
 
-    protected int recalcMultiplier(double zoom)
-    {
+    protected int recalcMultiplier(double zoom) {
         int factor = (int) (60F / zoom);
 
         /* Hardcoded caps */
@@ -115,10 +101,8 @@ public class Scale
 
     /* Getters/setters */
 
-    public void setShift(double shift)
-    {
-        if (this.lockViewport)
-        {
+    public void setShift(double shift) {
+        if (this.lockViewport) {
             double distance = this.getMaxValue() - this.getMinValue();
 
             this.shift = shift;
@@ -126,66 +110,52 @@ public class Scale
             double min = this.getMinValue();
             double max = this.getMaxValue();
 
-            if (min < this.lockMin)
-            {
+            if (min < this.lockMin) {
                 this.shift(this.lockMin, this.lockMin + distance);
-            }
-            else if (max > this.lockMax)
-            {
+            } else if (max > this.lockMax) {
                 this.shift(this.lockMax - distance, this.lockMax);
             }
 
             min = this.getMinValue();
             max = this.getMaxValue();
 
-            if (min < this.lockMin || max > this.lockMax)
-            {
+            if (min < this.lockMin || max > this.lockMax) {
                 double lockMin = Math.max(this.lockMin, min);
                 double lockMax = Math.min(this.lockMax, max);
 
                 this.view(lockMin, lockMax);
             }
-        }
-        else
-        {
+        } else {
             this.shift = shift;
         }
     }
 
-    public double getShift()
-    {
+    public double getShift() {
         return this.shift;
     }
 
-    public void setZoom(double zoom)
-    {
-        if (this.lockViewport)
-        {
+    public void setZoom(double zoom) {
+        if (this.lockViewport) {
             this.zoom = zoom;
 
             double min = this.getMinValue();
             double max = this.getMaxValue();
 
-            if (min < this.lockMin || max > this.lockMax)
-            {
+            if (min < this.lockMin || max > this.lockMax) {
                 this.view(Math.max(min, this.lockMin), Math.min(max, this.lockMax));
             }
-        }
-        else
-        {
+        } else {
             this.zoom = zoom;
         }
 
         this.calculateMultiplier();
     }
 
-    public double getZoom()
-    {
+    public double getZoom() {
         return this.zoom == 0 ? 1D : this.zoom;
     }
 
-    public int getMult()
-    {
+    public int getMult() {
         return this.mult;
     }
 
@@ -194,15 +164,13 @@ public class Scale
     /**
      * Convert the value to on-screen coordinate
      */
-    public double to(double value)
-    {
+    public double to(double value) {
         double factor = (this.inverse
             ? -value + this.shift
             : value - this.shift
         ) * this.getZoom();
 
-        if (this.area != null)
-        {
+        if (this.area != null) {
             factor += this.direction.getPosition(this.area, this.anchor);
         }
 
@@ -212,10 +180,8 @@ public class Scale
     /**
      * Convert on-screen coordinate to value
      */
-    public double from(double coordinate)
-    {
-        if (this.area != null)
-        {
+    public double from(double coordinate) {
+        if (this.area != null) {
             coordinate -= this.direction.getPosition(this.area, this.anchor);
         }
 
@@ -224,15 +190,13 @@ public class Scale
             : coordinate / this.getZoom() + this.shift;
     }
 
-    public double getMinValue()
-    {
+    public double getMinValue() {
         this.assertArea();
 
         return this.from(this.direction.getPosition(this.area, this.inverse ? 1 : 0));
     }
 
-    public double getMaxValue()
-    {
+    public double getMaxValue() {
         this.assertArea();
 
         return this.from(this.direction.getPosition(this.area, this.inverse ? 0 : 1));
@@ -240,40 +204,33 @@ public class Scale
 
     /* Viewport manipulation methods */
 
-    public void view(double min, double max)
-    {
+    public void view(double min, double max) {
         this.assertArea();
         this.view(min, max, this.direction.getSide(this.area));
     }
 
-    public void view(double min, double max, double length)
-    {
+    public void view(double min, double max, double length) {
         this.viewOffset(min, max, length, 0);
     }
 
-    public void viewOffset(double min, double max, double offset)
-    {
+    public void viewOffset(double min, double max, double offset) {
         this.assertArea();
         this.viewOffset(min, max, this.direction.getSide(this.area), offset);
     }
 
-    public void viewOffset(double min, double max, double length, double offset)
-    {
-        if (length <= 0)
-        {
+    public void viewOffset(double min, double max, double length, double offset) {
+        if (length <= 0) {
             return;
         }
 
         this.zoom = 1 / ((max - min) / length);
 
-        if (offset != 0)
-        {
+        if (offset != 0) {
             min -= offset / this.getZoom();
             max += offset / this.getZoom();
         }
 
-        if (this.lockViewport && (min < this.lockMin || max > this.lockMax))
-        {
+        if (this.lockViewport && (min < this.lockMin || max > this.lockMax)) {
             min = Math.max(min, this.lockMin);
             max = Math.min(max, this.lockMax);
         }
@@ -284,51 +241,39 @@ public class Scale
         this.calculateMultiplier();
     }
 
-    public void shift(double min, double max)
-    {
+    public void shift(double min, double max) {
         this.shift = Interpolations.lerp(min, max, this.inverse ? 1 - this.anchor : this.anchor);
     }
 
-    public void shiftInto(double value)
-    {
+    public void shiftInto(double value) {
         this.shiftInto(value, 0);
     }
 
-    public void shiftInto(double value, double offset)
-    {
+    public void shiftInto(double value, double offset) {
         double min = this.getMinValue();
         double max = this.getMaxValue();
         double distance = max - min;
 
-        if (value < min)
-        {
+        if (value < min) {
             this.shift(value, value + distance);
-        }
-        else if (value > max)
-        {
+        } else if (value > max) {
             value -= offset;
 
             this.shift(value - distance, value);
         }
     }
 
-    public void zoom(double amount, double min, double max)
-    {
+    public void zoom(double amount, double min, double max) {
         this.setZoom(MathUtils.clamp(this.getZoom() + amount, min, max));
     }
 
-    public void zoomAnchor(float newAnchor, double amount, double min, double max)
-    {
-        if (this.area != null)
-        {
-            if (this.inverse)
-            {
+    public void zoomAnchor(float newAnchor, double amount, double min, double max) {
+        if (this.area != null) {
+            if (this.inverse) {
                 double shift = this.direction.getPosition(this.area, this.anchor) - this.direction.getPosition(this.area, newAnchor);
 
                 this.shift += shift / this.getZoom();
-            }
-            else
-            {
+            } else {
                 double shift = this.direction.getPosition(this.area, this.anchor) - this.direction.getPosition(this.area, newAnchor);
 
                 this.shift -= shift / this.getZoom();
@@ -340,13 +285,11 @@ public class Scale
         this.zoom(amount, min, max);
     }
 
-    public double getZoomFactor()
-    {
+    public double getZoomFactor() {
         return this.getZoomFactor(this.getZoom());
     }
 
-    public double getZoomFactor(double zoom)
-    {
+    public double getZoomFactor(double zoom) {
         double factor = 5D;
 
         if (zoom < 0.2D) factor = 0.005D;
@@ -359,10 +302,8 @@ public class Scale
         return factor;
     }
 
-    protected void assertArea()
-    {
-        if (this.area == null)
-        {
+    protected void assertArea() {
+        if (this.area == null) {
             throw new IllegalStateException("This operation isn't possible without area present!");
         }
     }

@@ -22,18 +22,11 @@ import mchorse.bbs.world.entities.components.IRenderableComponent;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public final class Entity implements IMapSerializable, IWorldObject
-{
+public final class Entity implements IMapSerializable, IWorldObject {
     /**
-     * Static vector for calculating rendering information 
+     * Static vector for calculating rendering information
      */
     public static Vector3d vector = new Vector3d();
 
@@ -43,7 +36,7 @@ public final class Entity implements IMapSerializable, IWorldObject
     public final Link id;
 
     /**
-     * Reference to the current world in which this entity is located 
+     * Reference to the current world in which this entity is located
      */
     public World world;
 
@@ -65,23 +58,20 @@ public final class Entity implements IMapSerializable, IWorldObject
     /* Rendering */
     private Matrix4f transform = new Matrix4f();
 
-    public Entity(Link id, List<EntityRecord> records)
-    {
+    public Entity(Link id, List<EntityRecord> records) {
         this.id = id;
 
         List<Component> components = new ArrayList<>();
         HashMap<Class, Component> named = new HashMap<>();
         List<IRenderableComponent> renderables = new ArrayList<>();
 
-        for (EntityRecord record : records)
-        {
+        for (EntityRecord record : records) {
             record.component.setEntity(this);
 
             components.add(record.component);
             named.put(record.key, record.component);
 
-            if (record.component instanceof IRenderableComponent)
-            {
+            if (record.component instanceof IRenderableComponent) {
                 renderables.add((IRenderableComponent) record.component);
             }
         }
@@ -94,89 +84,73 @@ public final class Entity implements IMapSerializable, IWorldObject
         this.renderables = Collections.unmodifiableList(renderables);
     }
 
-    public List<Component> getAll()
-    {
+    public List<Component> getAll() {
         return Collections.unmodifiableList(this.components);
     }
 
-    public <T> T get(Class<T> component)
-    {
+    public <T> T get(Class<T> component) {
         Component result = this.named.get(component);
 
-        if (result == null)
-        {
+        if (result == null) {
             return null;
         }
 
         return (T) result;
     }
 
-    public <T> boolean has(Class<T> component)
-    {
+    public <T> boolean has(Class<T> component) {
         return this.named.containsKey(component);
     }
 
-    public UUID getUUID()
-    {
+    public UUID getUUID() {
         return this.uuid;
     }
 
-    public void setWorld(World world)
-    {
+    public void setWorld(World world) {
         this.world = world;
     }
 
-    public void setPosition(double x, double y, double z)
-    {
+    public void setPosition(double x, double y, double z) {
         this.basic.setPosition(x, y, z);
         this.basic.prevPosition.set(this.basic.position);
     }
 
-    public void setRotation(float pitch, float yaw)
-    {
+    public void setRotation(float pitch, float yaw) {
         this.basic.setRotation(pitch, yaw);
         this.basic.prevRotation.set(this.basic.rotation);
     }
 
-    public boolean isRemoved()
-    {
+    public boolean isRemoved() {
         return this.remove;
     }
 
-    public void remove()
-    {
+    public void remove() {
         this.remove = true;
 
-        for (Component component : this.components)
-        {
+        for (Component component : this.components) {
             component.entityWasRemoved();
         }
     }
 
-    public void update()
-    {
-        for (Component component : this.components)
-        {
+    public void update() {
+        for (Component component : this.components) {
             component.preUpdate();
         }
 
-        for (Component component : this.components)
-        {
+        for (Component component : this.components) {
             component.postUpdate();
         }
     }
 
     @Override
-    public AABB getPickingHitbox()
-    {
+    public AABB getPickingHitbox() {
         return this.basic.hitbox;
     }
 
     /* Serialization / Deserialization */
 
     @Override
-    public MapType toData()
-    {
+    public MapType toData() {
         MapType map = new MapType();
 
         map.putString("id", this.id.toString());
@@ -188,12 +162,10 @@ public final class Entity implements IMapSerializable, IWorldObject
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         MapType components = new MapType();
 
-        for (Component component : this.components)
-        {
+        for (Component component : this.components) {
             components.put(component.getId().toString(), component.toData());
         }
 
@@ -201,31 +173,25 @@ public final class Entity implements IMapSerializable, IWorldObject
     }
 
     @Override
-    public void fromData(MapType data)
-    {
-        if (data.has("uuid"))
-        {
+    public void fromData(MapType data) {
+        if (data.has("uuid")) {
             this.uuid = UUID.fromString(data.getString("uuid"));
         }
 
-        if (data.has("canBeSaved"))
-        {
+        if (data.has("canBeSaved")) {
             this.canBeSaved = data.getBool("canBeSaved");
         }
 
         MapType components = data.getMap("components", null);
 
-        if (components == null)
-        {
+        if (components == null) {
             return;
         }
 
-        for (Component component : this.components)
-        {
+        for (Component component : this.components) {
             MapType element = components.getMap(component.getId().toString());
 
-            if (element != null)
-            {
+            if (element != null) {
                 component.fromData(element);
             }
         }
@@ -236,37 +202,31 @@ public final class Entity implements IMapSerializable, IWorldObject
     /**
      * Calculates the position vector for rendering
      */
-    public void calculatePositionForRender(Vector3d vec, float transition)
-    {
+    public void calculatePositionForRender(Vector3d vec, float transition) {
         BasicComponent component = this.basic;
 
         component.prevPosition.lerp(component.position, transition, vec);
     }
 
-    public Matrix4f getMatrixForRender(Camera camera, float transition)
-    {
+    public Matrix4f getMatrixForRender(Camera camera, float transition) {
         this.calculatePositionForRender(vector, transition);
 
         return this.transform.identity().translate(camera.getRelative(vector));
     }
 
-    public Matrix4f getMatrixForRenderWithRotation(Camera camera, float transition)
-    {
+    public Matrix4f getMatrixForRenderWithRotation(Camera camera, float transition) {
         BasicComponent component = this.basic;
         float yaw = (float) Math.PI - Interpolations.lerp(component.prevRotation.z, component.rotation.z, transition);
 
         return this.getMatrixForRender(camera, transition).rotateY(yaw);
     }
 
-    public void render(RenderingContext context)
-    {
-        for (IRenderableComponent component : this.renderables)
-        {
+    public void render(RenderingContext context) {
+        for (IRenderableComponent component : this.renderables) {
             component.render(context);
         }
 
-        if (context.isDebug())
-        {
+        if (context.isDebug()) {
             Vector3d vec = Vectors.TEMP_3D.set(0, 0, 0);
             BasicComponent basic = this.basic;
 

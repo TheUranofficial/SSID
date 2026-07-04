@@ -9,18 +9,15 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 import java.util.HashSet;
 import java.util.function.Consumer;
 
-public class UIEditWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel
-{
-    public UIEditWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback)
-    {
+public class UIEditWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel {
+    public UIEditWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback) {
         super(blocks, callback, new HashSet<>());
 
         this.submit.label = UIKeys.EDIT_WORLD_SUBMIT;
     }
 
     @Override
-    protected void rebuild()
-    {
+    protected void rebuild() {
         int color = Colors.A50 | BBSSettings.primaryColor.get();
 
         this.view.removeAll();
@@ -28,8 +25,7 @@ public class UIEditWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_CHUNKS).marginTop(6), this.chunks);
         this.view.add(UI.label(UIKeys.EDIT_WORLD_CHUNK_LIMIT).background(color).marginBottom(6).marginTop(6), this.x.marginBottom(6));
 
-        if (!this.column.getValue())
-        {
+        if (!this.column.getValue()) {
             this.view.add(this.y.marginBottom(6));
         }
 
@@ -40,14 +36,12 @@ public class UIEditWorldMetadataOverlayPanel extends UIWorldMetadataOverlayPanel
     }
 
     @Override
-    protected boolean cannotSubmitWorldId()
-    {
+    protected boolean cannotSubmitWorldId() {
         return false;
     }
 
     @Override
-    protected boolean cannotSubmitWithEmptyGeneratorValues()
-    {
+    protected boolean cannotSubmitWithEmptyGeneratorValues() {
         return false;
     }
 }

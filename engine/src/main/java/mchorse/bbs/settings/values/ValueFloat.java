@@ -12,27 +12,22 @@ import mchorse.bbs.utils.math.MathUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueFloat extends BaseValueNumber<Float> implements IValueUIProvider
-{
-    public ValueFloat(String id, Float defaultValue)
-    {
+public class ValueFloat extends BaseValueNumber<Float> implements IValueUIProvider {
+    public ValueFloat(String id, Float defaultValue) {
         this(id, defaultValue, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
     }
 
-    public ValueFloat(String id, Float defaultValue, Float min, Float max)
-    {
+    public ValueFloat(String id, Float defaultValue, Float min, Float max) {
         super(id, defaultValue, min, max);
     }
 
     @Override
-    protected Float clamp(Float value)
-    {
+    protected Float clamp(Float value) {
         return MathUtils.clamp(value, this.min, this.max);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UITrackpad trackpad = UIValueFactory.floatUI(this, null);
 
         trackpad.w(90);
@@ -41,23 +36,19 @@ public class ValueFloat extends BaseValueNumber<Float> implements IValueUIProvid
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new FloatType(this.value);
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (data.isNumeric())
-        {
+    public void fromData(BaseType data) {
+        if (data.isNumeric()) {
             this.value = data.asNumeric().floatValue();
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Float.toString(this.value);
     }
 }

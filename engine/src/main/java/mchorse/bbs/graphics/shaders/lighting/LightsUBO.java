@@ -9,19 +9,16 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightsUBO extends UBO
-{
+public class LightsUBO extends UBO {
     private final List<Light> lights = new ArrayList<>();
     private ByteBuffer buffer = MemoryUtil.memAlloc((int) this.size());
 
-    public LightsUBO(int unit)
-    {
+    public LightsUBO(int unit) {
         super(unit);
     }
 
     @Override
-    protected long size()
-    {
+    protected long size() {
         /* Size explanation:
          *
          * - Length = 4 bytes for int + 12 bytes padding
@@ -35,18 +32,15 @@ public class LightsUBO extends UBO
         return 16 + (8 * 4) * 20;
     }
 
-    public void clear()
-    {
+    public void clear() {
         this.lights.clear();
     }
 
-    public void addLight(Light light)
-    {
+    public void addLight(Light light) {
         this.lights.add(light);
     }
 
-    public void submitLights()
-    {
+    public void submitLights() {
         int size = this.lights.size();
 
         this.buffer.clear();
@@ -55,8 +49,7 @@ public class LightsUBO extends UBO
         this.buffer.putFloat(0);
         this.buffer.putFloat(0);
 
-        for (Light light : lights)
-        {
+        for (Light light : lights) {
             this.buffer.putFloat(light.position.x);
             this.buffer.putFloat(light.position.y);
             this.buffer.putFloat(light.position.z);

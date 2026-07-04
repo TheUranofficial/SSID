@@ -10,14 +10,12 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.world.entities.UIVector3d;
 import mchorse.bbs.world.entities.components.FormComponent;
 
-public class UIFormEntityComponent extends UIEntityComponent<FormComponent>
-{
+public class UIFormEntityComponent extends UIEntityComponent<FormComponent> {
     public UINestedEdit form;
     public UINestedEdit firstPersonForm;
     public UIVector3d firstPersonOffset;
 
-    public UIFormEntityComponent(FormComponent component)
-    {
+    public UIFormEntityComponent(FormComponent component) {
         super(component);
 
         this.form = new UINestedEdit((editing) ->
@@ -25,8 +23,7 @@ public class UIFormEntityComponent extends UIEntityComponent<FormComponent>
             UIContext context = this.getContext();
             UIFormPalette palette = UIFormPalette.open(context.menu.overlay, editing, this.component.form, this::setForm);
 
-            if (palette != null)
-            {
+            if (palette != null) {
                 context.menu.main.setVisible(false);
 
                 palette.getEvents().register(UIRemovedEvent.class, (e) ->
@@ -42,8 +39,7 @@ public class UIFormEntityComponent extends UIEntityComponent<FormComponent>
             UIContext context = this.getContext();
             UIFormPalette palette = UIFormPalette.open(context.menu.overlay, editing, this.component.firstPersonForm, this::setFirstPersonForm);
 
-            if (palette != null)
-            {
+            if (palette != null) {
                 context.menu.main.setVisible(false);
 
                 palette.getEvents().register(UIRemovedEvent.class, (e) ->
@@ -61,14 +57,12 @@ public class UIFormEntityComponent extends UIEntityComponent<FormComponent>
         this.add(UI.label(UIKeys.ENTITIES_COMPONENTS_FORM_FIRST_PERSON_OFFSET).marginTop(4), this.firstPersonOffset);
     }
 
-    private void setForm(Form form)
-    {
+    private void setForm(Form form) {
         this.component.form = form;
         this.form.setForm(form);
     }
 
-    private void setFirstPersonForm(Form form)
-    {
+    private void setFirstPersonForm(Form form) {
         this.component.firstPersonForm = form;
         this.firstPersonForm.setForm(form);
     }

@@ -12,38 +12,33 @@ import mchorse.bbs.utils.math.Interpolations;
 /**
  * Solid color (not necessarily static)
  */
-public class Solid extends Tint
-{
+public class Solid extends Tint {
     public MolangExpression r;
     public MolangExpression g;
     public MolangExpression b;
     public MolangExpression a;
 
-    public Solid()
-    {
+    public Solid() {
         this.r = MolangParser.ONE;
         this.g = MolangParser.ONE;
         this.b = MolangParser.ONE;
         this.a = MolangParser.ONE;
     }
 
-    public Solid(MolangExpression r, MolangExpression g, MolangExpression b, MolangExpression a)
-    {
+    public Solid(MolangExpression r, MolangExpression g, MolangExpression b, MolangExpression a) {
         this.r = r;
         this.g = g;
         this.b = b;
         this.a = a;
     }
 
-    public boolean isConstant()
-    {
+    public boolean isConstant() {
         return MolangExpression.isExpressionConstant(this.r) && MolangExpression.isExpressionConstant(this.g)
             && MolangExpression.isExpressionConstant(this.b) && MolangExpression.isExpressionConstant(this.a);
     }
 
     @Override
-    public void compute(Particle particle)
-    {
+    public void compute(Particle particle) {
         particle.r = (float) this.r.get();
         particle.g = (float) this.g.get();
         particle.b = (float) this.b.get();
@@ -51,12 +46,10 @@ public class Solid extends Tint
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         ListType list = new ListType();
 
-        if (MolangExpression.isOne(this.r) && MolangExpression.isOne(this.g) && MolangExpression.isOne(this.b) && MolangExpression.isOne(this.a))
-        {
+        if (MolangExpression.isOne(this.r) && MolangExpression.isOne(this.g) && MolangExpression.isOne(this.b) && MolangExpression.isOne(this.a)) {
             return list;
         }
 
@@ -68,8 +61,7 @@ public class Solid extends Tint
         return list;
     }
 
-    public BaseType toHexData()
-    {
+    public BaseType toHexData() {
         int r = (int) (this.r.get() * 255) & 0xff;
         int g = (int) (this.g.get() * 255) & 0xff;
         int b = (int) (this.b.get() * 255) & 0xff;
@@ -77,8 +69,7 @@ public class Solid extends Tint
 
         String hex = "#";
 
-        if (a < 255)
-        {
+        if (a < 255) {
             hex += StringUtils.leftPad(Integer.toHexString(a), 2, "0").toUpperCase();
         }
 
@@ -89,8 +80,7 @@ public class Solid extends Tint
         return new StringType(hex);
     }
 
-    public void lerp(Particle particle, float factor)
-    {
+    public void lerp(Particle particle, float factor) {
         particle.r = Interpolations.lerp(particle.r, (float) this.r.get(), factor);
         particle.g = Interpolations.lerp(particle.g, (float) this.g.get(), factor);
         particle.b = Interpolations.lerp(particle.b, (float) this.b.get(), factor);

@@ -1,6 +1,5 @@
 package mchorse.bbs.utils.keyframes;
 
-public enum KeyframeEasing
-{
+public enum KeyframeEasing {
     IN, OUT, INOUT;
 }

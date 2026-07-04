@@ -9,22 +9,18 @@ import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentLocalSpace extends ParticleComponentBase implements IComponentParticleInitialize
-{
+public class ParticleComponentLocalSpace extends ParticleComponentBase implements IComponentParticleInitialize {
     public boolean position;
     public boolean rotation;
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         if (this.position) data.putBool("position", true);
         if (this.rotation) data.putBool("rotation", true);
     }
 
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
@@ -37,8 +33,7 @@ public class ParticleComponentLocalSpace extends ParticleComponentBase implement
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
+    public void apply(ParticleEmitter emitter, Particle particle) {
         particle.relativePosition = this.position;
         particle.relativeRotation = this.rotation;
 
@@ -46,8 +41,7 @@ public class ParticleComponentLocalSpace extends ParticleComponentBase implement
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 1000;
     }
 }

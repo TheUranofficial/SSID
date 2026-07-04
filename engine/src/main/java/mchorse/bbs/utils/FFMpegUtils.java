@@ -6,16 +6,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FFMpegUtils
-{
-    public static boolean execute(File folder, String... arguments)
-    {
+public class FFMpegUtils {
+    public static boolean execute(File folder, String... arguments) {
         List<String> args = new ArrayList<String>();
 
         args.add(BBSSettings.videoEncoderPath.get());
 
-        for (String arg : arguments)
-        {
+        for (String arg : arguments) {
             args.add(arg);
         }
 
@@ -23,14 +20,11 @@ public class FFMpegUtils
 
         builder.directory(folder);
 
-        try
-        {
+        try {
             Process start = builder.start();
 
             return start.waitFor() == 0;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

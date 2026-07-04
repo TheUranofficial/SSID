@@ -15,15 +15,13 @@ import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIFontFormatsOverlayPanel extends UIOverlayPanel
-{
+public class UIFontFormatsOverlayPanel extends UIOverlayPanel {
     public UIScrollView list;
     public UIIcon add;
 
     private Font font;
 
-    public UIFontFormatsOverlayPanel(Font font)
-    {
+    public UIFontFormatsOverlayPanel(Font font) {
         super(UIKeys.FONT_EDITOR_CODES_TITLE);
 
         this.font = font;
@@ -35,8 +33,7 @@ public class UIFontFormatsOverlayPanel extends UIOverlayPanel
         {
             this.getContext().replaceContextMenu((menu) ->
             {
-                for (String key : BBS.getFactoryFontFormats().getStringKeys())
-                {
+                for (String key : BBS.getFactoryFontFormats().getStringKeys()) {
                     menu.action(Icons.ADD, UIKeys.FONT_EDITOR_CODES_CONTEXT_ADD.format(UIKeys.C_FONT_FORMAT.get(key)), () ->
                     {
                         char available = this.getAvailableControlCharacter();
@@ -55,28 +52,23 @@ public class UIFontFormatsOverlayPanel extends UIOverlayPanel
         this.icons.add(this.add);
         this.content.add(this.list);
 
-        for (IFontFormat format : font.formats.values())
-        {
+        for (IFontFormat format : font.formats.values()) {
             this.addFormatPanel(format);
         }
     }
 
-    private char getAvailableControlCharacter()
-    {
+    private char getAvailableControlCharacter() {
         char start = 'A';
 
-        while (this.font.formats.containsKey(start))
-        {
+        while (this.font.formats.containsKey(start)) {
             start += 1;
         }
 
         return start;
     }
 
-    private void addFormatPanel(IFontFormat format)
-    {
-        try
-        {
+    private void addFormatPanel(IFontFormat format) {
+        try {
             Class<? extends UIBaseFontFormat> clazz = BBS.getFactoryFontFormats().getData(format);
             UIBaseFontFormat formatUI = clazz.getConstructor().newInstance();
 
@@ -92,9 +84,7 @@ public class UIFontFormatsOverlayPanel extends UIOverlayPanel
             });
 
             this.list.add(formatUI);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

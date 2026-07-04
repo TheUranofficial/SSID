@@ -13,19 +13,17 @@ import mchorse.bbs.world.entities.Entity;
 
 /**
  * Look modifier
- * 
- * This modifier locks fixture's angle so it would always look in the 
+ * <p>
+ * This modifier locks fixture's angle so it would always look in the
  * direction of entity. Relative yaw and pitch is also supported.
  */
-public class LookClip extends EntityClip
-{
+public class LookClip extends EntityClip {
     public final ValueBoolean relative = new ValueBoolean("relative");
     public final ValueBoolean atBlock = new ValueBoolean("atBlock");
     public final ValueBoolean forward = new ValueBoolean("forward");
     public final ValuePoint block = new ValuePoint("block", new Point(0, 0, 0));
 
-    public LookClip()
-    {
+    public LookClip() {
         super();
 
         this.add(this.relative);
@@ -35,30 +33,25 @@ public class LookClip extends EntityClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
-        if (this.checkForDead())
-        {
+    public void applyClip(ClipContext context, Position position) {
+        if (this.checkForDead()) {
             this.tryFindingEntity(context.bridge.get(IBridgeWorld.class).getWorld());
         }
 
         boolean atBlock = this.atBlock.get();
         boolean forward = this.forward.get();
 
-        if (this.entities == null && !(atBlock || forward))
-        {
+        if (this.entities == null && !(atBlock || forward)) {
             return;
         }
 
         boolean wasModified = false;
 
-        if (forward && context.applyUnderneath(context.ticks - 1, context.transition, this.position))
-        {
+        if (forward && context.applyUnderneath(context.ticks - 1, context.transition, this.position)) {
             wasModified = true;
         }
 
-        if (!wasModified)
-        {
+        if (!wasModified) {
             this.position.copy(position);
         }
 
@@ -66,20 +59,16 @@ public class LookClip extends EntityClip
         double y = 0;
         double z = 0;
 
-        if (atBlock)
-        {
+        if (atBlock) {
             Point block = this.block.get();
 
             x = block.x;
             y = block.y;
             z = block.z;
-        }
-        else if (!forward)
-        {
+        } else if (!forward) {
             double size = this.entities.size();
 
-            for (Entity entity : this.entities)
-            {
+            for (Entity entity : this.entities) {
                 x += Interpolations.lerp(entity.basic.prevPosition.x, entity.basic.position.x, context.transition) / size;
                 y += Interpolations.lerp(entity.basic.prevPosition.y, entity.basic.position.y, context.transition) / size;
                 z += Interpolations.lerp(entity.basic.prevPosition.z, entity.basic.position.z, context.transition) / size;
@@ -96,8 +85,7 @@ public class LookClip extends EntityClip
         double dY = y - position.point.y;
         double dZ = z - position.point.z;
 
-        if (forward)
-        {
+        if (forward) {
             dX = position.point.x - this.position.point.x;
             dY = position.point.y - this.position.point.y;
             dZ = position.point.z - this.position.point.z;
@@ -108,8 +96,7 @@ public class LookClip extends EntityClip
         float yaw = angle.yaw;
         float pitch = angle.pitch;
 
-        if (this.relative.get() && !forward)
-        {
+        if (this.relative.get() && !forward) {
             yaw += position.angle.yaw - this.position.angle.yaw;
             pitch += position.angle.pitch - this.position.angle.pitch;
         }
@@ -118,8 +105,7 @@ public class LookClip extends EntityClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new LookClip();
     }
 }

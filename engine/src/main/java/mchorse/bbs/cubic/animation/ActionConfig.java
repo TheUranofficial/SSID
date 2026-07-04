@@ -5,32 +5,27 @@ import mchorse.bbs.data.types.MapType;
 
 import java.util.Objects;
 
-public class ActionConfig implements IMapSerializable
-{
+public class ActionConfig implements IMapSerializable {
     public String name = "";
     public boolean loop = true;
     public float speed = 1;
     public float fade = 5;
     public int tick = 0;
 
-    public ActionConfig()
-    {}
+    public ActionConfig() {
+    }
 
-    public ActionConfig(String name)
-    {
+    public ActionConfig(String name) {
         this.name = name;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof ActionConfig)
-        {
+        if (obj instanceof ActionConfig) {
             ActionConfig config = (ActionConfig) obj;
 
             return Objects.equals(this.name, config.name)
@@ -44,8 +39,7 @@ public class ActionConfig implements IMapSerializable
     }
 
     @Override
-    public ActionConfig clone()
-    {
+    public ActionConfig clone() {
         ActionConfig config = new ActionConfig(this.name);
 
         config.loop = this.loop;
@@ -56,19 +50,16 @@ public class ActionConfig implements IMapSerializable
         return config;
     }
 
-    public boolean isDefault(String key)
-    {
+    public boolean isDefault(String key) {
         return this.isDefault() && this.name.equals(key);
     }
 
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return this.loop && this.speed == 1 && this.fade == 5 && this.tick == 0;
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putString("name", this.name);
         data.putBool("loop", this.loop);
         data.putFloat("speed", this.speed);
@@ -77,8 +68,7 @@ public class ActionConfig implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.name = data.getString("name");
         this.loop = data.getBool("loop");
         this.speed = data.getFloat("speed");

@@ -7,12 +7,10 @@ import mchorse.bbs.ui.world.UIBlockVariant;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 
-public class UIBlockFormPanel extends UIFormPanel<BlockForm>
-{
+public class UIBlockFormPanel extends UIFormPanel<BlockForm> {
     public UIBlockVariant block;
 
-    public UIBlockFormPanel(UIForm<BlockForm> editor)
-    {
+    public UIBlockFormPanel(UIForm<BlockForm> editor) {
         super(editor);
 
         this.block = new UIBlockVariant((b) -> this.form.block.set(b.getLink()));
@@ -22,8 +20,7 @@ public class UIBlockFormPanel extends UIFormPanel<BlockForm>
     }
 
     @Override
-    public void startEdit(BlockForm form)
-    {
+    public void startEdit(BlockForm form) {
         super.startEdit(form);
 
         ChunkBuilder builder = this.editor.getContext().menu.bridge.get(IBridgeWorld.class).getChunkBuilder();

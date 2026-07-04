@@ -2,12 +2,11 @@ package mchorse.bbs.utils.undo;
 
 /**
  * An undo entry in the UndoManager
- *
+ * <p>
  * This represents a single operation that can be either undone or redone.
  * The generic represents context upon which this undo acts upon.
  */
-public interface IUndo <T>
-{
+public interface IUndo<T> {
     /**
      * Mark undo as unmergable
      */

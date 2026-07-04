@@ -14,13 +14,12 @@ import java.util.List;
 
 /**
  * Abstract entity modifier
- * 
- * Abstract class for any new modifiers which are going to use entity 
- * selector to fetch an entity and apply some modifications to the path 
+ * <p>
+ * Abstract class for any new modifiers which are going to use entity
+ * selector to fetch an entity and apply some modifications to the path
  * based on the entity.
  */
-public abstract class EntityClip extends CameraClip
-{
+public abstract class EntityClip extends CameraClip {
     /**
      * Position which may be used for calculation of relative
      * camera fixture animations
@@ -40,8 +39,7 @@ public abstract class EntityClip extends CameraClip
     public final ValueString selector = new ValueString("selector", "");
     public final ValuePoint offset = new ValuePoint("offset", new Point(0, 0, 0));
 
-    public EntityClip()
-    {
+    public EntityClip() {
         super();
 
         this.add(this.selector);
@@ -51,8 +49,7 @@ public abstract class EntityClip extends CameraClip
     /**
      * Try finding entity based on entity selector or target's UUID
      */
-    public void tryFindingEntity(World world)
-    {
+    public void tryFindingEntity(World world) {
         this.entities = null;
 
         this.tryFindingEntityClient(world, this.selector.get());
@@ -61,16 +58,13 @@ public abstract class EntityClip extends CameraClip
     /**
      * Fancier targeting mechanism
      */
-    private void tryFindingEntityClient(World world, String selector)
-    {
+    private void tryFindingEntityClient(World world, String selector) {
         selector = selector.trim();
 
         List<Entity> entities = new ArrayList<>();
 
-        for (Entity entity : world.entities)
-        {
-            if (entity.id.equals(selector))
-            {
+        for (Entity entity : world.entities) {
+            if (entity.id.equals(selector)) {
                 entities.add(entity);
             }
         }
@@ -81,27 +75,22 @@ public abstract class EntityClip extends CameraClip
     /**
      * Check for dead entities
      */
-    protected boolean checkForDead()
-    {
-        if (this.entities == null)
-        {
+    protected boolean checkForDead() {
+        if (this.entities == null) {
             return true;
         }
 
         Iterator<Entity> it = this.entities.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Entity entity = it.next();
 
-            if (entity.isRemoved())
-            {
+            if (entity.isRemoved()) {
                 it.remove();
             }
         }
 
-        if (this.entities.isEmpty())
-        {
+        if (this.entities.isEmpty()) {
             this.entities = null;
         }
 

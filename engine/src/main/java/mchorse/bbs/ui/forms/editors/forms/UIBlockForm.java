@@ -5,10 +5,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.panels.UIBlockFormPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UIBlockForm extends UIForm<BlockForm>
-{
-    public UIBlockForm()
-    {
+public class UIBlockForm extends UIForm<BlockForm> {
+    public UIBlockForm() {
         super();
 
         this.defaultPanel = new UIBlockFormPanel(this);

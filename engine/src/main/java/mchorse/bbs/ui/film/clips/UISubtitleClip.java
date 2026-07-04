@@ -10,8 +10,7 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.world.objects.objects.UIPropTransform;
 import mchorse.bbs.utils.Direction;
 
-public class UISubtitleClip extends UIClip<SubtitleClip>
-{
+public class UISubtitleClip extends UIClip<SubtitleClip> {
     public UITrackpad x;
     public UITrackpad y;
     public UITrackpad size;
@@ -28,14 +27,12 @@ public class UISubtitleClip extends UIClip<SubtitleClip>
     public UITrackpad lineHeight;
     public UITrackpad maxWidth;
 
-    public UISubtitleClip(SubtitleClip clip, IUIClipsDelegate editor)
-    {
+    public UISubtitleClip(SubtitleClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.x = new UITrackpad((v) -> this.clip.x.set(v.intValue()));
@@ -105,8 +102,7 @@ public class UISubtitleClip extends UIClip<SubtitleClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_SUBTITLE_OFFSET).marginTop(6), UI.row(this.x, this.y));
@@ -120,8 +116,7 @@ public class UISubtitleClip extends UIClip<SubtitleClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.x.setValue(this.clip.x.get());

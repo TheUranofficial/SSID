@@ -9,8 +9,7 @@ import mchorse.bbs.world.entities.components.BasicComponent;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReplayKeyframes extends ValueGroup
-{
+public class ReplayKeyframes extends ValueGroup {
     public static final String GROUP_POSITION = "position";
     public static final String GROUP_ROTATION = "rotation";
     public static final String GROUP_LEFT_STICK = "lstick";
@@ -50,8 +49,7 @@ public class ReplayKeyframes extends ValueGroup
     public final KeyframeChannel extra2X = new KeyframeChannel("extra2_x");
     public final KeyframeChannel extra2Y = new KeyframeChannel("extra2_y");
 
-    public ReplayKeyframes(String id)
-    {
+    public ReplayKeyframes(String id) {
         super(id);
 
         this.add(this.x);
@@ -78,8 +76,7 @@ public class ReplayKeyframes extends ValueGroup
         this.add(this.extra2Y);
     }
 
-    public void record(int tick, Entity entity, List<String> groups)
-    {
+    public void record(int tick, Entity entity, List<String> groups) {
         BasicComponent basic = entity.basic;
 
         boolean empty = groups == null || groups.isEmpty();
@@ -92,8 +89,7 @@ public class ReplayKeyframes extends ValueGroup
         boolean extra2 = empty || groups.contains(GROUP_EXTRA2);
 
         /* Position and rotation */
-        if (position)
-        {
+        if (position) {
             this.x.insert(tick, basic.position.x);
             this.y.insert(tick, basic.position.y);
             this.z.insert(tick, basic.position.z);
@@ -108,8 +104,7 @@ public class ReplayKeyframes extends ValueGroup
         this.sneaking.insert(tick, basic.sneak ? 1D : 0D);
         this.grounded.insert(tick, basic.grounded ? 1D : 0D);
 
-        if (rotation)
-        {
+        if (rotation) {
             this.yaw.insert(tick, basic.rotation.y);
             this.pitch.insert(tick, basic.rotation.x);
             this.bodyYaw.insert(tick, basic.rotation.z);
@@ -117,34 +112,28 @@ public class ReplayKeyframes extends ValueGroup
 
         PlayerComponent component = entity.get(PlayerComponent.class);
 
-        if (component != null)
-        {
-            if (leftStick)
-            {
+        if (component != null) {
+            if (leftStick) {
                 this.stickLeftX.insert(tick, component.sticks[0]);
                 this.stickLeftY.insert(tick, component.sticks[1]);
             }
 
-            if (rightStick)
-            {
+            if (rightStick) {
                 this.stickRightX.insert(tick, component.sticks[2]);
                 this.stickRightY.insert(tick, component.sticks[3]);
             }
 
-            if (triggers)
-            {
+            if (triggers) {
                 this.triggerLeft.insert(tick, component.sticks[4]);
                 this.triggerRight.insert(tick, component.sticks[5]);
             }
 
-            if (extra1)
-            {
+            if (extra1) {
                 this.extra1X.insert(tick, component.sticks[6]);
                 this.extra1Y.insert(tick, component.sticks[7]);
             }
 
-            if (extra2)
-            {
+            if (extra2) {
                 this.extra2X.insert(tick, component.sticks[8]);
                 this.extra2Y.insert(tick, component.sticks[9]);
             }
@@ -154,8 +143,7 @@ public class ReplayKeyframes extends ValueGroup
     /**
      * Apply a frame at given tick on the given entity.
      */
-    public void apply(int tick, Entity entity, List<String> groups)
-    {
+    public void apply(int tick, Entity entity, List<String> groups) {
         BasicComponent basic = entity.basic;
         boolean empty = groups == null || groups.isEmpty();
         boolean position = empty || !groups.contains(GROUP_POSITION);
@@ -166,15 +154,13 @@ public class ReplayKeyframes extends ValueGroup
         boolean extra1 = empty || !groups.contains(GROUP_EXTRA1);
         boolean extra2 = empty || !groups.contains(GROUP_EXTRA2);
 
-        if (position)
-        {
+        if (position) {
             basic.setPosition(this.x.interpolate(tick), this.y.interpolate(tick), this.z.interpolate(tick));
             basic.velocity.set((float) this.vX.interpolate(tick), (float) this.vY.interpolate(tick), (float) this.vZ.interpolate(tick));
             basic.fall = (float) this.fall.interpolate(tick);
         }
 
-        if (rotation)
-        {
+        if (rotation) {
             basic.setRotation((float) this.pitch.interpolate(tick), (float) this.yaw.interpolate(tick));
             basic.rotation.z = (float) this.bodyYaw.interpolate(tick);
         }
@@ -185,34 +171,28 @@ public class ReplayKeyframes extends ValueGroup
 
         PlayerComponent component = entity.get(PlayerComponent.class);
 
-        if (component != null)
-        {
-            if (leftStick)
-            {
+        if (component != null) {
+            if (leftStick) {
                 component.sticks[0] = (float) this.stickLeftX.interpolate(tick);
                 component.sticks[1] = (float) this.stickLeftY.interpolate(tick);
             }
 
-            if (rightStick)
-            {
+            if (rightStick) {
                 component.sticks[2] = (float) this.stickRightX.interpolate(tick);
                 component.sticks[3] = (float) this.stickRightY.interpolate(tick);
             }
 
-            if (triggers)
-            {
+            if (triggers) {
                 component.sticks[4] = (float) this.triggerLeft.interpolate(tick);
                 component.sticks[5] = (float) this.triggerRight.interpolate(tick);
             }
 
-            if (extra1)
-            {
+            if (extra1) {
                 component.sticks[6] = (float) this.extra1X.interpolate(tick);
                 component.sticks[7] = (float) this.extra1Y.interpolate(tick);
             }
 
-            if (extra2)
-            {
+            if (extra2) {
                 component.sticks[8] = (float) this.extra2X.interpolate(tick);
                 component.sticks[9] = (float) this.extra2Y.interpolate(tick);
             }

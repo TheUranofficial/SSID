@@ -4,22 +4,17 @@ import mchorse.bbs.BBSSettings;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.utils.StringUtils;
 
-public class TimeUtils
-{
-    public static int toTick(float seconds)
-    {
+public class TimeUtils {
+    public static int toTick(float seconds) {
         return (int) (seconds * 20);
     }
 
-    public static float toSeconds(int tick)
-    {
+    public static float toSeconds(int tick) {
         return tick / 20F;
     }
 
-    public static String formatTime(long ticks)
-    {
-        if (BBSSettings.editorSeconds.get())
-        {
+    public static String formatTime(long ticks) {
+        if (BBSSettings.editorSeconds.get()) {
             long seconds = (long) (ticks / 20D);
             int milliseconds = (int) (ticks % 20 == 0 ? 0 : ticks % 20 * 5D);
 
@@ -29,24 +24,18 @@ public class TimeUtils
         return String.valueOf(ticks);
     }
 
-    public static double toTime(int ticks)
-    {
+    public static double toTime(int ticks) {
         return BBSSettings.editorSeconds.get() ? ticks / 20D : ticks;
     }
 
-    public static int fromTime(double time)
-    {
+    public static int fromTime(double time) {
         return BBSSettings.editorSeconds.get() ? (int) Math.round(time * 20) : (int) time;
     }
 
-    public static void configure(UITrackpad element, int defaultValue)
-    {
-        if (BBSSettings.editorSeconds.get())
-        {
+    public static void configure(UITrackpad element, int defaultValue) {
+        if (BBSSettings.editorSeconds.get()) {
             element.values(0.1D, 0.05D, 0.25D).limit(defaultValue / 20D, Double.POSITIVE_INFINITY, false);
-        }
-        else
-        {
+        } else {
             element.values(1.0D).limit(defaultValue, Double.POSITIVE_INFINITY, true);
         }
     }

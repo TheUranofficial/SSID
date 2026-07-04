@@ -4,8 +4,7 @@ import mchorse.bbs.data.DataStorageContext;
 
 import java.io.IOException;
 
-public abstract class BaseType
-{
+public abstract class BaseType {
     public static final byte TYPE_MAP = 0;
     public static final byte TYPE_LIST = 1;
     public static final byte TYPE_STRING = 2;
@@ -19,8 +18,7 @@ public abstract class BaseType
     public static final byte TYPE_SHORT_ARRAY = 10;
     public static final byte TYPE_INT_ARRAY = 11;
 
-    public static BaseType fromData(DataStorageContext context) throws IOException
-    {
+    public static BaseType fromData(DataStorageContext context) throws IOException {
         byte type = context.in.readByte();
         BaseType output = null;
 
@@ -37,8 +35,7 @@ public abstract class BaseType
         else if (type == TYPE_SHORT_ARRAY) output = new ShortArrayType();
         else if (type == TYPE_INT_ARRAY) output = new IntArrayType();
 
-        if (output != null)
-        {
+        if (output != null) {
             output.read(context);
 
             return output;
@@ -47,82 +44,67 @@ public abstract class BaseType
         throw new IllegalStateException("Data type " + type + " doesn't exist!");
     }
 
-    public static void toData(DataStorageContext context, BaseType type) throws IOException
-    {
+    public static void toData(DataStorageContext context, BaseType type) throws IOException {
         context.out.writeByte(type.getTypeId());
         type.write(context);
     }
 
-    public static boolean isMap(BaseType data)
-    {
+    public static boolean isMap(BaseType data) {
         return is(data, TYPE_MAP);
     }
 
-    public static boolean isList(BaseType data)
-    {
+    public static boolean isList(BaseType data) {
         return is(data, TYPE_LIST);
     }
 
-    public static boolean isString(BaseType data)
-    {
+    public static boolean isString(BaseType data) {
         return is(data, TYPE_STRING);
     }
 
-    public static boolean isNumeric(BaseType data)
-    {
+    public static boolean isNumeric(BaseType data) {
         return data instanceof NumericType;
     }
 
-    public static boolean isPrimitive(BaseType data)
-    {
+    public static boolean isPrimitive(BaseType data) {
         return isString(data) || isNumeric(data);
     }
 
-    public static boolean is(BaseType data, byte type)
-    {
+    public static boolean is(BaseType data, byte type) {
         return data != null && data.getTypeId() == type;
     }
 
-    public void traverseKeys(DataStorageContext context)
-    {}
+    public void traverseKeys(DataStorageContext context) {
+    }
 
-    public boolean isMap()
-    {
+    public boolean isMap() {
         return this instanceof MapType;
     }
 
-    public boolean isList()
-    {
+    public boolean isList() {
         return this instanceof ListType;
     }
 
-    public boolean isString()
-    {
+    public boolean isString() {
         return this instanceof StringType;
     }
 
-    public boolean isNumeric()
-    {
+    public boolean isNumeric() {
         return this instanceof NumericType;
     }
 
-    public MapType asMap()
-    {
+    public MapType asMap() {
         return (MapType) this;
     }
 
-    public ListType asList()
-    {
+    public ListType asList() {
         return (ListType) this;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return ((StringType) this).value;
     }
 
-    public NumericType asNumeric()
-    {
+    public NumericType asNumeric() {
         return (NumericType) this;
     }
 

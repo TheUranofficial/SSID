@@ -37,10 +37,10 @@ void main()
 
     if (texture(u_depth, uv).r == 1.0) return;
 
-    vec3 position     = texture(u_position, uv).xyz;
-    vec3 normal       = texture(u_normal, uv).xyz;
+    vec3 position = texture(u_position, uv).xyz;
+    vec3 normal = texture(u_normal, uv).xyz;
     vec3 viewPosition = (u_view * vec4(position, 1.0)).xyz;
-    vec3 viewNormal   = (u_view * vec4(normal  , 1.0)).xyz;
+    vec3 viewNormal = (u_view * vec4(normal, 1.0)).xyz;
 
     float ao = computeSSAO(viewPosition, viewNormal);
 
@@ -60,7 +60,7 @@ void main()
     out_ao.b = log2(prevPosition.z);
 
     bool  offscreen = saturate(prevPosition.xy) != prevPosition.xy;
-    float weight    = saturate(1.0 / max(out_ao.g, 1.0));
+    float weight = saturate(1.0 / max(out_ao.g, 1.0));
 
     out_ao.r = saturate(mix(out_ao.r, ao, offscreen ? 1.0 : weight));
     out_ao.a = 1.0;

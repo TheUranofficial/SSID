@@ -13,8 +13,7 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeExpirationSection extends UIParticleSchemeSection
-{
+public class UIParticleSchemeExpirationSection extends UIParticleSchemeSection {
     public UICirculate mode;
     public UIButton expression;
 
@@ -28,8 +27,7 @@ public class UIParticleSchemeExpirationSection extends UIParticleSchemeSection
     private ParticleComponentExpireInBlocks inBlocks;
     private ParticleComponentExpireNotInBlocks notInBlocks;
 
-    public UIParticleSchemeExpirationSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeExpirationSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.mode = new UICirculate((b) ->
@@ -80,22 +78,19 @@ public class UIParticleSchemeExpirationSection extends UIParticleSchemeSection
         this.fields.add(UI.row(5, 0, 20, this.c, this.d));
     }
 
-    private void updateTooltip()
-    {
+    private void updateTooltip() {
         this.expression.tooltip(this.lifetime.max
             ? UIKeys.SNOWSTORM_EXPIRATION_MAX_TOOLTIP
             : UIKeys.SNOWSTORM_EXPIRATION_EXPRESSION_TOOLTIP);
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_EXPIRATION_TITLE;
     }
 
     @Override
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         super.setScheme(scheme);
 
         this.lifetime = scheme.getOrCreate(ParticleComponentParticleLifetime.class);

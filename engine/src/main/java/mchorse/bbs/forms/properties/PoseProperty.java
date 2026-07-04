@@ -1,13 +1,11 @@
 package mchorse.bbs.forms.properties;
 
 import mchorse.bbs.forms.forms.Form;
-import mchorse.bbs.utils.pose.Pose;
 import mchorse.bbs.utils.keyframes.generic.factories.KeyframeFactories;
+import mchorse.bbs.utils.pose.Pose;
 
-public class PoseProperty extends BaseTweenProperty<Pose>
-{
-    public PoseProperty(Form form, String key, Pose value)
-    {
+public class PoseProperty extends BaseTweenProperty<Pose> {
+    public PoseProperty(Form form, String key, Pose value) {
         super(form, key, value, KeyframeFactories.POSE);
     }
 }

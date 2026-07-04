@@ -8,8 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class BaseValue implements IDataSerializable<BaseType>
-{
+public abstract class BaseValue implements IDataSerializable<BaseType> {
     protected String id;
     protected BaseValue parent;
 
@@ -17,10 +16,8 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
     private List<Consumer<BaseValue>> preCallbacks;
     private List<Consumer<BaseValue>> postCallbacks;
 
-    public static <T extends BaseValue> void edit(T value, Consumer<T> callback)
-    {
-        if (callback == null)
-        {
+    public static <T extends BaseValue> void edit(T value, Consumer<T> callback) {
+        if (callback == null) {
             return;
         }
 
@@ -29,30 +26,25 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         value.postNotifyParent();
     }
 
-    public BaseValue(String id)
-    {
+    public BaseValue(String id) {
         this.setId(id);
     }
 
     /**
      * Don't use it without a reason!
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public BaseValue invisible()
-    {
+    public BaseValue invisible() {
         this.visible = false;
 
         return this;
     }
 
-    public BaseValue preCallback(Consumer<BaseValue> callback)
-    {
-        if (this.preCallbacks == null)
-        {
+    public BaseValue preCallback(Consumer<BaseValue> callback) {
+        if (this.preCallbacks == null) {
             this.preCallbacks = new ArrayList<>();
         }
 
@@ -61,10 +53,8 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         return this;
     }
 
-    public BaseValue postCallback(Consumer<BaseValue> callback)
-    {
-        if (this.postCallbacks == null)
-        {
+    public BaseValue postCallback(Consumer<BaseValue> callback) {
+        if (this.postCallbacks == null) {
             this.postCallbacks = new ArrayList<>();
         }
 
@@ -73,13 +63,11 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         return this;
     }
 
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         boolean visible = true;
         BaseValue value = this;
 
-        while (value != null)
-        {
+        while (value != null) {
             visible = visible && (!(value instanceof BaseValue) || ((BaseValue) value).visible);
             value = value.getParent();
         }
@@ -87,14 +75,11 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         return visible;
     }
 
-    public BaseValue getRoot()
-    {
+    public BaseValue getRoot() {
         BaseValue value = this;
 
-        while (true)
-        {
-            if (value.getParent() == null)
-            {
+        while (true) {
+            if (value.getParent() == null) {
                 return value;
             }
 
@@ -102,74 +87,58 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         }
     }
 
-    public void setParent(BaseValue parent)
-    {
+    public void setParent(BaseValue parent) {
         this.parent = parent;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 
-    public void preNotifyParent()
-    {
+    public void preNotifyParent() {
         this.preNotifyParent(this);
     }
 
-    public void preNotifyParent(BaseValue value)
-    {
-        if (this.parent != null)
-        {
+    public void preNotifyParent(BaseValue value) {
+        if (this.parent != null) {
             this.parent.preNotifyParent(value);
         }
 
-        if (this.preCallbacks != null)
-        {
-            for (Consumer<BaseValue> callback : this.preCallbacks)
-            {
+        if (this.preCallbacks != null) {
+            for (Consumer<BaseValue> callback : this.preCallbacks) {
                 callback.accept(value);
             }
         }
     }
 
-    public void postNotifyParent()
-    {
+    public void postNotifyParent() {
         this.postNotifyParent(this);
     }
 
-    public void postNotifyParent(BaseValue value)
-    {
-        if (this.parent != null)
-        {
+    public void postNotifyParent(BaseValue value) {
+        if (this.parent != null) {
             this.parent.postNotifyParent(value);
         }
 
-        if (this.postCallbacks != null)
-        {
-            for (Consumer<BaseValue> callback : this.postCallbacks)
-            {
+        if (this.postCallbacks != null) {
+            for (Consumer<BaseValue> callback : this.postCallbacks) {
                 callback.accept(value);
             }
         }
     }
 
-    public BaseValue getParent()
-    {
+    public BaseValue getParent() {
         return this.parent;
     }
 
-    public List<String> getPathSegments()
-    {
+    public List<String> getPathSegments() {
         List<String> strings = new ArrayList<>();
         BaseValue value = this;
 
-        while (value != null)
-        {
+        while (value != null) {
             String id = value.getId();
 
-            if (!id.isEmpty())
-            {
+            if (!id.isEmpty()) {
                 strings.add(id);
             }
 
@@ -181,29 +150,24 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         return strings;
     }
 
-    public String getPath()
-    {
+    public String getPath() {
         return String.join(".", this.getPathSegments());
     }
 
-    public String getRelativePath(BaseValue ancestor)
-    {
+    public String getRelativePath(BaseValue ancestor) {
         List<String> strings = new ArrayList<>();
         BaseValue value = this;
 
-        while (value != null)
-        {
+        while (value != null) {
             String id = value.getId();
 
-            if (!id.isEmpty())
-            {
+            if (!id.isEmpty()) {
                 strings.add(id);
             }
 
             value = value.getParent();
 
-            if (value == ancestor)
-            {
+            if (value == ancestor) {
                 strings.add(value.getId());
 
                 Collections.reverse(strings);
@@ -215,8 +179,7 @@ public abstract class BaseValue implements IDataSerializable<BaseType>
         return null;
     }
 
-    public void copy(BaseValue value)
-    {
+    public void copy(BaseValue value) {
         this.fromData(value.toData());
     }
 }

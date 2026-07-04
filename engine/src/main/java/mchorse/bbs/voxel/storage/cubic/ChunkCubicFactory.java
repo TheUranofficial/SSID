@@ -1,34 +1,25 @@
 package mchorse.bbs.voxel.storage.cubic;
 
-import mchorse.bbs.voxel.storage.ChunkFactory;
-import mchorse.bbs.voxel.storage.ChunkManager;
-import mchorse.bbs.voxel.storage.ChunkStorage;
-import mchorse.bbs.voxel.storage.ChunkView;
-import mchorse.bbs.voxel.storage.ChunkArrayManager;
+import mchorse.bbs.voxel.storage.*;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 import mchorse.bbs.world.World;
 import mchorse.bbs.world.WorldMetadata;
 
 import java.io.File;
 
-public class ChunkCubicFactory extends ChunkFactory
-{
-    public ChunkCubicFactory(File folder, BlockSet blocks, WorldMetadata metadata)
-    {
+public class ChunkCubicFactory extends ChunkFactory {
+    public ChunkCubicFactory(File folder, BlockSet blocks, WorldMetadata metadata) {
         super(folder, blocks, metadata);
     }
 
     @Override
-    public ChunkStorage createStorage(String folder)
-    {
+    public ChunkStorage createStorage(String folder) {
         return new ChunkCubicStorage(new File(this.folder, folder), this.metadata);
     }
 
     @Override
-    public ChunkManager createManager()
-    {
-        if (this.conversion)
-        {
+    public ChunkManager createManager() {
+        if (this.conversion) {
             return new ChunkCubicConversionManager(this.blocks);
         }
 
@@ -41,8 +32,7 @@ public class ChunkCubicFactory extends ChunkFactory
     }
 
     @Override
-    public ChunkView createView(ChunkArrayManager manager, World world)
-    {
+    public ChunkView createView(ChunkArrayManager manager, World world) {
         return new ChunkCubicView(manager, new ChunkCubicThread(world), this.metadata);
     }
 }

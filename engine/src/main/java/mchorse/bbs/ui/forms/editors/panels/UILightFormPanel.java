@@ -8,13 +8,11 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.utils.colors.Color;
 
-public class UILightFormPanel extends UIFormPanel<LightForm>
-{
+public class UILightFormPanel extends UIFormPanel<LightForm> {
     public UIColor color;
     public UITrackpad distance;
 
-    public UILightFormPanel(UIForm<LightForm> editor)
-    {
+    public UILightFormPanel(UIForm<LightForm> editor) {
         super(editor);
 
         this.color = new UIColor((c) -> this.form.color.set(new Color().set(c, false)));
@@ -25,8 +23,7 @@ public class UILightFormPanel extends UIFormPanel<LightForm>
     }
 
     @Override
-    public void startEdit(LightForm form)
-    {
+    public void startEdit(LightForm form) {
         super.startEdit(form);
 
         this.color.setColor(form.color.get().getARGBColor());

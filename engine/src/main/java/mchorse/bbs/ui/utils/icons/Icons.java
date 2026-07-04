@@ -5,8 +5,7 @@ import mchorse.bbs.resources.Link;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Icons
-{
+public class Icons {
     public static final Map<String, Icon> ICONS = new HashMap<>();
     public static final Link ATLAS = Link.assets("textures/icons.png");
 
@@ -162,21 +161,14 @@ public class Icons
     public static final Icon KEY_CAP_RIGHT = new Icon(ATLAS, "key_cap", 236, 236, 4, 20);
     public static final Icon KEY_CAP_REPEATABLE = new Icon(ATLAS, "key_cap_repeatable", 224, 236, 12, 20);
 
-    public static Icon register(Icon icon)
-    {
-        if (ICONS.containsKey(icon.id))
-        {
-            try
-            {
+    public static Icon register(Icon icon) {
+        if (ICONS.containsKey(icon.id)) {
+            try {
                 throw new IllegalStateException("[Icons] Icon " + icon.id + " was already registered prior...");
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
             ICONS.put(icon.id, icon);
         }
 

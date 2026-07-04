@@ -8,13 +8,11 @@ import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 
 import java.util.function.Consumer;
 
-public class UINestedEdit extends UIElement
-{
+public class UINestedEdit extends UIElement {
     public UIButton pick;
     public UIButton edit;
 
-    public UINestedEdit(Consumer<Boolean> callback)
-    {
+    public UINestedEdit(Consumer<Boolean> callback) {
         super();
 
         this.edit = new UIButton(UIKeys.GENERAL_EDIT, (b) -> callback.accept(true));
@@ -27,24 +25,21 @@ public class UINestedEdit extends UIElement
         this.add(this.pick, this.edit);
     }
 
-    public UINestedEdit keybinds()
-    {
+    public UINestedEdit keybinds() {
         this.keys().register(Keys.FORMS_PICK, () -> this.pick.clickItself());
         this.keys().register(Keys.FORMS_EDIT, () -> this.edit.clickItself());
 
         return this;
     }
 
-    public UINestedEdit alternativeKeybinds()
-    {
+    public UINestedEdit alternativeKeybinds() {
         this.keys().register(Keys.FORMS_PICK_ALT, () -> this.pick.clickItself());
         this.keys().register(Keys.FORMS_EDIT_ALT, () -> this.edit.clickItself());
 
         return this;
     }
 
-    public void setForm(Form form)
-    {
+    public void setForm(Form form) {
         this.edit.setEnabled(form != null);
     }
 }

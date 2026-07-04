@@ -15,8 +15,7 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 
 import java.io.File;
 
-public class WorldMetadata implements IMapSerializable
-{
+public class WorldMetadata implements IMapSerializable {
     public static final Link TILESET = Link.assets("tileset/default.json");
     public final File save;
 
@@ -41,78 +40,63 @@ public class WorldMetadata implements IMapSerializable
     /* Metadata */
     public final MapType metadata = new MapType();
 
-    public static WorldMetadata fromFile(File worldFolder)
-    {
+    public static WorldMetadata fromFile(File worldFolder) {
         File metadataFile = new File(worldFolder, "metadata.json");
 
-        if (!metadataFile.isFile())
-        {
+        if (!metadataFile.isFile()) {
             return null;
         }
 
         WorldMetadata worldMetadata = new WorldMetadata(worldFolder);
 
-        try
-        {
+        try {
             String code = IOUtils.readText(metadataFile);
             MapType metadata = DataToString.mapFromString(code);
 
             worldMetadata.fromData(metadata);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return worldMetadata;
     }
 
-    public WorldMetadata(File save)
-    {
+    public WorldMetadata(File save) {
         this.save = save;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return this.save == null ? "" : this.save.getName();
     }
 
-    public ChunkFactory createFactory()
-    {
+    public ChunkFactory createFactory() {
         BlockSet blocks = this.createBlockSet();
 
-        if (this.column)
-        {
+        if (this.column) {
             return new ChunkColumnFactory(this.save, blocks, this);
         }
 
         return new ChunkCubicFactory(this.save, blocks, this);
     }
 
-    public BlockSet createBlockSet()
-    {
+    public BlockSet createBlockSet() {
         BlockSet blocks = new BlockSet(TILESET);
 
-        try
-        {
+        try {
             blocks.fromData(DataToString.mapFromString(IOUtils.readText(BBS.getProvider().getAsset(blocks.id))));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return blocks;
     }
 
-    public Generator createGenerator()
-    {
+    public Generator createGenerator() {
         return Generator.forName(this.generator);
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.combine(this.metadata);
 
         data.putString("name", this.name);
@@ -138,8 +122,7 @@ public class WorldMetadata implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.metadata.combine(data);
 
         this.name = data.getString("name");

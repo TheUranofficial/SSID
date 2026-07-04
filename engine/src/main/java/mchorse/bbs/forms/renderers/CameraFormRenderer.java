@@ -12,19 +12,14 @@ import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.UIRenderingContext;
 import mchorse.bbs.ui.utils.icons.Icons;
-import mchorse.bbs.utils.StringUtils;
 import mchorse.bbs.utils.joml.Matrices;
-import mchorse.bbs.utils.joml.Vectors;
 import mchorse.bbs.world.entities.Entity;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.opengl.GL30;
 
-public class CameraFormRenderer extends FormRenderer<CameraForm>
-{
+import java.lang.Math;
+
+public class CameraFormRenderer extends FormRenderer<CameraForm> {
     private static Vector4f transVector = new Vector4f();
     private static Vector3d posVector = new Vector3d();
     private static Matrix4f model = new Matrix4f();
@@ -32,30 +27,25 @@ public class CameraFormRenderer extends FormRenderer<CameraForm>
 
     private Camera camera = new Camera();
 
-    public CameraFormRenderer(CameraForm form)
-    {
+    public CameraFormRenderer(CameraForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         context.batcher.icon(Icons.CAMERA, (x1 + x2) / 2, (y1 + y2) / 2);
     }
 
     @Override
-    protected void render3D(Entity entity, RenderingContext context)
-    {
-        if (context instanceof UIRenderingContext)
-        {
+    protected void render3D(Entity entity, RenderingContext context) {
+        if (context instanceof UIRenderingContext) {
             return;
         }
 
         float transition = context.getTransition();
         Link texture = this.form.texture.get(transition);
 
-        if (this.form.enabled.get(transition) && texture != null && context.getPass() == 0)
-        {
+        if (this.form.enabled.get(transition) && texture != null && context.getPass() == 0) {
             int width = Math.max(2, this.form.width.get(transition));
             int height = Math.max(2, this.form.height.get(transition));
 
@@ -72,8 +62,7 @@ public class CameraFormRenderer extends FormRenderer<CameraForm>
 
                 Texture main = framebuffer.getMainTexture();
 
-                if (main.width != width || main.height != height)
-                {
+                if (main.width != width || main.height != height) {
                     framebuffer.resize(width, height);
                 }
 

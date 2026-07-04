@@ -4,16 +4,13 @@ import mchorse.bbs.voxel.tilesets.geometry.CombinedGeometry;
 import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 
-public class BlockModelPlant extends BlockModelFactory
-{
-    public BlockModelPlant()
-    {
+public class BlockModelPlant extends BlockModelFactory {
+    public BlockModelPlant() {
         this.opaque = this.ao = this.collision = false;
     }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         BlockModel model = this.createModel();
         final float sin45half = (float) Math.sin(Math.PI / 4) / 2;
         float x1 = 0.5F - sin45half;

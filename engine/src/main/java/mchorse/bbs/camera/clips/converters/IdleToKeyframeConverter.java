@@ -4,11 +4,9 @@ import mchorse.bbs.camera.clips.overwrite.IdleClip;
 import mchorse.bbs.camera.clips.overwrite.KeyframeClip;
 import mchorse.bbs.utils.keyframes.KeyframeChannel;
 
-public class IdleToKeyframeConverter implements IClipConverter<IdleClip, KeyframeClip>
-{
+public class IdleToKeyframeConverter implements IClipConverter<IdleClip, KeyframeClip> {
     @Override
-    public KeyframeClip convert(IdleClip clip)
-    {
+    public KeyframeClip convert(IdleClip clip) {
         KeyframeClip keyframeClip = new KeyframeClip();
 
         keyframeClip.copy(clip);
@@ -24,8 +22,7 @@ public class IdleToKeyframeConverter implements IClipConverter<IdleClip, Keyfram
         return keyframeClip;
     }
 
-    private void insert(KeyframeChannel channel, double value)
-    {
+    private void insert(KeyframeChannel channel, double value) {
         channel.getKeyframes().clear();
         channel.insert(0, value);
     }

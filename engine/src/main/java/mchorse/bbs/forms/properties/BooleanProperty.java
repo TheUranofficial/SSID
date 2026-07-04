@@ -5,34 +5,28 @@ import mchorse.bbs.forms.forms.Form;
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframeChannel;
 import mchorse.bbs.utils.keyframes.generic.factories.KeyframeFactories;
 
-public class BooleanProperty extends BaseProperty<Boolean>
-{
-    public BooleanProperty(Form form, String key, Boolean value)
-    {
+public class BooleanProperty extends BaseProperty<Boolean> {
+    public BooleanProperty(Form form, String key, Boolean value) {
         super(form, key, value);
     }
 
     @Override
-    protected void propertyFromData(MapType data, String key)
-    {
+    protected void propertyFromData(MapType data, String key) {
         this.set(data.getBool(key));
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putBool(this.getKey(), this.value);
     }
 
     @Override
-    public boolean canCreateChannel()
-    {
+    public boolean canCreateChannel() {
         return this.canAnimate;
     }
 
     @Override
-    public GenericKeyframeChannel createChannel(String key)
-    {
+    public GenericKeyframeChannel createChannel(String key) {
         return new GenericKeyframeChannel(key, KeyframeFactories.BOOLEAN);
     }
 }

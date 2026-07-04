@@ -5,8 +5,7 @@ import mchorse.bbs.forms.forms.Form;
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframeChannel;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public interface IFormProperty <T> extends IMapSerializable
-{
+public interface IFormProperty<T> extends IMapSerializable {
     /**
      * Get this property's key (which is used for serialization).
      */

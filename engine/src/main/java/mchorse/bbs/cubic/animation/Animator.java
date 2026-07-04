@@ -14,12 +14,11 @@ import java.util.List;
 
 /**
  * Animator class
- * 
- * This class is responsible for applying currently running actions onto 
+ * <p>
+ * This class is responsible for applying currently running actions onto
  * form (more specifically onto an armature).
  */
-public class Animator
-{
+public class Animator {
     /* Actions */
     public ActionPlayback idle;
     public ActionPlayback running;
@@ -49,16 +48,14 @@ public class Animator
 
     private CubicModel model;
 
-    public List<String> getActions()
-    {
+    public List<String> getActions() {
         return Arrays.asList(
             "idle", "running", "crouching", "crouching_idle", "dying", "falling",
             "swipe", "jump", "hurt", "land", "shoot", "consume"
         );
     }
 
-    public void setup(CubicModel model, ActionsConfig actions)
-    {
+    public void setup(CubicModel model, ActionsConfig actions) {
         this.model = model;
 
         this.idle = this.createAction(this.idle, actions.getConfig("idle"), true);
@@ -79,8 +76,7 @@ public class Animator
     /**
      * Create an action with default priority
      */
-    public ActionPlayback createAction(ActionPlayback old, ActionConfig config, boolean looping)
-    {
+    public ActionPlayback createAction(ActionPlayback old, ActionConfig config, boolean looping) {
         return this.createAction(old, config, looping, 1);
     }
 
@@ -90,27 +86,23 @@ public class Animator
      * actions are missing. Beside that, you can pass an old action so
      * in form merging situation it wouldn't interrupt animation.
      */
-    public ActionPlayback createAction(ActionPlayback old, ActionConfig config, boolean looping, int priority)
-    {
+    public ActionPlayback createAction(ActionPlayback old, ActionConfig config, boolean looping, int priority) {
         CubicModel model = this.model;
         Animations animations = model == null ? null : model.animations;
 
-        if (animations == null)
-        {
+        if (animations == null) {
             return null;
         }
 
         Animation action = animations.get(config.name);
 
         /* If given action is missing, then omit creation of ActionPlayback */
-        if (action == null)
-        {
+        if (action == null) {
             return null;
         }
 
         /* If old is the same, then there is no point creating a new one */
-        if (old != null && old.action == action)
-        {
+        if (old != null && old.action == action) {
             old.config = config;
             old.setSpeed(1);
 
@@ -121,16 +113,14 @@ public class Animator
     }
 
     /**
-     * Update animator. This method is responsible for updating action 
+     * Update animator. This method is responsible for updating action
      * pipeline and also change current actions based on entity's state.
      */
-    public void update(Entity target)
-    {
+    public void update(Entity target) {
         BasicComponent basic = target.basic;
 
         /* Fix issue with forms sudden running action */
-        if (this.prevX == Float.MAX_VALUE)
-        {
+        if (this.prevX == Float.MAX_VALUE) {
             this.prevX = basic.position.x;
             this.prevZ = basic.position.y;
         }
@@ -138,27 +128,23 @@ public class Animator
         this.controlActions(target);
 
         /* Update primary actions */
-        if (this.active != null)
-        {
+        if (this.active != null) {
             this.active.update();
         }
 
-        if (this.lastActive != null)
-        {
+        if (this.lastActive != null) {
             this.lastActive.update();
         }
 
         /* Update secondary actions */
         Iterator<ActionPlayback> it = this.actions.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             ActionPlayback action = it.next();
 
             action.update();
 
-            if (action.finishedFading() && action.isFadingModeOut())
-            {
+            if (action.finishedFading() && action.isFadingModeOut()) {
                 action.stopFade();
                 it.remove();
             }
@@ -166,12 +152,11 @@ public class Animator
     }
 
     /**
-     * This method is designed specifically to isolate any controlling 
-     * code (i.e. the ones that is responsible for switching between 
+     * This method is designed specifically to isolate any controlling
+     * code (i.e. the ones that is responsible for switching between
      * actions).
      */
-    protected void controlActions(Entity target)
-    {
+    protected void controlActions(Entity target) {
         BasicComponent basic = target.basic;
         double dx = basic.position.x - this.prevX;
         double dz = basic.position.z - this.prevZ;
@@ -203,43 +188,33 @@ public class Animator
         {
             this.setActiveAction(!moves ? this.flyingIdle : this.flying);
         } */
-        if (false)
-        {
+        if (false) {
             // TODO: implement more actions?
-        }
-        else
-        {
-            if (basic.sneak)
-            {
+        } else {
+            if (basic.sneak) {
                 this.setActiveAction(!moves ? this.crouchingIdle : this.crouching);
-            }
-            else if (!basic.grounded && basic.velocity.y < 0 && basic.fall > 1.25)
-            {
+            } else if (!basic.grounded && basic.velocity.y < 0 && basic.fall > 1.25) {
                 this.setActiveAction(this.falling);
             }
             /* else if (target.isSprinting() && this.sprinting != null)
             {
                 this.setActiveAction(this.sprinting);
             } */
-            else
-            {
+            else {
                 this.setActiveAction(!moves ? this.idle : this.running);
             }
 
-            if (basic.grounded && !this.wasOnGround && /* !target.isSprinting() && */ this.prevMY < -0.5)
-            {
+            if (basic.grounded && !this.wasOnGround && /* !target.isSprinting() && */ this.prevMY < -0.5) {
                 this.addAction(this.land);
             }
         }
 
-        if (!basic.grounded && this.wasOnGround && Math.abs(basic.velocity.y) > 0.2F)
-        {
+        if (!basic.grounded && this.wasOnGround && Math.abs(basic.velocity.y) > 0.2F) {
             this.addAction(this.jump);
             this.wasOnGround = false;
         }
 
-        if (basic.hitTimer >= 5)
-        {
+        if (basic.hitTimer >= 5) {
             this.addAction(this.swipe);
         }
 
@@ -250,28 +225,23 @@ public class Animator
         this.wasOnGround = basic.grounded;
     }
 
-    private boolean isGamepadPressed(int gamepad, int button)
-    {
+    private boolean isGamepadPressed(int gamepad, int button) {
         return ((gamepad >> button) & 0b1) == 1;
     }
 
     /**
-     * Set current active (primary) action 
+     * Set current active (primary) action
      */
-    public void setActiveAction(ActionPlayback action)
-    {
-        if (this.active == action || action == null)
-        {
+    public void setActiveAction(ActionPlayback action) {
+        if (this.active == action || action == null) {
             return;
         }
 
-        if (this.active != null && action.priority < this.active.priority)
-        {
+        if (this.active != null && action.priority < this.active.priority) {
             return;
         }
 
-        if (this.active != null)
-        {
+        if (this.active != null) {
             this.lastActive = this.active;
         }
 
@@ -280,25 +250,20 @@ public class Animator
         this.active.fadeIn();
     }
 
-    public void addAction(ActionPlayback action)
-    {
+    public void addAction(ActionPlayback action) {
         this.addAction(action, true);
     }
 
     /**
-     * Add an additional secondary action to the playback 
+     * Add an additional secondary action to the playback
      */
-    public void addAction(ActionPlayback action, boolean rewind)
-    {
-        if (action == null)
-        {
+    public void addAction(ActionPlayback action, boolean rewind) {
+        if (action == null) {
             return;
         }
 
-        if (this.actions.contains(action))
-        {
-            if (rewind)
-            {
+        if (this.actions.contains(action)) {
+            if (rewind) {
                 action.rewind();
             }
 
@@ -313,28 +278,21 @@ public class Animator
     /**
      * Apply currently running action pipeline onto given armature
      */
-    public void applyActions(Entity target, Model armature, float transition)
-    {
-        if (this.lastActive != null && this.active.isFading())
-        {
+    public void applyActions(Entity target, Model armature, float transition) {
+        if (this.lastActive != null && this.active.isFading()) {
             this.lastActive.apply(target, armature, transition, 1F, false);
         }
 
-        if (this.active != null)
-        {
+        if (this.active != null) {
             float fade = this.active.isFading() ? this.active.getFadeFactor(transition) : 1F;
 
             this.active.apply(target, armature, transition, fade, false);
         }
 
-        for (ActionPlayback action : this.actions)
-        {
-            if (action.isFading())
-            {
+        for (ActionPlayback action : this.actions) {
+            if (action.isFading()) {
                 action.apply(target, armature, transition, action.getFadeFactor(transition), true);
-            }
-            else
-            {
+            } else {
                 action.apply(target, armature, transition, 1F, true);
             }
         }

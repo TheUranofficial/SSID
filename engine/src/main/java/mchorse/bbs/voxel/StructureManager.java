@@ -4,42 +4,30 @@ import mchorse.bbs.core.IDisposable;
 import mchorse.bbs.data.storage.DataFileStorage;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.graphics.RenderingContext;
-import mchorse.bbs.voxel.Chunk;
-import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.storage.data.ChunkDisplay;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class StructureManager implements IDisposable
-{
+public class StructureManager implements IDisposable {
     public static final String SCHEMATIC = ".schematic";
 
     public File folder;
 
     private Map<String, ChunkDisplay> cachedStructures = new HashMap<>();
 
-    public StructureManager(File folder)
-    {
-        if (folder != null)
-        {
+    public StructureManager(File folder) {
+        if (folder != null) {
             this.folder = folder;
             this.folder.mkdirs();
         }
     }
 
     @Override
-    public void delete()
-    {
-        for (ChunkDisplay display : this.cachedStructures.values())
-        {
-            if (display != null)
-            {
+    public void delete() {
+        for (ChunkDisplay display : this.cachedStructures.values()) {
+            if (display != null) {
                 display.delete();
             }
         }
@@ -47,28 +35,23 @@ public class StructureManager implements IDisposable
         this.cachedStructures.clear();
     }
 
-    public List<String> getIds()
-    {
+    public List<String> getIds() {
         return this.getIds(true);
     }
 
-    public List<String> getIds(boolean includeSchematics)
-    {
+    public List<String> getIds(boolean includeSchematics) {
         File[] files = this.folder.listFiles();
 
-        if (files == null)
-        {
+        if (files == null) {
             return Collections.emptyList();
         }
 
         List<String> list = new ArrayList<>();
 
-        for (File file : files)
-        {
+        for (File file : files) {
             String name = file.getName();
 
-            if (name.endsWith(".dat"))
-            {
+            if (name.endsWith(".dat")) {
                 list.add(name.substring(0, name.length() - 4));
             }
         }
@@ -76,34 +59,28 @@ public class StructureManager implements IDisposable
         return list;
     }
 
-    public Chunk load(String id, BlockSet blockSet)
-    {
+    public Chunk load(String id, BlockSet blockSet) {
         File file = this.getFile(id);
 
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             return null;
         }
 
-        try
-        {
+        try {
             MapType map = (MapType) new DataFileStorage(file).read();
             Chunk chunk = new Chunk(map.getInt("w"), map.getInt("h"), map.getInt("d"), blockSet.air);
 
             chunk.fromData(map.get("blocks"), blockSet);
 
             return chunk;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public void save(String id, Chunk chunk)
-    {
+    public void save(String id, Chunk chunk) {
         MapType map = new MapType();
 
         map.putInt("w", chunk.w);
@@ -111,34 +88,27 @@ public class StructureManager implements IDisposable
         map.putInt("d", chunk.d);
         map.put("blocks", chunk.toData());
 
-        try
-        {
+        try {
             new DataFileStorage(this.getFile(id)).write(map);
 
             ChunkDisplay display = this.cachedStructures.remove(id);
 
-            if (display != null)
-            {
+            if (display != null) {
                 display.delete();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ChunkDisplay getCachedChunk(String id, RenderingContext context, ChunkBuilder builder)
-    {
-        if (this.cachedStructures.containsKey(id))
-        {
+    public ChunkDisplay getCachedChunk(String id, RenderingContext context, ChunkBuilder builder) {
+        if (this.cachedStructures.containsKey(id)) {
             return this.cachedStructures.get(id);
         }
 
         Chunk chunk = this.load(id, builder.models);
 
-        if (chunk != null)
-        {
+        if (chunk != null) {
             ChunkDisplay display = new ChunkDisplay(null, chunk, 0, 0, 0);
 
             builder.build(context, display, null);
@@ -152,8 +122,7 @@ public class StructureManager implements IDisposable
         return null;
     }
 
-    private File getFile(String id)
-    {
+    private File getFile(String id) {
         return new File(this.folder, id + ".dat");
     }
 }

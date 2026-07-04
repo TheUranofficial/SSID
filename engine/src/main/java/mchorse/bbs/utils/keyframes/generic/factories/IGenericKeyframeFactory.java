@@ -6,8 +6,7 @@ import mchorse.bbs.ui.framework.elements.input.keyframes.generic.factories.UIKey
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public interface IGenericKeyframeFactory <T>
-{
+public interface IGenericKeyframeFactory<T> {
     public T fromData(BaseType data);
 
     public BaseType toData(T value);

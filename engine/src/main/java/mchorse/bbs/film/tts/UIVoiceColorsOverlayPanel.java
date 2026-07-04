@@ -8,22 +8,18 @@ import mchorse.bbs.ui.framework.elements.overlay.UIOverlayPanel;
 import mchorse.bbs.ui.framework.elements.utils.UILabel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIVoiceColorsOverlayPanel extends UIOverlayPanel
-{
+public class UIVoiceColorsOverlayPanel extends UIOverlayPanel {
     public ValueVoiceColors colors;
 
-    public UIVoiceColorsOverlayPanel(ValueVoiceColors colors)
-    {
+    public UIVoiceColorsOverlayPanel(ValueVoiceColors colors) {
         super(UIKeys.VOICE_COLORS_TITLE);
 
         this.colors = colors;
 
         UIScrollView scrollView = UI.scrollView(5, 10);
 
-        for (ElevenLabsVoice voice : ElevenLabsAPI.getVoices().values())
-        {
-            if (!voice.isAllowed())
-            {
+        for (ElevenLabsVoice voice : ElevenLabsAPI.getVoices().values()) {
+            if (!voice.isAllowed()) {
                 continue;
             }
 

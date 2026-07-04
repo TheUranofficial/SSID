@@ -10,19 +10,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class UISoundOverlayPanel extends UIStringOverlayPanel
-{
-    private static Set<String> getSoundEvents()
-    {
+public class UISoundOverlayPanel extends UIStringOverlayPanel {
+    private static Set<String> getSoundEvents() {
         Set<String> locations = new HashSet<>();
 
-        for (Link link : BBS.getProvider().getLinksFromPath(Link.assets("audio")))
-        {
+        for (Link link : BBS.getProvider().getLinksFromPath(Link.assets("audio"))) {
             boolean supportedExtension = link.path.endsWith(".wav") || link.path.endsWith(".ogg");
             boolean notGenerated = !link.path.startsWith("audio/elevenlabs");
 
-            if (supportedExtension && notGenerated)
-            {
+            if (supportedExtension && notGenerated) {
                 locations.add(link.toString());
             }
         }
@@ -30,12 +26,10 @@ public class UISoundOverlayPanel extends UIStringOverlayPanel
         return locations;
     }
 
-    public UISoundOverlayPanel(Consumer<Link> callback)
-    {
+    public UISoundOverlayPanel(Consumer<Link> callback) {
         super(UIKeys.OVERLAYS_SOUNDS_MAIN, getSoundEvents(), (str) ->
         {
-            if (callback != null)
-            {
+            if (callback != null) {
                 callback.accept(Link.create(str));
             }
         });
@@ -45,10 +39,8 @@ public class UISoundOverlayPanel extends UIStringOverlayPanel
         this.icons.add(edit);
     }
 
-    private void playSound()
-    {
-        if (this.strings.list.getIndex() <= 0)
-        {
+    private void playSound() {
+        if (this.strings.list.getIndex() <= 0) {
             return;
         }
 

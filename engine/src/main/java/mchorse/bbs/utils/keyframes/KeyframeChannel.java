@@ -12,61 +12,50 @@ import java.util.List;
  * <p>This class is responsible for storing individual keyframes and also
  * interpolating between them.</p>
  */
-public class KeyframeChannel extends ValueList<Keyframe>
-{
+public class KeyframeChannel extends ValueList<Keyframe> {
     private static final Pair<Keyframe, Keyframe> segment = new Pair<>();
 
-    public KeyframeChannel()
-    {
+    public KeyframeChannel() {
         super("");
     }
 
-    public KeyframeChannel(String id)
-    {
+    public KeyframeChannel(String id) {
         super(id);
     }
 
     /* Read only */
 
-    public int getLength()
-    {
+    public int getLength() {
         return this.list.isEmpty() ? 0 : (int) this.list.get(this.list.size() - 1).getTick();
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.list.isEmpty();
     }
 
-    public List<Keyframe> getKeyframes()
-    {
+    public List<Keyframe> getKeyframes() {
         return this.list;
     }
 
-    public boolean has(int index)
-    {
+    public boolean has(int index) {
         return index >= 0 && index < this.list.size();
     }
 
-    public Keyframe get(int index)
-    {
+    public Keyframe get(int index) {
         return this.has(index) ? this.list.get(index) : null;
     }
 
     /**
      * Calculate the value at given tick
      */
-    public double interpolate(float ticks)
-    {
+    public double interpolate(float ticks) {
         Pair<Keyframe, Keyframe> segment = this.findSegment(ticks);
 
-        if (segment == null)
-        {
+        if (segment == null) {
             return 0;
         }
 
-        if (segment.a == segment.b)
-        {
+        if (segment.a == segment.b) {
             return segment.a.getValue();
         }
 
@@ -76,19 +65,16 @@ public class KeyframeChannel extends ValueList<Keyframe>
     /**
      * Find a keyframe segment at given ticks
      */
-    public Pair<Keyframe, Keyframe> findSegment(float ticks)
-    {
+    public Pair<Keyframe, Keyframe> findSegment(float ticks) {
         /* No keyframes, no values */
-        if (this.list.isEmpty())
-        {
+        if (this.list.isEmpty()) {
             return null;
         }
 
         /* Check whether given ticks are outside keyframe channel's range */
         Keyframe prev = this.list.get(0);
 
-        if (ticks <= prev.getTick())
-        {
+        if (ticks <= prev.getTick()) {
             segment.set(prev, prev);
 
             return segment;
@@ -97,8 +83,7 @@ public class KeyframeChannel extends ValueList<Keyframe>
         int size = this.list.size();
         Keyframe last = this.list.get(size - 1);
 
-        if (ticks >= last.getTick())
-        {
+        if (ticks >= last.getTick()) {
             segment.set(last, last);
 
             return segment;
@@ -108,16 +93,12 @@ public class KeyframeChannel extends ValueList<Keyframe>
         int low = 0;
         int high = size - 1;
 
-        while (low <= high)
-        {
+        while (low <= high) {
             int mid = low + (high - low) / 2;
 
-            if (this.list.get(mid).getTick() < ticks)
-            {
+            if (this.list.get(mid).getTick() < ticks) {
                 low = mid + 1;
-            }
-            else
-            {
+            } else {
                 high = mid - 1;
             }
         }
@@ -132,10 +113,8 @@ public class KeyframeChannel extends ValueList<Keyframe>
 
     /* Write only */
 
-    public void remove(int index)
-    {
-        if (index < 0 || index > this.list.size() - 1)
-        {
+    public void remove(int index) {
+        if (index < 0 || index > this.list.size() - 1) {
             return;
         }
 
@@ -160,18 +139,15 @@ public class KeyframeChannel extends ValueList<Keyframe>
      *
      * <p>Also, it returns index at which it was inserted.</p>
      */
-    public int insert(long tick, double value)
-    {
+    public int insert(long tick, double value) {
         this.preNotifyParent();
 
         Keyframe prev;
 
-        if (!this.list.isEmpty())
-        {
+        if (!this.list.isEmpty()) {
             prev = this.list.get(0);
 
-            if (tick < prev.getTick())
-            {
+            if (tick < prev.getTick()) {
                 this.add(0, new Keyframe("", tick, value));
                 this.sort();
                 this.postNotifyParent();
@@ -183,18 +159,15 @@ public class KeyframeChannel extends ValueList<Keyframe>
         prev = null;
         int index = 0;
 
-        for (Keyframe frame : this.list)
-        {
-            if (frame.getTick() == tick)
-            {
+        for (Keyframe frame : this.list) {
+            if (frame.getTick() == tick) {
                 frame.setValue(value);
                 this.postNotifyParent();
 
                 return index;
             }
 
-            if (prev != null && tick > prev.getTick() && tick < frame.getTick())
-            {
+            if (prev != null && tick > prev.getTick() && tick < frame.getTick()) {
                 break;
             }
 
@@ -205,8 +178,7 @@ public class KeyframeChannel extends ValueList<Keyframe>
         Keyframe frame = new Keyframe("", tick, value);
         this.add(index, frame);
 
-        if (this.list.size() > 1)
-        {
+        if (this.list.size() > 1) {
             frame.prev = this.list.get(Math.max(index - 1, 0));
             frame.next = this.list.get(Math.min(index + 1, this.list.size() - 1));
         }
@@ -217,12 +189,10 @@ public class KeyframeChannel extends ValueList<Keyframe>
         return index;
     }
 
-    public void moveX(long offset)
-    {
+    public void moveX(long offset) {
         this.preNotifyParent();
 
-        for (Keyframe keyframe : this.list)
-        {
+        for (Keyframe keyframe : this.list) {
             keyframe.setTick(keyframe.getTick() + offset);
         }
 
@@ -235,16 +205,13 @@ public class KeyframeChannel extends ValueList<Keyframe>
      * {@link #interpolate(float)} and other methods assume the order of
      * the keyframes to be chronologically correct.
      */
-    public void sort()
-    {
+    public void sort() {
         this.list.sort((a, b) -> (int) (a.getTick() - b.getTick()));
 
-        if (!this.list.isEmpty())
-        {
+        if (!this.list.isEmpty()) {
             Keyframe prev = this.list.get(0);
 
-            for (Keyframe frame : this.list)
-            {
+            for (Keyframe frame : this.list) {
                 frame.prev = prev;
                 prev.next = frame;
 
@@ -257,19 +224,15 @@ public class KeyframeChannel extends ValueList<Keyframe>
         this.sync();
     }
 
-    public void simplify()
-    {
-        if (this.list.size() <= 2)
-        {
+    public void simplify() {
+        if (this.list.size() <= 2) {
             return;
         }
 
         this.preNotifyParent();
 
-        for (int i = 1; i < this.list.size(); i++)
-        {
-            if (i >= this.list.size() - 1)
-            {
+        for (int i = 1; i < this.list.size(); i++) {
+            if (i >= this.list.size() - 1) {
                 continue;
             }
 
@@ -277,8 +240,7 @@ public class KeyframeChannel extends ValueList<Keyframe>
             Keyframe current = this.list.get(i);
             Keyframe next = this.list.get(i + 1);
 
-            if (current.getValue() == prev.getValue() && current.getValue() == next.getValue())
-            {
+            if (current.getValue() == prev.getValue() && current.getValue() == next.getValue()) {
                 this.list.remove(i);
 
                 i -= 1;
@@ -290,14 +252,12 @@ public class KeyframeChannel extends ValueList<Keyframe>
     }
 
     @Override
-    protected Keyframe create(String id)
-    {
+    protected Keyframe create(String id) {
         return new Keyframe(id);
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
+    public void fromData(BaseType data) {
         super.fromData(data);
 
         this.sort();

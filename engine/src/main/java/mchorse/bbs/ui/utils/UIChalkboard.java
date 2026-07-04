@@ -13,8 +13,7 @@ import mchorse.bbs.utils.resources.Pixels;
 import org.joml.Vector2d;
 import org.lwjgl.opengl.GL11;
 
-public class UIChalkboard extends UIElement
-{
+public class UIChalkboard extends UIElement {
     private UIColor picker;
 
     private Pixels pixels;
@@ -26,8 +25,7 @@ public class UIChalkboard extends UIElement
     private int lastX;
     private int lastY;
 
-    public UIChalkboard()
-    {
+    public UIChalkboard() {
         super();
 
         this.texture = new Texture();
@@ -42,23 +40,19 @@ public class UIChalkboard extends UIElement
         this.keys().register(Keys.CHALKBOARD_CLEAR, this::resize);
     }
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return BBSSettings.enableChalkboard.get() && this.isVisible();
     }
 
     /* Input handling */
 
     @Override
-    protected boolean subMouseClicked(UIContext context)
-    {
-        if (!this.isEnabled())
-        {
+    protected boolean subMouseClicked(UIContext context) {
+        if (!this.isEnabled()) {
             return false;
         }
 
-        if (context.mouseButton == 0)
-        {
+        if (context.mouseButton == 0) {
             this.drawing = true;
 
             this.lastX = context.mouseX;
@@ -71,15 +65,12 @@ public class UIChalkboard extends UIElement
     }
 
     @Override
-    protected boolean subMouseReleased(UIContext context)
-    {
-        if (!this.isEnabled())
-        {
+    protected boolean subMouseReleased(UIContext context) {
+        if (!this.isEnabled()) {
             return false;
         }
 
-        if (context.mouseButton == 0)
-        {
+        if (context.mouseButton == 0) {
             this.drawing = false;
         }
 
@@ -87,12 +78,10 @@ public class UIChalkboard extends UIElement
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
-        if (this.pixels != null)
-        {
+        if (this.pixels != null) {
             this.pixels.delete();
         }
 
@@ -105,20 +94,16 @@ public class UIChalkboard extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         int scale = BBSSettings.getScale();
         int x = context.mouseX;
         int y = context.mouseY;
 
-        if (this.pixels != null)
-        {
-            if (this.drawing)
-            {
+        if (this.pixels != null) {
+            if (this.drawing) {
                 double distance = new Vector2d(x, y).distance(this.lastX, this.lastY);
 
-                for (int i = 0; i < distance; i++)
-                {
+                for (int i = 0; i < distance; i++) {
                     int xx = (int) (Interpolations.lerp(x * scale, this.lastX * scale, i / distance));
                     int yy = (int) (Interpolations.lerp(y * scale, this.lastY * scale, i / distance));
 

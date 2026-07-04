@@ -6,8 +6,7 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.Scale;
 import mchorse.bbs.ui.utils.ScrollDirection;
 
-public abstract class UICanvas extends UIElement
-{
+public abstract class UICanvas extends UIElement {
     public Scale scaleX;
     public Scale scaleY;
 
@@ -19,8 +18,7 @@ public abstract class UICanvas extends UIElement
     protected double lastT;
     protected double lastV;
 
-    public UICanvas()
-    {
+    public UICanvas() {
         super();
 
         this.scaleX = new Scale(this.area);
@@ -29,31 +27,25 @@ public abstract class UICanvas extends UIElement
         this.scaleY.anchor(0.5F);
     }
 
-    public int toX(double x)
-    {
+    public int toX(double x) {
         return (int) Math.round(this.scaleX.to(x));
     }
 
-    public double fromX(int mouseX)
-    {
+    public double fromX(int mouseX) {
         return this.scaleX.from(mouseX);
     }
 
-    public int toY(double y)
-    {
+    public int toY(double y) {
         return (int) Math.round(this.scaleY.to(y));
     }
 
-    public double fromY(int mouseY)
-    {
+    public double fromY(int mouseY) {
         return this.scaleY.from(mouseY);
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && this.isMouseButtonAllowed(context.mouseButton))
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && this.isMouseButtonAllowed(context.mouseButton)) {
             this.dragging = true;
             this.mouse = context.mouseButton;
 
@@ -62,8 +54,7 @@ public abstract class UICanvas extends UIElement
 
             /* Fake middle mouse click to add an ability to navigate
              * with Ctrl + click dragging */
-            if (this.mouse == 0 && Window.isCtrlPressed())
-            {
+            if (this.mouse == 0 && Window.isCtrlPressed()) {
                 this.mouse = 2;
             }
 
@@ -75,45 +66,38 @@ public abstract class UICanvas extends UIElement
         return super.subMouseClicked(context);
     }
 
-    protected boolean isMouseButtonAllowed(int mouseButton)
-    {
+    protected boolean isMouseButtonAllowed(int mouseButton) {
         return mouseButton == 0 || mouseButton == 2;
     }
 
-    protected void startDragging(UIContext context)
-    {
+    protected void startDragging(UIContext context) {
         this.lastT = this.scaleX.getShift();
         this.lastV = this.scaleY.getShift();
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
-        if (this.area.isInside(context.mouseX, context.mouseY) && !this.dragging)
-        {
+    public boolean subMouseScrolled(UIContext context) {
+        if (this.area.isInside(context.mouseX, context.mouseY) && !this.dragging) {
             this.zoom(context, context.mouseWheel);
         }
 
         return super.subMouseScrolled(context);
     }
 
-    protected void zoom(UIContext context, int scroll)
-    {
+    protected void zoom(UIContext context, int scroll) {
         this.scaleX.zoomAnchor(Scale.getAnchorX(context, this.area), Math.copySign(this.scaleX.getZoomFactor(), scroll), 0.001, 1000);
         this.scaleY.zoomAnchor(Scale.getAnchorY(context, this.area), Math.copySign(this.scaleY.getZoomFactor(), scroll), 0.001, 1000);
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.dragging = false;
 
         return super.subMouseReleased(context);
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.dragging(context);
 
         context.batcher.clip(this.area, context);
@@ -123,10 +107,8 @@ public abstract class UICanvas extends UIElement
         super.render(context);
     }
 
-    protected void dragging(UIContext context)
-    {
-        if (this.dragging && this.mouse == 2)
-        {
+    protected void dragging(UIContext context) {
+        if (this.dragging && this.mouse == 2) {
             float y = this.scaleY.inverse ? 1 : -1;
 
             this.scaleX.setShift(-(context.mouseX - this.lastX) / this.scaleX.getZoom() + this.lastT);
@@ -134,6 +116,6 @@ public abstract class UICanvas extends UIElement
         }
     }
 
-    protected void renderCanvas(UIContext context)
-    {}
+    protected void renderCanvas(UIContext context) {
+    }
 }

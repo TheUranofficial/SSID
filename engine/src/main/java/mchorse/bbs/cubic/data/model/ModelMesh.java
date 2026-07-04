@@ -10,16 +10,14 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelMesh implements IMapSerializable
-{
+public class ModelMesh implements IMapSerializable {
     public Vector3f origin = new Vector3f();
     public Vector3f rotate = new Vector3f();
     public List<Vector3f> vertices = new ArrayList<>();
     public List<Vector2f> uvs = new ArrayList<>();
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.vertices.clear();
         this.uvs.clear();
 
@@ -29,10 +27,8 @@ public class ModelMesh implements IMapSerializable
         ListType vertices = data.getList("vertices");
         ListType uvs = data.getList("uvs");
 
-        if (vertices.size() / 3 == uvs.size() / 2)
-        {
-            for (int i = 0, c = vertices.size() / 3; i < c; i++)
-            {
+        if (vertices.size() / 3 == uvs.size() / 2) {
+            for (int i = 0, c = vertices.size() / 3; i < c; i++) {
                 int indexV = i * 3;
                 int indexU = i * 2;
 
@@ -43,20 +39,17 @@ public class ModelMesh implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType vertices = new ListType();
         ListType uvs = new ListType();
 
-        for (Vector3f v : this.vertices)
-        {
+        for (Vector3f v : this.vertices) {
             vertices.addFloat(v.x);
             vertices.addFloat(v.y);
             vertices.addFloat(v.z);
         }
 
-        for (Vector2f v : this.uvs)
-        {
+        for (Vector2f v : this.uvs) {
             uvs.addFloat(v.x);
             uvs.addFloat(v.y);
         }

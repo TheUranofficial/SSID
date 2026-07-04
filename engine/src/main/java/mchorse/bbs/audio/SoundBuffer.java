@@ -7,15 +7,13 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
-public class SoundBuffer implements IDisposable
-{
+public class SoundBuffer implements IDisposable {
     private final Link id;
     private int buffer;
     private float duration;
     private Waveform waveform;
 
-    public SoundBuffer(Link id, Wave wave, Waveform waveform)
-    {
+    public SoundBuffer(Link id, Wave wave, Waveform waveform) {
         this.id = id;
 
         this.buffer = AL10.alGenBuffers();
@@ -32,35 +30,29 @@ public class SoundBuffer implements IDisposable
         this.waveform = waveform;
     }
 
-    public Link getId()
-    {
+    public Link getId() {
         return this.id;
     }
 
-    public int getBuffer()
-    {
+    public int getBuffer() {
         return this.buffer;
     }
 
-    public float getDuration()
-    {
+    public float getDuration() {
         return this.duration;
     }
 
-    public Waveform getWaveform()
-    {
+    public Waveform getWaveform() {
         return this.waveform;
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         AL10.alDeleteBuffers(this.buffer);
 
         this.buffer = -1;
 
-        if (this.waveform != null)
-        {
+        if (this.waveform != null) {
             this.waveform.delete();
         }
     }

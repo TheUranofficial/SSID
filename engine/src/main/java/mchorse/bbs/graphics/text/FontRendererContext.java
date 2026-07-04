@@ -8,8 +8,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class FontRendererContext
-{
+public class FontRendererContext {
     public final Color color = Color.white();
     public float time;
 
@@ -22,10 +21,8 @@ public class FontRendererContext
     public final Set<IFontFormat> activeFormats = new HashSet<>();
     public final Random random = new Random();
 
-    public void reset()
-    {
-        for (IFontFormat format : this.activeFormats)
-        {
+    public void reset() {
+        for (IFontFormat format : this.activeFormats) {
             format.reset();
         }
 
@@ -35,8 +32,7 @@ public class FontRendererContext
         this.bold = false;
     }
 
-    public void setup(int index, int x, int y)
-    {
+    public void setup(int index, int x, int y) {
         this.index = index;
         this.x = x;
         this.y = y;

@@ -11,29 +11,23 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
-{
+public class UIFileLinkList extends UIList<UIFileLinkList.FileLink> {
     public Consumer<Link> fileCallback;
     public Link path = new Link("", "");
     public Predicate<Link> filter;
 
-    public UIFileLinkList(Consumer<Link> fileCallback)
-    {
+    public UIFileLinkList(Consumer<Link> fileCallback) {
         super(null);
 
         this.callback = (list) ->
         {
             FileLink fileLink = list.get(0);
 
-            if (!fileLink.folder)
-            {
-                if (this.fileCallback != null)
-                {
+            if (!fileLink.folder) {
+                if (this.fileCallback != null) {
                     this.fileCallback.accept(fileLink.link);
                 }
-            }
-            else
-            {
+            } else {
                 this.setPath(fileLink.link, !fileLink.title.equals(".."));
             }
         };
@@ -42,46 +36,37 @@ public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
         this.scroll.scrollSpeed = 16;
     }
 
-    public UIFileLinkList filter(Predicate<Link> filter)
-    {
+    public UIFileLinkList filter(Predicate<Link> filter) {
         this.filter = filter;
 
         return this;
     }
 
-    public void setPath(Link link)
-    {
+    public void setPath(Link link) {
         this.setPath(link, true);
     }
 
     /**
      * Set current link
      */
-    public void setPath(Link link, boolean fastForward)
-    {
-        if (link == null || link.source.isEmpty())
-        {
+    public void setPath(Link link, boolean fastForward) {
+        if (link == null || link.source.isEmpty()) {
             this.clear();
 
-            for (String source : BBS.getProvider().getSourceKeys())
-            {
+            for (String source : BBS.getProvider().getSourceKeys()) {
                 this.add(new FileLink(source, new Link(source, ""), true));
             }
 
             this.path = new Link("", "");
 
             this.sort();
-        }
-        else
-        {
+        } else {
             Collection<Link> links = BBS.getProvider().getLinksFromPath(link, false);
 
-            if (fastForward && links.size() == 1)
-            {
+            if (fastForward && links.size() == 1) {
                 Link first = links.iterator().next();
 
-                if (first.path.endsWith("/"))
-                {
+                if (first.path.endsWith("/")) {
                     this.setPath(first);
 
                     return;
@@ -97,10 +82,8 @@ public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
             this.clear();
             this.add(parent);
 
-            for (Link l : links)
-            {
-                if (this.filter == null || this.filter.test(l))
-                {
+            for (Link l : links) {
+                if (this.filter == null || this.filter.test(l)) {
                     this.add(new FileLink(StringUtils.fileName(l.path).replaceAll("/", ""), l, l.path.endsWith("/")));
                 }
             }
@@ -109,21 +92,17 @@ public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
         }
     }
 
-    public void setCurrent(Link link)
-    {
+    public void setCurrent(Link link) {
         this.deselect();
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
-        for (int i = 0, c = this.list.size(); i < c; i++)
-        {
+        for (int i = 0, c = this.list.size(); i < c; i++) {
             FileLink entry = this.list.get(i);
 
-            if (entry.link.equals(link))
-            {
+            if (entry.link.equals(link)) {
                 this.setIndex(i);
 
                 return;
@@ -132,12 +111,10 @@ public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
     }
 
     @Override
-    protected boolean sortElements()
-    {
+    protected boolean sortElements() {
         this.list.sort((a, b) ->
         {
-            if (a.folder != b.folder)
-            {
+            if (a.folder != b.folder) {
                 return a.folder ? -1 : 1;
             }
 
@@ -148,20 +125,17 @@ public class UIFileLinkList extends UIList<UIFileLinkList.FileLink>
     }
 
     @Override
-    protected void renderElementPart(UIContext context, FileLink element, int i, int x, int y, boolean hover, boolean selected)
-    {
+    protected void renderElementPart(UIContext context, FileLink element, int i, int x, int y, boolean hover, boolean selected) {
         context.batcher.icon(element.folder ? Icons.FOLDER : Icons.IMAGE, Colors.setA(Colors.WHITE, hover ? 0.75F : 0.6F), x + 2, y);
         context.batcher.textShadow(context.font, element.title, x + 20, y + 4, hover ? Colors.HIGHLIGHT : Colors.WHITE);
     }
 
-    public static class FileLink
-    {
+    public static class FileLink {
         public String title;
         public Link link;
         public boolean folder;
 
-        public FileLink(String title, Link link, boolean folder)
-        {
+        public FileLink(String title, Link link, boolean folder) {
             this.title = title;
             this.link = link;
             this.folder = folder;

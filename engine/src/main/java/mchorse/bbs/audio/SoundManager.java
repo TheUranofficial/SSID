@@ -15,13 +15,7 @@ import mchorse.bbs.utils.watchdog.WatchDogEvent;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.AL11;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALC10;
-import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.EXTDisconnect;
+import org.lwjgl.openal.*;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
@@ -30,15 +24,9 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class SoundManager implements IDisposable, IWatchDogListener
-{
+public class SoundManager implements IDisposable, IWatchDogListener {
     private static final float[] BUFFER = new float[6];
 
     private long device;
@@ -53,27 +41,22 @@ public class SoundManager implements IDisposable, IWatchDogListener
     private Vector3f at = new Vector3f();
     private Vector3f up = new Vector3f();
 
-    public SoundManager(AssetProvider provider)
-    {
+    public SoundManager(AssetProvider provider) {
         this.provider = provider;
     }
 
-    public Collection<SoundPlayer> getPlayers()
-    {
+    public Collection<SoundPlayer> getPlayers() {
         return this.sounds;
     }
 
-    public boolean isDevicePresent()
-    {
+    public boolean isDevicePresent() {
         return this.device != MemoryUtil.NULL;
     }
 
-    public void init()
-    {
+    public void init() {
         this.device = ALC10.alcOpenDevice((ByteBuffer) null);
 
-        if (this.device == MemoryUtil.NULL)
-        {
+        if (this.device == MemoryUtil.NULL) {
             this.device = 0;
             this.context = 0;
 
@@ -84,8 +67,7 @@ public class SoundManager implements IDisposable, IWatchDogListener
 
         this.context = ALC10.alcCreateContext(device, (IntBuffer) null);
 
-        if (this.context == MemoryUtil.NULL)
-        {
+        if (this.context == MemoryUtil.NULL) {
             throw new IllegalStateException("There was an error creating an OpenAL context!");
         }
 
@@ -98,22 +80,17 @@ public class SoundManager implements IDisposable, IWatchDogListener
     /**
      * Load a sound buffer (optionally include a waveform).
      */
-    public SoundBuffer load(Link link, boolean includeWaveform)
-    {
-        if (!this.isDevicePresent())
-        {
+    public SoundBuffer load(Link link, boolean includeWaveform) {
+        if (!this.isDevicePresent()) {
             return null;
         }
 
-        try
-        {
+        try {
             Wave wave = AudioReader.read(this.provider, link);
             Waveform waveform = null;
 
-            if (includeWaveform)
-            {
-                if (wave.getBytesPerSample() > 2)
-                {
+            if (includeWaveform) {
+                if (wave.getBytesPerSample() > 2) {
                     wave = wave.convertTo16();
                 }
 
@@ -128,31 +105,24 @@ public class SoundManager implements IDisposable, IWatchDogListener
             System.out.println("Sound \"" + link + "\" was loaded!");
 
             return buffer;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    private List<ColorCode> tryReadingColorCodes(Link link)
-    {
-        try
-        {
+    private List<ColorCode> tryReadingColorCodes(Link link) {
+        try {
             InputStream stream = this.provider.getAsset(new Link(link.source, link.path + ".json"));
             String string = IOUtils.readText(stream);
             ListType data = DataToString.listFromString(string);
 
-            if (data != null && !data.isEmpty())
-            {
+            if (data != null && !data.isEmpty()) {
                 List<ColorCode> colorCodes = new ArrayList<>();
 
-                for (BaseType type : data)
-                {
-                    if (!type.isList())
-                    {
+                for (BaseType type : data) {
+                    if (!type.isList()) {
                         continue;
                     }
 
@@ -162,34 +132,28 @@ public class SoundManager implements IDisposable, IWatchDogListener
                     colorCodes.add(colorCode);
                 }
 
-                if (!colorCodes.isEmpty())
-                {
+                if (!colorCodes.isEmpty()) {
                     return colorCodes;
                 }
             }
+        } catch (IOException e) {
         }
-        catch (IOException e)
-        {}
 
         return null;
     }
 
-    public SoundBuffer get(Link link, boolean includeWaveform)
-    {
-        if (!this.isDevicePresent())
-        {
+    public SoundBuffer get(Link link, boolean includeWaveform) {
+        if (!this.isDevicePresent()) {
             return null;
         }
 
-        if (!this.buffers.containsKey(link))
-        {
+        if (!this.buffers.containsKey(link)) {
             return this.load(link, includeWaveform);
         }
 
         SoundBuffer player = this.buffers.get(link);
 
-        if (includeWaveform && player.getWaveform() == null)
-        {
+        if (includeWaveform && player.getWaveform() == null) {
             player.delete();
 
             return this.load(link, true);
@@ -198,17 +162,14 @@ public class SoundManager implements IDisposable, IWatchDogListener
         return player;
     }
 
-    public SoundPlayer play(Link link)
-    {
-        if (!this.isDevicePresent())
-        {
+    public SoundPlayer play(Link link) {
+        if (!this.isDevicePresent()) {
             return null;
         }
 
         SoundBuffer buffer = this.get(link, false);
 
-        if (buffer != null)
-        {
+        if (buffer != null) {
             SoundPlayer player = new SoundPlayer(buffer);
 
             player.play();
@@ -220,25 +181,20 @@ public class SoundManager implements IDisposable, IWatchDogListener
         return null;
     }
 
-    public SoundPlayer playUnique(Link link)
-    {
-        if (!this.isDevicePresent())
-        {
+    public SoundPlayer playUnique(Link link) {
+        if (!this.isDevicePresent()) {
             return null;
         }
 
-        for (SoundPlayer player : this.sounds)
-        {
-            if (player.isUnique() && player.getBuffer().getId().equals(link))
-            {
+        for (SoundPlayer player : this.sounds) {
+            if (player.isUnique() && player.getBuffer().getId().equals(link)) {
                 return player;
             }
         }
 
         SoundBuffer buffer = this.get(link, true);
 
-        if (buffer != null)
-        {
+        if (buffer != null) {
             SoundPlayer player = new SoundPlayer(buffer).unique();
 
             player.play();
@@ -250,16 +206,13 @@ public class SoundManager implements IDisposable, IWatchDogListener
         return null;
     }
 
-    public void stop(Link link)
-    {
+    public void stop(Link link) {
         Iterator<SoundPlayer> it = this.sounds.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             SoundPlayer player = it.next();
 
-            if (player.getBuffer().getId().equals(link))
-            {
+            if (player.getBuffer().getId().equals(link)) {
                 player.stop();
                 player.delete();
 
@@ -268,17 +221,14 @@ public class SoundManager implements IDisposable, IWatchDogListener
         }
     }
 
-    private void checkAudio()
-    {
+    private void checkAudio() {
         long current = System.currentTimeMillis();
 
-        if (current - this.lastConnectivityCheck < 1000)
-        {
+        if (current - this.lastConnectivityCheck < 1000) {
             return;
         }
 
-        if (!this.isDevicePresent())
-        {
+        if (!this.isDevicePresent()) {
             this.init();
 
             this.lastConnectivityCheck = current;
@@ -288,8 +238,7 @@ public class SoundManager implements IDisposable, IWatchDogListener
 
         int connectivity = ALC10.alcGetInteger(this.device, EXTDisconnect.ALC_CONNECTED);
 
-        if (connectivity == AL10.AL_FALSE)
-        {
+        if (connectivity == AL10.AL_FALSE) {
             this.init();
             this.delete();
         }
@@ -299,51 +248,42 @@ public class SoundManager implements IDisposable, IWatchDogListener
 
     /* Updating methods (general update, update position, velocity and orientation) */
 
-    public void update()
-    {
+    public void update() {
         this.checkAudio();
 
         Iterator<SoundPlayer> it = this.sounds.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             SoundPlayer player = it.next();
 
-            if (player.canBeRemoved())
-            {
+            if (player.canBeRemoved()) {
                 player.delete();
                 it.remove();
             }
         }
     }
 
-    public void setPosition(Vector3d vector)
-    {
+    public void setPosition(Vector3d vector) {
         this.setPosition((float) vector.x, (float) vector.y, (float) vector.z);
     }
 
-    public void setPosition(float x, float y, float z)
-    {
+    public void setPosition(float x, float y, float z) {
         AL10.alListener3f(AL10.AL_POSITION, x, y, z);
     }
 
-    public void setVelocity(Vector3f vector)
-    {
+    public void setVelocity(Vector3f vector) {
         this.setVelocity(vector.x, vector.y, vector.z);
     }
 
-    public void setVelocity(double x, double y, double z)
-    {
+    public void setVelocity(double x, double y, double z) {
         this.setVelocity((float) x, (float) y, (float) z);
     }
 
-    public void setVelocity(float x, float y, float z)
-    {
+    public void setVelocity(float x, float y, float z) {
         AL10.alListener3f(AL10.AL_VELOCITY, x, y, z);
     }
 
-    public void setOrientation(Camera camera)
-    {
+    public void setOrientation(Camera camera) {
         Matrix4f transform = camera.updateView();
         Vector3f at = this.at.set(0, 0, 0);
         Vector3f up = this.up.set(0, 0, 0);
@@ -362,12 +302,10 @@ public class SoundManager implements IDisposable, IWatchDogListener
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.deleteSounds();
 
-        if (this.isDevicePresent())
-        {
+        if (this.isDevicePresent()) {
             ALC10.alcDestroyContext(this.context);
             ALC10.alcCloseDevice(this.device);
             ALC.destroy();
@@ -377,17 +315,14 @@ public class SoundManager implements IDisposable, IWatchDogListener
         this.context = 0;
     }
 
-    public void deleteSounds()
-    {
-        for (SoundPlayer player : this.sounds)
-        {
+    public void deleteSounds() {
+        for (SoundPlayer player : this.sounds) {
             player.delete();
         }
 
         this.sounds.clear();
 
-        for (SoundBuffer buffer : this.buffers.values())
-        {
+        for (SoundBuffer buffer : this.buffers.values()) {
             buffer.delete();
         }
 
@@ -397,28 +332,23 @@ public class SoundManager implements IDisposable, IWatchDogListener
     /* Watch dog listener implementation */
 
     @Override
-    public void accept(Path path, WatchDogEvent event)
-    {
-        if (!Files.isRegularFile(path))
-        {
+    public void accept(Path path, WatchDogEvent event) {
+        if (!Files.isRegularFile(path)) {
             return;
         }
 
         Link link = BBS.getProvider().getLink(path.toFile());
 
-        if (link == null && !(link.path.endsWith(".ogg") || link.path.endsWith(".wav")))
-        {
+        if (link == null && !(link.path.endsWith(".ogg") || link.path.endsWith(".wav"))) {
             return;
         }
 
-        if (this.buffers.containsKey(link))
-        {
+        if (this.buffers.containsKey(link)) {
             this.stop(link);
 
             SoundBuffer buffer = this.buffers.remove(link);
 
-            if (buffer != null)
-            {
+            if (buffer != null) {
                 buffer.delete();
             }
         }

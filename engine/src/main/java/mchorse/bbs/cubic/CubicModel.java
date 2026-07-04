@@ -5,8 +5,7 @@ import mchorse.bbs.cubic.data.model.Model;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.resources.Link;
 
-public class CubicModel
-{
+public class CubicModel {
     public final String id;
     public Model model;
     public Animations animations;
@@ -20,8 +19,7 @@ public class CubicModel
 
     private CubicModelRenderer renderer;
 
-    public CubicModel(String id, Model model, Animations animations, Link texture)
-    {
+    public CubicModel(String id, Model model, Animations animations, Link texture) {
         this.id = id;
         this.model = model;
         this.animations = animations;
@@ -31,20 +29,16 @@ public class CubicModel
         this.poseGroup = id;
     }
 
-    public CubicModelRenderer getRenderer()
-    {
-        if (this.renderer == null)
-        {
+    public CubicModelRenderer getRenderer() {
+        if (this.renderer == null) {
             this.renderer = new CubicModelRenderer(this);
         }
 
         return this.renderer;
     }
 
-    public void applyConfig(MapType config)
-    {
-        if (config == null)
-        {
+    public void applyConfig(MapType config) {
+        if (config == null) {
             return;
         }
 

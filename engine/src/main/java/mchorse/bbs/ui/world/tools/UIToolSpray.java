@@ -11,12 +11,10 @@ import mchorse.bbs.voxel.processor.Processor;
 import mchorse.bbs.voxel.processor.SprayProcessor;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 
-public class UIToolSpray extends UIToolProcessorPainter
-{
+public class UIToolSpray extends UIToolProcessorPainter {
     public UITrackpad chance;
 
-    public UIToolSpray(UIWorldEditorPanel editor)
-    {
+    public UIToolSpray(UIWorldEditorPanel editor) {
         super(editor);
 
         this.chance = new UITrackpad();
@@ -27,8 +25,7 @@ public class UIToolSpray extends UIToolProcessorPainter
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.SPRAY, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_SPRAY, Direction.RIGHT);
@@ -37,8 +34,7 @@ public class UIToolSpray extends UIToolProcessorPainter
     }
 
     @Override
-    protected Processor createProcessor(RayTraceResult result)
-    {
+    protected Processor createProcessor(RayTraceResult result) {
         return new SprayProcessor(this.variantToPlace, (float) this.chance.getValue() / 100F).collect();
     }
 }

@@ -9,19 +9,17 @@ import mchorse.bbs.utils.math.MathUtils;
 
 /**
  * Bounds resizer
- *
+ * <p>
  * This resizer class allows to keep the element within the bounds of
  * current viewport
  */
-public class BoundsResizer extends DecoratedResizer
-{
+public class BoundsResizer extends DecoratedResizer {
     public UIElement target;
     public int padding;
 
     private UIViewportStack viewport = new UIViewportStack();
 
-    public static BoundsResizer apply(UIElement element, UIElement target, int padding)
-    {
+    public static BoundsResizer apply(UIElement element, UIElement target, int padding) {
         BoundsResizer resizer = new BoundsResizer(element.resizer(), target, padding);
 
         element.post(resizer);
@@ -29,8 +27,7 @@ public class BoundsResizer extends DecoratedResizer
         return resizer;
     }
 
-    protected BoundsResizer(IResizer resizer, UIElement target, int padding)
-    {
+    protected BoundsResizer(IResizer resizer, UIElement target, int padding) {
         super(resizer);
 
         this.target = target;
@@ -38,14 +35,12 @@ public class BoundsResizer extends DecoratedResizer
     }
 
     @Override
-    public void apply(Area area)
-    {
+    public void apply(Area area) {
         this.viewport.applyFromElement(this.target);
 
         Area viewport = this.viewport.getViewport();
 
-        if (viewport != null)
-        {
+        if (viewport != null) {
             area.x = MathUtils.clamp(area.x, this.viewport.globalX(viewport.x) + this.padding, this.viewport.globalX(viewport.ex()) - area.w - this.padding);
             area.y = MathUtils.clamp(area.y, this.viewport.globalY(viewport.y) + this.padding, this.viewport.globalY(viewport.ey()) - area.h - this.padding);
         }
@@ -54,26 +49,22 @@ public class BoundsResizer extends DecoratedResizer
     }
 
     @Override
-    public int getX()
-    {
+    public int getX() {
         return 0;
     }
 
     @Override
-    public int getY()
-    {
+    public int getY() {
         return 0;
     }
 
     @Override
-    public int getW()
-    {
+    public int getW() {
         return 0;
     }
 
     @Override
-    public int getH()
-    {
+    public int getH() {
         return 0;
     }
 }

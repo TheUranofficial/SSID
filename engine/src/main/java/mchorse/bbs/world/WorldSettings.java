@@ -10,8 +10,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class WorldSettings implements IMapSerializable
-{
+public class WorldSettings implements IMapSerializable {
     public boolean terrain = true;
     public boolean sky = true;
     public boolean fog = true;
@@ -32,14 +31,12 @@ public class WorldSettings implements IMapSerializable
     public final Vector3f cameraRotation = new Vector3f();
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.terrain = data.getBool("terrain", this.terrain);
         this.sky = data.getBool("sky", this.sky);
         this.fog = data.getBool("fog", this.fog);
 
-        if (data.has("skyForm"))
-        {
+        if (data.has("skyForm")) {
             this.skyForm = FormUtils.fromData(data.getMap("skyForm"));
         }
 
@@ -59,14 +56,12 @@ public class WorldSettings implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putBool("terrain", this.terrain);
         data.putBool("sky", this.sky);
         data.putBool("fog", this.fog);
 
-        if (this.skyForm != null)
-        {
+        if (this.skyForm != null) {
             data.put("skyForm", FormUtils.toData(this.skyForm));
         }
 

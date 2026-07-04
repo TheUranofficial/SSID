@@ -16,25 +16,20 @@ import mchorse.bbs.utils.keyframes.KeyframeInterpolation;
 
 import java.util.function.Consumer;
 
-public class UI
-{
-    public static UIElement row(UIElement... elements)
-    {
+public class UI {
+    public static UIElement row(UIElement... elements) {
         return row(5, elements);
     }
 
-    public static UIElement row(int margin, UIElement... elements)
-    {
+    public static UIElement row(int margin, UIElement... elements) {
         return row(margin, 0, elements);
     }
 
-    public static UIElement row(int margin, int padding, UIElement... elements)
-    {
+    public static UIElement row(int margin, int padding, UIElement... elements) {
         return row(margin, padding, 0, elements);
     }
 
-    public static UIElement row(int margin, int padding, int height, UIElement... elements)
-    {
+    public static UIElement row(int margin, int padding, int height, UIElement... elements) {
         UIElement element = new UIElement();
 
         element.row(margin).padding(padding).height(height);
@@ -43,23 +38,19 @@ public class UI
         return element;
     }
 
-    public static UIElement column(UIElement... elements)
-    {
+    public static UIElement column(UIElement... elements) {
         return column(5, elements);
     }
 
-    public static UIElement column(int margin, UIElement... elements)
-    {
+    public static UIElement column(int margin, UIElement... elements) {
         return column(margin, 0, elements);
     }
 
-    public static UIElement column(int margin, int padding, UIElement... elements)
-    {
+    public static UIElement column(int margin, int padding, UIElement... elements) {
         return column(margin, padding, 0, elements);
     }
 
-    public static UIElement column(int margin, int padding, int height, UIElement... elements)
-    {
+    public static UIElement column(int margin, int padding, int height, UIElement... elements) {
         UIElement element = new UIElement();
 
         element.column(margin).vertical().stretch().padding(padding).height(height);
@@ -68,18 +59,15 @@ public class UI
         return element;
     }
 
-    public static UILabel label(IKey label)
-    {
+    public static UILabel label(IKey label) {
         return label(label, BBS.getRender().getFont().getHeight());
     }
 
-    public static UILabel label(IKey label, int height)
-    {
+    public static UILabel label(IKey label, int height) {
         return label(label, height, Colors.WHITE);
     }
 
-    public static UILabel label(IKey label, int height, int color)
-    {
+    public static UILabel label(IKey label, int height, int color) {
         UILabel element = new UILabel(label, color);
 
         element.h(height);
@@ -87,23 +75,19 @@ public class UI
         return element;
     }
 
-    public static UIScrollView scrollView(UIElement... elements)
-    {
+    public static UIScrollView scrollView(UIElement... elements) {
         return scrollView(5, elements);
     }
 
-    public static UIScrollView scrollView(int margin, UIElement... elements)
-    {
+    public static UIScrollView scrollView(int margin, UIElement... elements) {
         return scrollView(margin, 0, elements);
     }
 
-    public static UIScrollView scrollView(int margin, int padding, UIElement... elements)
-    {
+    public static UIScrollView scrollView(int margin, int padding, UIElement... elements) {
         return scrollView(margin, padding, 0, elements);
     }
 
-    public static UIScrollView scrollView(int margin, int padding, int width, UIElement... elements)
-    {
+    public static UIScrollView scrollView(int margin, int padding, int width, UIElement... elements) {
         UIScrollView scrollView = new UIScrollView();
 
         scrollView.column(margin).vertical().stretch().scroll().width(width).padding(padding);
@@ -111,20 +95,15 @@ public class UI
         return scrollView;
     }
 
-    public static void keyframeInterps(UIContext context, KeyframeInterpolation current, Consumer<KeyframeInterpolation> consumer)
-    {
+    public static void keyframeInterps(UIContext context, KeyframeInterpolation current, Consumer<KeyframeInterpolation> consumer) {
         context.replaceContextMenu((menu) ->
         {
-            for (KeyframeInterpolation interpolation : KeyframeInterpolation.values())
-            {
+            for (KeyframeInterpolation interpolation : KeyframeInterpolation.values()) {
                 ContextAction action;
 
-                if (interpolation == current)
-                {
+                if (interpolation == current) {
                     action = menu.action(Icons.ADD, UIKeys.C_INTERPOLATION.get(interpolation.key), BBSSettings.primaryColor.get(), () -> consumer.accept(interpolation));
-                }
-                else
-                {
+                } else {
                     action = menu.action(Icons.ADD, UIKeys.C_INTERPOLATION.get(interpolation.key), () -> consumer.accept(interpolation));
                 }
 

@@ -11,34 +11,29 @@ import mchorse.bbs.utils.keyframes.KeyframeChannel;
 
 import java.util.List;
 
-public class UICameraDopeSheetEditor extends UIKeyframesEditor<UIDopeSheetView>
-{
+public class UICameraDopeSheetEditor extends UIKeyframesEditor<UIDopeSheetView> {
     public static final int[] COLORS = {Colors.RED, Colors.GREEN, Colors.BLUE, Colors.CYAN, Colors.MAGENTA, Colors.YELLOW, Colors.LIGHTEST_GRAY};
     public static final CameraAxisConverter CONVERTER = new CameraAxisConverter();
 
     protected IUIClipsDelegate editor;
 
-    public UICameraDopeSheetEditor(IUIClipsDelegate editor)
-    {
+    public UICameraDopeSheetEditor(IUIClipsDelegate editor) {
         super();
 
         this.editor = editor;
         this.keyframes.editor = editor;
     }
 
-    public void updateConverter()
-    {
+    public void updateConverter() {
         this.setConverter(CONVERTER);
     }
 
     @Override
-    protected UIDopeSheetView createElement()
-    {
+    protected UIDopeSheetView createElement() {
         return new UIDopeSheetView(this, this::fillData);
     }
 
-    public void setChannel(KeyframeChannel channel, int color)
-    {
+    public void setChannel(KeyframeChannel channel, int color) {
         List<UISheet> sheets = this.keyframes.sheets;
 
         sheets.clear();
@@ -49,15 +44,13 @@ public class UICameraDopeSheetEditor extends UIKeyframesEditor<UIDopeSheetView>
         this.frameButtons.setVisible(false);
     }
 
-    public void setClip(KeyframeClip clip)
-    {
+    public void setClip(KeyframeClip clip) {
         List<UISheet> sheets = this.keyframes.sheets;
 
         sheets.clear();
         this.keyframes.clearSelection();
 
-        for (int i = 0; i < clip.channels.length; i++)
-        {
+        for (int i = 0; i < clip.channels.length; i++) {
             KeyframeChannel channel = clip.channels[i];
 
             sheets.add(new UISheet(channel.getId(), IKey.raw(channel.getId()), COLORS[i], channel));
@@ -66,15 +59,13 @@ public class UICameraDopeSheetEditor extends UIKeyframesEditor<UIDopeSheetView>
         this.frameButtons.setVisible(false);
     }
 
-    public void setChannels(List<KeyframeChannel> channels, List<Integer> colors)
-    {
+    public void setChannels(List<KeyframeChannel> channels, List<Integer> colors) {
         List<UISheet> sheets = this.keyframes.sheets;
 
         sheets.clear();
         this.keyframes.clearSelection();
 
-        for (int i = 0; i < channels.size(); i++)
-        {
+        for (int i = 0; i < channels.size(); i++) {
             KeyframeChannel channel = channels.get(i);
 
             sheets.add(new UISheet(channel.getId(), IKey.raw(channel.getId()), colors.get(i), channel));

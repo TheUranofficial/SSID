@@ -8,21 +8,16 @@ import mchorse.bbs.world.WorldMetadata;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIWorldMetadataList extends UIList<WorldMetadata>
-{
-    public UIWorldMetadataList(Consumer<List<WorldMetadata>> callback)
-    {
+public class UIWorldMetadataList extends UIList<WorldMetadata> {
+    public UIWorldMetadataList(Consumer<List<WorldMetadata>> callback) {
         super(callback);
 
         this.scroll.scrollItemSize = 32;
     }
 
-    public WorldMetadata getById(String id)
-    {
-        for (WorldMetadata metadata : this.getList())
-        {
-            if (metadata.getId().equals(id))
-            {
+    public WorldMetadata getById(String id) {
+        for (WorldMetadata metadata : this.getList()) {
+            if (metadata.getId().equals(id)) {
                 return metadata;
             }
         }
@@ -31,8 +26,7 @@ public class UIWorldMetadataList extends UIList<WorldMetadata>
     }
 
     @Override
-    protected void renderElementPart(UIContext context, WorldMetadata element, int i, int x, int y, boolean hover, boolean selected)
-    {
+    protected void renderElementPart(UIContext context, WorldMetadata element, int i, int x, int y, boolean hover, boolean selected) {
         int h = this.scroll.scrollItemSize;
 
         context.batcher.textShadow(element.name, x + 6, y + 6);

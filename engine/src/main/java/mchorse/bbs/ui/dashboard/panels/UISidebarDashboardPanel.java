@@ -8,8 +8,7 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.utils.UIRenderable;
 import mchorse.bbs.utils.colors.Colors;
 
-public abstract class UISidebarDashboardPanel extends UIDashboardPanel
-{
+public abstract class UISidebarDashboardPanel extends UIDashboardPanel {
     public static final IKey KEYS_CATEGORY = UIKeys.PANELS_KEYS_CATEGORY;
 
     public UIElement iconBar;
@@ -17,8 +16,7 @@ public abstract class UISidebarDashboardPanel extends UIDashboardPanel
 
     protected boolean update;
 
-    public UISidebarDashboardPanel(UIDashboard dashboard)
-    {
+    public UISidebarDashboardPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.iconBar = new UIElement();
@@ -31,20 +29,17 @@ public abstract class UISidebarDashboardPanel extends UIDashboardPanel
     }
 
     @Override
-    public void open()
-    {
+    public void open() {
         super.open();
 
         this.update = true;
     }
 
     @Override
-    public void appear()
-    {
+    public void appear() {
         super.appear();
 
-        if (this.update)
-        {
+        if (this.update) {
             this.update = false;
 
             this.requestNames();
@@ -53,10 +48,8 @@ public abstract class UISidebarDashboardPanel extends UIDashboardPanel
 
     public abstract void requestNames();
 
-    protected void renderBackground(UIContext context)
-    {
-        if (this.iconBar.isVisible())
-        {
+    protected void renderBackground(UIContext context) {
+        if (this.iconBar.isVisible()) {
             this.iconBar.area.render(context.batcher, Colors.A50);
             context.batcher.gradientHBox(this.iconBar.area.x - 6, this.iconBar.area.y, this.iconBar.area.x, this.iconBar.area.ey(), 0, 0x29000000);
         }

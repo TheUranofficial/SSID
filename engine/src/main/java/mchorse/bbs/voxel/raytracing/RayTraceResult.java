@@ -5,8 +5,7 @@ import mchorse.bbs.world.objects.WorldObject;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
-public class RayTraceResult
-{
+public class RayTraceResult {
     public RayTraceType type = RayTraceType.MISS;
     public Entity entity;
     public WorldObject object;
@@ -15,8 +14,7 @@ public class RayTraceResult
     public Vector3i normal = new Vector3i();
     public Vector3i block = new Vector3i();
 
-    public void reset()
-    {
+    public void reset() {
         this.type = RayTraceType.MISS;
         this.entity = null;
         this.object = null;

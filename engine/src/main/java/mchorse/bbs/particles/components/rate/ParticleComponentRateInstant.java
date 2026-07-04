@@ -12,35 +12,28 @@ import mchorse.bbs.particles.components.IComponentEmitterUpdate;
 import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentRateInstant extends ParticleComponentRate implements IComponentEmitterUpdate
-{
+public class ParticleComponentRateInstant extends ParticleComponentRate implements IComponentEmitterUpdate {
     public static final MolangExpression DEFAULT_PARTICLES = new MolangValue(null, new Constant(10));
 
-    public ParticleComponentRateInstant()
-    {
+    public ParticleComponentRateInstant() {
         this.particles = DEFAULT_PARTICLES;
     }
 
     @Override
-    protected void toData(MapType data)
-    {
-        if (!MolangExpression.isConstant(this.particles, 10))
-        {
+    protected void toData(MapType data) {
+        if (!MolangExpression.isConstant(this.particles, 10)) {
             data.put("num_particles", this.particles.toData());
         }
     }
 
-    public ParticleComponentBase fromData(BaseType elem, MolangParser parser) throws MolangException
-    {
-        if (!elem.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType elem, MolangParser parser) throws MolangException {
+        if (!elem.isMap()) {
             return super.fromData(elem, parser);
         }
 
         MapType map = elem.asMap();
 
-        if (map.has("num_particles"))
-        {
+        if (map.has("num_particles")) {
             this.particles = parser.parseData(map.get("num_particles"));
         }
 
@@ -48,16 +41,13 @@ public class ParticleComponentRateInstant extends ParticleComponentRate implemen
     }
 
     @Override
-    public void update(ParticleEmitter emitter)
-    {
+    public void update(ParticleEmitter emitter) {
         double age = emitter.getAge();
 
-        if (emitter.playing && Operation.equals(age, 0))
-        {
+        if (emitter.playing && Operation.equals(age, 0)) {
             emitter.setEmitterVariables(0);
 
-            for (int i = 0, c = (int) this.particles.get(); i < c; i ++)
-            {
+            for (int i = 0, c = (int) this.particles.get(); i < c; i++) {
                 emitter.spawnParticle();
             }
         }

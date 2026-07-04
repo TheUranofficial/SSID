@@ -6,11 +6,9 @@ import mchorse.bbs.world.entities.components.FormComponent;
 
 import java.util.List;
 
-public class PlayerEntityBlueprint extends BasicEntityBlueprint
-{
+public class PlayerEntityBlueprint extends BasicEntityBlueprint {
     @Override
-    public void fillComponents(List<EntityRecord> records)
-    {
+    public void fillComponents(List<EntityRecord> records) {
         super.fillComponents(records);
 
         records.add(new EntityRecord(FormComponent.class, new FormComponent()));

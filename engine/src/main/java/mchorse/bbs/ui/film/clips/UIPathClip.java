@@ -25,14 +25,13 @@ import org.joml.Vector2d;
 
 /**
  * Path clip panel
- *
+ * <p>
  * This panel has the most modules used. It's responsible for editing path
  * clip. It uses point and angle modules to edit a position which is picked
  * from the points module. Interpolation module is used to modify path clip's
  * interpolation methods.
  */
-public class UIPathClip extends UIClip<PathClip>
-{
+public class UIPathClip extends UIClip<PathClip> {
     public UIPointModule point;
     public UIAngleModule angle;
     public UIButton interpPoint;
@@ -46,14 +45,12 @@ public class UIPathClip extends UIClip<PathClip>
 
     public ValuePosition position;
 
-    public UIPathClip(PathClip clip, IUIClipsDelegate editor)
-    {
+    public UIPathClip(PathClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.point = new UIPointModule(editor);
@@ -73,8 +70,7 @@ public class UIPathClip extends UIClip<PathClip>
         {
             this.clip.circularAutoCenter.set(b.getValue());
 
-            if (!b.getValue())
-            {
+            if (!b.getValue()) {
                 Vector2d center = this.clip.calculateCenter(new Vector2d());
 
                 this.circularX.setValue(center.x);
@@ -94,8 +90,7 @@ public class UIPathClip extends UIClip<PathClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_PATH_POINTS).marginTop(12));
@@ -105,48 +100,39 @@ public class UIPathClip extends UIClip<PathClip>
         this.panels.context((menu) -> UICameraUtils.positionContextMenu(menu, editor, this.position));
     }
 
-    private IInterpolation getInterp(InterpolationType type)
-    {
+    private IInterpolation getInterp(InterpolationType type) {
         IInterpolation function = type.function;
 
-        if (type == InterpolationType.HERMITE)
-        {
+        if (type == InterpolationType.HERMITE) {
             function = KeyframeInterpolations.HERMITE;
-        }
-        else if (type == InterpolationType.CUBIC)
-        {
+        } else if (type == InterpolationType.CUBIC) {
             function = Interpolation.CUBIC_INOUT;
         }
 
         return function;
     }
 
-    private void updateSpeedPanel()
-    {
+    private void updateSpeedPanel() {
         this.resize();
     }
 
-    private ValuePosition getPosition(int index)
-    {
+    private ValuePosition getPosition(int index) {
         BaseValue value = this.clip.points.getAll().get(index);
 
         return value instanceof ValuePosition ? (ValuePosition) value : null;
     }
 
-    public void pickPoint(int index)
-    {
+    public void pickPoint(int index) {
         this.points.setIndex(index);
         this.position = this.getPosition(index);
 
         this.point.fill(this.position.getPoint());
         this.angle.fill(this.position.getAngle());
 
-        if (!Window.isCtrlPressed())
-        {
+        if (!Window.isCtrlPressed()) {
             int offset = this.clip.getTickForPoint(index);
 
-            if (offset == this.clip.duration.get())
-            {
+            if (offset == this.clip.duration.get()) {
                 offset -= 1;
             }
 
@@ -155,10 +141,8 @@ public class UIPathClip extends UIClip<PathClip>
     }
 
     @Override
-    public void editClip(Position position)
-    {
-        if (this.position != null)
-        {
+    public void editClip(Position position) {
+        if (this.position != null) {
             this.position.set(position);
 
             super.editClip(position);
@@ -166,8 +150,7 @@ public class UIPathClip extends UIClip<PathClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         int duration = this.clip.duration.get();

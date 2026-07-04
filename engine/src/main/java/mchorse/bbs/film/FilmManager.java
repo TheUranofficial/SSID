@@ -6,22 +6,18 @@ import mchorse.bbs.utils.manager.storage.CompressedDataStorage;
 
 import java.io.File;
 
-public class FilmManager extends BaseManager<Film>
-{
-    public FilmManager(File folder)
-    {
+public class FilmManager extends BaseManager<Film> {
+    public FilmManager(File folder) {
         super(folder);
 
         this.storage = new CompressedDataStorage();
     }
 
     @Override
-    protected Film createData(String id, MapType mapType)
-    {
+    protected Film createData(String id, MapType mapType) {
         Film film = new Film();
 
-        if (mapType != null)
-        {
+        if (mapType != null) {
             film.fromData(mapType);
         }
 
@@ -29,8 +25,7 @@ public class FilmManager extends BaseManager<Film>
     }
 
     @Override
-    protected String getExtension()
-    {
+    protected String getExtension() {
         return ".dat";
     }
 }

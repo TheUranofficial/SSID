@@ -6,48 +6,41 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-public class IntArrayType extends BaseType
-{
+public class IntArrayType extends BaseType {
     public static int[] DEFAULT = new int[0];
 
     public int[] value = DEFAULT;
 
-    public IntArrayType()
-    {}
+    public IntArrayType() {
+    }
 
-    public IntArrayType(int[] value)
-    {
+    public IntArrayType(int[] value) {
         this.value = value;
     }
 
     @Override
-    public byte getTypeId()
-    {
+    public byte getTypeId() {
         return BaseType.TYPE_INT_ARRAY;
     }
 
     @Override
-    public BaseType copy()
-    {
+    public BaseType copy() {
         return new IntArrayType(Arrays.copyOf(this.value, this.value.length));
     }
 
     @Override
-    public void read(DataStorageContext context) throws IOException
-    {
+    public void read(DataStorageContext context) throws IOException {
         int c = context.in.readInt();
         this.value = new int[c];
 
         byte[] bytes = new byte[c * 4];
         int counter = 0;
 
-        while (counter < bytes.length)
-        {
+        while (counter < bytes.length) {
             counter += context.in.read(bytes, counter, bytes.length - counter);
         }
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             int b1 = bytes[i * 4] & 0xff;
             int b2 = bytes[i * 4 + 1] & 0xff;
             int b3 = bytes[i * 4 + 2] & 0xff;
@@ -58,15 +51,13 @@ public class IntArrayType extends BaseType
     }
 
     @Override
-    public void write(DataStorageContext context) throws IOException
-    {
+    public void write(DataStorageContext context) throws IOException {
         int c = this.value.length;
         byte[] bytes = new byte[c * 4];
 
         context.out.writeInt(c);
 
-        for (int i = 0; i < c; i++)
-        {
+        for (int i = 0; i < c; i++) {
             int value = this.value[i];
 
             bytes[i * 4] = (byte) (value & 0xff);
@@ -79,21 +70,16 @@ public class IntArrayType extends BaseType
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof IntArrayType)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof IntArrayType) {
             IntArrayType array = (IntArrayType) obj;
 
-            if (array.value.length != this.value.length)
-            {
+            if (array.value.length != this.value.length) {
                 return false;
             }
 
-            for (int i = 0; i < this.value.length; i++)
-            {
-                if (this.value[i] != array.value[i])
-                {
+            for (int i = 0; i < this.value.length; i++) {
+                if (this.value[i] != array.value[i]) {
                     return false;
                 }
             }
@@ -105,12 +91,10 @@ public class IntArrayType extends BaseType
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringJoiner joiner = new StringJoiner(",");
 
-        for (int value : this.value)
-        {
+        for (int value : this.value) {
             joiner.add(String.valueOf(value));
         }
 

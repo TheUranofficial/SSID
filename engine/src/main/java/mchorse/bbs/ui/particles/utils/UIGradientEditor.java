@@ -15,8 +15,7 @@ import mchorse.bbs.utils.colors.Color;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class UIGradientEditor extends UIElement
-{
+public class UIGradientEditor extends UIElement {
     private UIParticleSchemeSection section;
     private UIColor color;
 
@@ -30,8 +29,7 @@ public class UIGradientEditor extends UIElement
     private Area b = new Area();
     private Color c = new Color();
 
-    public UIGradientEditor(UIParticleSchemeSection section, UIColor color)
-    {
+    public UIGradientEditor(UIParticleSchemeSection section, UIColor color) {
         super();
 
         this.section = section;
@@ -41,8 +39,7 @@ public class UIGradientEditor extends UIElement
         {
             menu.action(Icons.ADD, UIKeys.SNOWSTORM_LIGHTING_CONTEXT_ADD_STOP, this::addColorStop);
 
-            if (this.gradient.stops.size() > 1)
-            {
+            if (this.gradient.stops.size() > 1) {
                 menu.action(Icons.REMOVE, UIKeys.SNOWSTORM_LIGHTING_CONTEXT_REMOVE_STOP, this::removeColorStop);
             }
         });
@@ -50,8 +47,7 @@ public class UIGradientEditor extends UIElement
         this.h(20);
     }
 
-    private Color fillColor(Solid solid)
-    {
+    private Color fillColor(Solid solid) {
         this.c.r = (float) solid.r.get();
         this.c.g = (float) solid.g.get();
         this.c.b = (float) solid.b.get();
@@ -60,8 +56,7 @@ public class UIGradientEditor extends UIElement
         return this.c;
     }
 
-    private Area fillBound(Gradient.ColorStop stop)
-    {
+    private Area fillBound(Gradient.ColorStop stop) {
         int x = this.a.x(stop.stop / this.gradient.range);
 
         this.b.set(x - 3, this.a.ey() - 7, 6, 10);
@@ -69,14 +64,12 @@ public class UIGradientEditor extends UIElement
         return this.b;
     }
 
-    private void fillStop(Gradient.ColorStop stop)
-    {
+    private void fillStop(Gradient.ColorStop stop) {
         this.current = stop;
         this.color.setColor(this.fillColor(stop.color).getARGBColor());
     }
 
-    public void setColor(int color)
-    {
+    public void setColor(int color) {
         this.c.set(color);
 
         ((MolangValue) this.current.color.r).expression.set(this.c.r);
@@ -85,12 +78,10 @@ public class UIGradientEditor extends UIElement
         ((MolangValue) this.current.color.a).expression.set(this.c.a);
     }
 
-    public void setGradient(Gradient gradient)
-    {
+    public void setGradient(Gradient gradient) {
         this.gradient = gradient;
 
-        if (this.gradient.stops.isEmpty())
-        {
+        if (this.gradient.stops.isEmpty()) {
             this.gradient.stops.add(new Gradient.ColorStop(0, new Solid()));
         }
 
@@ -98,8 +89,7 @@ public class UIGradientEditor extends UIElement
         this.color.setColor(this.fillColor(this.current.color).getARGBColor());
     }
 
-    private void addColorStop()
-    {
+    private void addColorStop() {
         float x = (this.getContext().mouseX - this.area.x) / (float) this.area.w * this.gradient.range;
 
         Solid color = new Solid();
@@ -116,8 +106,7 @@ public class UIGradientEditor extends UIElement
         this.fillStop(stop);
     }
 
-    private void removeColorStop()
-    {
+    private void removeColorStop() {
         int index = this.gradient.stops.indexOf(this.current);
 
         this.gradient.stops.remove(index);
@@ -128,8 +117,7 @@ public class UIGradientEditor extends UIElement
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         this.a.copy(this.area);
@@ -137,16 +125,12 @@ public class UIGradientEditor extends UIElement
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 0)
-        {
-            for (Gradient.ColorStop stop : this.gradient.stops)
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 0) {
+            for (Gradient.ColorStop stop : this.gradient.stops) {
                 Area area = this.fillBound(stop);
 
-                if (area.isInside(context))
-                {
+                if (area.isInside(context)) {
                     this.dragging = 0;
                     this.lastX = context.mouseX;
                     this.fillStop(stop);
@@ -162,10 +146,8 @@ public class UIGradientEditor extends UIElement
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
-        if (this.dragging != -1)
-        {
+    public boolean subMouseReleased(UIContext context) {
+        if (this.dragging != -1) {
             this.section.dirty();
         }
 
@@ -175,14 +157,10 @@ public class UIGradientEditor extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.dragging == 0 && Math.abs(context.mouseX - this.lastX) > 3)
-        {
+    public void render(UIContext context) {
+        if (this.dragging == 0 && Math.abs(context.mouseX - this.lastX) > 3) {
             this.dragging = 1;
-        }
-        else if (this.dragging == 1)
-        {
+        } else if (this.dragging == 1) {
             float x = (context.mouseX - this.area.x) / (float) this.area.w * this.gradient.range;
 
             this.current.stop = MathUtils.clamp(x, 0, this.gradient.range);
@@ -197,16 +175,14 @@ public class UIGradientEditor extends UIElement
 
         Gradient.ColorStop first = this.gradient.stops.get(0);
 
-        if (first.stop > 0)
-        {
+        if (first.stop > 0) {
             int x1 = this.a.x(first.stop / this.gradient.range);
             int rgba1 = this.fillColor(first.color).getARGBColor();
 
             context.batcher.box(this.a.x, this.a.y, x1, this.a.ey(), rgba1);
         }
 
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             Gradient.ColorStop stop = this.gradient.stops.get(i);
             Gradient.ColorStop next = i + 1 < size ? this.gradient.stops.get(i + 1) : stop;
 
@@ -219,8 +195,7 @@ public class UIGradientEditor extends UIElement
             context.batcher.gradientHBox(x1, this.a.y, x2, this.a.ey(), rgba1, rgba2);
         }
 
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             Gradient.ColorStop stop = this.gradient.stops.get(i);
             Area area = this.fillBound(stop);
             int handleColor = this.fillColor(stop.color).getARGBColor();

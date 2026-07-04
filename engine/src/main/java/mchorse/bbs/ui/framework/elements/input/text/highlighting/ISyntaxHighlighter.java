@@ -4,8 +4,7 @@ import mchorse.bbs.graphics.text.FontRenderer;
 
 import java.util.List;
 
-public interface ISyntaxHighlighter
-{
+public interface ISyntaxHighlighter {
     public SyntaxStyle getStyle();
 
     public void setStyle(SyntaxStyle style);

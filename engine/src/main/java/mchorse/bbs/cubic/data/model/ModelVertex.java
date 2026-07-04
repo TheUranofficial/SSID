@@ -3,13 +3,11 @@ package mchorse.bbs.cubic.data.model;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-public class ModelVertex
-{
+public class ModelVertex {
     public Vector3f vertex = new Vector3f();
     public Vector2f uv = new Vector2f();
 
-    public void set(Vector3f vertex, Vector2f uv, Model model)
-    {
+    public void set(Vector3f vertex, Vector2f uv, Model model) {
         this.vertex.set(vertex);
         this.uv.set(uv);
 

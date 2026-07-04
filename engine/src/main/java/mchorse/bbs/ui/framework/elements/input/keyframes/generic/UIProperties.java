@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
-{
+public class UIProperties extends UIBaseKeyframes<GenericKeyframe> {
     public static final int TOP_MARGIN = 15;
 
     public boolean selected;
@@ -31,73 +30,56 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
 
     private IUIClipsDelegate delegate;
 
-    public UIProperties(IUIClipsDelegate delegate, Consumer<GenericKeyframe> callback)
-    {
+    public UIProperties(IUIClipsDelegate delegate, Consumer<GenericKeyframe> callback) {
         super(callback);
 
         this.delegate = delegate;
     }
 
-    public IUIClipsDelegate getDelegate()
-    {
+    public IUIClipsDelegate getDelegate() {
         return this.delegate;
     }
 
     /* Implementation of setters */
 
-    public void setInstant(boolean instant)
-    {
-        for (UIProperty property : this.properties)
-        {
+    public void setInstant(boolean instant) {
+        for (UIProperty property : this.properties) {
             property.setInstant(instant);
         }
     }
 
-    public void setTick(double tick)
-    {
-        if (this.isMultipleSelected())
-        {
+    public void setTick(double tick) {
+        if (this.isMultipleSelected()) {
             tick = (long) tick;
 
             double dx = tick - this.getCurrent().getTick();
 
-            for (UIProperty property : this.properties)
-            {
+            for (UIProperty property : this.properties) {
                 property.setTick(dx);
             }
-        }
-        else
-        {
+        } else {
             this.getCurrent().setTick((long) tick);
         }
 
         this.sliding = true;
     }
 
-    public void setValue(Object value)
-    {
+    public void setValue(Object value) {
         GenericKeyframe current = this.getCurrent();
 
-        if (this.isMultipleSelected())
-        {
-            for (UIProperty property : this.properties)
-            {
-                if (current.getFactory() == property.channel.getFactory())
-                {
+        if (this.isMultipleSelected()) {
+            for (UIProperty property : this.properties) {
+                if (current.getFactory() == property.channel.getFactory()) {
                     property.setValue(current.getValue());
                 }
             }
-        }
-        else
-        {
+        } else {
             current.setValue(value);
         }
     }
 
-    public void setInterpolation(IInterpolation interp)
-    {
-        for (UIProperty property : this.properties)
-        {
+    public void setInterpolation(IInterpolation interp) {
+        for (UIProperty property : this.properties) {
             property.setInterpolation(interp);
         }
     }
@@ -105,8 +87,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* Graphing code */
 
     @Override
-    public void resetView()
-    {
+    public void resetView() {
         int c = 0;
 
         this.scaleX.set(0, 2);
@@ -115,10 +96,8 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         int max = Integer.MIN_VALUE;
 
         /* Find minimum and maximum */
-        for (UIProperty property : this.properties)
-        {
-            for (Object object : property.channel.getKeyframes())
-            {
+        for (UIProperty property : this.properties) {
+            for (Object object : property.channel.getKeyframes()) {
                 GenericKeyframe frame = (GenericKeyframe) object;
 
                 min = Integer.min((int) frame.getTick(), min);
@@ -128,42 +107,33 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
             c = Math.max(c, property.channel.getKeyframes().size());
         }
 
-        if (c <= 1)
-        {
-            if (c == 0)
-            {
+        if (c <= 1) {
+            if (c == 0) {
                 min = 0;
             }
 
             max = this.duration;
         }
 
-        if (Math.abs(max - min) > 0.01F)
-        {
+        if (Math.abs(max - min) > 0.01F) {
             this.scaleX.viewOffset(min, max, this.area.w, 20);
         }
     }
 
-    public GenericKeyframe getCurrent()
-    {
+    public GenericKeyframe getCurrent() {
         UIProperty current = this.getCurrentSheet();
 
         return current == null ? null : current.getKeyframe();
     }
 
-    public List<UIProperty> getProperties()
-    {
+    public List<UIProperty> getProperties() {
         return this.properties;
     }
 
-    public UIProperty getProperty(GenericKeyframe keyframe)
-    {
-        for (UIProperty property : this.getProperties())
-        {
-            for (Object object : property.channel.getKeyframes())
-            {
-                if (object == keyframe)
-                {
+    public UIProperty getProperty(GenericKeyframe keyframe) {
+        for (UIProperty property : this.getProperties()) {
+            for (Object object : property.channel.getKeyframes()) {
+                if (object == keyframe) {
                     return property;
                 }
             }
@@ -172,8 +142,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         return null;
     }
 
-    public UIProperty getProperty(int mouseY)
-    {
+    public UIProperty getProperty(int mouseY) {
         List<UIProperty> properties = this.properties;
         int sheetCount = properties.size();
         int h = (this.area.h - TOP_MARGIN) / sheetCount;
@@ -183,10 +152,8 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    public void selectAll()
-    {
-        for (UIProperty property : this.properties)
-        {
+    public void selectAll() {
+        for (UIProperty property : this.properties) {
             property.selectAll();
         }
 
@@ -195,12 +162,9 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         this.setKeyframe(this.getCurrent());
     }
 
-    public UIProperty getCurrentSheet()
-    {
-        for (UIProperty property : this.properties)
-        {
-            if (!property.selected.isEmpty())
-            {
+    public UIProperty getCurrentSheet() {
+        for (UIProperty property : this.properties) {
+            if (!property.selected.isEmpty()) {
                 return property;
             }
         }
@@ -209,12 +173,10 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    public int getSelectedCount()
-    {
+    public int getSelectedCount() {
         int i = 0;
 
-        for (UIProperty property : this.properties)
-        {
+        for (UIProperty property : this.properties) {
             i += property.getSelectedCount();
         }
 
@@ -222,38 +184,32 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    public void clearSelection()
-    {
+    public void clearSelection() {
         this.selected = false;
 
-        for (UIProperty property : this.properties)
-        {
+        for (UIProperty property : this.properties) {
             property.clearSelection();
         }
     }
 
     @Override
-    public void addCurrent(int mouseX, int mouseY)
-    {
+    public void addCurrent(int mouseX, int mouseY) {
         UIProperty property = this.getProperty(mouseY);
 
-        if (property == null)
-        {
+        if (property == null) {
             return;
         }
 
         this.addCurrent(property, Math.round(this.fromGraphX(mouseX)));
     }
 
-    public void addCurrent(UIProperty property, long tick)
-    {
+    public void addCurrent(UIProperty property, long tick) {
         IInterpolation interp = Interpolation.LINEAR;
         GenericKeyframe frame = this.getCurrent();
         IGenericKeyframeFactory factory = property.channel.getFactory();
         long oldTick = tick;
 
-        if (frame != null)
-        {
+        if (frame != null) {
             interp = frame.getInterpolation();
             oldTick = frame.getTick();
         }
@@ -261,18 +217,12 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         Object value;
         GenericKeyframeSegment segment = property.channel.find(tick);
 
-        if (segment == null)
-        {
+        if (segment == null) {
             value = factory.copy(property.property.get());
-        }
-        else
-        {
-            if (segment.isSame())
-            {
+        } else {
+            if (segment.isSame()) {
                 value = factory.copy(segment.a.getValue());
-            }
-            else
-            {
+            } else {
                 value = segment.createInterpolated();
             }
         }
@@ -281,19 +231,16 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         property.selected.add(property.channel.insert(tick, value));
         frame = this.getCurrent();
 
-        if (oldTick != tick)
-        {
+        if (oldTick != tick) {
             frame.setInterpolation(interp);
         }
     }
 
     @Override
-    public void removeCurrent()
-    {
+    public void removeCurrent() {
         GenericKeyframe frame = this.getCurrent();
 
-        if (frame == null)
-        {
+        if (frame == null) {
             return;
         }
 
@@ -306,10 +253,8 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    public void removeSelectedKeyframes()
-    {
-        for (UIProperty property : this.properties)
-        {
+    public void removeSelectedKeyframes() {
+        for (UIProperty property : this.properties) {
             property.removeSelectedKeyframes();
         }
 
@@ -321,31 +266,24 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* Mouse input handling */
 
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selected;
     }
 
     @Override
-    public void doubleClick(int mouseX, int mouseY)
-    {
-        if (!this.selected)
-        {
+    public void doubleClick(int mouseX, int mouseY) {
+        if (!this.selected) {
             this.addCurrent(mouseX, mouseY);
-        }
-        else if (!this.isMultipleSelected())
-        {
+        } else if (!this.isMultipleSelected()) {
             this.removeCurrent();
         }
     }
 
     @Override
-    protected void duplicateKeyframe(UIContext context, int mouseX, int mouseY)
-    {
+    protected void duplicateKeyframe(UIContext context, int mouseX, int mouseY) {
         long offset = (long) this.fromGraphX(mouseX);
 
-        for (UIProperty property : this.properties)
-        {
+        for (UIProperty property : this.properties) {
             property.duplicate(offset);
         }
 
@@ -353,8 +291,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    protected boolean pickKeyframe(UIContext context, int mouseX, int mouseY, boolean shift)
-    {
+    protected boolean pickKeyframe(UIContext context, int mouseX, int mouseY, boolean shift) {
         int propertyCount = this.properties.size();
         int h = (this.area.h - TOP_MARGIN) / propertyCount;
         int y = this.area.ey() - h * propertyCount;
@@ -362,55 +299,42 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
         boolean finished = false;
         boolean isMultiSelect = this.isMultipleSelected();
 
-        for (UIProperty property : this.properties)
-        {
+        for (UIProperty property : this.properties) {
             int index = 0;
 
-            for (Object object : property.channel.getKeyframes())
-            {
+            for (Object object : property.channel.getKeyframes()) {
                 GenericKeyframe frame = (GenericKeyframe) object;
                 boolean point = this.isInside(this.toGraphX(frame.getTick()), alt ? mouseY : y + h / 2, mouseX, mouseY);
 
-                if (point)
-                {
+                if (point) {
                     int key = property.selected.indexOf(index);
 
-                    if (!shift && key == -1 && !alt)
-                    {
+                    if (!shift && key == -1 && !alt) {
                         this.clearSelection();
                     }
 
-                    if (!shift)
-                    {
+                    if (!shift) {
                         this.selected = true;
 
-                        if (key == -1)
-                        {
+                        if (key == -1) {
                             property.selected.add(index);
                             frame = isMultiSelect ? this.getCurrent() : frame;
-                        }
-                        else
-                        {
+                        } else {
                             frame = this.getCurrent();
                         }
 
                         this.setKeyframe(frame);
                     }
 
-                    if (frame != null)
-                    {
+                    if (frame != null) {
                         this.lastT = frame.getTick();
                     }
 
-                    if (alt)
-                    {
-                        if (frame != null)
-                        {
+                    if (alt) {
+                        if (frame != null) {
                             finished = true;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         return true;
                     }
                 }
@@ -425,17 +349,12 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    protected void resetMouseReleased(UIContext context)
-    {
-        if (this.selected)
-        {
-            if (this.sliding)
-            {
+    protected void resetMouseReleased(UIContext context) {
+        if (this.selected) {
+            if (this.sliding) {
                 /* Resort after dragging the tick thing */
-                for (UIProperty property : this.getProperties())
-                {
-                    if (!property.selected.isEmpty())
-                    {
+                for (UIProperty property : this.getProperties()) {
+                    if (!property.selected.isEmpty()) {
                         property.sort();
                     }
                 }
@@ -444,8 +363,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
             }
         }
 
-        if (this.isGrabbing())
-        {
+        if (this.isGrabbing()) {
             /* Multi select */
             Area area = this.getGrabbingArea(context);
             int count = this.properties.size();
@@ -453,16 +371,13 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
             int y = this.area.ey() - h * count;
             int c = 0;
 
-            for (UIProperty property : this.properties)
-            {
+            for (UIProperty property : this.properties) {
                 int i = 0;
 
-                for (Object object : property.channel.getKeyframes())
-                {
+                for (Object object : property.channel.getKeyframes()) {
                     GenericKeyframe keyframe = (GenericKeyframe) object;
 
-                    if (area.isInside(this.toGraphX(keyframe.getTick()), y + h / 2) && !property.selected.contains(i))
-                    {
+                    if (area.isInside(this.toGraphX(keyframe.getTick()), y + h / 2) && !property.selected.contains(i)) {
                         property.selected.add(i);
                         c++;
                     }
@@ -473,8 +388,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
                 y += h;
             }
 
-            if (c > 0)
-            {
+            if (c > 0) {
                 this.selected = true;
 
                 this.setKeyframe(this.getCurrent());
@@ -487,21 +401,18 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* Rendering */
 
     @Override
-    protected void renderGraph(UIContext context)
-    {
+    protected void renderGraph(UIContext context) {
         /* Draw dope property */
         int propertyCount = this.properties.size();
 
-        if (propertyCount == 0)
-        {
+        if (propertyCount == 0) {
             return;
         }
 
         int h = (this.area.h - TOP_MARGIN) / propertyCount;
         int y = this.area.ey() - h * propertyCount;
 
-        for (UIProperty property : this.properties)
-        {
+        for (UIProperty property : this.properties) {
             COLOR.set(property.color, false);
 
             LineBuilder line = new LineBuilder(0.75F);
@@ -515,18 +426,16 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
             int index = 0;
             int forcedIndex = 0;
 
-            for (Object object : property.channel.getKeyframes())
-            {
+            for (Object object : property.channel.getKeyframes()) {
                 GenericKeyframe frame = (GenericKeyframe) object;
                 int duration = frame.getDuration();
                 long tick = frame.getTick();
                 int x1 = this.toGraphX(tick);
 
-                if (duration > 0)
-                {
+                if (duration > 0) {
                     int x2 = this.toGraphX(tick + duration);
                     int y1 = y + h / 2 - 8 + (forcedIndex % 2 == 1 ? -4 : 0);
-                    int color = property.hasSelected(index) ? Colors.WHITE :  Colors.setA(Colors.mulRGB(property.color, 0.9F), 0.75F);
+                    int color = property.hasSelected(index) ? Colors.WHITE : Colors.setA(Colors.mulRGB(property.color, 0.9F), 0.75F);
 
                     context.batcher.box(x1, y1 - 2, x1 + 1, y1 + 3, color);
                     context.batcher.box(x2 - 1, y1 - 2, x2, y1 + 3, color);
@@ -537,8 +446,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
 
                 boolean isPointHover = this.isInside(this.toGraphX(frame.getTick()), y + h / 2, context.mouseX, context.mouseY);
 
-                if (this.isGrabbing())
-                {
+                if (this.isGrabbing()) {
                     isPointHover = isPointHover || this.getGrabbingArea(context).isInside(this.toGraphX(frame.getTick()), y + h / 2);
                 }
 
@@ -549,8 +457,7 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
 
             index = 0;
 
-            for (Object object : property.channel.getKeyframes())
-            {
+            for (Object object : property.channel.getKeyframes()) {
                 GenericKeyframe frame = (GenericKeyframe) object;
 
                 this.renderRect(context, this.toGraphX(frame.getTick()), y + h / 2, 2, property.hasSelected(index) ? Colors.ACTIVE : 0);
@@ -569,19 +476,14 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* Handling dragging */
 
     @Override
-    protected GenericKeyframe moving(UIContext context, int mouseX, int mouseY)
-    {
+    protected GenericKeyframe moving(UIContext context, int mouseX, int mouseY) {
         GenericKeyframe frame = this.getCurrent();
         double x = this.fromGraphX(mouseX);
 
-        if (!this.selected)
-        {
+        if (!this.selected) {
             this.moveNoKeyframe(context, x, 0);
-        }
-        else
-        {
-            if (this.isMultipleSelected())
-            {
+        } else {
+            if (this.isMultipleSelected()) {
                 int dx = mouseX - this.lastX;
                 int xx = this.toGraphX(this.lastT);
 
@@ -597,19 +499,15 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* ... */
 
     @Override
-    protected void moveNoKeyframe(UIContext context, double x, double y)
-    {
-        if (this.delegate != null)
-        {
+    protected void moveNoKeyframe(UIContext context, double x, double y) {
+        if (this.delegate != null) {
             this.delegate.setCursor((int) x);
         }
     }
 
     @Override
-    protected void renderCursor(UIContext context)
-    {
-        if (this.delegate != null)
-        {
+    protected void renderCursor(UIContext context) {
+        if (this.delegate != null) {
             int cx = this.toGraphX(this.delegate.getCursor());
             String label = TimeUtils.formatTime(this.delegate.getCursor()) + "/" + TimeUtils.formatTime(this.duration);
 
@@ -620,28 +518,22 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     /* Undo/redo */
 
     @Override
-    public FilmEditorUndo.KeyframeSelection createSelection()
-    {
+    public FilmEditorUndo.KeyframeSelection createSelection() {
         FilmEditorUndo.KeyframeSelection selection = super.createSelection();
         GenericKeyframe keyframe = this.getCurrent();
         List<UIProperty> properties = this.getProperties();
 
-        for (UIProperty property : properties)
-        {
+        for (UIProperty property : properties) {
             selection.selected.add(new ArrayList<>(property.selected));
         }
 
-        if (keyframe != null)
-        {
+        if (keyframe != null) {
             main:
-            for (int i = 0; i < properties.size(); i++)
-            {
+            for (int i = 0; i < properties.size(); i++) {
                 UIProperty property = properties.get(i);
 
-                for (int j = 0; j < property.channel.getKeyframes().size(); j++)
-                {
-                    if (property.channel.getKeyframes().get(j) == keyframe)
-                    {
+                for (int j = 0; j < property.channel.getKeyframes().size(); j++) {
+                    if (property.channel.getKeyframes().get(j) == keyframe) {
                         selection.current.set(i, j);
 
                         break main;
@@ -654,25 +546,22 @@ public class UIProperties extends UIBaseKeyframes<GenericKeyframe>
     }
 
     @Override
-    public void applySelection(FilmEditorUndo.KeyframeSelection selection)
-    {
+    public void applySelection(FilmEditorUndo.KeyframeSelection selection) {
         super.applySelection(selection);
 
         this.clearSelection();
 
         List<UIProperty> properties = this.getProperties();
 
-        for (int i = 0; i < properties.size(); i++)
-        {
-            if (CollectionUtils.inRange(selection.selected, i))
-            {
+        for (int i = 0; i < properties.size(); i++) {
+            if (CollectionUtils.inRange(selection.selected, i)) {
                 properties.get(i).selected.addAll(selection.selected.get(i));
             }
         }
 
         if (
             CollectionUtils.inRange(properties, selection.current.x) &&
-            CollectionUtils.inRange(properties.get(selection.current.x).channel.getKeyframes(), selection.current.y)
+                CollectionUtils.inRange(properties.get(selection.current.x).channel.getKeyframes(), selection.current.y)
         ) {
             GenericKeyframe keyframe = (GenericKeyframe) properties.get(selection.current.x).channel.getKeyframes().get(selection.current.y);
 

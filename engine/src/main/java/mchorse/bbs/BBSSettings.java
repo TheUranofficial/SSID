@@ -2,19 +2,12 @@ package mchorse.bbs;
 
 import mchorse.bbs.film.tts.ValueVoiceColors;
 import mchorse.bbs.settings.SettingsBuilder;
-import mchorse.bbs.settings.values.ValueBoolean;
-import mchorse.bbs.settings.values.ValueColors;
-import mchorse.bbs.settings.values.ValueFloat;
-import mchorse.bbs.settings.values.ValueInt;
-import mchorse.bbs.settings.values.ValueLanguage;
-import mchorse.bbs.settings.values.ValueLink;
-import mchorse.bbs.settings.values.ValueString;
+import mchorse.bbs.settings.values.*;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class BBSSettings
-{
+public class BBSSettings {
     public static ValueColors favoriteColors;
     public static ValueLanguage language;
     public static ValueInt primaryColor;
@@ -76,45 +69,37 @@ public class BBSSettings
     public static ValueString elevenLabsToken;
     public static ValueVoiceColors elevenVoiceColors;
 
-    public static int primaryColor()
-    {
+    public static int primaryColor() {
         return primaryColor(Colors.A50);
     }
 
-    public static int primaryColor(int alpha)
-    {
+    public static int primaryColor(int alpha) {
         return primaryColor.get() | alpha;
     }
 
-    public static int getScale()
-    {
+    public static int getScale() {
         int scale = userIntefaceScale.get();
 
-        if (scale == 0)
-        {
+        if (scale == 0) {
             return 2;
         }
 
         return scale;
     }
 
-    public static int getDefaultDuration()
-    {
+    public static int getDefaultDuration() {
         return duration == null ? 30 : duration.get();
     }
 
-    public static int transform(int value)
-    {
+    public static int transform(int value) {
         return value / getScale();
     }
 
-    public static float getFov()
-    {
+    public static float getFov() {
         return BBSSettings.fov == null ? MathUtils.toRad(50) : MathUtils.toRad(BBSSettings.fov.get());
     }
 
-    public static void register(SettingsBuilder builder)
-    {
+    public static void register(SettingsBuilder builder) {
         builder.category("appearance");
 
         language = new ValueLanguage("language");
@@ -145,8 +130,8 @@ public class BBSSettings
             UIKeys.ENGINE_KEYSTROKES_POSITION_TOP_LEFT
         );
 
-        backgroundImage = builder.category("background").getRL("image",  null);
-        backgroundColor = builder.getInt("color",  Colors.A75).colorAlpha();
+        backgroundImage = builder.category("background").getRL("image", null);
+        backgroundColor = builder.getInt("color", Colors.A75).colorAlpha();
 
         scrollbarShadow = builder.category("scrollbars").getInt("shadow", Colors.A50).colorAlpha();
         scrollbarWidth = builder.getInt("width", 4, 2, 10);

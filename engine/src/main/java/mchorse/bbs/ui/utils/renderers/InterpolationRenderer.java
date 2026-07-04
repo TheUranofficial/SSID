@@ -17,14 +17,11 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class InterpolationRenderer
-{
+public class InterpolationRenderer {
     private static Color color = new Color();
 
-    public static void renderInterpolationPreview(IInterpolation interp, UIContext context, int x, int y, float anchorX, float anchorY, int duration)
-    {
-        if (interp == null)
-        {
+    public static void renderInterpolationPreview(IInterpolation interp, UIContext context, int x, int y, float anchorX, float anchorY, int duration) {
+        if (interp == null) {
             return;
         }
 
@@ -57,8 +54,7 @@ public class InterpolationRenderer
 
         context.batcher.textShadow(interp.getName().get(), x + 10, y + 10, font);
 
-        for (int i = 0; i < lines.size(); i++)
-        {
+        for (int i = 0; i < lines.size(); i++) {
             context.batcher.textShadow(lines.get(i), x + 10, y + h - 5 + i * (context.font.getHeight() + 4), font);
         }
 
@@ -90,8 +86,7 @@ public class InterpolationRenderer
 
         LineBuilder line = new LineBuilder(0.75F);
 
-        for (int i = 0; i <= iterations; i++)
-        {
+        for (int i = 0; i <= iterations; i++) {
             float factor = i / iterations;
             float value = 1 - interp.interpolate(0, 1, factor);
 
@@ -103,8 +98,8 @@ public class InterpolationRenderer
 
         line.render(context.batcher, SolidColorLineRenderer.get(fg));
 
-        context.batcher.text("A", x + 14, (int)(y + h - 10 - padding / 2) + 4, font);
-        context.batcher.text("B", x + w - 19, (int)(y + 20 + padding / 2) - context.font.getHeight() - 4, font);
+        context.batcher.text("A", x + 14, (int) (y + h - 10 - padding / 2) + 4, font);
+        context.batcher.text("B", x + w - 19, (int) (y + 20 + padding / 2) - context.font.getHeight() - 4, font);
 
         float tick = context.getTickTransition() % (duration + 20);
         float factor = MathUtils.clamp(tick / (float) duration, 0, 1);

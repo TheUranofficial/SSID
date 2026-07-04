@@ -1,6 +1,5 @@
 package mchorse.bbs.utils.cli;
 
-public enum ArgumentType
-{
+public enum ArgumentType {
     STRING, NUMBER, PATH;
 }

@@ -6,15 +6,13 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AutomaticResizer extends BaseResizer
-{
+public abstract class AutomaticResizer extends BaseResizer {
     public UIElement parent;
     public int margin;
     public int padding;
     public int height;
 
-    public AutomaticResizer(UIElement parent, int margin)
-    {
+    public AutomaticResizer(UIElement parent, int margin) {
         this.parent = parent;
         this.margin = margin;
 
@@ -23,15 +21,13 @@ public abstract class AutomaticResizer extends BaseResizer
 
     /* Standard properties */
 
-    public AutomaticResizer padding(int padding)
-    {
+    public AutomaticResizer padding(int padding) {
         this.padding = padding;
 
         return this;
     }
 
-    public AutomaticResizer height(int height)
-    {
+    public AutomaticResizer height(int height) {
         this.height = height;
 
         return this;
@@ -39,12 +35,9 @@ public abstract class AutomaticResizer extends BaseResizer
 
     /* Child management */
 
-    public void setup()
-    {
-        for (IUIElement child : this.parent.getChildren())
-        {
-            if (child instanceof UIElement)
-            {
+    public void setup() {
+        for (IUIElement child : this.parent.getChildren()) {
+            if (child instanceof UIElement) {
                 UIElement element = (UIElement) child;
 
                 element.resizer(this.child(element));
@@ -52,25 +45,20 @@ public abstract class AutomaticResizer extends BaseResizer
         }
     }
 
-    public IResizer child(UIElement element)
-    {
+    public IResizer child(UIElement element) {
         ChildResizer child = new ChildResizer(this, element);
 
         return child;
     }
 
-    public List<ChildResizer> getResizers()
-    {
+    public List<ChildResizer> getResizers() {
         List<ChildResizer> resizers = new ArrayList<>();
 
-        for (IUIElement element : this.parent.getChildren())
-        {
-            if (element instanceof UIElement)
-            {
+        for (IUIElement element : this.parent.getChildren()) {
+            if (element instanceof UIElement) {
                 UIElement elem = (UIElement) element;
 
-                if (elem.resizer() instanceof ChildResizer)
-                {
+                if (elem.resizer() instanceof ChildResizer) {
                     resizers.add((ChildResizer) elem.resizer());
                 }
             }
@@ -82,43 +70,36 @@ public abstract class AutomaticResizer extends BaseResizer
     /* Miscellaneous */
 
     @Override
-    public void add(UIElement parent, UIElement child)
-    {
+    public void add(UIElement parent, UIElement child) {
         child.resizer(this.child(child));
     }
 
     @Override
-    public void remove(UIElement parent, UIElement child)
-    {
+    public void remove(UIElement parent, UIElement child) {
         IResizer resizer = child.resizer();
 
-        if (resizer instanceof ChildResizer)
-        {
+        if (resizer instanceof ChildResizer) {
             child.resizer(((ChildResizer) resizer).resizer);
         }
     }
 
     @Override
-    public int getX()
-    {
+    public int getX() {
         return 0;
     }
 
     @Override
-    public int getY()
-    {
+    public int getY() {
         return 0;
     }
 
     @Override
-    public int getW()
-    {
+    public int getW() {
         return 0;
     }
 
     @Override
-    public int getH()
-    {
+    public int getH() {
         return 0;
     }
 }

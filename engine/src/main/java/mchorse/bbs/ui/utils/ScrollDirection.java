@@ -3,57 +3,46 @@ package mchorse.bbs.ui.utils;
 /**
  * Scroll direction
  */
-public enum ScrollDirection
-{
-    VERTICAL()
-    {
+public enum ScrollDirection {
+    VERTICAL() {
         @Override
-        public int getPosition(Area area, float x)
-        {
+        public int getPosition(Area area, float x) {
             return area.y(x);
         }
 
         @Override
-        public int getSide(Area area)
-        {
+        public int getSide(Area area) {
             return area.h;
         }
 
         @Override
-        public int getScroll(Area area, ScrollArea scroll, int x, int y)
-        {
+        public int getScroll(Area area, ScrollArea scroll, int x, int y) {
             return y - area.y + scroll.scroll;
         }
 
         @Override
-        public float getProgress(Area area, int x, int y)
-        {
+        public float getProgress(Area area, int x, int y) {
             return (y - area.y) / (float) area.h;
         }
     },
-    HORIZONTAL()
-    {
+    HORIZONTAL() {
         @Override
-        public int getPosition(Area area, float x)
-        {
+        public int getPosition(Area area, float x) {
             return area.x(x);
         }
 
         @Override
-        public int getSide(Area area)
-        {
+        public int getSide(Area area) {
             return area.w;
         }
 
         @Override
-        public int getScroll(Area area, ScrollArea scroll, int x, int y)
-        {
+        public int getScroll(Area area, ScrollArea scroll, int x, int y) {
             return x - area.x + scroll.scroll;
         }
 
         @Override
-        public float getProgress(Area area, int x, int y)
-        {
+        public float getProgress(Area area, int x, int y) {
             return (x - area.x) / (float) area.w;
         }
     };
@@ -61,7 +50,7 @@ public enum ScrollDirection
     /**
      * Get position of the area, x = 0 minimum corner, x = 1 maximum corner
      */
-    public abstract int getPosition(Area area,  float x);
+    public abstract int getPosition(Area area, float x);
 
     /**
      * Get dominant side for this scrolling direction

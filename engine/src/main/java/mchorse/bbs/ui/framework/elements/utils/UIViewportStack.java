@@ -1,7 +1,7 @@
 package mchorse.bbs.ui.framework.elements.utils;
 
-import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.IViewport;
+import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.Area;
 
 import java.util.ArrayList;
@@ -10,19 +10,17 @@ import java.util.Stack;
 
 /**
  * Viewport stack
- *
+ * <p>
  * This class is responsible for calculating and keeping track of
  * embedded (into each other) scrolling areas
  */
-public class UIViewportStack implements IViewportStack
-{
+public class UIViewportStack implements IViewportStack {
     private Stack<Area> viewportStack = new Stack<>();
     private List<Area> viewportAreas = new ArrayList<>();
     private int shiftX;
     private int shiftY;
 
-    public static UIViewportStack fromElement(UIElement element)
-    {
+    public static UIViewportStack fromElement(UIElement element) {
         UIViewportStack stack = new UIViewportStack();
 
         stack.applyFromElement(element);
@@ -30,29 +28,24 @@ public class UIViewportStack implements IViewportStack
         return stack;
     }
 
-    public void applyFromElement(UIElement element)
-    {
+    public void applyFromElement(UIElement element) {
         List<IViewport> elements = new ArrayList<>();
 
-        while (element != null)
-        {
-            if (element instanceof IViewport)
-            {
+        while (element != null) {
+            if (element instanceof IViewport) {
                 elements.add((IViewport) element);
             }
 
             element = element.getParent();
         }
 
-        for (int i = elements.size() - 1; i >= 0; i--)
-        {
+        for (int i = elements.size() - 1; i >= 0; i--) {
             elements.get(i).apply(this);
         }
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
         this.shiftX = 0;
         this.shiftY = 0;
 
@@ -60,23 +53,18 @@ public class UIViewportStack implements IViewportStack
     }
 
     @Override
-    public Area getViewport()
-    {
+    public Area getViewport() {
         return this.viewportStack.isEmpty() ? null : this.viewportStack.peek();
     }
 
     @Override
-    public void pushViewport(Area area)
-    {
-        if (this.viewportStack.isEmpty())
-        {
+    public void pushViewport(Area area) {
+        if (this.viewportStack.isEmpty()) {
             Area child = this.getCurrentViewportArea();
 
             child.copy(area);
             this.viewportStack.push(child);
-        }
-        else
-        {
+        } else {
             Area current = this.viewportStack.peek();
             Area child = this.getCurrentViewportArea();
 
@@ -86,10 +74,8 @@ public class UIViewportStack implements IViewportStack
         }
     }
 
-    private Area getCurrentViewportArea()
-    {
-        while (this.viewportAreas.size() < this.viewportStack.size() + 1)
-        {
+    private Area getCurrentViewportArea() {
+        while (this.viewportAreas.size() < this.viewportStack.size() + 1) {
             this.viewportAreas.add(new Area());
         }
 
@@ -97,20 +83,17 @@ public class UIViewportStack implements IViewportStack
     }
 
     @Override
-    public void popViewport()
-    {
+    public void popViewport() {
         this.viewportStack.pop();
     }
 
     @Override
-    public int getShiftX()
-    {
+    public int getShiftX() {
         return this.shiftX;
     }
 
     @Override
-    public int getShiftY()
-    {
+    public int getShiftY() {
         return this.shiftY;
     }
 
@@ -118,8 +101,7 @@ public class UIViewportStack implements IViewportStack
      * Get global X (relative to root element/screen)
      */
     @Override
-    public int globalX(int x)
-    {
+    public int globalX(int x) {
         return x - this.shiftX;
     }
 
@@ -127,8 +109,7 @@ public class UIViewportStack implements IViewportStack
      * Get global Y (relative to root element/screen)
      */
     @Override
-    public int globalY(int y)
-    {
+    public int globalY(int y) {
         return y - this.shiftY;
     }
 
@@ -136,8 +117,7 @@ public class UIViewportStack implements IViewportStack
      * Get current local X (relative to current viewport)
      */
     @Override
-    public int localX(int x)
-    {
+    public int localX(int x) {
         return x + this.shiftX;
     }
 
@@ -145,29 +125,24 @@ public class UIViewportStack implements IViewportStack
      * Get current local Y (relative to current viewport)
      */
     @Override
-    public int localY(int y)
-    {
+    public int localY(int y) {
         return y + this.shiftY;
     }
 
     @Override
-    public void shiftX(int x)
-    {
+    public void shiftX(int x) {
         this.shiftX += x;
 
-        if (!this.viewportStack.isEmpty())
-        {
+        if (!this.viewportStack.isEmpty()) {
             this.viewportStack.peek().x += x;
         }
     }
 
     @Override
-    public void shiftY(int y)
-    {
+    public void shiftY(int y) {
         this.shiftY += y;
 
-        if (!this.viewportStack.isEmpty())
-        {
+        if (!this.viewportStack.isEmpty()) {
             this.viewportStack.peek().y += y;
         }
     }

@@ -16,8 +16,7 @@ import mchorse.bbs.utils.keyframes.KeyframeChannel;
 import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector2f;
 
-public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
-{
+public class UIClipRenderer<T extends Clip> implements IUIClipRenderer<T> {
     private static final Color ENVELOPE_COLOR = new Color(0, 0, 0, 0.25F);
 
     /* Temporary objects */
@@ -25,16 +24,14 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
     private static Vector2f previous = new Vector2f();
 
     @Override
-    public void renderClip(UIContext context, UIClips clips, T clip, Area area, boolean selected, boolean current)
-    {
+    public void renderClip(UIContext context, UIClips clips, T clip, Area area, boolean selected, boolean current) {
         int y = area.y;
         int h = area.h;
 
         int left = area.x;
         int right = area.ex();
 
-        if (current)
-        {
+        if (current) {
             int color = BBSSettings.primaryColor.get();
 
             context.batcher.dropShadow(left + 2, y + 2, right - 2, y + h - 2, 8, Colors.A75 + color, color);
@@ -42,51 +39,40 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
 
         int color = Colors.A100 | clips.getFactory().getData(clip).color;
 
-        if (clip.enabled.get())
-        {
+        if (clip.enabled.get()) {
             this.renderBackground(context, color, clip, area, selected, current);
-        }
-        else
-        {
+        } else {
             context.batcher.iconArea(Icons.DISABLED, color, left, y, (right - left), h);
         }
 
         context.batcher.outline(left, y, right, y + h, selected ? Colors.WHITE : Colors.A50);
 
-        if (right - left > 10 && clip.envelope.enabled.get())
-        {
+        if (right - left > 10 && clip.envelope.enabled.get()) {
             this.renderEnvelope(context, clip.envelope, clip.duration.get(), left + 1, y + 1, right - 1, y + 17);
         }
 
         String label = context.font.limitToWidth(clip.title.get(), right - 5 - left);
 
-        if (!label.isEmpty())
-        {
+        if (!label.isEmpty()) {
             context.batcher.textShadow(label, left + 5, y + (h - context.font.getHeight()) / 2);
         }
     }
 
-    protected void renderBackground(UIContext context, int color, T clip, Area area, boolean selected, boolean current)
-    {
+    protected void renderBackground(UIContext context, int color, T clip, Area area, boolean selected, boolean current) {
         context.batcher.box(area.x, area.y, area.ex(), area.ey(), color);
     }
 
     /**
      * Render envelope's preview (either through keyframes or simple)
      */
-    private void renderEnvelope(UIContext context, Envelope envelope, int duration, int x1, int y1, int x2, int y2)
-    {
+    private void renderEnvelope(UIContext context, Envelope envelope, int duration, int x1, int y1, int x2, int y2) {
         VAOBuilder builder = context.batcher.begin(VBOAttributes.VERTEX_RGBA_2D);
 
-        if (envelope.keyframes.get())
-        {
-            if (!envelope.channel.isEmpty())
-            {
+        if (envelope.keyframes.get()) {
+            if (!envelope.channel.isEmpty()) {
                 this.renderEnvelopesKeyframes(builder, envelope.channel, duration, x1, y1, x2, y2);
             }
-        }
-        else
-        {
+        } else {
             this.renderSimpleEnvelope(builder, envelope, duration, x1, y1, x2, y2);
         }
 
@@ -96,14 +82,11 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
     /**
      * Render keyframe based envelope.
      */
-    private void renderEnvelopesKeyframes(VAOBuilder builder, KeyframeChannel channel, int duration, int x1, int y1, int x2, int y2)
-    {
+    private void renderEnvelopesKeyframes(VAOBuilder builder, KeyframeChannel channel, int duration, int x1, int y1, int x2, int y2) {
         Keyframe prevKeyframe = null;
 
-        for (Keyframe keyframe : channel.getKeyframes())
-        {
-            if (prevKeyframe != null)
-            {
+        for (Keyframe keyframe : channel.getKeyframes()) {
+            if (prevKeyframe != null) {
                 Vector2f point = this.calculateEnvelopePoint(vector, (int) keyframe.getTick(), (float) keyframe.getValue(), duration, x1, y1, x2, y2);
                 Vector2f prevPoint = this.calculateEnvelopePoint(previous, (int) prevKeyframe.getTick(), (float) prevKeyframe.getValue(), duration, x1, y1, x2, y2);
 
@@ -120,8 +103,7 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
         }
 
         /* Finish the end */
-        if (prevKeyframe != null && prevKeyframe.getTick() < duration)
-        {
+        if (prevKeyframe != null && prevKeyframe.getTick() < duration) {
             Vector2f point = this.calculateEnvelopePoint(vector, (int) prevKeyframe.getTick(), (float) prevKeyframe.getValue(), duration, x1, y1, x2, y2);
 
             builder.xy(point.x, y2).rgba(ENVELOPE_COLOR);
@@ -137,8 +119,7 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
     /**
      * Render simple envelope (using start and end values).
      */
-    protected void renderSimpleEnvelope(VAOBuilder builder, Envelope envelope, int duration, int x1, int y1, int x2, int y2)
-    {
+    protected void renderSimpleEnvelope(VAOBuilder builder, Envelope envelope, int duration, int x1, int y1, int x2, int y2) {
         /* First triangle */
         Vector2f point = this.calculateEnvelopePoint(vector, (int) envelope.getStartX(duration), 0, duration, x1, y1, x2, y2);
         builder.xy(point.x, point.y).rgba(ENVELOPE_COLOR);
@@ -168,8 +149,7 @@ public class UIClipRenderer <T extends Clip> implements IUIClipRenderer<T>
         builder.xy(point.x, point.y).rgba(ENVELOPE_COLOR);
     }
 
-    protected Vector2f calculateEnvelopePoint(Vector2f vector, int tick, float value, int duration, int x1, int y1, int x2, int y2)
-    {
+    protected Vector2f calculateEnvelopePoint(Vector2f vector, int tick, float value, int duration, int x1, int y1, int x2, int y2) {
         int width = x2 - x1;
         int height = y2 - y1;
 

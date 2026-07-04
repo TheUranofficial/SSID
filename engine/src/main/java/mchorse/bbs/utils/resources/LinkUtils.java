@@ -8,94 +8,70 @@ import mchorse.bbs.resources.Link;
 
 import java.io.IOException;
 
-public class LinkUtils
-{
+public class LinkUtils {
     private static final Link MULTILINK_PLACEHOLDER = Link.assets("textures/placeholder.png");
 
     /**
-     * Get stream for multi resource location 
+     * Get stream for multi resource location
      */
-    public static Pixels getStreamForMultiLink(MultiLink multi) throws IOException
-    {
-        if (multi.children.isEmpty())
-        {
+    public static Pixels getStreamForMultiLink(MultiLink multi) throws IOException {
+        if (multi.children.isEmpty()) {
             throw new IOException("Given MultiLink is empty!");
         }
 
-        try
-        {
-            if (BBSSettings.multiskinMultiThreaded.get())
-            {
+        try {
+            if (BBSSettings.multiskinMultiThreaded.get()) {
                 MultiLinkThread.add(multi);
 
                 return Pixels.fromPNGStream(BBS.getProvider().getAsset(MULTILINK_PLACEHOLDER));
-            }
-            else
-            {
+            } else {
                 MultiLinkThread.clear();
 
                 return TextureProcessor.process(multi);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
-    public static Link create(String path)
-    {
+    public static Link create(String path) {
         return path.isEmpty() ? null : Link.create(path);
     }
 
-    public static Link create(String domain, String path)
-    {
+    public static Link create(String domain, String path) {
         return new Link(domain, path);
     }
 
-    public static Link create(BaseType data)
-    {
+    public static Link create(BaseType data) {
         Link location = MultiLink.from(data);
 
-        if (location != null)
-        {
+        if (location != null) {
             return location;
         }
 
-        if (BaseType.isString(data))
-        {
+        if (BaseType.isString(data)) {
             return create(data.asString());
         }
 
         return null;
     }
 
-    public static BaseType toData(Link link)
-    {
-        if (link instanceof IWritableLink)
-        {
+    public static BaseType toData(Link link) {
+        if (link instanceof IWritableLink) {
             return ((IWritableLink) link).toData();
-        }
-        else if (link != null)
-        {
+        } else if (link != null) {
             return new StringType(link.toString());
         }
 
         return null;
     }
 
-    public static Link copy(Link link)
-    {
-        if (link instanceof IWritableLink)
-        {
+    public static Link copy(Link link) {
+        if (link instanceof IWritableLink) {
             return ((IWritableLink) link).copy();
-        }
-        else if (link != null)
-        {
+        } else if (link != null) {
             return create(link.toString());
         }
 

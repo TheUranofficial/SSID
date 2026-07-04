@@ -2,18 +2,15 @@ package mchorse.bbs.ui.forms.editors.panels;
 
 import mchorse.bbs.BBS;
 import mchorse.bbs.forms.forms.StructureForm;
-import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.forms.UIForm;
 import mchorse.bbs.ui.framework.elements.input.list.UIStringList;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIStructureFormPanel extends UIFormPanel<StructureForm>
-{
+public class UIStructureFormPanel extends UIFormPanel<StructureForm> {
     public UIStringList structures;
 
-    public UIStructureFormPanel(UIForm<StructureForm> editor)
-    {
+    public UIStructureFormPanel(UIForm<StructureForm> editor) {
         super(editor);
 
         this.structures = new UIStringList((l) -> this.form.structure.set(l.get(0)));
@@ -23,8 +20,7 @@ public class UIStructureFormPanel extends UIFormPanel<StructureForm>
     }
 
     @Override
-    public void startEdit(StructureForm form)
-    {
+    public void startEdit(StructureForm form) {
         super.startEdit(form);
 
         this.structures.clear();

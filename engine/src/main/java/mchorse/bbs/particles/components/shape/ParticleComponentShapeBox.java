@@ -10,29 +10,24 @@ import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public class ParticleComponentShapeBox extends ParticleComponentShapeBase
-{
+public class ParticleComponentShapeBox extends ParticleComponentShapeBase {
     public MolangExpression[] halfDimensions = {MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
 
     @Override
-    protected void toData(MapType data)
-    {
+    protected void toData(MapType data) {
         super.toData(data);
 
         data.put("half_dimensions", ParticleUtils.vectorToList(this.halfDimensions));
     }
 
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType map = data.asMap();
 
-        if (map.has("half_dimensions"))
-        {
+        if (map.has("half_dimensions")) {
             ParticleUtils.vectorFromList(map.getList("half_dimensions"), this.halfDimensions, parser);
         }
 
@@ -40,8 +35,7 @@ public class ParticleComponentShapeBox extends ParticleComponentShapeBase
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
+    public void apply(ParticleEmitter emitter, Particle particle) {
         float centerX = (float) this.offset[0].get();
         float centerY = (float) this.offset[1].get();
         float centerZ = (float) this.offset[2].get();
@@ -54,8 +48,7 @@ public class ParticleComponentShapeBox extends ParticleComponentShapeBase
         particle.position.y = centerY + ((float) Math.random() * 2 - 1F) * h;
         particle.position.z = centerZ + ((float) Math.random() * 2 - 1F) * d;
 
-        if (this.surface)
-        {
+        if (this.surface) {
             int roll = (int) (Math.random() * 6 * 100) % 6;
 
             if (roll == 0) particle.position.x = centerX + w;

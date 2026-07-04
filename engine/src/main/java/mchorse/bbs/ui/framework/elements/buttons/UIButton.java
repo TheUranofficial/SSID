@@ -8,8 +8,7 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Consumer;
 
-public class UIButton extends UIClickable<UIButton> implements ITextColoring
-{
+public class UIButton extends UIClickable<UIButton> implements ITextColoring {
     public IKey label;
 
     public int textColor = Colors.WHITE;
@@ -19,62 +18,53 @@ public class UIButton extends UIClickable<UIButton> implements ITextColoring
     public int customColor;
     public boolean background = true;
 
-    public UIButton(IKey label, Consumer<UIButton> callback)
-    {
+    public UIButton(IKey label, Consumer<UIButton> callback) {
         super(callback);
 
         this.label = label;
         this.h(20);
     }
 
-    public UIButton color(int color)
-    {
+    public UIButton color(int color) {
         this.custom = true;
         this.customColor = color & Colors.RGB;
 
         return this;
     }
 
-    public UIButton textColor(int color, boolean shadow)
-    {
+    public UIButton textColor(int color, boolean shadow) {
         this.textColor = color;
         this.textShadow = shadow;
 
         return this;
     }
 
-    public UIButton background(boolean background)
-    {
+    public UIButton background(boolean background) {
         this.background = background;
 
         return this;
     }
 
     @Override
-    public void setColor(int color, boolean shadow)
-    {
+    public void setColor(int color, boolean shadow) {
         this.textColor = color;
         this.textShadow = shadow;
     }
 
     @Override
-    protected UIButton get()
-    {
+    protected UIButton get() {
         return this;
     }
 
     @Override
-    protected void renderSkin(UIContext context)
-    {
+    protected void renderSkin(UIContext context) {
         int color = Colors.A100 + (this.custom ? this.customColor : BBSSettings.primaryColor.get());
 
-        if (this.hover)
-        {
+        if (this.hover) {
             color = Colors.mulRGB(color, 0.85F);
         }
 
-        if (this.background)
-        {
+        if (this.background) {
             this.area.render(context.batcher, color);
         }
 

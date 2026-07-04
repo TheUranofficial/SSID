@@ -11,8 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class UIProperty
-{
+public class UIProperty {
     public final String id;
     public IKey title;
     public int color;
@@ -20,8 +19,7 @@ public class UIProperty
     public List<Integer> selected = new ArrayList<>();
     public IFormProperty property;
 
-    public UIProperty(String id, IKey title, int color, GenericKeyframeChannel channel, IFormProperty property)
-    {
+    public UIProperty(String id, IKey title, int color, GenericKeyframeChannel channel, IFormProperty property) {
         this.id = id;
         this.title = title;
         this.color = color;
@@ -29,16 +27,13 @@ public class UIProperty
         this.property = property;
     }
 
-    public void sort()
-    {
+    public void sort() {
         List<GenericKeyframe> keyframes = new ArrayList<>();
 
-        for (int index : this.selected)
-        {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 keyframes.add(keyframe);
             }
         }
@@ -48,91 +43,72 @@ public class UIProperty
         this.channel.postNotifyParent();
         this.selected.clear();
 
-        for (GenericKeyframe keyframe : keyframes)
-        {
+        for (GenericKeyframe keyframe : keyframes) {
             this.selected.add(this.channel.getKeyframes().indexOf(keyframe));
         }
     }
 
-    public void setInstant(boolean instant)
-    {
-        for (int index : this.selected)
-        {
+    public void setInstant(boolean instant) {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 keyframe.setInstant(instant);
             }
         }
     }
 
-    public void setTick(double dx)
-    {
-        for (int index : this.selected)
-        {
+    public void setTick(double dx) {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 keyframe.setTick(keyframe.getTick() + (long) dx);
             }
         }
     }
 
-    public void setValue(Object object)
-    {
-        for (int index : this.selected)
-        {
+    public void setValue(Object object) {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 keyframe.setValue(this.channel.getFactory().copy(object));
             }
         }
     }
 
-    public void setInterpolation(IInterpolation interp)
-    {
-        for (int index : this.selected)
-        {
+    public void setInterpolation(IInterpolation interp) {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 keyframe.setInterpolation(interp);
             }
         }
     }
 
-    public GenericKeyframe getKeyframe()
-    {
-        if (this.selected.isEmpty())
-        {
+    public GenericKeyframe getKeyframe() {
+        if (this.selected.isEmpty()) {
             return null;
         }
 
         return this.channel.get(this.selected.get(0));
     }
 
-    public boolean hasSelected(int i)
-    {
+    public boolean hasSelected(int i) {
         return this.selected.contains(i);
     }
 
-    public void clearSelection()
-    {
+    public void clearSelection() {
         this.selected.clear();
     }
 
-    public int getSelectedCount()
-    {
+    public int getSelectedCount() {
         return this.selected.size();
     }
 
-    public void removeSelectedKeyframes()
-    {
+    public void removeSelectedKeyframes() {
         List<Integer> sorted = new ArrayList<>(this.selected);
 
         Collections.sort(sorted);
@@ -140,27 +116,23 @@ public class UIProperty
 
         this.clearSelection();
 
-        for (int index : sorted)
-        {
+        for (int index : sorted) {
             this.channel.remove(index);
         }
 
         this.clearSelection();
     }
 
-    public void duplicate(long tick)
-    {
+    public void duplicate(long tick) {
         List<GenericKeyframe> selected = new ArrayList<>();
         List<GenericKeyframe> created = new ArrayList<>();
 
         long minTick = Integer.MAX_VALUE;
 
-        for (int index : this.selected)
-        {
+        for (int index : this.selected) {
             GenericKeyframe keyframe = this.channel.get(index);
 
-            if (keyframe != null)
-            {
+            if (keyframe != null) {
                 selected.add(keyframe);
                 minTick = Math.min(keyframe.getTick(), minTick);
             }
@@ -170,8 +142,7 @@ public class UIProperty
 
         long diff = tick - minTick;
 
-        for (GenericKeyframe keyframe : selected)
-        {
+        for (GenericKeyframe keyframe : selected) {
             long fin = keyframe.getTick() + diff;
             int index = this.channel.insert(fin, keyframe.getValue());
             GenericKeyframe current = this.channel.get(index);
@@ -183,18 +154,15 @@ public class UIProperty
 
         this.clearSelection();
 
-        for (GenericKeyframe keyframe : created)
-        {
+        for (GenericKeyframe keyframe : created) {
             this.selected.add(this.channel.getKeyframes().indexOf(keyframe));
         }
     }
 
-    public void selectAll()
-    {
+    public void selectAll() {
         this.clearSelection();
 
-        for (int i = 0, c = this.channel.getKeyframes().size(); i < c; i++)
-        {
+        for (int i = 0, c = this.channel.getKeyframes().size(); i < c; i++) {
             this.selected.add(i);
         }
     }

@@ -11,16 +11,13 @@ import java.util.function.Consumer;
 /**
  * Interpolations list
  */
-public class UIInterpolationList extends UIList<Interpolation>
-{
-    public UIInterpolationList(Consumer<List<Interpolation>> callback)
-    {
+public class UIInterpolationList extends UIList<Interpolation> {
+    public UIInterpolationList(Consumer<List<Interpolation>> callback) {
         super(callback);
 
         this.scroll.scrollItemSize = 16;
 
-        for (Interpolation interp : Interpolation.values())
-        {
+        for (Interpolation interp : Interpolation.values()) {
             this.add(interp);
         }
 
@@ -28,16 +25,14 @@ public class UIInterpolationList extends UIList<Interpolation>
     }
 
     @Override
-    protected boolean sortElements()
-    {
+    protected boolean sortElements() {
         Collections.sort(this.list, Comparator.comparing(o -> o.key));
 
         return true;
     }
 
     @Override
-    protected String elementToString(UIContext context, int i, Interpolation element)
-    {
+    protected String elementToString(UIContext context, int i, Interpolation element) {
         return element.getName().get();
     }
 }

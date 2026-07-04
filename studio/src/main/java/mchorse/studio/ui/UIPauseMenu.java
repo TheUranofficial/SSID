@@ -7,12 +7,10 @@ import mchorse.bbs.ui.framework.UIRenderingContext;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.studio.Studio;
 
-public class UIPauseMenu extends UIBaseMenu
-{
+public class UIPauseMenu extends UIBaseMenu {
     public UIButton resume;
 
-    public UIPauseMenu(IBridge bridge)
-    {
+    public UIPauseMenu(IBridge bridge) {
         super(bridge);
 
         this.resume = new UIButton(UIKeysApp.PAUSE_RESUME, (b) -> this.closeThisMenu());
@@ -22,14 +20,12 @@ public class UIPauseMenu extends UIBaseMenu
     }
 
     @Override
-    public Link getMenuId()
-    {
+    public Link getMenuId() {
         return Studio.link("pause");
     }
 
     @Override
-    protected void preRenderMenu(UIRenderingContext context)
-    {
+    protected void preRenderMenu(UIRenderingContext context) {
         super.preRenderMenu(context);
 
         this.renderDefaultBackground();

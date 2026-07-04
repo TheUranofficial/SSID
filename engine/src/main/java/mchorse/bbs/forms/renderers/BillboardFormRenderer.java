@@ -20,25 +20,21 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class BillboardFormRenderer extends FormRenderer<BillboardForm>
-{
+public class BillboardFormRenderer extends FormRenderer<BillboardForm> {
     private static final Quad quad = new Quad();
     private static final Quad uvQuad = new Quad();
 
     private static final Matrix4f matrix = new Matrix4f();
 
-    public BillboardFormRenderer(BillboardForm form)
-    {
+    public BillboardFormRenderer(BillboardForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         Link t = this.form.texture.get(context.getTransition());
 
-        if (t == null)
-        {
+        if (t == null) {
             return;
         }
 
@@ -58,12 +54,10 @@ public class BillboardFormRenderer extends FormRenderer<BillboardForm>
     }
 
     @Override
-    public void render3D(Entity entity, RenderingContext context)
-    {
+    public void render3D(Entity entity, RenderingContext context) {
         Link t = this.form.texture.get(context.getTransition());
 
-        if (t == null)
-        {
+        if (t == null) {
             return;
         }
 
@@ -91,8 +85,7 @@ public class BillboardFormRenderer extends FormRenderer<BillboardForm>
         float uvFinalBRx = uvBRx;
         float uvFinalBRy = uvBRy;
 
-        if (this.form.resizeCrop.get(context.getTransition()))
-        {
+        if (this.form.resizeCrop.get(context.getTransition())) {
             uvFinalTLx = uvFinalTLy = 0F;
             uvFinalBRx = uvFinalBRy = 1F;
 
@@ -117,8 +110,7 @@ public class BillboardFormRenderer extends FormRenderer<BillboardForm>
         float offsetY = this.form.offsetY.get(context.getTransition());
         float rotation = this.form.rotation.get(context.getTransition());
 
-        if (offsetX != 0F || offsetY != 0F || rotation != 0F)
-        {
+        if (offsetX != 0F || offsetY != 0F || rotation != 0F) {
             float centerX = (crop.x + (ow - crop.z)) / 2F / ow;
             float centerY = (crop.y + (oh - crop.w)) / 2F / ow;
 
@@ -134,14 +126,12 @@ public class BillboardFormRenderer extends FormRenderer<BillboardForm>
         this.renderQuad(context);
     }
 
-    private void renderQuad(RenderingContext context)
-    {
+    private void renderQuad(RenderingContext context) {
         Shader shader = context.getShaders().get(VBOAttributes.VERTEX_NORMAL_UV_RGBA);
         VAOBuilder builder = context.getVAO().setup(shader);
         Color color = this.form.color.get(context.getTransition());
 
-        if (this.form.billboard.get(context.getTransition()))
-        {
+        if (this.form.billboard.get(context.getTransition())) {
             Matrix4f modelMatrix = context.stack.getModelMatrix();
             Vector3f scale = Vectors.TEMP_3F;
             Matrix4f invert = Matrices.TEMP_4F.set(context.getCamera().view).invert();

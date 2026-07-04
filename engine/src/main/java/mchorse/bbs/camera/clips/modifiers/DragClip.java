@@ -10,13 +10,12 @@ import mchorse.bbs.utils.math.Interpolations;
 
 /**
  * Drag modifier
- * 
- * This modifier is responsible for creating follow like 
- * behavior by memorizing previous position/angle and then 
+ * <p>
+ * This modifier is responsible for creating follow like
+ * behavior by memorizing previous position/angle and then
  * linearly interpolating it using given factor.
  */
-public class DragClip extends ComponentClip
-{
+public class DragClip extends ComponentClip {
     public final ValueBoolean deterministic = new ValueBoolean("deterministic", true);
     public final ValueFloat factor = new ValueFloat("factor", 0.5F, 0F, 1F);
     public final ValueInt rate = new ValueInt("rate", 60, 1, 300);
@@ -33,8 +32,7 @@ public class DragClip extends ComponentClip
     private float prevRoll;
     private float prevFov;
 
-    public DragClip()
-    {
+    public DragClip() {
         super();
 
         this.add(this.deterministic);
@@ -42,21 +40,17 @@ public class DragClip extends ComponentClip
         this.add(this.rate);
     }
 
-    public void resetCache()
-    {
+    public void resetCache() {
         this.cached = false;
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
-        if (this.active.get() == 0)
-        {
+    public void applyClip(ClipContext context, Position position) {
+        if (this.active.get() == 0) {
             return;
         }
 
-        if (!this.cached)
-        {
+        if (!this.cached) {
             this.cached = true;
             this.prevX = position.point.x;
             this.prevY = position.point.y;
@@ -76,8 +70,7 @@ public class DragClip extends ComponentClip
         boolean isRoll = this.isActive(5);
         boolean isFov = this.isActive(6);
 
-        if (this.deterministic.get())
-        {
+        if (this.deterministic.get()) {
             int offset = this.tick.get();
 
             this.original.copy(position);
@@ -87,8 +80,7 @@ public class DragClip extends ComponentClip
             float rate = this.rate.get() / 20F;
             float duration = (context.relativeTick + context.transition) * rate;
 
-            for (int i = 1; i <= duration; i++)
-            {
+            for (int i = 1; i <= duration; i++) {
                 float tick = i / rate;
 
                 context.applyUnderneath(offset + (int) tick, tick % 1, this.current);
@@ -97,8 +89,10 @@ public class DragClip extends ComponentClip
                 if (isY) position.point.y = Interpolations.lerp(position.point.y, this.current.point.y, factor);
                 if (isZ) position.point.z = Interpolations.lerp(position.point.z, this.current.point.z, factor);
                 if (isYaw) position.angle.yaw = Interpolations.lerp(position.angle.yaw, this.current.angle.yaw, factor);
-                if (isPitch) position.angle.pitch = Interpolations.lerp(position.angle.pitch, this.current.angle.pitch, factor);
-                if (isRoll) position.angle.roll = Interpolations.lerp(position.angle.roll, this.current.angle.roll, factor);
+                if (isPitch)
+                    position.angle.pitch = Interpolations.lerp(position.angle.pitch, this.current.angle.pitch, factor);
+                if (isRoll)
+                    position.angle.roll = Interpolations.lerp(position.angle.roll, this.current.angle.roll, factor);
                 if (isFov) position.angle.fov = Interpolations.lerp(position.angle.fov, this.current.angle.fov, factor);
             }
 
@@ -109,24 +103,25 @@ public class DragClip extends ComponentClip
             if (!isPitch) position.angle.pitch = this.original.angle.pitch;
             if (!isRoll) position.angle.roll = this.original.angle.roll;
             if (!isFov) position.angle.fov = this.original.angle.fov;
-        }
-        else
-        {
+        } else {
             context.applyUnderneath(context.ticks, context.transition, this.current);
 
             if (isX) position.point.x = this.prevX = Interpolations.lerp(this.prevX, this.current.point.x, factor);
             if (isY) position.point.y = this.prevY = Interpolations.lerp(this.prevY, this.current.point.y, factor);
             if (isZ) position.point.z = this.prevZ = Interpolations.lerp(this.prevZ, this.current.point.z, factor);
-            if (isYaw) position.angle.yaw = this.prevYaw = Interpolations.lerp(this.prevYaw, this.current.angle.yaw, factor);
-            if (isPitch) position.angle.pitch = this.prevPitch = Interpolations.lerp(this.prevPitch, this.current.angle.pitch, factor);
-            if (isRoll) position.angle.roll = this.prevRoll = Interpolations.lerp(this.prevRoll, this.current.angle.roll, factor);
-            if (isFov) position.angle.fov = this.prevFov = Interpolations.lerp(this.prevFov, this.current.angle.fov, factor);
+            if (isYaw)
+                position.angle.yaw = this.prevYaw = Interpolations.lerp(this.prevYaw, this.current.angle.yaw, factor);
+            if (isPitch)
+                position.angle.pitch = this.prevPitch = Interpolations.lerp(this.prevPitch, this.current.angle.pitch, factor);
+            if (isRoll)
+                position.angle.roll = this.prevRoll = Interpolations.lerp(this.prevRoll, this.current.angle.roll, factor);
+            if (isFov)
+                position.angle.fov = this.prevFov = Interpolations.lerp(this.prevFov, this.current.angle.fov, factor);
         }
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new DragClip();
     }
 }

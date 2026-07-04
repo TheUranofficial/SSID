@@ -31,10 +31,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class UIElement implements IUIElement
-{
+public class UIElement implements IUIElement {
     /**
-     * Area of this element (i.e. position and size) 
+     * Area of this element (i.e. position and size)
      */
     public Area area = new Area();
 
@@ -104,12 +103,12 @@ public class UIElement implements IUIElement
     private List<IUIElement> children = new ArrayList<>();
 
     /**
-     * Whether this element is enabled (can handle any input) 
+     * Whether this element is enabled (can handle any input)
      */
     protected boolean enabled = true;
 
     /**
-     * Whether this element is visible 
+     * Whether this element is visible
      */
     protected boolean visible = true;
 
@@ -120,53 +119,43 @@ public class UIElement implements IUIElement
      */
     private Map<String, Object> customData;
 
-    public EventManager getEvents()
-    {
+    public EventManager getEvents() {
         return this.events;
     }
 
     /* Hierarchy management */
 
-    public UIBaseMenu.UIRootElement getRoot()
-    {
+    public UIBaseMenu.UIRootElement getRoot() {
         UIElement element = this;
 
-        while (element.getParent() != null)
-        {
+        while (element.getParent() != null) {
             element = element.getParent();
         }
 
         return element instanceof UIBaseMenu.UIRootElement ? (UIBaseMenu.UIRootElement) element : null;
     }
 
-    public UIContext getContext()
-    {
+    public UIContext getContext() {
         UIBaseMenu.UIRootElement root = this.getRoot();
 
         return root == null ? null : root.getContext();
     }
 
-    public UIElement getParent()
-    {
+    public UIElement getParent() {
         return this.parent;
     }
 
-    public boolean hasParent()
-    {
+    public boolean hasParent() {
         return this.parent != null;
     }
 
-    public boolean isDescendant(UIElement element)
-    {
-        if (this == element)
-        {
+    public boolean isDescendant(UIElement element) {
+        if (this == element) {
             return false;
         }
 
-        while (element != null)
-        {
-            if (element.parent == this)
-            {
+        while (element != null) {
+            if (element.parent == this) {
                 return true;
             }
 
@@ -176,37 +165,29 @@ public class UIElement implements IUIElement
         return false;
     }
 
-    public List<IUIElement> getChildren()
-    {
+    public List<IUIElement> getChildren() {
         return this.children;
     }
 
-    public <T> List<T> getChildren(Class<T> clazz)
-    {
+    public <T> List<T> getChildren(Class<T> clazz) {
         return getChildren(clazz, new ArrayList<>());
     }
 
-    public <T> List<T> getChildren(Class<T> clazz, List<T> list)
-    {
+    public <T> List<T> getChildren(Class<T> clazz, List<T> list) {
         return getChildren(clazz, list, false);
     }
 
-    public <T> List<T> getChildren(Class<T> clazz, List<T> list, boolean includeItself)
-    {
-        if (includeItself && clazz.isAssignableFrom(this.getClass()))
-        {
+    public <T> List<T> getChildren(Class<T> clazz, List<T> list, boolean includeItself) {
+        if (includeItself && clazz.isAssignableFrom(this.getClass())) {
             list.add(clazz.cast(this));
         }
 
-        for (IUIElement element : this.getChildren())
-        {
-            if (clazz.isAssignableFrom(element.getClass()))
-            {
+        for (IUIElement element : this.getChildren()) {
+            if (clazz.isAssignableFrom(element.getClass())) {
                 list.add(clazz.cast(element));
             }
 
-            if (element instanceof UIElement)
-            {
+            if (element instanceof UIElement) {
                 ((UIElement) element).getChildren(clazz, list, includeItself);
             }
         }
@@ -214,48 +195,36 @@ public class UIElement implements IUIElement
         return list;
     }
 
-    public void prepend(IUIElement element)
-    {
-        if (element != null)
-        {
+    public void prepend(IUIElement element) {
+        if (element != null) {
             this.children.add(0, element);
             this.markChild(element);
         }
     }
 
-    public void add(IUIElement element)
-    {
-        if (element != null)
-        {
+    public void add(IUIElement element) {
+        if (element != null) {
             this.children.add(element);
             this.markChild(element);
         }
     }
 
-    public void add(IUIElement... elements)
-    {
-        for (IUIElement element : elements)
-        {
-            if (element != null)
-            {
+    public void add(IUIElement... elements) {
+        for (IUIElement element : elements) {
+            if (element != null) {
                 this.children.add(element);
                 this.markChild(element);
             }
         }
     }
 
-    public void addAfter(IUIElement target, IUIElement element)
-    {
+    public void addAfter(IUIElement target, IUIElement element) {
         int index = this.children.indexOf(target);
 
-        if (index != -1 && element != null)
-        {
-            if (index + 1 >= this.children.size())
-            {
+        if (index != -1 && element != null) {
+            if (index + 1 >= this.children.size()) {
                 this.children.add(element);
-            }
-            else
-            {
+            } else {
                 this.children.add(index + 1, element);
             }
 
@@ -263,44 +232,35 @@ public class UIElement implements IUIElement
         }
     }
 
-    public void addBefore(IUIElement target, IUIElement element)
-    {
+    public void addBefore(IUIElement target, IUIElement element) {
         int index = this.children.indexOf(target);
 
-        if (index != -1 && element != null)
-        {
+        if (index != -1 && element != null) {
             this.children.add(index, element);
 
             this.markChild(element);
         }
     }
 
-    private void markChild(IUIElement element)
-    {
-        if (element instanceof UIElement)
-        {
+    private void markChild(IUIElement element) {
+        if (element instanceof UIElement) {
             UIElement child = (UIElement) element;
 
             child.parent = this;
             child.onAdd(this);
 
-            if (this.resizer != null)
-            {
+            if (this.resizer != null) {
                 this.resizer.add(this, child);
             }
         }
     }
 
-    public void removeAll()
-    {
-        for (IUIElement uiElement : this.children)
-        {
-            if (uiElement instanceof UIElement)
-            {
+    public void removeAll() {
+        for (IUIElement uiElement : this.children) {
+            if (uiElement instanceof UIElement) {
                 UIElement element = (UIElement) uiElement;
 
-                if (this.resizer != null)
-                {
+                if (this.resizer != null) {
                     this.resizer.remove(this, element);
                 }
 
@@ -312,25 +272,19 @@ public class UIElement implements IUIElement
         this.children.clear();
     }
 
-    public void removeFromParent()
-    {
-        if (this.hasParent())
-        {
+    public void removeFromParent() {
+        if (this.hasParent()) {
             this.parent.remove(this);
         }
     }
 
-    public void remove(IUIElement element)
-    {
+    public void remove(IUIElement element) {
         this.children.remove(element);
     }
 
-    public void remove(UIElement element)
-    {
-        if (this.children.remove(element))
-        {
-            if (this.resizer != null)
-            {
+    public void remove(UIElement element) {
+        if (this.children.remove(element)) {
+            if (this.resizer != null) {
                 this.resizer.remove(this, element);
             }
 
@@ -339,40 +293,33 @@ public class UIElement implements IUIElement
         }
     }
 
-    protected void onAdd(UIElement parent)
-    {
+    protected void onAdd(UIElement parent) {
         this.events.emit(new UIAddedEvent(this));
 
-        for (IUITreeEventListener listener : this.getChildren(IUITreeEventListener.class))
-        {
+        for (IUITreeEventListener listener : this.getChildren(IUITreeEventListener.class)) {
             listener.onAddedToTree(this);
         }
     }
 
-    protected void onRemove(UIElement parent)
-    {
+    protected void onRemove(UIElement parent) {
         this.events.emit(new UIRemovedEvent(this));
 
-        for (IUITreeEventListener listener : this.getChildren(IUITreeEventListener.class))
-        {
+        for (IUITreeEventListener listener : this.getChildren(IUITreeEventListener.class)) {
             listener.onRemovedFromTree(this);
         }
     }
 
-    public UIElement eventPropagataion(EventPropagation propagation)
-    {
+    public UIElement eventPropagataion(EventPropagation propagation) {
         return this.mouseEventPropagataion(propagation).keyboardEventPropagataion(propagation);
     }
 
-    public UIElement mouseEventPropagataion(EventPropagation propagation)
-    {
+    public UIElement mouseEventPropagataion(EventPropagation propagation) {
         this.mousePropagation = propagation;
 
         return this;
     }
 
-    public UIElement keyboardEventPropagataion(EventPropagation propagation)
-    {
+    public UIElement keyboardEventPropagataion(EventPropagation propagation) {
         this.keyboardPropagation = propagation;
 
         return this;
@@ -380,15 +327,12 @@ public class UIElement implements IUIElement
 
     /* Custom data */
 
-    public Object getCustomValue(String key)
-    {
+    public Object getCustomValue(String key) {
         return this.customData == null ? null : this.customData.get(key);
     }
 
-    public void setCustomValue(String key, Object value)
-    {
-        if (this.customData == null)
-        {
+    public void setCustomValue(String key, Object value) {
+        if (this.customData == null) {
             this.customData = new HashMap<>();
         }
 
@@ -397,37 +341,31 @@ public class UIElement implements IUIElement
 
     /* Setters */
 
-    public UIElement removeTooltip()
-    {
+    public UIElement removeTooltip() {
         this.tooltip = null;
 
         return this;
     }
 
-    public UIElement tooltip(ITooltip tooltip)
-    {
+    public UIElement tooltip(ITooltip tooltip) {
         this.tooltip = tooltip;
 
         return this;
     }
 
-    public UIElement tooltip(IKey label)
-    {
+    public UIElement tooltip(IKey label) {
         return this.tooltip(label, Direction.BOTTOM);
     }
 
-    public UIElement tooltip(IKey label, Direction direction)
-    {
+    public UIElement tooltip(IKey label, Direction direction) {
         return this.tooltip(new LabelTooltip(label, direction));
     }
 
-    public UIElement tooltip(IKey label, int width, Direction direction)
-    {
+    public UIElement tooltip(IKey label, int width, Direction direction) {
         return this.tooltip(new LabelTooltip(label, width, direction));
     }
 
-    public UIElement noCulling()
-    {
+    public UIElement noCulling() {
         this.culled = false;
 
         return this;
@@ -435,10 +373,8 @@ public class UIElement implements IUIElement
 
     /* Keybind manager */
 
-    public KeybindManager keys()
-    {
-        if (this.keybinds == null)
-        {
+    public KeybindManager keys() {
+        if (this.keybinds == null) {
             this.keybinds = new KeybindManager();
         }
 
@@ -447,51 +383,41 @@ public class UIElement implements IUIElement
 
     /* Container stuff */
 
-    public UIElement markContainer()
-    {
+    public UIElement markContainer() {
         this.container = true;
 
         return this;
     }
 
-    public boolean isContainer()
-    {
+    public boolean isContainer() {
         return this.container;
     }
 
-    public UIElement getParentContainer()
-    {
+    public UIElement getParentContainer() {
         UIElement element = this.getParent();
 
-        while (element != null && !element.isContainer())
-        {
+        while (element != null && !element.isContainer()) {
             element = element.getParent();
         }
 
         return element;
     }
 
-    public void resetContext()
-    {
+    public void resetContext() {
         this.contextOptions = null;
     }
 
-    public UIElement context(Supplier<UIContextMenu> supplier)
-    {
-        if (supplier != null)
-        {
+    public UIElement context(Supplier<UIContextMenu> supplier) {
+        if (supplier != null) {
             this.contextSupplier = supplier;
         }
 
         return this;
     }
 
-    public UIElement context(Consumer<ContextMenuManager> consumer)
-    {
-        if (consumer != null)
-        {
-            if (this.contextOptions == null)
-            {
+    public UIElement context(Consumer<ContextMenuManager> consumer) {
+        if (consumer != null) {
+            if (this.contextOptions == null) {
                 this.contextOptions = new ArrayList<>();
             }
 
@@ -503,26 +429,22 @@ public class UIElement implements IUIElement
 
     /**
      * Create a context menu instance
-     *
+     * <p>
      * Some subclasses of UIElement might want to override this method in order to create their
      * own context menus.
      */
-    public UIContextMenu createContextMenu(UIContext context)
-    {
-        if (this.contextSupplier != null)
-        {
+    public UIContextMenu createContextMenu(UIContext context) {
+        if (this.contextSupplier != null) {
             return this.contextSupplier.get();
         }
 
-        if (this.contextOptions == null)
-        {
+        if (this.contextOptions == null) {
             return null;
         }
 
         ContextMenuManager manager = new ContextMenuManager();
 
-        for (Consumer<ContextMenuManager> consumer : this.contextOptions)
-        {
+        for (Consumer<ContextMenuManager> consumer : this.contextOptions) {
             consumer.accept(manager);
         }
 
@@ -531,25 +453,21 @@ public class UIElement implements IUIElement
 
     /* Resizer methods */
 
-    public Flex getFlex()
-    {
+    public Flex getFlex() {
         return this.flex;
     }
 
-    public IResizer resizer()
-    {
+    public IResizer resizer() {
         return this.resizer;
     }
 
-    public UIElement resizer(IResizer resizer)
-    {
+    public UIElement resizer(IResizer resizer) {
         this.resizer = resizer;
 
         return this;
     }
 
-    public UIElement resetFlex()
-    {
+    public UIElement resetFlex() {
         this.flex.x.reset();
         this.flex.y.reset();
         this.flex.w.reset();
@@ -560,8 +478,7 @@ public class UIElement implements IUIElement
         return this;
     }
 
-    public UIElement set(int x, int y, int w, int h)
-    {
+    public UIElement set(int x, int y, int w, int h) {
         this.flex.x.set(0, x);
         this.flex.y.set(0, y);
         this.flex.w.set(0, w);
@@ -572,22 +489,19 @@ public class UIElement implements IUIElement
 
     /* X */
 
-    public UIElement x(int offset)
-    {
+    public UIElement x(int offset) {
         this.flex.x.set(0, offset);
 
         return this;
     }
 
-    public UIElement x(float value)
-    {
+    public UIElement x(float value) {
         this.flex.x.set(value, 0);
 
         return this;
     }
 
-    public UIElement x(float value, int offset)
-    {
+    public UIElement x(float value, int offset) {
         this.flex.x.set(value, offset);
 
         return this;
@@ -595,22 +509,19 @@ public class UIElement implements IUIElement
 
     /* Y */
 
-    public UIElement y(int offset)
-    {
+    public UIElement y(int offset) {
         this.flex.y.set(0, offset);
 
         return this;
     }
 
-    public UIElement y(float value)
-    {
+    public UIElement y(float value) {
         this.flex.y.set(value, 0);
 
         return this;
     }
 
-    public UIElement y(float value, int offset)
-    {
+    public UIElement y(float value, int offset) {
         this.flex.y.set(value, offset);
 
         return this;
@@ -618,52 +529,45 @@ public class UIElement implements IUIElement
 
     /* Width */
 
-    public UIElement w(int offset)
-    {
+    public UIElement w(int offset) {
         this.flex.w.set(0, offset);
 
         return this;
     }
 
-    public UIElement w(float value)
-    {
+    public UIElement w(float value) {
         this.flex.w.set(value, 0);
 
         return this;
     }
 
-    public UIElement w(float value, int offset)
-    {
+    public UIElement w(float value, int offset) {
         this.flex.w.set(value, offset);
 
         return this;
     }
 
-    public UIElement wTo(IResizer flex)
-    {
+    public UIElement wTo(IResizer flex) {
         this.flex.w.target = flex;
 
         return this;
     }
 
-    public UIElement wTo(IResizer flex, int offset)
-    {
+    public UIElement wTo(IResizer flex, int offset) {
         this.flex.w.target = flex;
         this.flex.w.offset = offset;
 
         return this;
     }
 
-    public UIElement wTo(IResizer flex, float anchor)
-    {
+    public UIElement wTo(IResizer flex, float anchor) {
         this.flex.w.target = flex;
         this.flex.w.targetAnchor = anchor;
 
         return this;
     }
 
-    public UIElement wTo(IResizer flex, float anchor, int offset)
-    {
+    public UIElement wTo(IResizer flex, float anchor, int offset) {
         this.flex.w.target = flex;
         this.flex.w.targetAnchor = anchor;
         this.flex.w.offset = offset;
@@ -673,44 +577,37 @@ public class UIElement implements IUIElement
 
     /* Height */
 
-    public UIElement h(int offset)
-    {
+    public UIElement h(int offset) {
         this.flex.h.set(0, offset);
 
         return this;
     }
 
-    public UIElement h(float value)
-    {
+    public UIElement h(float value) {
         this.flex.h.set(value, 0);
 
         return this;
     }
 
-    public UIElement h(float value, int offset)
-    {
+    public UIElement h(float value, int offset) {
         this.flex.h.set(value, offset);
 
         return this;
     }
 
-    public UIElement hTo(IResizer target)
-    {
+    public UIElement hTo(IResizer target) {
         return this.hTo(target, 0);
     }
 
-    public UIElement hTo(IResizer target, int offset)
-    {
+    public UIElement hTo(IResizer target, int offset) {
         return this.hTo(target, 0F, offset);
     }
 
-    public UIElement hTo(IResizer target, float anchor)
-    {
+    public UIElement hTo(IResizer target, float anchor) {
         return this.hTo(target, anchor, 0);
     }
 
-    public UIElement hTo(IResizer target, float anchor, int offset)
-    {
+    public UIElement hTo(IResizer target, float anchor, int offset) {
         this.flex.h.target = target;
         this.flex.h.targetAnchor = anchor;
         this.flex.h.offset = offset;
@@ -720,79 +617,68 @@ public class UIElement implements IUIElement
 
     /* Other variations */
 
-    public UIElement xy(int x, int y)
-    {
+    public UIElement xy(int x, int y) {
         this.flex.x.set(0, x);
         this.flex.y.set(0, y);
 
         return this;
     }
 
-    public UIElement xy(float x, float y)
-    {
+    public UIElement xy(float x, float y) {
         this.flex.x.set(x);
         this.flex.y.set(y);
 
         return this;
     }
 
-    public UIElement wh(int w, int h)
-    {
+    public UIElement wh(int w, int h) {
         this.flex.w.set(0, w);
         this.flex.h.set(0, h);
 
         return this;
     }
 
-    public UIElement full()
-    {
+    public UIElement full() {
         return this.wh(1F, 1F);
     }
 
-    public UIElement wh(float w, float h)
-    {
+    public UIElement wh(float w, float h) {
         this.flex.w.set(w);
         this.flex.h.set(h);
 
         return this;
     }
 
-    public UIElement maxW(int max)
-    {
+    public UIElement maxW(int max) {
         this.flex.w.max = max;
 
         return this;
     }
 
-    public UIElement maxH(int max)
-    {
+    public UIElement maxH(int max) {
         this.flex.h.max = max;
 
         return this;
     }
 
-    public UIElement anchor(float x)
-    {
+    public UIElement anchor(float x) {
         return this.anchor(x, x);
     }
 
-    public UIElement anchor(float x, float y)
-    {
+    public UIElement anchor(float x, float y) {
         this.flex.x.anchor = x;
         this.flex.y.anchor = y;
 
         return this;
     }
 
-    public UIElement anchorX(float x)
-    {
+    public UIElement anchorX(float x) {
         this.flex.x.anchor = x;
 
         return this;
     }
 
-    public UIElement anchorY(float y)
-    {
+    public UIElement anchorY(float y) {
         this.flex.y.anchor = y;
 
         return this;
@@ -801,50 +687,40 @@ public class UIElement implements IUIElement
     /* Post resizers convenience methods
      * TODO: remove child resizers when switching to another post method */
 
-    public RowResizer row()
-    {
+    public RowResizer row() {
         return this.row(5);
     }
 
-    public RowResizer row(int margin)
-    {
-        if (this.flex.post instanceof RowResizer)
-        {
+    public RowResizer row(int margin) {
+        if (this.flex.post instanceof RowResizer) {
             return (RowResizer) this.flex.post;
         }
 
         return RowResizer.apply(this, margin);
     }
 
-    public ColumnResizer column()
-    {
+    public ColumnResizer column() {
         return this.column(5);
     }
 
-    public ColumnResizer column(int margin)
-    {
-        if (this.flex.post instanceof ColumnResizer)
-        {
+    public ColumnResizer column(int margin) {
+        if (this.flex.post instanceof ColumnResizer) {
             return (ColumnResizer) this.flex.post;
         }
 
         return ColumnResizer.apply(this, margin);
     }
 
-    public GridResizer grid(int margin)
-    {
-        if (this.flex.post instanceof GridResizer)
-        {
+    public GridResizer grid(int margin) {
+        if (this.flex.post instanceof GridResizer) {
             return (GridResizer) this.flex.post;
         }
 
         return GridResizer.apply(this, margin);
     }
 
-    public BoundsResizer bounds(UIElement target, int margin)
-    {
-        if (this.flex.post instanceof BoundsResizer)
-        {
+    public BoundsResizer bounds(UIElement target, int margin) {
+        if (this.flex.post instanceof BoundsResizer) {
             return (BoundsResizer) this.flex.post;
         }
 
@@ -853,22 +729,19 @@ public class UIElement implements IUIElement
 
     /* Hierarchy */
 
-    public UIElement relative(UIElement element)
-    {
+    public UIElement relative(UIElement element) {
         this.flex.relative = element.area;
 
         return this;
     }
 
-    public UIElement relative(IResizer relative)
-    {
+    public UIElement relative(IResizer relative) {
         this.flex.relative = relative;
 
         return this;
     }
 
-    public UIElement post(IResizer post)
-    {
+    public UIElement post(IResizer post) {
         this.flex.post = post;
 
         return this;
@@ -876,46 +749,39 @@ public class UIElement implements IUIElement
 
     /* Margin */
 
-    public UIElement margin(int all)
-    {
+    public UIElement margin(int all) {
         return this.margin(all, all);
     }
 
-    public UIElement margin(int horizontal, int vertical)
-    {
+    public UIElement margin(int horizontal, int vertical) {
         return this.margin(horizontal, vertical, horizontal, vertical);
     }
 
-    public UIElement margin(int left, int top, int right, int bottom)
-    {
+    public UIElement margin(int left, int top, int right, int bottom) {
         this.margin.all(left, top, right, bottom);
 
         return this;
     }
 
-    public UIElement marginLeft(int left)
-    {
+    public UIElement marginLeft(int left) {
         this.margin.left(left);
 
         return this;
     }
 
-    public UIElement marginTop(int top)
-    {
+    public UIElement marginTop(int top) {
         this.margin.top(top);
 
         return this;
     }
 
-    public UIElement marginRight(int right)
-    {
+    public UIElement marginRight(int right) {
         this.margin.right(right);
 
         return this;
     }
 
-    public UIElement marginBottom(int bottom)
-    {
+    public UIElement marginBottom(int bottom) {
         this.margin.bottom(bottom);
 
         return this;
@@ -924,55 +790,45 @@ public class UIElement implements IUIElement
     /* Enabled methods */
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return this.enabled && this.visible;
     }
 
-    public void setEnabled(boolean enabled)
-    {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
     @Override
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
 
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public void toggleVisible()
-    {
+    public void toggleVisible() {
         this.visible = !this.visible;
     }
 
     /**
      * Whether element can be seen on the screen
      */
-    public boolean canBeSeen()
-    {
-        if (!this.hasParent() || !this.isVisible())
-        {
+    public boolean canBeSeen() {
+        if (!this.hasParent() || !this.isVisible()) {
             return false;
         }
 
         UIElement element = this;
 
-        while (true)
-        {
-            if (!element.isVisible())
-            {
+        while (true) {
+            if (!element.isVisible()) {
                 return false;
             }
 
             UIElement parent = element.getParent();
 
-            if (parent == null)
-            {
+            if (parent == null) {
                 break;
             }
 
@@ -982,52 +838,43 @@ public class UIElement implements IUIElement
         return element instanceof UIBaseMenu.UIRootElement;
     }
 
-    /* Overriding those methods so it would be much easier to 
+    /* Overriding those methods so it would be much easier to
      * override only needed methods in subclasses */
 
     @Override
-    public void resize()
-    {
-        if (this.resizer != null)
-        {
+    public void resize() {
+        if (this.resizer != null) {
             this.resizer.apply(this.area);
         }
 
         this.afterResizeApplied();
 
-        for (IUIElement element : this.children)
-        {
+        for (IUIElement element : this.children) {
             element.resize();
         }
 
-        if (this.resizer != null)
-        {
+        if (this.resizer != null) {
             this.resizer.postApply(this.area);
         }
     }
 
-    protected void afterResizeApplied()
-    {}
+    protected void afterResizeApplied() {
+    }
 
-    public void clickItself()
-    {
+    public void clickItself() {
         this.clickItself(this.getContext());
     }
 
-    public void clickItself(int mouseButton)
-    {
+    public void clickItself(int mouseButton) {
         this.clickItself(this.getContext(), mouseButton);
     }
 
-    public void clickItself(UIContext context)
-    {
+    public void clickItself(UIContext context) {
         this.clickItself(context, 0);
     }
 
-    public void clickItself(UIContext context, int mouseButton)
-    {
-        if (!this.isEnabled())
-        {
+    public void clickItself(UIContext context, int mouseButton) {
+        if (!this.isEnabled()) {
             return;
         }
 
@@ -1052,41 +899,34 @@ public class UIElement implements IUIElement
      * subclass children*, sub* or misc. event handling methods! */
 
     @Override
-    public final boolean mouseClicked(UIContext context)
-    {
+    public final boolean mouseClicked(UIContext context) {
         return this.childrenMouseClicked(context) || this.subMouseClicked(context) || this.mouseClickedContextMenu(context) || this.cantPropagate(this.mousePropagation, context);
     }
 
     @Override
-    public final boolean mouseScrolled(UIContext context)
-    {
+    public final boolean mouseScrolled(UIContext context) {
         return this.childrenMouseScrolled(context) || this.subMouseScrolled(context) || this.cantPropagate(this.mousePropagation, context);
     }
 
     @Override
-    public final boolean mouseReleased(UIContext context)
-    {
+    public final boolean mouseReleased(UIContext context) {
         return this.childrenMouseReleased(context) || this.subMouseReleased(context) || this.cantPropagate(this.mousePropagation, context);
     }
 
     @Override
-    public final boolean keyPressed(UIContext context)
-    {
+    public final boolean keyPressed(UIContext context) {
         return this.childrenKeyPressed(context) || this.subKeyPressed(context) || this.keybindsKeyPressed(context) || this.cantPropagate(this.keyboardPropagation, context);
     }
 
     @Override
-    public final boolean textInput(UIContext context)
-    {
+    public final boolean textInput(UIContext context) {
         return this.childrenTextInput(context) || this.subTextInput(context) || this.cantPropagate(this.keyboardPropagation, context);
     }
 
     /* Handling children input events */
 
-    protected boolean childrenMouseClicked(UIContext context)
-    {
-        for (int i = this.children.size() - 1; i >= 0; i--)
-        {
+    protected boolean childrenMouseClicked(UIContext context) {
+        for (int i = this.children.size() - 1; i >= 0; i--) {
             IUIElement element = this.children.get(i);
 
             if (element.isEnabled() && element.mouseClicked(context)) return true;
@@ -1095,10 +935,8 @@ public class UIElement implements IUIElement
         return false;
     }
 
-    protected boolean childrenMouseScrolled(UIContext context)
-    {
-        for (int i = this.children.size() - 1; i >= 0; i--)
-        {
+    protected boolean childrenMouseScrolled(UIContext context) {
+        for (int i = this.children.size() - 1; i >= 0; i--) {
             IUIElement element = this.children.get(i);
 
             if (element.isEnabled() && element.mouseScrolled(context)) return true;
@@ -1107,10 +945,8 @@ public class UIElement implements IUIElement
         return false;
     }
 
-    protected boolean childrenMouseReleased(UIContext context)
-    {
-        for (int i = this.children.size() - 1; i >= 0; i--)
-        {
+    protected boolean childrenMouseReleased(UIContext context) {
+        for (int i = this.children.size() - 1; i >= 0; i--) {
             IUIElement element = this.children.get(i);
 
             if (element.isEnabled() && element.mouseReleased(context)) return true;
@@ -1119,10 +955,8 @@ public class UIElement implements IUIElement
         return false;
     }
 
-    protected boolean childrenKeyPressed(UIContext context)
-    {
-        for (int i = this.children.size() - 1; i >= 0; i--)
-        {
+    protected boolean childrenKeyPressed(UIContext context) {
+        for (int i = this.children.size() - 1; i >= 0; i--) {
             IUIElement element = this.children.get(i);
 
             if (element.isEnabled() && element.keyPressed(context)) return true;
@@ -1131,14 +965,11 @@ public class UIElement implements IUIElement
         return false;
     }
 
-    protected boolean childrenTextInput(UIContext context)
-    {
-        for (int i = this.children.size() - 1; i >= 0; i--)
-        {
+    protected boolean childrenTextInput(UIContext context) {
+        for (int i = this.children.size() - 1; i >= 0; i--) {
             IUIElement element = this.children.get(i);
 
-            if (element.isEnabled() && element.textInput(context))
-            {
+            if (element.isEnabled() && element.textInput(context)) {
                 return true;
             }
         }
@@ -1148,28 +979,23 @@ public class UIElement implements IUIElement
 
     /* Subclasses' input event handling */
 
-    protected boolean subMouseClicked(UIContext context)
-    {
+    protected boolean subMouseClicked(UIContext context) {
         return false;
     }
 
-    protected boolean subMouseScrolled(UIContext context)
-    {
+    protected boolean subMouseScrolled(UIContext context) {
         return false;
     }
 
-    protected boolean subMouseReleased(UIContext context)
-    {
+    protected boolean subMouseReleased(UIContext context) {
         return false;
     }
 
-    protected boolean subKeyPressed(UIContext context)
-    {
+    protected boolean subKeyPressed(UIContext context) {
         return false;
     }
 
-    protected boolean subTextInput(UIContext context)
-    {
+    protected boolean subTextInput(UIContext context) {
         return false;
     }
 
@@ -1179,14 +1005,11 @@ public class UIElement implements IUIElement
      * Handle creating a context menu (when right clicked in the area, a context
      * menu may appear, if configured)
      */
-    protected boolean mouseClickedContextMenu(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 1 && !context.hasContextMenu())
-        {
+    protected boolean mouseClickedContextMenu(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 1 && !context.hasContextMenu()) {
             UIContextMenu menu = this.createContextMenu(context);
 
-            if (menu != null && !menu.isEmpty())
-            {
+            if (menu != null && !menu.isEmpty()) {
                 context.setContextMenu(menu);
 
                 return true;
@@ -1199,19 +1022,16 @@ public class UIElement implements IUIElement
     /**
      * Handle keybind manager's keybinds
      */
-    protected boolean keybindsKeyPressed(UIContext context)
-    {
+    protected boolean keybindsKeyPressed(UIContext context) {
         return this.keybinds != null && this.keybinds.check(context, this.area.isInside(context));
     }
 
     /**
      * Checks whether an input event can be propagated
      */
-    protected boolean cantPropagate(EventPropagation propagation, UIContext context)
-    {
-        if (propagation == EventPropagation.BLOCK)
-        {
-             return true;
+    protected boolean cantPropagate(EventPropagation propagation, UIContext context) {
+        if (propagation == EventPropagation.BLOCK) {
+            return true;
         }
 
         return propagation == EventPropagation.BLOCK_INSIDE && this.area.isInside(context);
@@ -1220,49 +1040,38 @@ public class UIElement implements IUIElement
     /* Rendering */
 
     @Override
-    public boolean canBeRendered(Area viewport)
-    {
+    public boolean canBeRendered(Area viewport) {
         return !this.culled || viewport.intersects(this.area);
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.keybinds != null && this.isEnabled())
-        {
+    public void render(UIContext context) {
+        if (this.keybinds != null && this.isEnabled()) {
             this.keybinds.add(context, this.area.isInside(context));
         }
 
-        if (this.tooltip != null && this.area.isInside(context))
-        {
+        if (this.tooltip != null && this.area.isInside(context)) {
             context.tooltip.set(context, this);
-        }
-        else if ((this.container || this.mousePropagation != EventPropagation.PASS) && this.area.isInside(context))
-        {
+        } else if ((this.container || this.mousePropagation != EventPropagation.PASS) && this.area.isInside(context)) {
             context.resetTooltip();
         }
 
-        for (IUIElement element : this.children)
-        {
-            if (element.isVisible() && element.canBeRendered(context.getViewport()))
-            {
+        for (IUIElement element : this.children) {
+            if (element.isVisible() && element.canBeRendered(context.getViewport())) {
                 element.render(context);
             }
         }
     }
 
-    public void renderTooltip(UIContext context, Area area)
-    {
+    public void renderTooltip(UIContext context, Area area) {
         context.tooltip.render(this.tooltip, context);
     }
 
     /**
      * Generic method for rendering locked (disabled) state of an input field
      */
-    public void renderLockedArea(UIContext context)
-    {
-        if (!this.isEnabled())
-        {
+    public void renderLockedArea(UIContext context) {
+        if (!this.isEnabled()) {
             this.area.render(context.batcher, Colors.A50);
 
             context.batcher.outlinedIcon(Icons.LOCKED, this.area.mx(), this.area.my(), 0.5F, 0.5F);

@@ -9,10 +9,8 @@ import mchorse.bbs.voxel.processor.Processor;
 import mchorse.bbs.voxel.processor.SphereProcessor;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 
-public class UIToolSphere extends UIToolProcessorPainter
-{
-    public UIToolSphere(UIWorldEditorPanel editor)
-    {
+public class UIToolSphere extends UIToolProcessorPainter {
+    public UIToolSphere(UIWorldEditorPanel editor) {
         super(editor);
 
         this.size = 5;
@@ -20,8 +18,7 @@ public class UIToolSphere extends UIToolProcessorPainter
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.SPHERE, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_SPHERE, Direction.RIGHT);
@@ -30,8 +27,7 @@ public class UIToolSphere extends UIToolProcessorPainter
     }
 
     @Override
-    protected Processor createProcessor(RayTraceResult result)
-    {
+    protected Processor createProcessor(RayTraceResult result) {
         return new SphereProcessor(this.variantToPlace, false).collect();
     }
 }

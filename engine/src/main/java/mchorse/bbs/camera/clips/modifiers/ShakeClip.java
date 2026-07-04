@@ -7,17 +7,15 @@ import mchorse.bbs.utils.clips.ClipContext;
 
 /**
  * Shake modifier
- * 
- * This modifier shakes the camera depending on the given component 
+ * <p>
+ * This modifier shakes the camera depending on the given component
  * flags.
  */
-public class ShakeClip extends ComponentClip
-{
+public class ShakeClip extends ComponentClip {
     public final ValueFloat shake = new ValueFloat("shake", 0F);
     public final ValueFloat shakeAmount = new ValueFloat("shakeAmount", 0F);
 
-    public ShakeClip()
-    {
+    public ShakeClip() {
         super();
 
         this.add(this.shake);
@@ -25,8 +23,7 @@ public class ShakeClip extends ComponentClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         float shake = this.shake.get();
         float amount = this.shakeAmount.get();
         float x = (context.ticks + context.transition) / (shake == 0 ? 1 : shake);
@@ -42,56 +39,45 @@ public class ShakeClip extends ComponentClip
         double sin = Math.sin(x);
         double cos = Math.cos(x);
 
-        if (isYaw && isPitch && !isX && !isY && !isZ && !isRoll && !isFov)
-        {
+        if (isYaw && isPitch && !isX && !isY && !isZ && !isRoll && !isFov) {
             float swingX = (float) (sin * sin * cos * Math.cos(x / 2));
             float swingY = (float) (cos * sin * sin);
 
             position.angle.yaw += swingX * amount;
             position.angle.pitch += swingY * amount;
-        }
-        else
-        {
-            if (isX)
-            {
+        } else {
+            if (isX) {
                 position.point.x += sin * amount;
             }
 
-            if (isY)
-            {
+            if (isY) {
                 position.point.y -= sin * amount;
             }
 
-            if (isZ)
-            {
+            if (isZ) {
                 position.point.z += cos * amount;
             }
 
-            if (isYaw)
-            {
+            if (isYaw) {
                 position.angle.yaw += sin * amount;
             }
 
-            if (isPitch)
-            {
+            if (isPitch) {
                 position.angle.pitch += cos * amount;
             }
 
-            if (isRoll)
-            {
+            if (isRoll) {
                 position.angle.roll += sin * amount;
             }
 
-            if (isFov)
-            {
+            if (isFov) {
                 position.angle.fov += cos * amount;
             }
         }
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new ShakeClip();
     }
 }

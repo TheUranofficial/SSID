@@ -8,13 +8,11 @@ import mchorse.bbs.ui.framework.elements.utils.UILabel;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public abstract class UIParticleSchemeModeSection <T extends ParticleComponentBase> extends UIParticleSchemeComponentSection<T>
-{
+public abstract class UIParticleSchemeModeSection<T extends ParticleComponentBase> extends UIParticleSchemeComponentSection<T> {
     public UICirculate mode;
     public UILabel modeLabel;
 
-    public UIParticleSchemeModeSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeModeSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.mode = new UICirculate((b) -> this.updateMode(this.mode.getValue()));
@@ -25,20 +23,16 @@ public abstract class UIParticleSchemeModeSection <T extends ParticleComponentBa
     }
 
     @Override
-    protected T getComponent(ParticleScheme scheme)
-    {
+    protected T getComponent(ParticleScheme scheme) {
         return scheme.getOrCreate(this.getBaseClass(), this.getDefaultClass());
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         super.fillData();
 
-        for (int i = 0, c = this.mode.getLabels().size(); i < c; i ++)
-        {
-            if (this.getModeClass(i) == this.component.getClass())
-            {
+        for (int i = 0, c = this.mode.getLabels().size(); i < c; i++) {
+            if (this.getModeClass(i) == this.component.getClass()) {
                 this.mode.setValue(i);
 
                 break;
@@ -48,8 +42,7 @@ public abstract class UIParticleSchemeModeSection <T extends ParticleComponentBa
 
     protected abstract void fillModes(UICirculate button);
 
-    protected void updateMode(int value)
-    {
+    protected void updateMode(int value) {
         T old = this.component;
 
         this.component = this.scheme.replace(this.getBaseClass(), this.getModeClass(this.mode.getValue()));
@@ -59,8 +52,8 @@ public abstract class UIParticleSchemeModeSection <T extends ParticleComponentBa
         this.fillData();
     }
 
-    protected void restoreInfo(T component, T old)
-    {}
+    protected void restoreInfo(T component, T old) {
+    }
 
     protected abstract Class<T> getBaseClass();
 

@@ -2,12 +2,10 @@ package mchorse.studio.bridge;
 
 import mchorse.studio.StudioEngine;
 
-public class BaseBridge
-{
+public class BaseBridge {
     protected StudioEngine engine;
 
-    public BaseBridge(StudioEngine engine)
-    {
+    public BaseBridge(StudioEngine engine) {
         this.engine = engine;
     }
 }

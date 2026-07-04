@@ -11,18 +11,15 @@ import java.io.File;
  * Base JSON manager which loads and saves different data
  * structures based upon Data API
  */
-public abstract class BaseManager <T extends ValueGroup> extends FolderManager<T>
-{
+public abstract class BaseManager<T extends ValueGroup> extends FolderManager<T> {
     protected IDataStorage storage = new JSONLikeStorage();
 
-    public BaseManager(File folder)
-    {
+    public BaseManager(File folder) {
         super(folder);
     }
 
     @Override
-    public final T create(String id, MapType data)
-    {
+    public final T create(String id, MapType data) {
         T object = this.createData(id, data);
 
         object.setId(id);
@@ -33,39 +30,30 @@ public abstract class BaseManager <T extends ValueGroup> extends FolderManager<T
     protected abstract T createData(String id, MapType mapType);
 
     @Override
-    public T load(String id)
-    {
-        try
-        {
+    public T load(String id) {
+        try {
             MapType mapType = this.storage.load(this.getFile(id));
             T data = this.create(id, mapType);
 
             return data;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public boolean save(T data)
-    {
+    public boolean save(T data) {
         return this.save(data.getId(), data.toData().asMap());
     }
 
     @Override
-    public boolean save(String id, MapType data)
-    {
-        try
-        {
+    public boolean save(String id, MapType data) {
+        try {
             this.storage.save(this.getFile(id), data);
 
             return true;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

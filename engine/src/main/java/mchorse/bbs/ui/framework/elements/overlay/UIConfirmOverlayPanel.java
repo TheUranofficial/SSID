@@ -6,16 +6,14 @@ import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 
 import java.util.function.Consumer;
 
-public class UIConfirmOverlayPanel extends UIMessageOverlayPanel
-{
+public class UIConfirmOverlayPanel extends UIMessageOverlayPanel {
     public UIButton confirm;
 
     public Consumer<Boolean> callback;
 
     private boolean result;
 
-    public UIConfirmOverlayPanel(IKey title, IKey message, Consumer<Boolean> callback)
-    {
+    public UIConfirmOverlayPanel(IKey title, IKey message, Consumer<Boolean> callback) {
         super(title, message);
 
         this.callback = callback;
@@ -27,20 +25,17 @@ public class UIConfirmOverlayPanel extends UIMessageOverlayPanel
     }
 
     @Override
-    public void confirm()
-    {
+    public void confirm() {
         this.result = true;
 
         this.close();
     }
 
     @Override
-    public void onClose()
-    {
+    public void onClose() {
         super.onClose();
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(this.result);
         }
     }

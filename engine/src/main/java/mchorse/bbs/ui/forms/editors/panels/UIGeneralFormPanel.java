@@ -9,8 +9,7 @@ import mchorse.bbs.ui.framework.elements.input.text.UITextbox;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.world.objects.objects.UIPropTransform;
 
-public class UIGeneralFormPanel extends UIFormPanel
-{
+public class UIGeneralFormPanel extends UIFormPanel {
     public UITextbox name;
     public UIPropTransform transform;
 
@@ -20,8 +19,7 @@ public class UIGeneralFormPanel extends UIFormPanel
     public UITrackpad hitboxSneakMultiplier;
     public UITrackpad hitboxEyeHeight;
 
-    public UIGeneralFormPanel(UIForm editor)
-    {
+    public UIGeneralFormPanel(UIForm editor) {
         super(editor);
 
         this.name = new UITextbox(120, (t) -> this.form.name.set(t));
@@ -46,8 +44,7 @@ public class UIGeneralFormPanel extends UIFormPanel
     }
 
     @Override
-    public void startEdit(Form form)
-    {
+    public void startEdit(Form form) {
         super.startEdit(form);
 
         this.name.setText(form.name.get());

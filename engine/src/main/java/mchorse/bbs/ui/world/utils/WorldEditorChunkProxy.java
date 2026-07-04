@@ -11,30 +11,26 @@ import mchorse.bbs.world.World;
 
 import java.util.List;
 
-public class WorldEditorChunkProxy extends ChunkProxy
-{
+public class WorldEditorChunkProxy extends ChunkProxy {
     public UIWorldEditorPanel editor;
     public BlockSelection selectionBefore = new BlockSelection();
     public BlockSelection selectionAfter = new BlockSelection();
 
-    public WorldEditorChunkProxy(UIWorldEditorPanel editor, ChunkManager chunks, UndoManager<World> undoManager)
-    {
+    public WorldEditorChunkProxy(UIWorldEditorPanel editor, ChunkManager chunks, UndoManager<World> undoManager) {
         super(chunks, undoManager);
 
         this.editor = editor;
     }
 
     @Override
-    public void begin()
-    {
+    public void begin() {
         super.begin();
 
         this.selectionBefore.copy(this.editor.getSelection());
     }
 
     @Override
-    protected BlocksUndo createUndo(List<BlockDiff> list)
-    {
+    protected BlocksUndo createUndo(List<BlockDiff> list) {
         this.selectionAfter.copy(this.editor.getSelection());
 
         return new WorldEditorBlocksUndo(this.editor, list, this.selectionBefore, this.selectionAfter);

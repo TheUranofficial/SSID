@@ -11,21 +11,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIListOverlayPanel extends UIMessageOverlayPanel
-{
+public class UIListOverlayPanel extends UIMessageOverlayPanel {
     public Consumer<List<String>> callback;
 
     public UIButton confirm;
     public UIStringList list;
 
-    public UIListOverlayPanel(IKey title, IKey message, Consumer<String> callback)
-    {
+    public UIListOverlayPanel(IKey title, IKey message, Consumer<String> callback) {
         super(title, message);
 
         this.callback = (list) ->
         {
-            if (callback != null)
-            {
+            if (callback != null) {
                 callback.accept(this.list.getIndex() == 0 ? "" : this.list.getCurrentFirst());
             }
         };
@@ -41,60 +38,47 @@ public class UIListOverlayPanel extends UIMessageOverlayPanel
         this.content.add(this.confirm, this.list);
     }
 
-    public UIListOverlayPanel callback(Consumer<List<String>> callback)
-    {
+    public UIListOverlayPanel callback(Consumer<List<String>> callback) {
         this.callback = callback;
 
         return this;
     }
 
-    public UIListOverlayPanel setValue(String value)
-    {
-        if (value.isEmpty())
-        {
+    public UIListOverlayPanel setValue(String value) {
+        if (value.isEmpty()) {
             this.list.setIndex(0);
-        }
-        else
-        {
+        } else {
             this.list.setCurrent(value);
         }
 
         return this;
     }
 
-    public UIListOverlayPanel addValues(Collection<String> values)
-    {
+    public UIListOverlayPanel addValues(Collection<String> values) {
         this.list.add(values);
 
         return this;
     }
 
-    public void send()
-    {
-        if (this.list.isDeselected())
-        {
+    public void send() {
+        if (this.list.isDeselected()) {
             return;
         }
 
         this.close();
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(this.list.getCurrent());
         }
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ENTER))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ENTER)) {
             this.send();
 
             return true;
-        }
-        else if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+        } else if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.removeFromParent();
 
             return true;

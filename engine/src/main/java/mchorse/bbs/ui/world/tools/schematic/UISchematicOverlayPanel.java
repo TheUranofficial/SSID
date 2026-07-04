@@ -22,8 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UISchematicOverlayPanel extends UIOverlayPanel
-{
+public class UISchematicOverlayPanel extends UIOverlayPanel {
     public UISchematicRenderer renderer;
     public UIScrollView blocks;
 
@@ -35,8 +34,7 @@ public class UISchematicOverlayPanel extends UIOverlayPanel
     private boolean first = true;
     private Map<Integer, UIBlockVariant> blockVariants = new HashMap<>();
 
-    public UISchematicOverlayPanel(BlockSet blockSet, CompoundTag schematic, Consumer<Chunk> callback)
-    {
+    public UISchematicOverlayPanel(BlockSet blockSet, CompoundTag schematic, Consumer<Chunk> callback) {
         super(UIKeys.WORLD_EDITOR_SCHEMATIC_TITLE);
 
         this.blockSet = blockSet;
@@ -51,8 +49,7 @@ public class UISchematicOverlayPanel extends UIOverlayPanel
 
         int i = 0;
 
-        for (Integer integer : this.schematic.getUniqueBlocks())
-        {
+        for (Integer integer : this.schematic.getUniqueBlocks()) {
             UILabel label = UI.label(UIKeys.WORLD_EDITOR_SCHEMATIC_BLOCK.format(i)).labelAnchor(0, 0.5F);
             UIBlockVariant variant = new UIBlockVariant((b) -> this.replace(integer, b)).allowEmpty();
             UIElement row = UI.row(label, variant);
@@ -68,25 +65,20 @@ public class UISchematicOverlayPanel extends UIOverlayPanel
         this.content.add(this.renderer, new UIRenderable(this::renderScrollBackground), this.blocks);
     }
 
-    private void handleRenderCallback(Vector3i vector3i)
-    {
+    private void handleRenderCallback(Vector3i vector3i) {
         int block = this.schematic.getDataBlockAt(vector3i.x, vector3i.y, vector3i.z);
 
-        if (block != 0)
-        {
+        if (block != 0) {
             UIBlockVariant variant = this.blockVariants.get(block);
 
-            if (variant != null)
-            {
+            if (variant != null) {
                 variant.clickItself();
             }
         }
     }
 
-    private void replace(Integer blockId, IBlockVariant blockVariant)
-    {
-        if (blockVariant == null)
-        {
+    private void replace(Integer blockId, IBlockVariant blockVariant) {
+        if (blockVariant == null) {
             blockVariant = this.blockSet.air;
         }
 
@@ -95,35 +87,29 @@ public class UISchematicOverlayPanel extends UIOverlayPanel
         this.updateDisplay();
     }
 
-    private void updateDisplay()
-    {
+    private void updateDisplay() {
         UIContext context = this.getContext();
 
         context.menu.bridge.get(IBridgeWorld.class).getChunkBuilder().build(context.render, this.display, null);
     }
 
     @Override
-    public void onClose()
-    {
+    public void onClose() {
         super.onClose();
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.accept(this.display.chunk);
             this.display.delete();
         }
     }
 
-    private void renderScrollBackground(UIContext context)
-    {
+    private void renderScrollBackground(UIContext context) {
         this.blocks.area.render(context.batcher, Colors.A50);
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {
-        if (this.first)
-        {
+    protected void renderBackground(UIContext context) {
+        if (this.first) {
             this.first = false;
 
             context.batcher.flush();

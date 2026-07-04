@@ -18,47 +18,39 @@ import mchorse.bbs.utils.colors.Colors;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-public class UIPickableFormRenderer extends UIFormRenderer
-{
+public class UIPickableFormRenderer extends UIFormRenderer {
     public UIFormEditor formEditor;
 
     private boolean update;
 
     private StencilFormFramebuffer stencil = new StencilFormFramebuffer();
 
-    public UIPickableFormRenderer(UIFormEditor formEditor)
-    {
+    public UIPickableFormRenderer(UIFormEditor formEditor) {
         this.formEditor = formEditor;
     }
 
-    public void updatable()
-    {
+    public void updatable() {
         this.update = true;
     }
 
-    private void ensureFramebuffer()
-    {
+    private void ensureFramebuffer() {
         this.stencil.setup(Link.bbs("stencil_form"));
         this.stencil.resizeGUI(this.area.w, this.area.h);
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         this.ensureFramebuffer();
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.stencil.hasPicked() && context.mouseButton == 0)
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.stencil.hasPicked() && context.mouseButton == 0) {
             Pair<Form, String> pair = this.stencil.getPicked();
 
-            if (pair != null)
-            {
+            if (pair != null) {
                 this.formEditor.pickFormFromRenderer(pair);
 
                 return true;
@@ -69,24 +61,20 @@ public class UIPickableFormRenderer extends UIFormRenderer
     }
 
     @Override
-    protected void renderUserModel(UIContext context)
-    {
-        if (this.form == null)
-        {
+    protected void renderUserModel(UIContext context) {
+        if (this.form == null) {
             return;
         }
 
         this.form.getRenderer().render(this.entity, context.render);
 
-        if (this.form.hitbox.get())
-        {
+        if (this.form.hitbox.get()) {
             this.renderFormHitbox(context.render);
         }
 
         this.renderAxes(context);
 
-        if (this.area.isInside(context))
-        {
+        if (this.area.isInside(context)) {
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
             this.stencil.apply(context);
@@ -96,15 +84,12 @@ public class UIPickableFormRenderer extends UIFormRenderer
             this.stencil.unbind(context);
 
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        }
-        else
-        {
+        } else {
             this.stencil.clearPicking();
         }
     }
 
-    private void renderAxes(UIContext context)
-    {
+    private void renderAxes(UIContext context) {
         Matrix4f matrix = this.formEditor.editor.getOrigin(context.getTransition());
         final float axisSize = 0.1F;
         final float axisOffset = 0.005F;
@@ -115,8 +100,7 @@ public class UIPickableFormRenderer extends UIFormRenderer
 
         context.render.stack.push();
 
-        if (matrix != null)
-        {
+        if (matrix != null) {
             context.render.stack.multiply(matrix);
         }
 
@@ -146,8 +130,7 @@ public class UIPickableFormRenderer extends UIFormRenderer
         GLStates.depthTest(true);
     }
 
-    private void renderFormHitbox(RenderingContext context)
-    {
+    private void renderFormHitbox(RenderingContext context) {
         float hitboxW = this.form.hitboxWidth.get();
         float hitboxH = this.form.hitboxHeight.get();
         float eyeHeight = hitboxH * this.form.hitboxEyeHeight.get();
@@ -161,23 +144,19 @@ public class UIPickableFormRenderer extends UIFormRenderer
     }
 
     @Override
-    protected void update()
-    {
+    protected void update() {
         super.update();
 
-        if (this.update)
-        {
+        if (this.update) {
             this.form.update(this.entity);
         }
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
-        if (!this.stencil.hasPicked())
-        {
+        if (!this.stencil.hasPicked()) {
             return;
         }
 
@@ -192,12 +171,10 @@ public class UIPickableFormRenderer extends UIFormRenderer
         CommonShaderAccess.setTarget(shader, index);
         context.batcher.texturedBox(shader, texture, Colors.WHITE, this.area.x, this.area.y, this.area.w, this.area.h, 0, h, w, 0, w, h);
 
-        if (pair != null)
-        {
+        if (pair != null) {
             String label = pair.a.getIdOrName();
 
-            if (!pair.b.isEmpty())
-            {
+            if (!pair.b.isEmpty()) {
                 label += " - " + pair.b;
             }
 

@@ -7,49 +7,40 @@ import mchorse.bbs.voxel.tilesets.models.BlockModel;
  * can be later replaced dynamically without having to replace
  * those globally.
  */
-public class BlockVariantDelegate implements IBlockVariant
-{
+public class BlockVariantDelegate implements IBlockVariant {
     public BlockVariant variant;
 
-    public BlockVariantDelegate(BlockVariant variant)
-    {
+    public BlockVariantDelegate(BlockVariant variant) {
         this.variant = variant;
     }
 
     @Override
-    public BlockLink getLink()
-    {
+    public BlockLink getLink() {
         return this.variant.getLink();
     }
 
     @Override
-    public int getGlobalId()
-    {
+    public int getGlobalId() {
         return this.variant.getGlobalId();
     }
 
     @Override
-    public BlockModel getModel()
-    {
+    public BlockModel getModel() {
         return this.variant.getModel();
     }
 
     @Override
-    public boolean isAir()
-    {
+    public boolean isAir() {
         return this.variant.isAir();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof IBlockVariant)
-        {
+        if (obj instanceof IBlockVariant) {
             IBlockVariant variant = (IBlockVariant) obj;
 
             return this.getGlobalId() == variant.getGlobalId();

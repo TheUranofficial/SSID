@@ -15,21 +15,9 @@ import mchorse.bbs.ui.dashboard.panels.UIDataDashboardPanel;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIScrollView;
 import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
-import mchorse.bbs.ui.framework.elements.utils.UIRenderable;
 import mchorse.bbs.ui.framework.elements.input.text.UITextEditor;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeAppearanceSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeCollisionSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeCurvesSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeExpirationSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeGeneralSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeInitializationSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeLifetimeSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeLightingSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeMotionSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeRateSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeShapeSection;
-import mchorse.bbs.ui.particles.sections.UIParticleSchemeSpaceSection;
+import mchorse.bbs.ui.framework.elements.utils.UIRenderable;
+import mchorse.bbs.ui.particles.sections.*;
 import mchorse.bbs.ui.particles.utils.MolangSyntaxHighlighter;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.icons.Icons;
@@ -40,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
-{
+public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme> {
     /**
      * Default particle placeholder that comes with the engine.
      */
@@ -55,8 +42,7 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
 
     private String molangId;
 
-    public UIParticleSchemePanel(UIDashboard dashboard)
-    {
+    public UIParticleSchemePanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.renderer = new UIParticleSchemeRenderer();
@@ -94,19 +80,15 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
         this.fill(null);
     }
 
-    public void editMoLang(String id, Consumer<String> callback, MolangExpression expression)
-    {
+    public void editMoLang(String id, Consumer<String> callback, MolangExpression expression) {
         this.molangId = id;
         this.textEditor.callback = callback;
         this.textEditor.setText(expression == null ? "" : expression.toString());
         this.textEditor.setVisible(callback != null);
 
-        if (callback != null)
-        {
+        if (callback != null) {
             this.sectionsView.hTo(this.textEditor.area);
-        }
-        else
-        {
+        } else {
             this.sectionsView.h(1F);
         }
 
@@ -114,41 +96,34 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
     }
 
     @Override
-    protected IKey getTitle()
-    {
+    protected IKey getTitle() {
         return UIKeys.SNOWSTORM_TITLE;
     }
 
     @Override
-    public ContentType getType()
-    {
+    public ContentType getType() {
         return ContentType.PARTICLES;
     }
 
-    public void dirty()
-    {
+    public void dirty() {
         this.renderer.emitter.setupVariables();
     }
 
-    private void addSection(UIParticleSchemeSection section)
-    {
+    private void addSection(UIParticleSchemeSection section) {
         this.sections.add(section);
         this.sectionsView.add(section);
     }
 
     @Override
-    public void fill(ParticleScheme data)
-    {
+    public void fill(ParticleScheme data) {
         super.fill(data);
 
         this.editMoLang(null, null, null);
 
-        if (this.data != null)
-        {
+        if (this.data != null) {
             this.renderer.setScheme(this.data);
 
-            for (UIParticleSchemeSection section : this.sections)
-            {
+            for (UIParticleSchemeSection section : this.sections) {
                 section.setScheme(this.data);
             }
 
@@ -157,41 +132,34 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
     }
 
     @Override
-    public void fillDefaultData(ParticleScheme data)
-    {
+    public void fillDefaultData(ParticleScheme data) {
         super.fillDefaultData(data);
 
-        try
-        {
+        try {
             InputStream asset = BBS.getProvider().getAsset(PARTICLE_PLACEHOLDER);
             MapType map = DataToString.mapFromString(IOUtils.readText(asset));
 
             ParticleScheme.PARSER.fromData(data, map);
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
     }
 
     @Override
-    public void appear()
-    {
+    public void appear() {
         super.appear();
 
         this.textEditor.updateHighlighter();
     }
 
     @Override
-    public void close()
-    {
-        if (this.renderer.emitter != null)
-        {
+    public void close() {
+        if (this.renderer.emitter != null) {
             this.renderer.emitter.particles.clear();
         }
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         /* Renderer needs to be resized again because iconBar is in front, and wTo() doesn't
@@ -199,11 +167,9 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
         this.renderer.resize();
     }
 
-    private void drawOverlay(UIContext context)
-    {
+    private void drawOverlay(UIContext context) {
         /* Draw debug info */
-        if (this.editor.isVisible())
-        {
+        if (this.editor.isVisible()) {
             ParticleEmitter emitter = this.renderer.emitter;
             String label = emitter.particles.size() + "P - " + emitter.age + "A";
 
@@ -214,12 +180,10 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme>
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         super.render(context);
 
-        if (this.molangId != null)
-        {
+        if (this.molangId != null) {
             int w = context.font.getWidth(this.molangId);
 
             context.batcher.textCard(context.font, this.molangId, this.textEditor.area.ex() - 6 - w, this.textEditor.area.ey() - 6 - context.font.getHeight());

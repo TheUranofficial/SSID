@@ -4,75 +4,63 @@ import mchorse.bbs.data.DataStorageContext;
 
 import java.io.IOException;
 
-public class FloatType extends NumericType
-{
+public class FloatType extends NumericType {
     public float value;
 
-    public FloatType()
-    {}
+    public FloatType() {
+    }
 
-    public FloatType(float value)
-    {
+    public FloatType(float value) {
         this.value = value;
     }
 
     /* Numeric type implementation */
 
     @Override
-    public int intValue()
-    {
+    public int intValue() {
         return (int) this.value;
     }
 
     @Override
-    public float floatValue()
-    {
+    public float floatValue() {
         return this.value;
     }
 
     @Override
-    public long longValue()
-    {
+    public long longValue() {
         return (long) this.value;
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return this.value;
     }
 
     /* BaseType implementation */
 
     @Override
-    public byte getTypeId()
-    {
+    public byte getTypeId() {
         return BaseType.TYPE_FLOAT;
     }
 
     @Override
-    public BaseType copy()
-    {
+    public BaseType copy() {
         return new FloatType(this.value);
     }
 
     @Override
-    public void read(DataStorageContext context) throws IOException
-    {
+    public void read(DataStorageContext context) throws IOException {
         this.value = context.in.readFloat();
     }
 
     @Override
-    public void write(DataStorageContext context) throws IOException
-    {
+    public void write(DataStorageContext context) throws IOException {
         context.out.writeFloat(this.value);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof FloatType)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof FloatType) {
             return this.value == ((FloatType) obj).value;
         }
 
@@ -80,8 +68,7 @@ public class FloatType extends NumericType
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.value + "f";
     }
 }

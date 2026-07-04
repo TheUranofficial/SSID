@@ -6,19 +6,16 @@ import mchorse.bbs.ui.film.IUIClipsDelegate;
 import mchorse.bbs.ui.film.clips.modules.UICircularModule;
 import mchorse.bbs.ui.film.clips.modules.UIPointModule;
 
-public class UICircularClip extends UIClip<CircularClip>
-{
+public class UICircularClip extends UIClip<CircularClip> {
     public UIPointModule point;
     public UICircularModule circular;
 
-    public UICircularClip(CircularClip clip, IUIClipsDelegate editor)
-    {
+    public UICircularClip(CircularClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.point = new UIPointModule(this.editor).contextMenu();
@@ -26,24 +23,21 @@ public class UICircularClip extends UIClip<CircularClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(this.point.marginTop(12), this.circular.marginTop(6));
     }
 
     @Override
-    public void editClip(Position position)
-    {
+    public void editClip(Position position) {
         this.clip.start.set(position.point.copy());
 
         super.editClip(position);
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.point.fill(this.clip.start);

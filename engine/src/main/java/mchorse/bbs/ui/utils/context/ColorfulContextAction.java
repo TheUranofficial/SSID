@@ -5,20 +5,17 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.icons.Icon;
 import mchorse.bbs.utils.colors.Colors;
 
-public class ColorfulContextAction extends ContextAction
-{
+public class ColorfulContextAction extends ContextAction {
     public int color;
 
-    public ColorfulContextAction(Icon icon, IKey label, Runnable runnable, int color)
-    {
+    public ColorfulContextAction(Icon icon, IKey label, Runnable runnable, int color) {
         super(icon, label, runnable);
 
         this.color = color;
     }
 
     @Override
-    protected void renderBackground(UIContext context, int x, int y, int w, int h, boolean hover, boolean selected)
-    {
+    protected void renderBackground(UIContext context, int x, int y, int w, int h, boolean hover, boolean selected) {
         super.renderBackground(context, x, y, w, h, hover, selected);
 
         context.batcher.box(x, y, x + 2, y + h, Colors.A100 | this.color);

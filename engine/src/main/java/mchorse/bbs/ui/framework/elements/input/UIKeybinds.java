@@ -12,12 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UIKeybinds extends UIScrollView
-{
+public class UIKeybinds extends UIScrollView {
     public Map<String, KeybindCategory> keybinds = new HashMap<>();
 
-    public UIKeybinds()
-    {
+    public UIKeybinds() {
         super();
 
         this.markContainer();
@@ -25,13 +23,11 @@ public class UIKeybinds extends UIScrollView
         this.scroll.cancelScrolling();
     }
 
-    public void addKeybind(Keybind keybind)
-    {
+    public void addKeybind(Keybind keybind) {
         IKey categoryKey = keybind.getCategory();
         KeybindCategory category = this.keybinds.get(categoryKey.get());
 
-        if (category == null)
-        {
+        if (category == null) {
             category = new KeybindCategory(categoryKey);
             this.keybinds.put(categoryKey.get(), category);
         }
@@ -40,8 +36,7 @@ public class UIKeybinds extends UIScrollView
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         int cx = 40;
 
         context.batcher.box(this.area.x, this.area.y, cx, this.area.ey(), Colors.A75);
@@ -51,8 +46,7 @@ public class UIKeybinds extends UIScrollView
     }
 
     @Override
-    protected void preRender(UIContext context)
-    {
+    protected void preRender(UIContext context) {
         super.preRender(context);
 
         int x = this.area.x + 10;
@@ -63,10 +57,8 @@ public class UIKeybinds extends UIScrollView
 
         i = general == null ? i : general.render(context, x, y, i) + 10;
 
-        for (KeybindCategory category : this.keybinds.values())
-        {
-            if (category != general)
-            {
+        for (KeybindCategory category : this.keybinds.values()) {
+            if (category != general) {
                 i = category.render(context, x, y, i) + 10;
             }
         }
@@ -76,21 +68,17 @@ public class UIKeybinds extends UIScrollView
         this.scroll.clamp();
     }
 
-    public static class KeybindCategory
-    {
+    public static class KeybindCategory {
         public IKey title;
         public List<Keybind> keybinds = new ArrayList<>();
         public boolean shouldClean;
 
-        public KeybindCategory(IKey title)
-        {
+        public KeybindCategory(IKey title) {
             this.title = title;
         }
 
-        public void add(Keybind keybind)
-        {
-            if (this.shouldClean)
-            {
+        public void add(Keybind keybind) {
+            if (this.shouldClean) {
                 this.keybinds.clear();
                 this.shouldClean = false;
             }
@@ -98,21 +86,18 @@ public class UIKeybinds extends UIScrollView
             this.keybinds.add(keybind);
         }
 
-        public int render(UIContext context, int x, int y, int i)
-        {
+        public int render(UIContext context, int x, int y, int i) {
             int color = Colors.A100 | BBSSettings.primaryColor.get();
 
             String title = this.title.get();
 
-            if (!title.isEmpty())
-            {
+            if (!title.isEmpty()) {
                 context.batcher.box(x - 10, y + i - 2, x + context.font.getWidth(title) + 2, y + i + context.font.getHeight() + 2, color);
                 context.batcher.text(title, x, y + i);
                 i += 14;
             }
 
-            for (Keybind keybind : this.keybinds)
-            {
+            for (Keybind keybind : this.keybinds) {
                 String combo = keybind.getKeyCombo();
                 int w = context.font.getWidth(combo);
 

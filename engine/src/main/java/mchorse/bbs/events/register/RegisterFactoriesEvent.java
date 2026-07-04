@@ -1,4 +1,4 @@
 package mchorse.bbs.events.register;
 
-public class RegisterFactoriesEvent
-{}
+public class RegisterFactoriesEvent {
+}

@@ -6,8 +6,7 @@ import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.icons.Icons;
 import org.joml.Vector2i;
 
-public abstract class UICanvasEditor extends UICanvas
-{
+public abstract class UICanvasEditor extends UICanvas {
     private static Area processed = new Area();
 
     public UIElement editor;
@@ -16,8 +15,7 @@ public abstract class UICanvasEditor extends UICanvas
     protected int w;
     protected int h;
 
-    public UICanvasEditor()
-    {
+    public UICanvasEditor() {
         super();
 
         this.editor = new UIElement();
@@ -25,18 +23,15 @@ public abstract class UICanvasEditor extends UICanvas
         this.add(this.editor);
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return this.w;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return this.h;
     }
 
-    public void setSize(int w, int h)
-    {
+    public void setSize(int w, int h) {
         this.w = w;
         this.h = h;
 
@@ -53,8 +48,7 @@ public abstract class UICanvasEditor extends UICanvas
         this.scaleY.setZoom(min);
     }
 
-    protected Vector2i getHoverPixel(int x, int y)
-    {
+    protected Vector2i getHoverPixel(int x, int y) {
         return new Vector2i(
             (int) Math.floor(this.scaleX.from(x)) + this.w / 2,
             (int) Math.floor(this.scaleY.from(y)) + this.h / 2
@@ -62,8 +56,7 @@ public abstract class UICanvasEditor extends UICanvas
     }
 
     @Override
-    protected void renderCanvas(UIContext context)
-    {
+    protected void renderCanvas(UIContext context) {
         this.renderBackground(context);
 
         int x = -this.w / 2;
@@ -72,8 +65,7 @@ public abstract class UICanvasEditor extends UICanvas
 
         context.batcher.box(area.x - 1, area.y - 1, area.ex() + 1, area.ey() + 1, 0xff181818);
 
-        if (!this.shouldDrawCanvas(context))
-        {
+        if (!this.shouldDrawCanvas(context)) {
             return;
         }
 
@@ -94,33 +86,28 @@ public abstract class UICanvasEditor extends UICanvas
         this.renderForeground(context);
     }
 
-    protected void renderCheckboard(UIContext context, Area processed)
-    {
+    protected void renderCheckboard(UIContext context, Area processed) {
         context.batcher.iconArea(Icons.CHECKBOARD, processed.x, processed.y, processed.w, processed.h);
     }
 
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         this.area.render(context.batcher, 0xff2f2f2f);
     }
 
-    protected void renderForeground(UIContext context)
-    {}
+    protected void renderForeground(UIContext context) {
+    }
 
     protected abstract void renderCanvasFrame(UIContext context);
 
-    protected boolean shouldDrawCanvas(UIContext context)
-    {
+    protected boolean shouldDrawCanvas(UIContext context) {
         return true;
     }
 
-    protected Area calculateRelative(int a, int b, int c, int d)
-    {
+    protected Area calculateRelative(int a, int b, int c, int d) {
         return this.calculate(-this.w / 2 + a, -this.h / 2 + b, -this.w / 2 + c, -this.h / 2 + d);
     }
 
-    protected Area calculate(int ix1, int iy1, int ix2, int iy2)
-    {
+    protected Area calculate(int ix1, int iy1, int ix2, int iy2) {
         int x1 = this.toX(ix1);
         int y1 = this.toY(iy1);
         int x2 = this.toX(ix2);

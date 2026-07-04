@@ -5,11 +5,10 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * Mouse input class
- * 
+ * <p>
  * This class is responsible for handling mouse input.
  */
-public class MouseInput
-{
+public class MouseInput {
     private IMouseHandler handler;
     private boolean inWindow = true;
 
@@ -21,13 +20,11 @@ public class MouseInput
 
     private long lastScrollTime;
 
-    public MouseInput(IMouseHandler handler)
-    {
+    public MouseInput(IMouseHandler handler) {
         this.handler = handler;
     }
 
-    public void init()
-    {
+    public void init() {
         long win = Window.getWindow();
         double[] x = new double[1];
         double[] y = new double[1];
@@ -50,8 +47,7 @@ public class MouseInput
 
         GLFW.glfwSetMouseButtonCallback(win, (windowHandle, button, action, mode) ->
         {
-            if (this.handler != null)
-            {
+            if (this.handler != null) {
                 this.handler.handleMouse(button, action, mode);
             }
         });
@@ -62,8 +58,7 @@ public class MouseInput
             this.lastScrollY = (int) scrollY;
             this.lastScrollTime = System.currentTimeMillis();
 
-            if (this.handler != null)
-            {
+            if (this.handler != null) {
                 this.handler.handleScroll(scrollX, scrollY);
             }
         });
@@ -72,15 +67,12 @@ public class MouseInput
     /**
      * Check whether the cursor inside the window
      */
-    public boolean isInWindow()
-    {
+    public boolean isInWindow() {
         return this.inWindow;
     }
 
-    public void update()
-    {
-        if (System.currentTimeMillis() - this.lastScrollTime > 50)
-        {
+    public void update() {
+        if (System.currentTimeMillis() - this.lastScrollTime > 50) {
             this.lastScrollX = 0;
             this.lastScrollY = 0;
         }

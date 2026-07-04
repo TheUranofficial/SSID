@@ -8,11 +8,9 @@ import mchorse.bbs.ui.framework.elements.input.keyframes.generic.factories.UIKey
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public class AnchorKeyframeFactory implements IGenericKeyframeFactory<AnchorProperty.Anchor>
-{
+public class AnchorKeyframeFactory implements IGenericKeyframeFactory<AnchorProperty.Anchor> {
     @Override
-    public AnchorProperty.Anchor fromData(BaseType data)
-    {
+    public AnchorProperty.Anchor fromData(BaseType data) {
         AnchorProperty.Anchor anchor = new AnchorProperty.Anchor();
 
         anchor.fromData(data.asMap());
@@ -21,14 +19,12 @@ public class AnchorKeyframeFactory implements IGenericKeyframeFactory<AnchorProp
     }
 
     @Override
-    public BaseType toData(AnchorProperty.Anchor value)
-    {
+    public BaseType toData(AnchorProperty.Anchor value) {
         return value.toData();
     }
 
     @Override
-    public AnchorProperty.Anchor copy(AnchorProperty.Anchor value)
-    {
+    public AnchorProperty.Anchor copy(AnchorProperty.Anchor value) {
         AnchorProperty.Anchor anchor = new AnchorProperty.Anchor();
 
         anchor.actor = value.actor;
@@ -38,14 +34,12 @@ public class AnchorKeyframeFactory implements IGenericKeyframeFactory<AnchorProp
     }
 
     @Override
-    public AnchorProperty.Anchor interpolate(AnchorProperty.Anchor a, AnchorProperty.Anchor b, IInterpolation interpolation, float x)
-    {
+    public AnchorProperty.Anchor interpolate(AnchorProperty.Anchor a, AnchorProperty.Anchor b, IInterpolation interpolation, float x) {
         return b;
     }
 
     @Override
-    public UIKeyframeFactory<AnchorProperty.Anchor> createUI(GenericKeyframe<AnchorProperty.Anchor> keyframe, UIPropertyEditor editor)
-    {
+    public UIKeyframeFactory<AnchorProperty.Anchor> createUI(GenericKeyframe<AnchorProperty.Anchor> keyframe, UIPropertyEditor editor) {
         return new UIAnchorKeyframeFactory(keyframe, editor);
     }
 }

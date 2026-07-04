@@ -12,8 +12,7 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.function.Consumer;
 
-public abstract class UIBaseKeyframes <T> extends UIElement
-{
+public abstract class UIBaseKeyframes<T> extends UIElement {
     public static final Color COLOR = new Color();
     public static final double MIN_ZOOM = 0.01D;
     public static final double MAX_ZOOM = 1000D;
@@ -62,8 +61,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     protected Consumer<UIContext> backgroundRender;
 
-    public UIBaseKeyframes(Consumer<T> callback)
-    {
+    public UIBaseKeyframes(Consumer<T> callback) {
         super();
 
         this.callback = callback;
@@ -71,33 +69,27 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         this.scaleX.anchor(0.5F);
     }
 
-    public void setBackgroundRender(Consumer<UIContext> backgroundRender)
-    {
+    public void setBackgroundRender(Consumer<UIContext> backgroundRender) {
         this.backgroundRender = backgroundRender;
     }
 
-    public void setConverter(IAxisConverter converter)
-    {
+    public void setConverter(IAxisConverter converter) {
         this.converter = converter;
     }
 
-    public Scale getScaleX()
-    {
+    public Scale getScaleX() {
         return this.scaleX;
     }
 
-    public void setKeyframe(T current)
-    {
-        if (this.callback != null)
-        {
+    public void setKeyframe(T current) {
+        if (this.callback != null) {
             this.callback.accept(current);
         }
     }
 
     /* Setters */
 
-    public void setDuration(long duration)
-    {
+    public void setDuration(long duration) {
         this.duration = (int) duration;
     }
 
@@ -105,32 +97,27 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     public abstract void resetView();
 
-    protected boolean isInside(double x, double y, int mouseX, int mouseY)
-    {
+    protected boolean isInside(double x, double y, int mouseX, int mouseY) {
         double d = Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2);
 
         return d < 25;
     }
 
-    public int toGraphX(double tick)
-    {
+    public int toGraphX(double tick) {
         return (int) this.scaleX.to(tick);
     }
 
-    public double fromGraphX(int mouseX)
-    {
+    public double fromGraphX(int mouseX) {
         return this.scaleX.from(mouseX);
     }
 
     /* Abstract methods */
 
-    public boolean isGrabbing()
-    {
+    public boolean isGrabbing() {
         return this.dragging && this.moving && this.grabbing;
     }
 
-    public Area getGrabbingArea(UIContext context)
-    {
+    public Area getGrabbingArea(UIContext context) {
         Area area = new Area();
 
         area.setPoints(this.lastX, this.lastY, context.mouseX, context.mouseY, 3);
@@ -138,8 +125,8 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         return area;
     }
 
-    public void selectByDuration(long duration)
-    {}
+    public void selectByDuration(long duration) {
+    }
 
     public abstract void selectAll();
 
@@ -147,13 +134,11 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     public abstract boolean isSelected();
 
-    public boolean isMultipleSelected()
-    {
+    public boolean isMultipleSelected() {
         return this.getSelectedCount() > 1;
     }
 
-    public boolean hasSelected()
-    {
+    public boolean hasSelected() {
         return this.getSelectedCount() > 0;
     }
 
@@ -169,27 +154,23 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     /* Common hooks */
 
-    protected void moveNoKeyframe(UIContext context, double x, double y)
-    {}
+    protected void moveNoKeyframe(UIContext context, double x, double y) {
+    }
 
     /* Mouse input handling */
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
+    public boolean subMouseClicked(UIContext context) {
         int mouseX = context.mouseX;
         int mouseY = context.mouseY;
 
         /* Select current point with a mouse click */
-        if (this.area.isInside(mouseX, mouseY))
-        {
-            if (context.mouseButton == 0)
-            {
+        if (this.area.isInside(mouseX, mouseY)) {
+            if (context.mouseButton == 0) {
                 boolean shift = Window.isShiftPressed();
 
                 /* Duplicate the keyframe */
-                if (Window.isAltPressed() && !shift && this.isSelected())
-                {
+                if (Window.isAltPressed() && !shift && this.isSelected()) {
                     this.duplicateKeyframe(context, mouseX, mouseY);
 
                     return false;
@@ -198,21 +179,17 @@ public abstract class UIBaseKeyframes <T> extends UIElement
                 this.lastX = mouseX;
                 this.lastY = mouseY;
 
-                if (shift)
-                {
+                if (shift) {
                     this.grabbing = true;
                 }
 
-                if (!this.pickKeyframe(context, mouseX, mouseY, shift) && !shift)
-                {
+                if (!this.pickKeyframe(context, mouseX, mouseY, shift) && !shift) {
                     this.clearSelection();
                     this.setKeyframe(null);
                 }
 
                 this.dragging = true;
-            }
-            else if (context.mouseButton == 2)
-            {
+            } else if (context.mouseButton == 2) {
                 this.setupScrolling(context, mouseX, mouseY);
 
                 return true;
@@ -226,8 +203,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     protected abstract boolean pickKeyframe(UIContext context, int mouseX, int mouseY, boolean multi);
 
-    protected void setupScrolling(UIContext context, int mouseX, int mouseY)
-    {
+    protected void setupScrolling(UIContext context, int mouseX, int mouseY) {
         this.scrolling = true;
         this.lastX = mouseX;
         this.lastY = mouseY;
@@ -235,14 +211,11 @@ public abstract class UIBaseKeyframes <T> extends UIElement
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
-        if (this.area.isInside(context.mouseX, context.mouseY) && !this.scrolling)
-        {
+    public boolean subMouseScrolled(UIContext context) {
+        if (this.area.isInside(context.mouseX, context.mouseY) && !this.scrolling) {
             int scroll = context.mouseWheel;
 
-            if (OS.CURRENT != OS.MACOS)
-            {
+            if (OS.CURRENT != OS.MACOS) {
                 scroll = -scroll;
             }
 
@@ -254,21 +227,18 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         return super.subMouseScrolled(context);
     }
 
-    protected void zoom(UIContext context, int scroll)
-    {
+    protected void zoom(UIContext context, int scroll) {
         this.scaleX.zoomAnchor(Scale.getAnchorX(context, this.area), Math.copySign(this.scaleX.getZoomFactor(), scroll), MIN_ZOOM, MAX_ZOOM);
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.resetMouseReleased(context);
 
         return super.subMouseReleased(context);
     }
 
-    protected void resetMouseReleased(UIContext context)
-    {
+    protected void resetMouseReleased(UIContext context) {
         this.grabbing = false;
         this.dragging = false;
         this.moving = false;
@@ -278,8 +248,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
     /* Rendering */
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.handleMouse(context, context.mouseX, context.mouseY);
         this.renderBackground(context);
 
@@ -292,8 +261,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         this.renderGraph(context);
 
         /* Draw selection box */
-        if (this.isGrabbing())
-        {
+        if (this.isGrabbing()) {
             context.batcher.normalizedBox(this.lastX, this.lastY, context.mouseX, context.mouseY, Colors.setA(Colors.ACTIVE, 0.25F));
         }
 
@@ -302,24 +270,22 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         super.render(context);
     }
 
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         this.area.render(context.batcher, Colors.A50);
 
-        if (this.duration > 0)
-        {
+        if (this.duration > 0) {
             int leftBorder = this.toGraphX(0);
             int rightBorder = this.toGraphX(this.duration);
 
-            if (leftBorder > this.area.x) context.batcher.box(this.area.x, this.area.y, leftBorder, this.area.y + this.area.h, Colors.A50);
-            if (rightBorder < this.area.ex()) context.batcher.box(rightBorder, this.area.y, this.area.ex() , this.area.y + this.area.h, Colors.A50);
+            if (leftBorder > this.area.x)
+                context.batcher.box(this.area.x, this.area.y, leftBorder, this.area.y + this.area.h, Colors.A50);
+            if (rightBorder < this.area.ex())
+                context.batcher.box(rightBorder, this.area.y, this.area.ex(), this.area.y + this.area.h, Colors.A50);
         }
     }
 
-    protected void renderGrid(UIContext context)
-    {
-        if (this.backgroundRender != null)
-        {
+    protected void renderGrid(UIContext context) {
+        if (this.backgroundRender != null) {
             this.backgroundRender.accept(context);
         }
 
@@ -328,12 +294,10 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         int hx = this.duration / mult;
         int ht = (int) this.fromGraphX(this.area.x);
 
-        for (int j = Math.max(ht / mult, 0); j <= hx; j++)
-        {
+        for (int j = Math.max(ht / mult, 0); j <= hx; j++) {
             int x = this.toGraphX(j * mult);
 
-            if (x >= this.area.ex())
-            {
+            if (x >= this.area.ex()) {
                 break;
             }
 
@@ -344,13 +308,12 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         }
     }
 
-    protected void renderCursor(UIContext context)
-    {}
+    protected void renderCursor(UIContext context) {
+    }
 
     protected abstract void renderGraph(UIContext context);
 
-    protected void renderRect(UIContext context, int x, int y, int offset, int c)
-    {
+    protected void renderRect(UIContext context, int x, int y, int offset, int c) {
         c = Colors.A100 | c;
 
         context.batcher.box(x - offset, y - offset, x + offset, y + offset, c);
@@ -358,27 +321,22 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     /* Handling dragging */
 
-    protected void handleMouse(UIContext context, int mouseX, int mouseY)
-    {
-        if (this.dragging && !this.moving && (Math.abs(this.lastX - mouseX) > 3 || Math.abs(this.lastY - mouseY) > 3))
-        {
+    protected void handleMouse(UIContext context, int mouseX, int mouseY) {
+        if (this.dragging && !this.moving && (Math.abs(this.lastX - mouseX) > 3 || Math.abs(this.lastY - mouseY) > 3)) {
             this.moving = true;
             this.sliding = true;
         }
 
-        if (this.scrolling)
-        {
+        if (this.scrolling) {
             this.scrolling(mouseX, mouseY);
         }
         /* Move the current keyframe */
-        else if (this.moving && !this.grabbing)
-        {
+        else if (this.moving && !this.grabbing) {
             this.setKeyframe(this.moving(context, mouseX, mouseY));
         }
     }
 
-    protected void scrolling(int mouseX, int mouseY)
-    {
+    protected void scrolling(int mouseX, int mouseY) {
         this.scaleX.setShift(-(mouseX - this.lastX) / this.scaleX.getZoom() + this.lastT);
     }
 
@@ -386,8 +344,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
 
     /* Undo/Redo */
 
-    public FilmEditorUndo.KeyframeSelection createSelection()
-    {
+    public FilmEditorUndo.KeyframeSelection createSelection() {
         FilmEditorUndo.KeyframeSelection selection = new FilmEditorUndo.KeyframeSelection();
 
         selection.min = this.scaleX.getMinValue();
@@ -396,8 +353,7 @@ public abstract class UIBaseKeyframes <T> extends UIElement
         return selection;
     }
 
-    public void applySelection(FilmEditorUndo.KeyframeSelection selection)
-    {
+    public void applySelection(FilmEditorUndo.KeyframeSelection selection) {
         this.scaleX.view(selection.min, selection.max);
     }
 }

@@ -12,14 +12,9 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 import org.joml.Vector3i;
 import org.joml.Vector4i;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
-public abstract class ChunkManager implements IDisposable, IBlockAccessor
-{
+public abstract class ChunkManager implements IDisposable, IBlockAccessor {
     public final ChunkBuilder builder;
     public final List<ChunkDisplay> dirty = new ArrayList<>();
 
@@ -28,28 +23,23 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
      */
     public int s = 16;
 
-    public int getW()
-    {
+    public int getW() {
         return 1;
     }
 
-    public int getH()
-    {
+    public int getH() {
         return 1;
     }
 
-    public int getD()
-    {
+    public int getD() {
         return 1;
     }
 
-    public ChunkManager(BlockSet models)
-    {
+    public ChunkManager(BlockSet models) {
         this.builder = new ChunkBuilder(models);
     }
 
-    public void setChunkSize(int size)
-    {
+    public void setChunkSize(int size) {
         this.s = MathUtils.clamp(size, 2, 128);
     }
 
@@ -65,8 +55,7 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
     /**
      * Get chunk display at global block coordinates.
      */
-    public ChunkDisplay getDisplay(int x, int y, int z)
-    {
+    public ChunkDisplay getDisplay(int x, int y, int z) {
         ChunkCell cell = this.getCell(x, y, z, false);
 
         return cell == null ? null : cell.getDisplay(x, y, z);
@@ -76,8 +65,7 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
      * Get block at global block coordinates.
      */
     @Override
-    public IBlockVariant getBlock(int x, int y, int z)
-    {
+    public IBlockVariant getBlock(int x, int y, int z) {
         ChunkCell cell = this.getCell(x, y, z, false);
 
         return cell == null ? this.builder.models.air : cell.getBlock(x, y, z);
@@ -86,47 +74,39 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
     /**
      * Set block at global block coordinates and notify neighbors.
      */
-    public void setBlock(int x, int y, int z, IBlockVariant block)
-    {
+    public void setBlock(int x, int y, int z, IBlockVariant block) {
         this.setBlock(x, y, z, block, true, false);
     }
 
     /**
      * Set block at global block coordinates and notify neighbors.
      */
-    public void setBlockForced(int x, int y, int z, IBlockVariant block)
-    {
+    public void setBlockForced(int x, int y, int z, IBlockVariant block) {
         this.setBlock(x, y, z, block, true, true);
     }
 
     /**
      * Set block at global block coordinates.
      */
-    public void setBlock(int x, int y, int z, IBlockVariant block, boolean notify, boolean priority)
-    {
+    public void setBlock(int x, int y, int z, IBlockVariant block, boolean notify, boolean priority) {
         ChunkCell cell = this.getCell(x, y, z, true);
 
-        if (cell != null)
-        {
-            if (priority)
-            {
+        if (cell != null) {
+            if (priority) {
                 cell.generated = true;
             }
 
             IBlockVariant old = cell.getBlock(x, y, z);
 
-            if (!cell.setBlock(x, y, z, block, priority))
-            {
+            if (!cell.setBlock(x, y, z, block, priority)) {
                 return;
             }
 
-            if (old != block)
-            {
+            if (old != block) {
                 this.propagateLight(new Vector3i(x, y, z), block.getModel().lighting);
             }
 
-            if (!notify)
-            {
+            if (!notify) {
                 return;
             }
 
@@ -137,8 +117,7 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
     /**
      * Mark neighbor chunks for update.
      */
-    protected void markNeighbors(int x, int y, int z, boolean priority)
-    {
+    protected void markNeighbors(int x, int y, int z, boolean priority) {
         int size = this.s;
         int modX = x - MathUtils.toChunk(x, size) * size;
         int modY = y - MathUtils.toChunk(y, size) * size;
@@ -147,8 +126,7 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
 
         /* There is no point in doing extra checks, if the block is not anywhere adjacent
          * on corner, or on edge of the chunk. */
-        if (modX > 0 && modX < edge && modY > 0 && modY < edge && modZ > 0 && modZ < edge)
-        {
+        if (modX > 0 && modX < edge && modY > 0 && modY < edge && modZ > 0 && modZ < edge) {
             return;
         }
 
@@ -195,12 +173,10 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
      *
      * @link https://web.archive.org/web/20201003052751/https://www.seedofandromeda.com/blogs/29-fast-flood-fill-lighting-in-a-blocky-voxel-game-pt-1
      */
-    protected void propagateLight(Vector3i block, int light)
-    {
+    protected void propagateLight(Vector3i block, int light) {
         Queue<Vector3i> addingLight = new LinkedList<>();
 
-        if (light == 0)
-        {
+        if (light == 0) {
             Queue<Vector4i> removingLight = new LinkedList<>();
             int lighting = this.getLighting(block.x, block.y, block.z);
 
@@ -208,8 +184,7 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
 
             this.setLighting(block.x, block.y, block.z, 0);
 
-            while (!removingLight.isEmpty())
-            {
+            while (!removingLight.isEmpty()) {
                 Vector4i p = removingLight.poll();
 
                 this.removeLightFurther(new Vector4i(p).add(0, 1, 0, 0), removingLight, addingLight);
@@ -219,16 +194,13 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
                 this.removeLightFurther(new Vector4i(p).add(0, 0, 1, 0), removingLight, addingLight);
                 this.removeLightFurther(new Vector4i(p).add(0, 0, -1, 0), removingLight, addingLight);
             }
-        }
-        else
-        {
+        } else {
             this.setLighting(block.x, block.y, block.z, light);
 
             addingLight.add(block);
         }
 
-        while (!addingLight.isEmpty())
-        {
+        while (!addingLight.isEmpty()) {
             Vector3i p = addingLight.poll();
             int pLight = this.getLighting(p.x, p.y, p.z);
 
@@ -244,19 +216,16 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
     /**
      * If conditions are met to propagate light further, it will propagate further
      */
-    protected void propagateLightFurther(Vector3i block, Queue<Vector3i> queue, int light)
-    {
+    protected void propagateLightFurther(Vector3i block, Queue<Vector3i> queue, int light) {
         int blockLight = this.getLighting(block.x, block.y, block.z);
         IBlockVariant variant = this.getBlock(block.x, block.y, block.z);
 
-        if (blockLight < light - 2 && !variant.getModel().opaque)
-        {
+        if (blockLight < light - 2 && !variant.getModel().opaque) {
             queue.add(block);
 
             ChunkCell cell = this.getCell(block.x, block.y, block.z, false);
 
-            if (cell != null)
-            {
+            if (cell != null) {
                 cell.dirty();
                 cell.saveLater();
                 cell.setLighting(block.x, block.y, block.z, light - 1);
@@ -269,14 +238,12 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
      * If conditions are met to remove light further, it will remove further,
      * otherwise, the light will have to be propagated
      */
-    protected void removeLightFurther(Vector4i block, Queue<Vector4i> removing, Queue<Vector3i> adding)
-    {
+    protected void removeLightFurther(Vector4i block, Queue<Vector4i> removing, Queue<Vector3i> adding) {
         int light = block.w;
         int blockLight = this.getLighting(block.x, block.y, block.z);
         IBlockVariant variant = this.getBlock(block.x, block.y, block.z);
 
-        if (blockLight != 0 && blockLight < light && !variant.getModel().opaque)
-        {
+        if (blockLight != 0 && blockLight < light && !variant.getModel().opaque) {
             removing.add(block);
 
             ChunkCell cell = this.getCell(block.x, block.y, block.z, false);
@@ -285,31 +252,25 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
             cell.saveLater();
             cell.setLighting(block.x, block.y, block.z, 0);
             this.markNeighbors(block.x, block.y, block.z, true);
-        }
-        else if (blockLight >= light)
-        {
+        } else if (blockLight >= light) {
             adding.add(new Vector3i(block.x, block.y, block.z));
         }
     }
 
-    public int getLighting(int x, int y, int z)
-    {
+    public int getLighting(int x, int y, int z) {
         ChunkDisplay display = this.getDisplay(x, y, z);
 
-        if (display != null)
-        {
+        if (display != null) {
             return display.chunk.getLighting(x - display.x, y - display.y, z - display.z);
         }
 
         return 0;
     }
 
-    public void setLighting(int x, int y, int z, int light)
-    {
+    public void setLighting(int x, int y, int z, int light) {
         ChunkCell cell = this.getCell(x, y, z, false);
 
-        if (cell != null)
-        {
+        if (cell != null) {
             cell.setLighting(x, y, z, light);
         }
     }
@@ -317,51 +278,42 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
     /**
      * Mark chunk display dirty at given global block coordinates XYZ.
      */
-    public void markDirty(int x, int y, int z, boolean priority)
-    {
+    public void markDirty(int x, int y, int z, boolean priority) {
         ChunkDisplay display = this.getDisplay(x, y, z);
 
-        if (display != null)
-        {
+        if (display != null) {
             display.dirty(priority);
         }
     }
 
-    public boolean isOutside(int x, int y, int z)
-    {
+    public boolean isOutside(int x, int y, int z) {
         return false;
     }
 
     @Override
-    public boolean hasBlock(int x, int y, int z)
-    {
-        if (this.isOutside(x, y, z))
-        {
+    public boolean hasBlock(int x, int y, int z) {
+        if (this.isOutside(x, y, z)) {
             return false;
         }
 
         return !this.getBlock(x, y, z).isAir();
     }
 
-    public void rebuild()
-    {}
+    public void rebuild() {
+    }
 
-    public void buildChunks(RenderingContext context, boolean forceAll)
-    {
-        if (this.dirty.isEmpty())
-        {
+    public void buildChunks(RenderingContext context, boolean forceAll) {
+        if (this.dirty.isEmpty()) {
             return;
         }
 
         Iterator<ChunkDisplay> it = this.dirty.iterator();
         long time = System.currentTimeMillis();
 
-        while (it.hasNext() && (System.currentTimeMillis() - time < 4 || forceAll))
-        {
+        while (it.hasNext() && (System.currentTimeMillis() - time < 4 || forceAll)) {
             ChunkDisplay display = it.next();
 
-            if (!display.parent.generated)
-            {
+            if (!display.parent.generated) {
                 display.dirty = false;
                 it.remove();
 
@@ -379,12 +331,9 @@ public abstract class ChunkManager implements IDisposable, IBlockAccessor
      * Free up any OpenGL or native memory that was used by this chunk manager.
      */
     @Override
-    public void delete()
-    {
-        for (ChunkCell cell : this.getCells())
-        {
-            if (cell != null)
-            {
+    public void delete() {
+        for (ChunkCell cell : this.getCells()) {
+            if (cell != null) {
                 cell.delete();
             }
         }

@@ -7,8 +7,7 @@ import mchorse.bbs.utils.colors.Colors;
 
 import java.util.Objects;
 
-public class FilteredLink implements IWritableLink
-{
+public class FilteredLink implements IWritableLink {
     public Link path;
 
     public boolean autoSize = true;
@@ -25,44 +24,36 @@ public class FilteredLink implements IWritableLink
     public int pixelate = 1;
     public boolean erase;
 
-    public static FilteredLink from(BaseType data)
-    {
-        try
-        {
+    public static FilteredLink from(BaseType data) {
+        try {
             FilteredLink location = new FilteredLink();
 
             location.fromData(data);
 
             return location;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return null;
     }
 
-    public FilteredLink()
-    {}
+    public FilteredLink() {
+    }
 
-    public FilteredLink(Link path)
-    {
+    public FilteredLink(Link path) {
         this.path = path;
     }
 
-    public int getWidth(int width)
-    {
-        if (!this.autoSize && this.sizeW > 0)
-        {
+    public int getWidth(int width) {
+        if (!this.autoSize && this.sizeW > 0) {
             return this.sizeW;
         }
 
         return width;
     }
 
-    public int getHeight(int height)
-    {
-        if (!this.autoSize && this.sizeH > 0)
-        {
+    public int getHeight(int height) {
+        if (!this.autoSize && this.sizeH > 0) {
             return this.sizeH;
         }
 
@@ -70,21 +61,17 @@ public class FilteredLink implements IWritableLink
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.path == null ? "" : this.path.toString();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof FilteredLink)
-        {
+        if (obj instanceof FilteredLink) {
             FilteredLink filtered = (FilteredLink) obj;
 
             return Objects.equals(this.path, filtered.path)
@@ -104,8 +91,7 @@ public class FilteredLink implements IWritableLink
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hashCode = this.path.hashCode();
 
         hashCode = 31 * hashCode + (this.autoSize ? 1 : 0);
@@ -122,14 +108,12 @@ public class FilteredLink implements IWritableLink
         return hashCode;
     }
 
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return (this.autoSize || (this.sizeW == 0 && this.sizeH == 0)) && this.color == Colors.WHITE && !this.scaleToLargest && this.scale == 1F && this.shiftX == 0 && this.shiftY == 0 && this.pixelate <= 1 && !this.erase;
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         MapType map = new MapType();
 
         map.putString("path", this.toString());
@@ -149,10 +133,8 @@ public class FilteredLink implements IWritableLink
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (BaseType.isString(data))
-        {
+    public void fromData(BaseType data) {
+        if (BaseType.isString(data)) {
             this.path = LinkUtils.create(data);
 
             return;
@@ -175,13 +157,11 @@ public class FilteredLink implements IWritableLink
     }
 
     @Override
-    public Link copy()
-    {
+    public Link copy() {
         return LinkUtils.copy(this.path);
     }
 
-    public FilteredLink copyFiltered()
-    {
+    public FilteredLink copyFiltered() {
         return FilteredLink.from(this.toData());
     }
 }

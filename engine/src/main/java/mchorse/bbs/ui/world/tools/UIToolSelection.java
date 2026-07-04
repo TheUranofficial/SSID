@@ -14,21 +14,18 @@ import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.utils.BlockSelection;
 import org.joml.Vector3d;
 
-public class UIToolSelection extends UIToolSelectionBase
-{
+public class UIToolSelection extends UIToolSelectionBase {
     public UIToolSelectionBase.PlaneSelection selection;
     public Vector3d lastMin;
     public Vector3d lastMax;
     public Vector3d lastIntersection;
 
-    public UIToolSelection(UIWorldEditorPanel editor)
-    {
+    public UIToolSelection(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.FULLSCREEN, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_SELECTION, Direction.RIGHT).marginTop(10);
@@ -37,8 +34,7 @@ public class UIToolSelection extends UIToolSelectionBase
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
         BlockSelection selection = this.editor.getSelection();
@@ -54,8 +50,7 @@ public class UIToolSelection extends UIToolSelectionBase
     }
 
     @Override
-    public void end(RayTraceResult result)
-    {
+    public void end(RayTraceResult result) {
         super.end(result);
 
         this.lastMin = null;
@@ -65,17 +60,14 @@ public class UIToolSelection extends UIToolSelectionBase
     }
 
     @Override
-    public void drag(RayTraceResult result)
-    {
+    public void drag(RayTraceResult result) {
         super.drag(result);
 
         this.select(result);
     }
 
-    private void select(RayTraceResult result)
-    {
-        if (this.selection == null)
-        {
+    private void select(RayTraceResult result) {
+        if (this.selection == null) {
             return;
         }
 
@@ -83,8 +75,7 @@ public class UIToolSelection extends UIToolSelectionBase
         Camera camera = this.editor.getBridge().get(IBridgeCamera.class).getCamera();
         Vector3d intersection = Vectors.intersectPlanePerpendicular(this.selection.axis, camera.position, camera.getMouseDirection(), this.selection.block);
 
-        if (intersection != null && this.lastIntersection != null)
-        {
+        if (intersection != null && this.lastIntersection != null) {
             Vector3d vector = this.selection.side > 0 ? this.lastMax : this.lastMin;
             Vector3d other = this.selection.side > 0 ? this.lastMin : this.lastMax;
             double value = 0;
@@ -93,18 +84,14 @@ public class UIToolSelection extends UIToolSelectionBase
             else if (this.selection.axis == Axis.Y) value = Math.round(intersection.y - this.lastIntersection.y);
             else if (this.selection.axis == Axis.Z) value = Math.round(intersection.z - this.lastIntersection.z);
 
-            if (value != 0)
-            {
-                if (this.lastMouseButton == 0)
-                {
+            if (value != 0) {
+                if (this.lastMouseButton == 0) {
                     if (this.selection.axis == Axis.X) vector.x += value;
                     else if (this.selection.axis == Axis.Y) vector.y += value;
                     else if (this.selection.axis == Axis.Z) vector.z += value;
 
                     selection.set(vector, other);
-                }
-                else if (this.lastMouseButton == 1)
-                {
+                } else if (this.lastMouseButton == 1) {
                     if (this.selection.axis == Axis.X) selection.move((int) value, 0, 0);
                     else if (this.selection.axis == Axis.Y) selection.move(0, (int) value, 0);
                     else if (this.selection.axis == Axis.Z) selection.move(0, 0, (int) value);
@@ -114,8 +101,7 @@ public class UIToolSelection extends UIToolSelectionBase
             }
         }
 
-        if (this.lastIntersection == null)
-        {
+        if (this.lastIntersection == null) {
             this.lastIntersection = intersection;
         }
 
@@ -124,8 +110,7 @@ public class UIToolSelection extends UIToolSelectionBase
     }
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         super.render(context, result);
 
         this.renderPlaneSelection(context, this.selection == null ? this.getSelection() : this.selection);

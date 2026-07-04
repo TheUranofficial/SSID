@@ -6,10 +6,8 @@ import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIBlockModelFactoryList extends UIList<BlockModelFactory>
-{
-    public UIBlockModelFactoryList(Consumer<List<BlockModelFactory>> callback)
-    {
+public class UIBlockModelFactoryList extends UIList<BlockModelFactory> {
+    public UIBlockModelFactoryList(Consumer<List<BlockModelFactory>> callback) {
         super(callback);
 
         this.scroll.scrollItemSize = 16;

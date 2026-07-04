@@ -17,12 +17,10 @@ import java.util.zip.DeflaterOutputStream;
  * @link http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
  * @link https://www.nayuki.io/res/dumb-png-output-java/DumbPngOutput.java
  */
-public class PNGEncoder
-{
+public class PNGEncoder {
     private ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-    public static void writeToFile(Pixels pixels, File file) throws IOException
-    {
+    public static void writeToFile(Pixels pixels, File file) throws IOException {
         PNGEncoder encoder = new PNGEncoder();
         byte[] bytes = encoder.encode(pixels);
 
@@ -32,8 +30,7 @@ public class PNGEncoder
         stream.close();
     }
 
-    public byte[] encode(Pixels pixels) throws IOException
-    {
+    public byte[] encode(Pixels pixels) throws IOException {
         this.writeSignature();
         this.writeIHDRChunk(pixels);
         this.writeIDATChunk(pixels);
@@ -44,8 +41,7 @@ public class PNGEncoder
 
     /* Chunks */
 
-    private void writeSignature()
-    {
+    private void writeSignature() {
         /* http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#PNG-file-signature */
         this.bytes.write(137);
         this.bytes.write(80);
@@ -57,8 +53,7 @@ public class PNGEncoder
         this.bytes.write(10);
     }
 
-    private void writeIHDRChunk(Pixels pixels) throws IOException
-    {
+    private void writeIHDRChunk(Pixels pixels) throws IOException {
         ByteArrayOutputStream IHDR = new ByteArrayOutputStream();
 
         /* IHDR data chunk length (it's constant) */
@@ -84,17 +79,14 @@ public class PNGEncoder
         this.writeChunk(IHDR);
     }
 
-    private void writeIDATChunk(Pixels pixels) throws IOException
-    {
+    private void writeIDATChunk(Pixels pixels) throws IOException {
         ByteArrayOutputStream IDAT = new ByteArrayOutputStream();
         ByteArrayOutputStream scanlines = new ByteArrayOutputStream();
 
-        for (int y = 0; y < pixels.height; y++)
-        {
+        for (int y = 0; y < pixels.height; y++) {
             scanlines.write(0);
 
-            for (int x = 0; x < pixels.width; x++)
-            {
+            for (int x = 0; x < pixels.width; x++) {
                 Color color = pixels.getColor(x, y);
 
                 scanlines.write((int) (color.r * 255F));
@@ -123,8 +115,7 @@ public class PNGEncoder
         this.writeChunk(IDAT);
     }
 
-    private void writeIENDChunk() throws IOException
-    {
+    private void writeIENDChunk() throws IOException {
         ByteArrayOutputStream IEND = new ByteArrayOutputStream();
 
         /* Length, Header, (no data), and CRC */
@@ -136,16 +127,13 @@ public class PNGEncoder
 
     /* Helpers */
 
-    private void writeString(ByteArrayOutputStream stream, String string)
-    {
-        for (int i = 0; i < string.length(); i++)
-        {
+    private void writeString(ByteArrayOutputStream stream, String string) {
+        for (int i = 0; i < string.length(); i++) {
             stream.write(string.charAt(i));
         }
     }
 
-    private void writeInt(ByteArrayOutputStream stream, int integer)
-    {
+    private void writeInt(ByteArrayOutputStream stream, int integer) {
         byte b1 = (byte) ((integer >> 24) & 0xff);
         byte b2 = (byte) ((integer >> 16) & 0xff);
         byte b3 = (byte) ((integer >> 8) & 0xff);
@@ -157,19 +145,17 @@ public class PNGEncoder
         stream.write(b4);
     }
 
-    private void writeChunk(ByteArrayOutputStream stream) throws IOException
-    {
+    private void writeChunk(ByteArrayOutputStream stream) throws IOException {
         byte[] bytes = stream.toByteArray();
 
         this.bytes.write(bytes);
         this.writeCRC(bytes);
     }
 
-    private void writeCRC(byte[] bytes)
-    {
+    private void writeCRC(byte[] bytes) {
         CRC32 crc32 = new CRC32();
 
-        crc32.update(bytes.length == 0 ? new byte[] {0} : bytes);
+        crc32.update(bytes.length == 0 ? new byte[]{0} : bytes);
 
         long crc = crc32.getValue();
         int b1 = (int) ((crc >> 24) & 0xff);

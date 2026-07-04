@@ -17,51 +17,42 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ValueInt extends BaseValueNumber<Integer> implements IValueUIProvider
-{
+public class ValueInt extends BaseValueNumber<Integer> implements IValueUIProvider {
     private Subtype subtype = Subtype.INTEGER;
     private List<IKey> labels;
 
-    public ValueInt(String id, Integer defaultValue)
-    {
+    public ValueInt(String id, Integer defaultValue) {
         this(id, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    public ValueInt(String id, Integer defaultValue, Integer min, Integer max)
-    {
+    public ValueInt(String id, Integer defaultValue, Integer min, Integer max) {
         super(id, defaultValue, min, max);
     }
 
     @Override
-    protected Integer clamp(Integer value)
-    {
+    protected Integer clamp(Integer value) {
         return MathUtils.clamp(value, this.min, this.max);
     }
 
-    public Subtype getSubtype()
-    {
+    public Subtype getSubtype() {
         return this.subtype;
     }
 
-    public ValueInt subtype(Subtype subtype)
-    {
+    public ValueInt subtype(Subtype subtype) {
         this.subtype = subtype;
 
         return this;
     }
 
-    public ValueInt color()
-    {
+    public ValueInt color() {
         return this.subtype(Subtype.COLOR);
     }
 
-    public ValueInt colorAlpha()
-    {
+    public ValueInt colorAlpha() {
         return this.subtype(Subtype.COLOR_ALPHA);
     }
 
-    public ValueInt modes(IKey... labels)
-    {
+    public ValueInt modes(IKey... labels) {
         this.labels = new ArrayList<>();
         Collections.addAll(this.labels, labels);
 
@@ -69,22 +60,17 @@ public class ValueInt extends BaseValueNumber<Integer> implements IValueUIProvid
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
-        if (this.subtype == Subtype.COLOR || this.subtype == Subtype.COLOR_ALPHA)
-        {
+    public List<UIElement> getFields(UIElement ui) {
+        if (this.subtype == Subtype.COLOR || this.subtype == Subtype.COLOR_ALPHA) {
             UIColor color = UIValueFactory.colorUI(this, null);
 
             color.w(90);
 
             return Arrays.asList(UIValueFactory.column(color, this));
-        }
-        else if (this.subtype == Subtype.MODES)
-        {
+        } else if (this.subtype == Subtype.MODES) {
             UICirculate button = new UICirculate(null);
 
-            for (IKey key : this.labels)
-            {
+            for (IKey key : this.labels) {
                 button.addLabel(key);
             }
 
@@ -103,33 +89,27 @@ public class ValueInt extends BaseValueNumber<Integer> implements IValueUIProvid
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new IntType(this.value);
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (data.isNumeric())
-        {
+    public void fromData(BaseType data) {
+        if (data.isNumeric()) {
             this.value = data.asNumeric().intValue();
         }
     }
 
     @Override
-    public String toString()
-    {
-        if (this.subtype == Subtype.COLOR || this.subtype == Subtype.COLOR_ALPHA)
-        {
+    public String toString() {
+        if (this.subtype == Subtype.COLOR || this.subtype == Subtype.COLOR_ALPHA) {
             return "#" + Integer.toHexString(this.value);
         }
 
         return Integer.toString(this.value);
     }
 
-    public static enum Subtype
-    {
+    public static enum Subtype {
         INTEGER,
         COLOR,
         COLOR_ALPHA,

@@ -6,24 +6,19 @@ import mchorse.bbs.math.Variable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MathBuilderTest
-{
+public class MathBuilderTest {
     @Test
-    public void testParsing()
-    {
+    public void testParsing() {
         MathBuilder builder = new MathBuilder();
         Variable t = new Variable("t", 0);
 
         builder.register(t);
 
-        try
-        {
+        try {
             IExpression expression = builder.parse("-(t + 10)");
 
             Assertions.assertEquals("-(t + 10.0)", expression.toString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
 
             Assertions.fail();
@@ -31,17 +26,13 @@ public class MathBuilderTest
     }
 
     @Test
-    public void testParsingMinusInFront()
-    {
+    public void testParsingMinusInFront() {
         MathBuilder builder = new MathBuilder();
         IExpression expression = null;
 
-        try
-        {
+        try {
             expression = builder.parse("- sin(0)");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

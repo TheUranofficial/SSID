@@ -7,8 +7,7 @@ import org.lwjgl.opengl.GL20;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VBOAttributes
-{
+public class VBOAttributes {
     public static final VBOAttributes EMPTY = new VBOAttributes(Link.bbs("empty"));
 
     public static final VBOAttributes VERTEX = new VBOAttributes(Link.bbs("vertex"))
@@ -59,42 +58,34 @@ public class VBOAttributes
     public final Link name;
     public List<VBOAttribute> elements = new ArrayList<>();
 
-    public VBOAttributes(Link name)
-    {
+    public VBOAttributes(Link name) {
         this.name = name;
     }
 
-    public VBOAttributes register(VBOAttribute attribute)
-    {
+    public VBOAttributes register(VBOAttribute attribute) {
         this.elements.add(attribute);
 
         return this;
     }
 
-    public int getBytes()
-    {
+    public int getBytes() {
         int size = 0;
 
-        for (VBOAttribute attribute : this.elements)
-        {
+        for (VBOAttribute attribute : this.elements) {
             size += attribute.getBytes();
         }
 
         return size;
     }
 
-    public void bindForRender()
-    {
-        for (int i = 0; i < this.elements.size(); i++)
-        {
+    public void bindForRender() {
+        for (int i = 0; i < this.elements.size(); i++) {
             GL20.glEnableVertexAttribArray(i);
         }
     }
 
-    public void unbindForRender()
-    {
-        for (int i = 0; i < this.elements.size(); i++)
-        {
+    public void unbindForRender() {
+        for (int i = 0; i < this.elements.size(); i++) {
             GL20.glDisableVertexAttribArray(i);
         }
     }

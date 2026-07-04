@@ -15,8 +15,7 @@ import mchorse.bbs.ui.framework.tooltips.InterpolationTooltip;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UIDollyClip extends UIClip<DollyClip>
-{
+public class UIDollyClip extends UIClip<DollyClip> {
     public UIPointModule point;
     public UIAngleModule angle;
 
@@ -27,14 +26,12 @@ public class UIDollyClip extends UIClip<DollyClip>
     public UITrackpad yaw;
     public UITrackpad pitch;
 
-    public UIDollyClip(DollyClip clip, IUIClipsDelegate editor)
-    {
+    public UIDollyClip(DollyClip clip, IUIClipsDelegate editor) {
         super(clip, editor);
     }
 
     @Override
-    protected void registerUI()
-    {
+    protected void registerUI() {
         super.registerUI();
 
         this.point = new UIPointModule(editor);
@@ -56,8 +53,7 @@ public class UIDollyClip extends UIClip<DollyClip>
     }
 
     @Override
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         super.registerPanels();
 
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_DOLLY_TITLE).marginTop(12));
@@ -67,8 +63,7 @@ public class UIDollyClip extends UIClip<DollyClip>
         this.panels.context((menu) -> UICameraUtils.positionContextMenu(menu, this.editor, this.clip.position));
     }
 
-    private void reverse()
-    {
+    private void reverse() {
         Position position = new Position();
 
         this.clip.applyLast(new CameraClipContext(), position);
@@ -79,8 +74,7 @@ public class UIDollyClip extends UIClip<DollyClip>
     }
 
     @Override
-    public void editClip(Position position)
-    {
+    public void editClip(Position position) {
         this.clip.position.set(position);
         this.clip.yaw.set(position.angle.yaw);
         this.clip.pitch.set(position.angle.pitch);
@@ -89,8 +83,7 @@ public class UIDollyClip extends UIClip<DollyClip>
     }
 
     @Override
-    public void fillData()
-    {
+    public void fillData() {
         super.fillData();
 
         this.point.fill(this.clip.position.getPoint());

@@ -12,11 +12,10 @@ import java.util.List;
 
 /**
  * The game engine
- * 
+ * <p>
  * This class is responsible for managing the game state and stages.
  */
-public abstract class Engine implements IEngine, IJoystickHandler
-{
+public abstract class Engine implements IEngine, IJoystickHandler {
     /**
      * Mouse input instance
      */
@@ -33,7 +32,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
     public final JoystickInput joystick;
 
     /**
-     * Last calculated FPS 
+     * Last calculated FPS
      */
     public int lastFPS;
 
@@ -68,8 +67,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
     /**
      * Creates needed classes for the game to work
      */
-    public Engine()
-    {
+    public Engine() {
         this.mouse = new MouseInput(this);
         this.keys = new KeyboardInput(this);
         this.joystick = new JoystickInput(this);
@@ -79,13 +77,11 @@ public abstract class Engine implements IEngine, IJoystickHandler
     /**
      * Mark that the game needs a resize
      */
-    public void needsResize()
-    {
+    public void needsResize() {
         Window.resized = true;
     }
 
-    public void toggleFullScreen()
-    {
+    public void toggleFullScreen() {
         this.needsToggleFullscreen = true;
     }
 
@@ -95,12 +91,10 @@ public abstract class Engine implements IEngine, IJoystickHandler
     /**
      * Turn or turn off the real time game loop
      */
-    public void toggleRealTime(boolean realTime)
-    {
+    public void toggleRealTime(boolean realTime) {
         this.realTimeLoop = realTime;
 
-        if (!realTime)
-        {
+        if (!realTime) {
             this.frameCounter = 0;
         }
     }
@@ -108,8 +102,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
     /**
      * Increment frame for non real time game loop
      */
-    public void nextFrame()
-    {
+    public void nextFrame() {
         this.frameCounter++;
     }
 
@@ -119,8 +112,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
      * Initiates everything
      */
     @Override
-    public void init() throws Exception
-    {
+    public void init() throws Exception {
         this.mouse.init();
         this.keys.init();
         this.joystick.init();
@@ -130,8 +122,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
      * Clean up the game engine (game shutdown)
      */
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.joystick.delete();
     }
 
@@ -141,8 +132,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
      * @param id Window's ID
      * @link http://gameprogrammingpatterns.com/game-loop.html
      */
-    public void start(long id) throws InterruptedException
-    {
+    public void start(long id) throws InterruptedException {
         final long MS_PER_UPDATE = 1000 / 20;
 
         long previous = System.currentTimeMillis();
@@ -151,14 +141,12 @@ public abstract class Engine implements IEngine, IJoystickHandler
         double lastTime = GLFW.glfwGetTime();
         int frames = 0;
 
-        while (!GLFW.glfwWindowShouldClose(id))
-        {
+        while (!GLFW.glfwWindowShouldClose(id)) {
             double currentTime = GLFW.glfwGetTime();
 
             frames++;
 
-            if (currentTime - lastTime >= 1)
-            {
+            if (currentTime - lastTime >= 1) {
                 this.lastFPS = frames;
 
                 frames = 0;
@@ -169,22 +157,17 @@ public abstract class Engine implements IEngine, IJoystickHandler
             long elapsed = current - previous;
             previous = current;
 
-            if (this.realTimeLoop)
-            {
+            if (this.realTimeLoop) {
                 lag += elapsed;
-            }
-            else
-            {
-                if (this.frameCounter == 0)
-                {
+            } else {
+                if (this.frameCounter == 0) {
                     lag = 0;
                 }
 
                 lag += 1000 / (float) this.frameRate;
             }
 
-            while (lag > MS_PER_UPDATE)
-            {
+            while (lag > MS_PER_UPDATE) {
                 this.update();
                 lag -= MS_PER_UPDATE;
             }
@@ -196,8 +179,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
 
             long sleep = current + (long) (1000 / (float) this.frameRate) - System.currentTimeMillis();
 
-            if (sleep > 0 && this.realTimeLoop)
-            {
+            if (sleep > 0 && this.realTimeLoop) {
                 Thread.sleep(sleep);
             }
         }
@@ -207,8 +189,7 @@ public abstract class Engine implements IEngine, IJoystickHandler
      * Update the logic
      */
     @Override
-    public void update()
-    {
+    public void update() {
         this.mouse.update();
         this.joystick.update();
     }
@@ -217,18 +198,14 @@ public abstract class Engine implements IEngine, IJoystickHandler
      * Render updated entities, world, etc.
      */
     @Override
-    public void render(float transition)
-    {
+    public void render(float transition) {
         this.lastTransition = transition;
 
-        if (!this.scheduledRunnables.isEmpty())
-        {
+        if (!this.scheduledRunnables.isEmpty()) {
             List<Runnable> runnables = new ArrayList<>(this.scheduledRunnables);
 
-            for (Runnable runnable : runnables)
-            {
-                if (runnable != null)
-                {
+            for (Runnable runnable : runnables) {
+                if (runnable != null) {
                     runnable.run();
                 }
             }
@@ -236,14 +213,12 @@ public abstract class Engine implements IEngine, IJoystickHandler
             this.scheduledRunnables.clear();
         }
 
-        if (this.needsToggleFullscreen)
-        {
+        if (this.needsToggleFullscreen) {
             this.needsToggleFullscreen = false;
             Window.toggleFullscreen();
         }
 
-        if (Window.resized)
-        {
+        if (Window.resized) {
             Window.resized = false;
             this.resize(Window.width, Window.height);
         }

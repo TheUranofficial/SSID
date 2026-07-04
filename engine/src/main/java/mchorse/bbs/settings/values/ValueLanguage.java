@@ -21,16 +21,13 @@ import java.util.List;
  * language strings don't get reloaded automatically! You need to attach a
  * callback to the value.</p>
  */
-public class ValueLanguage extends ValueString
-{
-    public ValueLanguage(String id)
-    {
+public class ValueLanguage extends ValueString {
+    public ValueLanguage(String id) {
         super(id, L10n.DEFAULT_LANGUAGE);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         UIButton button = new UIButton(UIKeys.LANGUAGE_PICK, (b) ->
         {
             List<Label<String>> labels = BBS.getL10n().getSupportedLanguageLabels();

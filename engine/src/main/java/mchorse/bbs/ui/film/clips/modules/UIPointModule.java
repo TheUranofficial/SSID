@@ -12,25 +12,22 @@ import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 
 /**
  * Point GUI module
- *
+ * <p>
  * This class unifies three trackpads into one object which edits a {@link Point},
  * and makes it way easier to reuse in other classes.
  */
-public class UIPointModule extends UIAbstractModule
-{
+public class UIPointModule extends UIAbstractModule {
     public UITrackpad x;
     public UITrackpad y;
     public UITrackpad z;
 
     public ValuePoint point;
 
-    public UIPointModule(IUIClipsDelegate editor)
-    {
+    public UIPointModule(IUIClipsDelegate editor) {
         this(editor, UIKeys.CAMERA_PANELS_POSITION);
     }
 
-    public UIPointModule(IUIClipsDelegate editor, IKey title)
-    {
+    public UIPointModule(IUIClipsDelegate editor, IKey title) {
         super(editor);
 
         this.x = new UITrackpad((value) -> BaseValue.edit(this.point, (point) -> point.get().x = value));
@@ -50,15 +47,13 @@ public class UIPointModule extends UIAbstractModule
         this.add(UIClip.label(title), this.x, this.y, this.z);
     }
 
-    public UIPointModule contextMenu()
-    {
+    public UIPointModule contextMenu() {
         this.context((menu) -> UICameraUtils.pointContextMenu(menu, this.editor, this.point));
 
         return this;
     }
 
-    public void fill(ValuePoint point)
-    {
+    public void fill(ValuePoint point) {
         this.point = point;
 
         this.x.setValue((float) point.get().x);

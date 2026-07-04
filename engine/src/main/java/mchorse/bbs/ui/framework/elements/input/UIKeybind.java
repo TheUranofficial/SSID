@@ -12,14 +12,12 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
-public class UIKeybind extends UIElement
-{
+public class UIKeybind extends UIElement {
     public KeyCombo combo;
     public boolean reading;
     public Consumer<KeyCombo> callback;
 
-    public UIKeybind(Consumer<KeyCombo> callback)
-    {
+    public UIKeybind(Consumer<KeyCombo> callback) {
         super();
 
         this.combo = new KeyCombo(null, 0);
@@ -29,26 +27,21 @@ public class UIKeybind extends UIElement
         this.h(20);
     }
 
-    public void setKeyCodes(int... keys)
-    {
+    public void setKeyCodes(int... keys) {
         this.combo.keys.clear();
 
-        for (int i : keys)
-        {
+        for (int i : keys) {
             this.combo.keys.add(i);
         }
     }
 
-    public void setKeyCombo(KeyCombo combo)
-    {
+    public void setKeyCombo(KeyCombo combo) {
         this.combo.copy(combo);
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context) && context.mouseButton == 0)
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context) && context.mouseButton == 0) {
             context.unfocus();
 
             this.reading = true;
@@ -59,12 +52,9 @@ public class UIKeybind extends UIElement
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (this.reading)
-        {
-            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-            {
+    public boolean subKeyPressed(UIContext context) {
+        if (this.reading) {
+            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 this.combo.keys.clear();
                 this.reading = false;
 
@@ -73,25 +63,20 @@ public class UIKeybind extends UIElement
                 return true;
             }
 
-            if (context.getKeyAction() == KeyAction.PRESSED)
-            {
+            if (context.getKeyAction() == KeyAction.PRESSED) {
                 int key = context.getKeyCode();
 
-                if (!this.combo.keys.contains(key))
-                {
+                if (!this.combo.keys.contains(key)) {
                     this.combo.keys.add(0, key);
                 }
             }
 
-            if (this.combo.keys.isEmpty())
-            {
+            if (this.combo.keys.isEmpty()) {
                 return false;
             }
 
-            for (int key : this.combo.keys)
-            {
-                if (Window.isKeyPressed(key))
-                {
+            for (int key : this.combo.keys) {
+                if (Window.isKeyPressed(key)) {
                     return true;
                 }
             }
@@ -106,22 +91,18 @@ public class UIKeybind extends UIElement
         return super.subKeyPressed(context);
     }
 
-    private void callback()
-    {
-        if (this.callback != null)
-        {
+    private void callback() {
+        if (this.callback != null) {
             this.callback.accept(this.combo);
         }
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         String label = this.combo.keys.isEmpty() ? UIKeys.GENERAL_NONE.get() : this.combo.getKeyCombo();
         int w = context.font.getWidth(label) - 1;
 
-        if (this.reading)
-        {
+        if (this.reading) {
             this.area.render(context.batcher, Colors.A100 | BBSSettings.primaryColor.get());
 
             int x = this.area.mx(w);
@@ -130,9 +111,7 @@ public class UIKeybind extends UIElement
             int c = Colors.setA(Colors.WHITE, a * 0.5F + 0.5F);
 
             context.batcher.box(x, y, x + w, y + 1, c);
-        }
-        else
-        {
+        } else {
             this.area.render(context.batcher, Colors.A100);
         }
 

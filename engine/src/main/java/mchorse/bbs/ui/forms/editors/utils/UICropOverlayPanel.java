@@ -7,12 +7,10 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.elements.overlay.UIOverlayPanel;
 import org.joml.Vector4f;
 
-public class UICropOverlayPanel extends UIOverlayPanel
-{
+public class UICropOverlayPanel extends UIOverlayPanel {
     public UICropEditor cropEditor;
 
-    public UICropOverlayPanel(Link texture, Vector4f crop)
-    {
+    public UICropOverlayPanel(Link texture, Vector4f crop) {
         super(UIKeys.FORMS_CROP_TITLE);
 
         Texture t = BBS.getTextures().getTexture(texture);

@@ -10,33 +10,27 @@ import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
 import org.joml.Vector3f;
 
-public class ParticleComponentShapeSphere extends ParticleComponentShapeBase
-{
+public class ParticleComponentShapeSphere extends ParticleComponentShapeBase {
     public MolangExpression radius = MolangParser.ZERO;
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
-        if (!MolangExpression.isZero(this.radius))
-        {
+        if (!MolangExpression.isZero(this.radius)) {
             data.put("radius", this.radius.toData());
         }
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType map = data.asMap();
 
-        if (map.has("radius"))
-        {
+        if (map.has("radius")) {
             this.radius = parser.parseData(map.get("radius"));
         }
 
@@ -44,8 +38,7 @@ public class ParticleComponentShapeSphere extends ParticleComponentShapeBase
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
+    public void apply(ParticleEmitter emitter, Particle particle) {
         float centerX = (float) this.offset[0].get();
         float centerY = (float) this.offset[1].get();
         float centerZ = (float) this.offset[2].get();
@@ -54,8 +47,7 @@ public class ParticleComponentShapeSphere extends ParticleComponentShapeBase
         Vector3f direction = new Vector3f((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1);
         direction.normalize();
 
-        if (!this.surface)
-        {
+        if (!this.surface) {
             radius *= Math.random();
         }
 

@@ -15,8 +15,7 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 
 import java.util.function.Consumer;
 
-public class UIBlockPicker extends UIElement
-{
+public class UIBlockPicker extends UIElement {
     public static final int BLOCK_SLOT_SIZE = 24;
 
     public BlockSet blocks;
@@ -24,8 +23,7 @@ public class UIBlockPicker extends UIElement
 
     public ScrollArea scroll = new ScrollArea(new Area()).cancelScrolling();
 
-    public UIBlockPicker(BlockSet blockSet, Consumer<IBlockVariant> callback)
-    {
+    public UIBlockPicker(BlockSet blockSet, Consumer<IBlockVariant> callback) {
         this.blocks = blockSet;
         this.callback = callback;
 
@@ -33,8 +31,7 @@ public class UIBlockPicker extends UIElement
     }
 
     @Override
-    public void resize()
-    {
+    public void resize() {
         super.resize();
 
         this.scroll.area.copy(this.area);
@@ -47,30 +44,25 @@ public class UIBlockPicker extends UIElement
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.scroll.mouseClicked(context))
-        {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.scroll.mouseClicked(context)) {
             return true;
         }
 
         Area area = this.scroll.area;
 
-        if (area.isInside(context) && context.mouseButton == 0 && this.callback != null)
-        {
+        if (area.isInside(context) && context.mouseButton == 0 && this.callback != null) {
             int blocks = area.w / BLOCK_SLOT_SIZE;
             int x = context.mouseX - area.x;
             int y = context.mouseY - area.y + this.scroll.scroll;
             int index = MathUtils.clamp(x / BLOCK_SLOT_SIZE, 0, blocks - 1) + (int) Math.floor(y / BLOCK_SLOT_SIZE) * blocks;
 
-            if (index >= 0 && index < this.blocks.variants.size() + 1)
-            {
+            if (index >= 0 && index < this.blocks.variants.size() + 1) {
                 this.callback.accept(index == 0 ? this.blocks.air : this.blocks.variants.get(index - 1));
             }
         }
 
-        if (!this.area.isInside(context))
-        {
+        if (!this.area.isInside(context)) {
             this.removeFromParent();
 
             return true;
@@ -80,22 +72,19 @@ public class UIBlockPicker extends UIElement
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
+    public boolean subMouseScrolled(UIContext context) {
         return this.scroll.mouseScroll(context);
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
+    public boolean subMouseReleased(UIContext context) {
         this.scroll.mouseReleased(context);
 
         return super.subMouseReleased(context);
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         Area area = this.scroll.area;
 
         this.scroll.drag(context);
@@ -111,8 +100,7 @@ public class UIBlockPicker extends UIElement
         int hoveredX = 0;
         int hoveredY = 0;
 
-        for (int i = 0; i < this.blocks.variants.size() + 1; i++)
-        {
+        for (int i = 0; i < this.blocks.variants.size() + 1; i++) {
             int x = area.x + (i % blocks) * BLOCK_SLOT_SIZE;
             int y = area.y + (i / blocks) * BLOCK_SLOT_SIZE - this.scroll.scroll;
 
@@ -122,8 +110,7 @@ public class UIBlockPicker extends UIElement
 
             context.batcher.box(x + 1, y + 1, x + BLOCK_SLOT_SIZE - 1, y + BLOCK_SLOT_SIZE - 1, inside ? Colors.setA(Colors.ACTIVE, 0.25F) : Colors.A25);
 
-            if (inside)
-            {
+            if (inside) {
                 hovered = i - 1;
                 hoveredX = x;
                 hoveredY = y;
@@ -139,8 +126,7 @@ public class UIBlockPicker extends UIElement
 
         context.render.getTextures().bind(blockBuilder.models.atlas);
 
-        for (int i = 1; i < this.blocks.variants.size() + 1; i++)
-        {
+        for (int i = 1; i < this.blocks.variants.size() + 1; i++) {
             IBlockVariant variant = this.blocks.variants.get(i - 1);
             int x = area.x + (i % blocks) * BLOCK_SLOT_SIZE;
             int y = area.y + (i / blocks) * BLOCK_SLOT_SIZE - this.scroll.scroll;
@@ -158,8 +144,7 @@ public class UIBlockPicker extends UIElement
         context.batcher.unclip(context);
 
         /* Render tooltip of highlighted block picker */
-        if (hovered >= -1)
-        {
+        if (hovered >= -1) {
             IBlockVariant variant = hovered < 0 ? this.blocks.air : this.blocks.variants.get(hovered);
             String label = variant.getLink().toString();
             int w = context.font.getWidth(label);

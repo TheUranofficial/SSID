@@ -9,39 +9,32 @@ import mchorse.bbs.settings.values.ValueLink;
 import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.clips.ClipContext;
 
-public class AudioClip extends CameraClip
-{
+public class AudioClip extends CameraClip {
     public ValueLink audio = new ValueLink("audio", null);
 
-    public AudioClip()
-    {
+    public AudioClip() {
         super();
 
         this.add(this.audio);
     }
 
     @Override
-    public void shutdown(ClipContext context)
-    {
+    public void shutdown(ClipContext context) {
         Link link = this.audio.get();
 
-        if (link != null)
-        {
+        if (link != null) {
             BBS.getSounds().stop(link);
         }
     }
 
     @Override
-    protected void applyClip(ClipContext context, Position position)
-    {
+    protected void applyClip(ClipContext context, Position position) {
         Link link = this.audio.get();
 
-        if (link != null)
-        {
+        if (link != null) {
             SoundPlayer player = BBS.getSounds().playUnique(link);
 
-            if (player == null)
-            {
+            if (player == null) {
                 return;
             }
 
@@ -50,43 +43,35 @@ public class AudioClip extends CameraClip
             float tickTime = (context.relativeTick + context.transition) / 20F;
             float time = player.getPlaybackPosition();
 
-            if (tickTime >= player.getBuffer().getDuration())
-            {
-                if (!player.isStopped())
-                {
+            if (tickTime >= player.getBuffer().getDuration()) {
+                if (!player.isStopped()) {
                     player.stop();
                 }
 
                 return;
             }
 
-            if (player.isStopped())
-            {
+            if (player.isStopped()) {
                 player.setPlaybackPosition(0);
                 player.play();
             }
 
-            if (player.isPlaying() && !context.playing)
-            {
+            if (player.isPlaying() && !context.playing) {
                 player.pause();
-            }
-            else if (player.isPaused() && context.playing)
-            {
+            } else if (player.isPaused() && context.playing) {
                 player.play();
             }
 
             float diff = Math.abs(tickTime - time);
 
-            if (diff > 0.05F)
-            {
+            if (diff > 0.05F) {
                 player.setPlaybackPosition(tickTime);
             }
         }
     }
 
     @Override
-    protected Clip create()
-    {
+    protected Clip create() {
         return new AudioClip();
     }
 }

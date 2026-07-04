@@ -5,15 +5,13 @@ import mchorse.bbs.utils.clips.Clip;
 
 import java.util.UUID;
 
-public class VoicelineClip extends Clip
-{
+public class VoicelineClip extends Clip {
     public final ValueString uuid = new ValueString("uuid", "");
     public final ValueString content = new ValueString("text", "");
     public final ValueString voice = new ValueString("voice", "");
     public final ValueString variant = new ValueString("variant", "");
 
-    public VoicelineClip()
-    {
+    public VoicelineClip() {
         super();
 
         this.uuid.set(UUID.randomUUID().toString());
@@ -25,8 +23,7 @@ public class VoicelineClip extends Clip
     }
 
     @Override
-    protected Clip create()
-    {
+    protected Clip create() {
         return new VoicelineClip();
     }
 }

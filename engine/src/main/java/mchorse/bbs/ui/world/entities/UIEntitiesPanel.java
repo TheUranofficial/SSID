@@ -28,18 +28,13 @@ import org.joml.Vector3f;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIEntitiesPanel extends UICommonWorldEditor<Entity>
-{
-    public static void setupEntityEditor(UIScrollView editor, Entity object)
-    {
-        for (Component component : object.getAll())
-        {
-            try
-            {
+public class UIEntitiesPanel extends UICommonWorldEditor<Entity> {
+    public static void setupEntityEditor(UIScrollView editor, Entity object) {
+        for (Component component : object.getAll()) {
+            try {
                 Class<? extends UIEntityComponent> clazz = BBS.getFactoryEntityComponents().getData(component);
 
-                if (clazz == null)
-                {
+                if (clazz == null) {
                     continue;
                 }
 
@@ -47,54 +42,45 @@ public class UIEntitiesPanel extends UICommonWorldEditor<Entity>
 
                 ui.marginTop(editor.getChildren().isEmpty() ? 0 : 8);
                 editor.add(ui);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public UIEntitiesPanel(UIDashboard dashboard)
-    {
+    public UIEntitiesPanel(UIDashboard dashboard) {
         super(dashboard);
     }
 
     @Override
-    public boolean canPause()
-    {
+    public boolean canPause() {
         return true;
     }
 
     @Override
-    public boolean canRefresh()
-    {
+    public boolean canRefresh() {
         return true;
     }
 
     @Override
-    protected void moveToCursor(Entity object, Vector3d hit)
-    {
+    protected void moveToCursor(Entity object, Vector3d hit) {
         object.setPosition(hit.x, hit.y, hit.z);
 
         this.fill(object, false);
     }
 
     @Override
-    protected UISearchList<Entity> createSearchList(Consumer<List<Entity>> callback)
-    {
+    protected UISearchList<Entity> createSearchList(Consumer<List<Entity>> callback) {
         return new UISearchList<>(new UIEntityList(callback));
     }
 
     @Override
-    protected void addObject()
-    {
+    protected void addObject() {
         this.getContext().replaceContextMenu((menu) ->
         {
             World world = this.dashboard.bridge.get(IBridgeWorld.class).getWorld();
 
-            for (Link key : world.architect.getKeys())
-            {
+            for (Link key : world.architect.getKeys()) {
                 menu.action(Icons.ADD, UIKeys.ENTITIES_CONTEXT_ADD.format(UIKeys.C_ENTITIES.get(key)), () ->
                 {
                     this.addObject(world.architect.create(key));
@@ -104,20 +90,16 @@ public class UIEntitiesPanel extends UICommonWorldEditor<Entity>
     }
 
     @Override
-    protected void addObject(Entity entity)
-    {
+    protected void addObject(Entity entity) {
         RayTraceResult result = new RayTraceResult();
         UIContext context = this.getContext();
         Camera camera = context.menu.bridge.get(IBridgeCamera.class).getCamera();
 
         RayTracer.trace(result, context.menu.bridge.get(IBridgeWorld.class).getWorld().chunks, camera.position, camera.getLookDirection(), 64);
 
-        if (result.type == RayTraceType.BLOCK)
-        {
+        if (result.type == RayTraceType.BLOCK) {
             entity.setPosition(result.hit.x, result.hit.y, result.hit.z);
-        }
-        else
-        {
+        } else {
             Vector3f look = camera.getLookDirection().mul(3);
             Vector3d position = new Vector3d(camera.position).add(look.x, look.y, look.z);
 
@@ -130,29 +112,23 @@ public class UIEntitiesPanel extends UICommonWorldEditor<Entity>
     }
 
     @Override
-    protected MapType toData(Entity object)
-    {
+    protected MapType toData(Entity object) {
         return object.toData();
     }
 
     @Override
-    protected void pasteObject(MapType type)
-    {
+    protected void pasteObject(MapType type) {
         this.addObject(this.dashboard.bridge.get(IBridgeWorld.class).getWorld().architect.create(type));
     }
 
     @Override
-    protected void removeObject()
-    {
+    protected void removeObject() {
         List<Entity> list = this.objects.list.getList();
         int index = list.indexOf(this.object);
 
-        if (index == -1)
-        {
+        if (index == -1) {
             this.fill(null, true);
-        }
-        else
-        {
+        } else {
             this.dashboard.bridge.get(IBridgeWorld.class).getWorld().removeEntity(this.object);
             this.fill(list.isEmpty() ? null : list.get(MathUtils.clamp(index, 0, list.size() - 1)), true);
             this.objects.list.update();
@@ -160,20 +136,17 @@ public class UIEntitiesPanel extends UICommonWorldEditor<Entity>
     }
 
     @Override
-    protected void setupEditor(Entity object)
-    {
+    protected void setupEditor(Entity object) {
         setupEntityEditor(this.editor, object);
     }
 
     @Override
-    protected List<Entity> getList()
-    {
+    protected List<Entity> getList() {
         return this.dashboard.bridge.get(IBridgeWorld.class).getWorld().entities;
     }
 
     @Override
-    protected AABB getHitbox(Entity object)
-    {
+    protected AABB getHitbox(Entity object) {
         return object.basic.hitbox;
     }
 }

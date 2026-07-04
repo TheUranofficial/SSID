@@ -7,32 +7,21 @@ import mchorse.bbs.world.entities.EntityRecord;
 import mchorse.bbs.world.entities.architect.blueprints.BasicEntityBlueprint;
 import mchorse.bbs.world.entities.architect.blueprints.IEntityBlueprint;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class EntityArchitect
-{
+public class EntityArchitect {
     private Map<Link, IEntityBlueprint> blueprints = new HashMap<>();
 
-    public static Entity createDummy()
-    {
+    public static Entity createDummy() {
         return createEntity(Link.bbs("dummy"), new BasicEntityBlueprint());
     }
 
-    public static Entity createEntity(Link id, IEntityBlueprint blueprint)
-    {
+    public static Entity createEntity(Link id, IEntityBlueprint blueprint) {
         return createEntity(id, blueprint, null);
     }
 
-    public static Entity createEntity(Link id, IEntityBlueprint blueprint, MapType data)
-    {
-        if (blueprint == null)
-        {
+    public static Entity createEntity(Link id, IEntityBlueprint blueprint, MapType data) {
+        if (blueprint == null) {
             return null;
         }
 
@@ -45,33 +34,27 @@ public class EntityArchitect
 
         blueprint.setupEntity(entity);
 
-        if (data != null)
-        {
+        if (data != null) {
             entity.fromData(data);
         }
 
         return entity;
     }
 
-    public void register(Link id, IEntityBlueprint blueprint)
-    {
+    public void register(Link id, IEntityBlueprint blueprint) {
         this.blueprints.put(id, blueprint);
     }
 
-    public Entity create(MapType data)
-    {
+    public Entity create(MapType data) {
         return create(Link.create(data.getString("id")), data);
     }
 
-    public Entity create(Link id)
-    {
+    public Entity create(Link id) {
         return create(id, null);
     }
 
-    public Entity create(Link id, MapType data)
-    {
-        if (id == null)
-        {
+    public Entity create(Link id, MapType data) {
+        if (id == null) {
             return null;
         }
 
@@ -80,8 +63,7 @@ public class EntityArchitect
         return createEntity(id, blueprint, data);
     }
 
-    public Set<Link> getKeys()
-    {
+    public Set<Link> getKeys() {
         return Collections.unmodifiableSet(this.blueprints.keySet());
     }
 }

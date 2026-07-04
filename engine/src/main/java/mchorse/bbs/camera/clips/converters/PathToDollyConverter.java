@@ -6,13 +6,10 @@ import mchorse.bbs.camera.data.Angle;
 import mchorse.bbs.camera.data.Position;
 import mchorse.bbs.utils.math.Interpolation;
 
-public class PathToDollyConverter implements IClipConverter<PathClip, DollyClip>
-{
+public class PathToDollyConverter implements IClipConverter<PathClip, DollyClip> {
     @Override
-    public DollyClip convert(PathClip path)
-    {
-        if (path.size() != 2)
-        {
+    public DollyClip convert(PathClip path) {
+        if (path.size() != 2) {
             return null;
         }
 
@@ -31,8 +28,7 @@ public class PathToDollyConverter implements IClipConverter<PathClip, DollyClip>
 
         Interpolation function = path.interpolationPoint.get().function;
 
-        if (function != null)
-        {
+        if (function != null) {
             dolly.interp.set(function);
         }
 

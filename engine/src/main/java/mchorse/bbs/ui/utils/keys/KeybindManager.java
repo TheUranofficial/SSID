@@ -9,13 +9,11 @@ import java.util.List;
 /**
  * Keybind manager
  */
-public class KeybindManager
-{
+public class KeybindManager {
     public List<Keybind> keybinds = new ArrayList<>();
     public boolean focus = true;
 
-    public Keybind register(KeyCombo combo, Runnable callback)
-    {
+    public Keybind register(KeyCombo combo, Runnable callback) {
         Keybind keybind = new Keybind(combo, callback);
 
         this.keybinds.add(keybind);
@@ -23,45 +21,36 @@ public class KeybindManager
         return keybind;
     }
 
-    public KeybindManager ignoreFocus()
-    {
+    public KeybindManager ignoreFocus() {
         this.focus = false;
 
         return this;
     }
 
-    public void add(UIContext context, boolean inside)
-    {
-        if (this.focus && context.isFocused())
-        {
+    public void add(UIContext context, boolean inside) {
+        if (this.focus && context.isFocused()) {
             return;
         }
 
         UIKeybinds keybinds = context.keybinds;
 
-        if (!keybinds.hasParent())
-        {
+        if (!keybinds.hasParent()) {
             return;
         }
 
-        for (Keybind keybind : this.keybinds)
-        {
-            if (keybind.isActive() && (!keybind.inside || inside))
-            {
+        for (Keybind keybind : this.keybinds) {
+            if (keybind.isActive() && (!keybind.inside || inside)) {
                 keybinds.addKeybind(keybind);
             }
         }
     }
 
-    public boolean check(UIContext context, boolean inside)
-    {
-        if (context.getKeyAction() == KeyAction.RELEASED)
-        {
+    public boolean check(UIContext context, boolean inside) {
+        if (context.getKeyAction() == KeyAction.RELEASED) {
             return false;
         }
 
-        if (this.focus && context.isFocused())
-        {
+        if (this.focus && context.isFocused()) {
             return false;
         }
 
@@ -70,24 +59,20 @@ public class KeybindManager
         int index = -1;
         int score = 0;
 
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             Keybind keybind = this.keybinds.get(i);
 
-            if (keybind.callback != null && keybind.isActive() && keybind.check(keyCode, context.getKeyAction(), inside))
-            {
+            if (keybind.callback != null && keybind.isActive() && keybind.check(keyCode, context.getKeyAction(), inside)) {
                 int keybindScore = keybind.getScore();
 
-                if (index == -1 || keybindScore > score)
-                {
+                if (index == -1 || keybindScore > score) {
                     index = i;
                     score = keybindScore;
                 }
             }
         }
 
-        if (index >= 0)
-        {
+        if (index >= 0) {
             this.keybinds.get(index).callback.run();
 
             return true;

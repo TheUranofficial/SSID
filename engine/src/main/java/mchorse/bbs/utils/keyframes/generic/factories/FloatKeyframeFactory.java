@@ -8,35 +8,29 @@ import mchorse.bbs.ui.framework.elements.input.keyframes.generic.factories.UIKey
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public class FloatKeyframeFactory implements IGenericKeyframeFactory<Float>
-{
+public class FloatKeyframeFactory implements IGenericKeyframeFactory<Float> {
     @Override
-    public Float fromData(BaseType data)
-    {
+    public Float fromData(BaseType data) {
         return data.isNumeric() ? data.asNumeric().floatValue() : 0F;
     }
 
     @Override
-    public BaseType toData(Float value)
-    {
+    public BaseType toData(Float value) {
         return new FloatType(value);
     }
 
     @Override
-    public Float copy(Float value)
-    {
+    public Float copy(Float value) {
         return value;
     }
 
     @Override
-    public Float interpolate(Float a, Float b, IInterpolation interpolation, float x)
-    {
+    public Float interpolate(Float a, Float b, IInterpolation interpolation, float x) {
         return interpolation.interpolate(a, b, x);
     }
 
     @Override
-    public UIKeyframeFactory<Float> createUI(GenericKeyframe<Float> keyframe, UIPropertyEditor editor)
-    {
+    public UIKeyframeFactory<Float> createUI(GenericKeyframe<Float> keyframe, UIPropertyEditor editor) {
         return new UIFloatKeyframeFactory(keyframe, editor);
     }
 }

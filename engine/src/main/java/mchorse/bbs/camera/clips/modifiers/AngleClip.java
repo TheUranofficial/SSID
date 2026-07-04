@@ -8,24 +8,21 @@ import mchorse.bbs.utils.clips.ClipContext;
 
 /**
  * Angle modifier
- * 
- * This camera modifier simply adds stored angle values to given 
- * position. 
+ * <p>
+ * This camera modifier simply adds stored angle values to given
+ * position.
  */
-public class AngleClip extends ComponentClip
-{
+public class AngleClip extends ComponentClip {
     public final ValueAngle angle = new ValueAngle("angle", new Angle(0, 0, 0, 0));
 
-    public AngleClip()
-    {
+    public AngleClip() {
         super();
 
         this.add(this.angle);
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         Angle angle = this.angle.get();
 
         position.angle.yaw = this.applyProperty(context.count, 0, position.angle.yaw, angle.yaw);
@@ -34,10 +31,8 @@ public class AngleClip extends ComponentClip
         position.angle.fov = this.applyProperty(context.count, 3, position.angle.fov, angle.fov);
     }
 
-    private float applyProperty(int count, int i, float absolute, float relative)
-    {
-        if (this.isActive(i))
-        {
+    private float applyProperty(int count, int i, float absolute, float relative) {
+        if (this.isActive(i)) {
             return relative;
         }
 
@@ -45,8 +40,7 @@ public class AngleClip extends ComponentClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new AngleClip();
     }
 }

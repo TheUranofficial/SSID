@@ -17,19 +17,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class FontManager implements IWatchDogListener
-{
+public class FontManager implements IWatchDogListener {
     public final Map<Link, FontRenderer> fontRenderers = new HashMap<>();
 
     private AssetProvider provider;
 
-    public FontManager(AssetProvider provider)
-    {
+    public FontManager(AssetProvider provider) {
         this.provider = provider;
     }
 
-    public Set<Link> getFontSet()
-    {
+    public Set<Link> getFontSet() {
         Set<Link> linkSet = new HashSet<>();
         File fonts = BBS.getAssetsPath("fonts");
 
@@ -39,10 +36,8 @@ public class FontManager implements IWatchDogListener
 
         fonts.mkdirs();
 
-        for (File file : fonts.listFiles())
-        {
-            if (file.getName().endsWith(".json"))
-            {
+        for (File file : fonts.listFiles()) {
+            if (file.getName().endsWith(".json")) {
                 linkSet.add(Link.assets("fonts/" + file.getName()));
             }
         }
@@ -50,20 +45,16 @@ public class FontManager implements IWatchDogListener
         return linkSet;
     }
 
-    public FontRenderer getRenderer(Link link)
-    {
-        if (!this.fontRenderers.containsKey(link))
-        {
+    public FontRenderer getRenderer(Link link) {
+        if (!this.fontRenderers.containsKey(link)) {
             this.fontRenderers.put(link, this.loadFont(link));
         }
 
         return this.fontRenderers.get(link);
     }
 
-    private FontRenderer loadFont(Link link)
-    {
-        try
-        {
+    private FontRenderer loadFont(Link link) {
+        try {
             InputStream fontData = this.provider.getAsset(link);
             Font font = Font.fromMap(DataToString.mapFromString(IOUtils.readText(fontData)));
             Link texture = new Link(link.source, StringUtils.replaceExtension(link.path, "png"));
@@ -71,9 +62,7 @@ public class FontManager implements IWatchDogListener
             System.out.println("Font \"" + link + "\" was loaded!");
 
             return new FontRenderer(texture, font);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.err.println("Failed to load font renderer \"" + link + "\"!");
             e.printStackTrace();
         }
@@ -82,28 +71,22 @@ public class FontManager implements IWatchDogListener
     }
 
     @Override
-    public void accept(Path path, WatchDogEvent event)
-    {
+    public void accept(Path path, WatchDogEvent event) {
         Link link = BBS.getProvider().getLink(path.toFile());
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
         FontRenderer fontRenderer = this.fontRenderers.get(link);
 
-        if (fontRenderer != null)
-        {
+        if (fontRenderer != null) {
             FontRenderer newFontRenderer = this.loadFont(link);
 
-            if (newFontRenderer != null)
-            {
+            if (newFontRenderer != null) {
                 fontRenderer.update(newFontRenderer);
             }
-        }
-        else
-        {
+        } else {
             this.fontRenderers.remove(link);
         }
     }

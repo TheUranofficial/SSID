@@ -13,14 +13,12 @@ import mchorse.bbs.world.entities.components.FormComponent;
 
 import java.util.List;
 
-public class Replay extends ValueGroup
-{
+public class Replay extends ValueGroup {
     public final ValueForm form = new ValueForm("form");
     public final ReplayKeyframes keyframes = new ReplayKeyframes("keyframes");
     public final FormProperties properties = new FormProperties("properties");
 
-    public Replay(String id)
-    {
+    public Replay(String id) {
         super(id);
 
         this.add(this.form);
@@ -28,66 +26,50 @@ public class Replay extends ValueGroup
         this.add(this.properties);
     }
 
-    public void applyFrame(int tick, Entity actor)
-    {
+    public void applyFrame(int tick, Entity actor) {
         this.applyFrame(tick, actor, null);
     }
 
-    public void applyFrame(int tick, Entity actor, List<String> groups)
-    {
+    public void applyFrame(int tick, Entity actor, List<String> groups) {
         this.keyframes.apply(tick, actor, groups);
     }
 
-    public void applyProperties(int tick, Entity entity, boolean playing)
-    {
+    public void applyProperties(int tick, Entity entity, boolean playing) {
         Form form = entity.get(FormComponent.class).form;
 
-        if (form == null)
-        {
+        if (form == null) {
             return;
         }
 
-        for (BaseValue value : this.properties.getAll())
-        {
-            if (value instanceof GenericKeyframeChannel)
-            {
+        for (BaseValue value : this.properties.getAll()) {
+            if (value instanceof GenericKeyframeChannel) {
                 this.applyProperty(tick, playing, form, (GenericKeyframeChannel) value);
             }
         }
     }
 
-    private void applyProperty(int tick, boolean playing, Form form, GenericKeyframeChannel value)
-    {
+    private void applyProperty(int tick, boolean playing, Form form, GenericKeyframeChannel value) {
         IFormProperty property = FormUtils.getProperty(form, value.getId());
 
-        if (property == null)
-        {
+        if (property == null) {
             return;
         }
 
         GenericKeyframeSegment segment = value.find(tick);
 
-        if (segment != null)
-        {
-            if (segment.isSame() || segment.a.isInstant())
-            {
+        if (segment != null) {
+            if (segment.isSame() || segment.a.isInstant()) {
                 property.set(segment.a.getValue());
-            }
-            else
-            {
+            } else {
                 property.tween(segment.b.getValue(), segment.a.getValue(), segment.duration, segment.a.getInterpolation(), (int) segment.offset, playing);
             }
-        }
-        else
-        {
+        } else {
             Form replayForm = this.form.get();
 
-            if (replayForm != null)
-            {
+            if (replayForm != null) {
                 IFormProperty replayProperty = FormUtils.getProperty(replayForm, value.getId());
 
-                if (replayProperty != null)
-                {
+                if (replayProperty != null) {
                     property.set(replayProperty.get());
                 }
             }

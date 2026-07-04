@@ -14,17 +14,14 @@ import org.joml.Vector3i;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UIToolLine extends UITool
-{
+public class UIToolLine extends UITool {
     private Set<Vector3i> blocks = new HashSet<>();
 
-    public static Set<Vector3i> calculate(Vector3i initial, Vector3i target)
-    {
+    public static Set<Vector3i> calculate(Vector3i initial, Vector3i target) {
         return calculate(new HashSet<>(), initial, target);
     }
 
-    public static Set<Vector3i> calculate(Set<Vector3i> blocks, Vector3i initial, Vector3i target)
-    {
+    public static Set<Vector3i> calculate(Set<Vector3i> blocks, Vector3i initial, Vector3i target) {
         blocks.clear();
         blocks.add(initial);
         blocks.add(target);
@@ -36,8 +33,7 @@ public class UIToolLine extends UITool
 
         Vector3f start = new Vector3f(initial.x + 0.5F, initial.y + 0.5F, initial.z + 0.5F);
 
-        for (int i = 0, c = Math.round(distance); i < c; i++)
-        {
+        for (int i = 0, c = Math.round(distance); i < c; i++) {
             start.add(diff);
             blocks.add(new Vector3i((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z)));
         }
@@ -45,14 +41,12 @@ public class UIToolLine extends UITool
         return blocks;
     }
 
-    public UIToolLine(UIWorldEditorPanel editor)
-    {
+    public UIToolLine(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.LINE, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_LINE, Direction.RIGHT);
@@ -61,25 +55,21 @@ public class UIToolLine extends UITool
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
-        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled())
-        {
+        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled()) {
             this.firstBlock.add(result.normal);
         }
     }
 
     @Override
-    public void drag(RayTraceResult result)
-    {
+    public void drag(RayTraceResult result) {
         super.drag(result);
 
         Vector3i block = new Vector3i(result.block);
 
-        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled())
-        {
+        if (this.lastMouseButton == 1 && !this.editor.getProxy().isMaskEnabled()) {
             block.add(result.normal);
         }
 
@@ -87,25 +77,21 @@ public class UIToolLine extends UITool
     }
 
     @Override
-    public void end(RayTraceResult result)
-    {
-        for (Vector3i block : this.blocks)
-        {
+    public void end(RayTraceResult result) {
+        for (Vector3i block : this.blocks) {
             this.getProxy().setBlock(block.x, block.y, block.z, this.variantToPlace);
         }
 
         this.blocks.clear();
-        
+
         super.end(result);
     }
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         super.render(context, result);
 
-        for (Vector3i block : this.blocks)
-        {
+        for (Vector3i block : this.blocks) {
             Draw.renderBlockAABB(context, this.getProxy().getChunks(), block.x, block.y, block.z);
         }
     }

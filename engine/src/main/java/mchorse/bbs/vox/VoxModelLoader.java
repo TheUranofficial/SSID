@@ -18,22 +18,17 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 
-public class VoxModelLoader implements IModelLoader
-{
+public class VoxModelLoader implements IModelLoader {
     @Override
-    public CubicModel load(String id, ModelManager models, Link model, Collection<Link> links) throws Exception
-    {
+    public CubicModel load(String id, ModelManager models, Link model, Collection<Link> links) throws Exception {
         Link modelVox = IModelLoader.getLink(model.combine("model.vox"), links, ".vox");
         Link pallete = IModelLoader.getLink(model.combine("palette.png"), links, ".palette");
         InputStream voxStream;
         Model newModel = new Model(models.parser);
 
-        try
-        {
+        try {
             voxStream = models.provider.getAsset(modelVox);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
 
@@ -43,8 +38,7 @@ public class VoxModelLoader implements IModelLoader
         newModel.textureWidth = document.palette.length;
         newModel.textureHeight = 1;
 
-        for (VoxDocument.LimbNode node : document.generate())
-        {
+        for (VoxDocument.LimbNode node : document.generate()) {
             ModelGroup group = new ModelGroup(node.name);
             VoxBuilder builder = new VoxBuilder(node.translation, node.rotation);
 
@@ -60,44 +54,34 @@ public class VoxModelLoader implements IModelLoader
         return new CubicModel(id, newModel, new Animations(), pallete);
     }
 
-    private void ensurePalette(AssetProvider provider, VoxDocument document, Link vox, Link pallete)
-    {
+    private void ensurePalette(AssetProvider provider, VoxDocument document, Link vox, Link pallete) {
         File paletteFile = provider.getFile(pallete);
         File voxFile = provider.getFile(vox);
 
-        if (paletteFile.exists())
-        {
-            try
-            {
+        if (paletteFile.exists()) {
+            try {
                 BasicFileAttributes voxAttributes = Files.readAttributes(voxFile.toPath(), BasicFileAttributes.class);
                 BasicFileAttributes paletteAttributes = Files.readAttributes(paletteFile.toPath(), BasicFileAttributes.class);
                 int compare = paletteAttributes.lastModifiedTime().compareTo(voxAttributes.lastModifiedTime());
 
                 /* If palette is older than vox, then it needs to be regenerated */
-                if (compare >= 0)
-                {
+                if (compare >= 0) {
                     return;
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 return;
             }
         }
 
         Pixels pixels = Pixels.fromSize(document.palette.length, 1);
 
-        for (int x = 0; x < document.palette.length; x++)
-        {
+        for (int x = 0; x < document.palette.length; x++) {
             pixels.setColor(x, 0, new Color().set(document.palette[x], false));
         }
 
-        try
-        {
+        try {
             PNGEncoder.writeToFile(pixels, paletteFile);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -23,27 +23,26 @@ import org.joml.Vector3i;
 
 /**
  * Chunk builder
- * 
- * At the moment, this class can only construct chunks out of opaque 
+ * <p>
+ * At the moment, this class can only construct chunks out of opaque
  * blocks with no textures.
  */
-public class ChunkBuilder
-{
+public class ChunkBuilder {
     private static Vector3i tmp = new Vector3i();
     private static Vector3i tmp2 = new Vector3i();
 
     /**
-     * Chunks 
+     * Chunks
      */
     protected ChunkManager manager;
 
     /**
-     * Currently constructing chunk 
+     * Currently constructing chunk
      */
     protected ChunkDisplay chunk;
 
     /**
-     * Current index of a face 
+     * Current index of a face
      */
     protected int index;
 
@@ -53,48 +52,42 @@ public class ChunkBuilder
     protected Vector3i edge;
 
     /**
-     * Block model manager 
+     * Block model manager
      */
     public BlockSet models;
 
     public Color color = Color.white();
 
-    public ChunkBuilder(BlockSet models)
-    {
+    public ChunkBuilder(BlockSet models) {
         this.models = models;
     }
 
-    public VBOAttributes getAttributes()
-    {
+    public VBOAttributes getAttributes() {
         return VBOAttributes.VERTEX_NORMAL_UV_LIGHT_RGBA;
     }
 
-    public ChunkBuilder resetIndex()
-    {
+    public ChunkBuilder resetIndex() {
         this.chunk = null;
         this.index = 0;
 
         return this;
     }
 
-    public ChunkBuilder buildBlock(IBlockVariant block, int nx, int ny, int nz, VAOBuilder builder, VBOAttributes attributes)
-    {
+    public ChunkBuilder buildBlock(IBlockVariant block, int nx, int ny, int nz, VAOBuilder builder, VBOAttributes attributes) {
         this.generateBlock(block, nx, ny, nz, builder, attributes, Vectors.EMPTY_3I);
 
         return this;
     }
 
     /**
-     * Build a VAO based on given chunk 
+     * Build a VAO based on given chunk
      */
-    public VAO build(RenderingContext context, ChunkDisplay chunk, ChunkManager manager)
-    {
+    public VAO build(RenderingContext context, ChunkDisplay chunk, ChunkManager manager) {
         this.chunk = chunk;
         this.manager = manager;
         this.index = 0;
 
-        if (manager != null)
-        {
+        if (manager != null) {
             this.edge = new Vector3i();
 
             if (manager.isOutside(chunk.x - 1, chunk.y, chunk.z)) this.edge.x = -1;
@@ -117,12 +110,10 @@ public class ChunkBuilder
         this.manager = null;
         this.edge = null;
 
-        if (this.index == 0)
-        {
+        if (this.index == 0) {
             chunk.display = null;
 
-            if (vao != null)
-            {
+            if (vao != null) {
                 vao.delete();
             }
 
@@ -131,8 +122,7 @@ public class ChunkBuilder
             return null;
         }
 
-        if (vao == null)
-        {
+        if (vao == null) {
             vao = chunk.display = new VAO().register(this.getAttributes()).registerIndex();
         }
 
@@ -145,23 +135,20 @@ public class ChunkBuilder
 
     /**
      * Generate geometry
-     * 
-     * This method is basically goes over every block in a chunk and 
+     * <p>
+     * This method is basically goes over every block in a chunk and
      * delegates construction logic to generateBlock method.
      */
-    protected void generateGeometry(VAOBuilder builder)
-    {
+    protected void generateGeometry(VAOBuilder builder) {
         Chunk chunk = this.chunk.chunk;
         IBlockVariant[] chunkData = chunk.getData();
 
         this.color.set(1, 1, 1, 1);
 
-        for (int i = 0; i < chunkData.length; i++)
-        {
+        for (int i = 0; i < chunkData.length; i++) {
             IBlockVariant block = chunk.data[i];
 
-            if (!block.isAir())
-            {
+            if (!block.isAir()) {
                 MathUtils.toBlock(i, chunk.w, chunk.h, tmp);
 
                 this.generateBlock(block, tmp.x, tmp.y, tmp.z, builder, getAttributes(), this.getEdge(tmp));
@@ -173,10 +160,8 @@ public class ChunkBuilder
      * Get edge vector that is used by Block models to avoid
      * generating faces on the edge of render distance.
      */
-    private Vector3i getEdge(Vector3i block)
-    {
-        if (this.edge == null)
-        {
+    private Vector3i getEdge(Vector3i block) {
+        if (this.edge == null) {
             return Vectors.EMPTY_3I;
         }
 
@@ -197,26 +182,21 @@ public class ChunkBuilder
     }
 
     /**
-     * Generate faces for given block 
+     * Generate faces for given block
      */
-    protected void generateBlock(IBlockVariant block, int nx, int ny, int nz, VAOBuilder builder, VBOAttributes attributes, Vector3i edge)
-    {
+    protected void generateBlock(IBlockVariant block, int nx, int ny, int nz, VAOBuilder builder, VBOAttributes attributes, Vector3i edge) {
         this.index = block.getModel().build(builder, attributes, this, block, this.index, nx, ny, nz, edge);
     }
 
     /* API methods for model things */
 
-    public IBlockVariant block(int x, int y, int z)
-    {
-        if (this.chunk == null)
-        {
+    public IBlockVariant block(int x, int y, int z) {
+        if (this.chunk == null) {
             return this.models.air;
         }
 
-        if (this.manager == null)
-        {
-            if (this.chunk.chunk.isOutside(x, y, z))
-            {
+        if (this.manager == null) {
+            if (this.chunk.chunk.isOutside(x, y, z)) {
                 return this.models.air;
             }
 
@@ -229,23 +209,19 @@ public class ChunkBuilder
 
         ChunkCell cell = this.manager.getCell(x, y, z, false);
 
-        if (cell != null)
-        {
+        if (cell != null) {
             return cell.getBlock(x, y, z);
         }
 
         return this.models.air;
     }
 
-    public int lighting(int x, int y, int z)
-    {
-        if (this.chunk == null)
-        {
+    public int lighting(int x, int y, int z) {
+        if (this.chunk == null) {
             return 0;
         }
 
-        if (this.manager == null)
-        {
+        if (this.manager == null) {
             Chunk c = this.chunk.chunk;
 
             x = MathUtils.clamp(x, 0, c.w - 1);
@@ -262,13 +238,11 @@ public class ChunkBuilder
         return this.manager.getLighting(x, y, z);
     }
 
-    public boolean emitsAO(int x, int y, int z)
-    {
+    public boolean emitsAO(int x, int y, int z) {
         return this.block(x, y, z).getModel().ao;
     }
 
-    public void renderInUI(UIContext context, IBlockVariant variant, int x, int y, int scale)
-    {
+    public void renderInUI(UIContext context, IBlockVariant variant, int x, int y, int scale) {
         context.batcher.flush();
 
         Shader shader = context.render.getShaders().get(this.getAttributes());

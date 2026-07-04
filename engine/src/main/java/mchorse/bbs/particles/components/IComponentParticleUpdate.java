@@ -1,9 +1,8 @@
 package mchorse.bbs.particles.components;
 
-import mchorse.bbs.particles.emitter.ParticleEmitter;
 import mchorse.bbs.particles.emitter.Particle;
+import mchorse.bbs.particles.emitter.ParticleEmitter;
 
-public interface IComponentParticleUpdate extends IComponentBase
-{
+public interface IComponentParticleUpdate extends IComponentBase {
     public void update(ParticleEmitter emitter, Particle particle);
 }

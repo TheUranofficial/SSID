@@ -8,8 +8,7 @@ import org.lwjgl.glfw.GLFW;
  * IF THE KEYS DON'T APPEAR IN THE CONFIGURATION MENU, you used wrong constructor!
  * Use {@link KeyCombo#KeyCombo(String, IKey, int...)} intead of {@link KeyCombo#KeyCombo(IKey, int...)}!
  */
-public class Keys
-{
+public class Keys {
     /* General */
     public static final KeyCombo DESELECT = new KeyCombo("deselect", UIKeys.CAMERA_EDITOR_KEYS_CLIPS_DESELECT, GLFW.GLFW_KEY_D, GLFW.GLFW_KEY_LEFT_CONTROL);
     public static final KeyCombo KEYBINDS = new KeyCombo("keybinds", UIKeys.KEYS_LIST, GLFW.GLFW_KEY_F9);

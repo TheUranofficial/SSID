@@ -6,20 +6,15 @@ import mchorse.bbs.voxel.tilesets.geometry.QuadGeometry;
 import mchorse.bbs.voxel.tilesets.models.BlockModel;
 import org.joml.Vector2i;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class BlockModelVertical extends BlockModelAll
-{
+public class BlockModelVertical extends BlockModelAll {
     public final Vector2i topUV = new Vector2i();
     public final Vector2i bottomUV = new Vector2i();
 
-    public BlockModelVertical()
-    {}
+    public BlockModelVertical() {
+    }
 
     @Override
-    public void compile()
-    {
+    public void compile() {
         super.compile();
 
         BlockModel model = this.models.list.get(0);
@@ -35,8 +30,7 @@ public class BlockModelVertical extends BlockModelAll
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
         data.put("top", DataStorageUtils.vector2iToData(this.topUV));
@@ -44,8 +38,7 @@ public class BlockModelVertical extends BlockModelAll
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         super.fromData(data);
 
         this.topUV.set(DataStorageUtils.vector2iFromData(data.getList("top")));

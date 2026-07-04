@@ -15,10 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelParser
-{
-    public static Model parse(MolangParser parser, MapType data)
-    {
+public class ModelParser {
+    public static Model parse(MolangParser parser, MapType data) {
         ListType texture = data.getList("texture");
         Model model = new Model(parser);
 
@@ -32,13 +30,11 @@ public class ModelParser
         return model;
     }
 
-    private static Model parseGroups(Model model, MapType groups)
-    {
+    private static Model parseGroups(Model model, MapType groups) {
         Map<String, List<String>> hierarchy = new HashMap<>();
         Map<String, ModelGroup> flatGroups = new HashMap<>();
 
-        for (String key : groups.keys())
-        {
+        for (String key : groups.keys()) {
             MapType groupElement = groups.getMap(key);
             ModelGroup group = new ModelGroup(key);
 
@@ -49,24 +45,20 @@ public class ModelParser
             list.add(group.id);
 
             /* Setup initial transformations */
-            if (groupElement.has("origin"))
-            {
+            if (groupElement.has("origin")) {
                 group.initial.translate.set(DataStorageUtils.vector3fFromData(groupElement.getList("origin")));
             }
 
-            if (groupElement.has("rotate"))
-            {
+            if (groupElement.has("rotate")) {
                 group.initial.rotate.set(DataStorageUtils.vector3fFromData(groupElement.getList("rotate")));
             }
 
             /* Setup cubes and meshes */
-            if (groupElement.has("cubes"))
-            {
+            if (groupElement.has("cubes")) {
                 parseCubes(model, group, groupElement.getList("cubes"));
             }
 
-            if (groupElement.has("meshes"))
-            {
+            if (groupElement.has("meshes")) {
                 parseMeshes(model, group, groupElement.getList("meshes"));
             }
 
@@ -74,27 +66,22 @@ public class ModelParser
         }
 
         /* Setup hierarchy */
-        for (Map.Entry<String, List<String>> entry : hierarchy.entrySet())
-        {
-            if (entry.getKey().isEmpty())
-            {
+        for (Map.Entry<String, List<String>> entry : hierarchy.entrySet()) {
+            if (entry.getKey().isEmpty()) {
                 continue;
             }
 
             ModelGroup group = flatGroups.get(entry.getKey());
 
-            for (String child : entry.getValue())
-            {
+            for (String child : entry.getValue()) {
                 group.children.add(flatGroups.get(child));
             }
         }
 
         List<String> topLevel = hierarchy.get("");
 
-        if (topLevel != null)
-        {
-            for (String rootGroup : topLevel)
-            {
+        if (topLevel != null) {
+            for (String rootGroup : topLevel) {
                 model.topGroups.add(flatGroups.get(rootGroup));
             }
         }
@@ -102,10 +89,8 @@ public class ModelParser
         return model;
     }
 
-    private static void parseCubes(Model model, ModelGroup group, ListType cubes)
-    {
-        for (BaseType element : cubes)
-        {
+    private static void parseCubes(Model model, ModelGroup group, ListType cubes) {
+        for (BaseType element : cubes) {
             ModelCube cube = new ModelCube();
 
             cube.fromData((MapType) element);
@@ -115,10 +100,8 @@ public class ModelParser
         }
     }
 
-    private static void parseMeshes(Model model, ModelGroup group, ListType meshes)
-    {
-        for (BaseType element : meshes)
-        {
+    private static void parseMeshes(Model model, ModelGroup group, ListType meshes) {
+        for (BaseType element : meshes) {
             ModelMesh mesh = new ModelMesh();
 
             mesh.fromData((MapType) element);

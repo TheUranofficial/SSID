@@ -13,15 +13,13 @@ import mchorse.bbs.utils.math.Interpolation;
 import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector3f;
 
-public class DollyClip extends IdleClip
-{
+public class DollyClip extends IdleClip {
     public final ValueFloat distance = new ValueFloat("distance", 0.1F);
     public final ValueInterpolation interp = new ValueInterpolation("interp");
     public final ValueFloat yaw = new ValueFloat("yaw", 0F);
     public final ValueFloat pitch = new ValueFloat("pitch", 0F);
 
-    public DollyClip()
-    {
+    public DollyClip() {
         super();
 
         this.add(this.distance);
@@ -31,8 +29,7 @@ public class DollyClip extends IdleClip
     }
 
     @Override
-    public void fromCamera(Camera camera)
-    {
+    public void fromCamera(Camera camera) {
         super.fromCamera(camera);
 
         this.yaw.set(this.position.get().angle.yaw);
@@ -40,8 +37,7 @@ public class DollyClip extends IdleClip
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         super.applyClip(context, position);
 
         Interpolation interp = this.interp.get();
@@ -63,14 +59,12 @@ public class DollyClip extends IdleClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new DollyClip();
     }
 
     @Override
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         super.breakDownClip(original, offset);
 
         DollyClip dolly = (DollyClip) original;

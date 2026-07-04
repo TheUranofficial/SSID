@@ -4,19 +4,14 @@ import mchorse.bbs.BBS;
 import mchorse.bbs.cubic.CubicModel;
 import mchorse.bbs.cubic.animation.ActionsConfig;
 import mchorse.bbs.cubic.animation.Animator;
-import mchorse.bbs.forms.properties.ActionsConfigProperty;
-import mchorse.bbs.forms.properties.ColorProperty;
-import mchorse.bbs.forms.properties.LinkProperty;
-import mchorse.bbs.forms.properties.PoseProperty;
-import mchorse.bbs.forms.properties.StringProperty;
+import mchorse.bbs.forms.properties.*;
 import mchorse.bbs.forms.renderers.FormRenderer;
 import mchorse.bbs.forms.renderers.ModelFormRenderer;
-import mchorse.bbs.utils.pose.Pose;
 import mchorse.bbs.utils.colors.Color;
+import mchorse.bbs.utils.pose.Pose;
 import mchorse.bbs.world.entities.Entity;
 
-public class ModelForm extends Form
-{
+public class ModelForm extends Form {
     public final LinkProperty texture = new LinkProperty(this, "texture", null);
     public final StringProperty model = new StringProperty(this, "model", "");
     public final PoseProperty pose = new PoseProperty(this, "pose", new Pose());
@@ -26,25 +21,21 @@ public class ModelForm extends Form
     private Animator animator;
     private long lastCheck;
 
-    public String getModelKey()
-    {
+    public String getModelKey() {
         return this.model.get();
     }
 
-    public CubicModel getModel()
-    {
+    public CubicModel getModel() {
         return BBS.getModels().getModel(this.model.get());
     }
 
-    public void setModel(String model)
-    {
+    public void setModel(String model) {
         this.model.set(model);
 
         this.resetAnimator();
     }
 
-    public ModelForm()
-    {
+    public ModelForm() {
         super();
 
         this.register(this.texture);
@@ -54,40 +45,33 @@ public class ModelForm extends Form
         this.register(this.color);
     }
 
-    public Animator getAnimator()
-    {
+    public Animator getAnimator() {
         return this.animator;
     }
 
     @Override
-    protected FormRenderer createRenderer()
-    {
+    protected FormRenderer createRenderer() {
         return new ModelFormRenderer(this);
     }
 
     @Override
-    public String getDefaultDisplayName()
-    {
+    public String getDefaultDisplayName() {
         return this.model.get();
     }
 
-    public Pose getPose(float transition)
-    {
+    public Pose getPose(float transition) {
         return this.pose.get(transition);
     }
 
-    public void resetAnimator()
-    {
+    public void resetAnimator() {
         this.animator = null;
         this.lastCheck = 0;
     }
 
-    public void ensureAnimator()
-    {
+    public void ensureAnimator() {
         CubicModel model = this.getModel();
 
-        if (model == null || this.lastCheck >= model.loadTime)
-        {
+        if (model == null || this.lastCheck >= model.loadTime) {
             return;
         }
 
@@ -98,14 +82,12 @@ public class ModelForm extends Form
     }
 
     @Override
-    public void update(Entity entity)
-    {
+    public void update(Entity entity) {
         super.update(entity);
 
         this.ensureAnimator();
 
-        if (this.animator != null)
-        {
+        if (this.animator != null) {
             this.animator.update(entity);
         }
     }

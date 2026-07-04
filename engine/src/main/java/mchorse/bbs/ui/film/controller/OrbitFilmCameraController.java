@@ -10,8 +10,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3d;
 
-public class OrbitFilmCameraController implements ICameraController
-{
+public class OrbitFilmCameraController implements ICameraController {
     private UIFilmController controller;
 
     public boolean enabled;
@@ -21,36 +20,29 @@ public class OrbitFilmCameraController implements ICameraController
     private Vector2i last = new Vector2i();
     private float distance = 5F;
 
-    public OrbitFilmCameraController(UIFilmController controller)
-    {
+    public OrbitFilmCameraController(UIFilmController controller) {
         this.controller = controller;
     }
 
-    public float getDistance()
-    {
+    public float getDistance() {
         return this.distance;
     }
 
-    public void start(UIContext context)
-    {
+    public void start(UIContext context) {
         this.orbiting = true;
         this.last.set(context.mouseX, context.mouseY);
     }
 
-    public void handleDistance(UIContext context)
-    {
+    public void handleDistance(UIContext context) {
         this.distance = MathUtils.clamp(this.distance + Math.copySign(1, context.mouseWheel), 0F, 100F);
     }
 
-    public void stop()
-    {
+    public void stop() {
         this.orbiting = false;
     }
 
-    public void handleOrbiting(UIContext context)
-    {
-        if (this.orbiting)
-        {
+    public void handleOrbiting(UIContext context) {
+        if (this.orbiting) {
             int x = context.mouseX;
             int y = context.mouseY;
 
@@ -64,12 +56,10 @@ public class OrbitFilmCameraController implements ICameraController
     }
 
     @Override
-    public void setup(Camera camera, float transition)
-    {
+    public void setup(Camera camera, float transition) {
         Entity entity = this.controller.getCurrentEntity();
 
-        if (entity != null)
-        {
+        if (entity != null) {
             Vector3d offset = new Vector3d(Matrices.rotation(this.rotation.x, this.rotation.y));
 
             offset.mul(this.distance);
@@ -81,8 +71,7 @@ public class OrbitFilmCameraController implements ICameraController
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return 20;
     }
 }

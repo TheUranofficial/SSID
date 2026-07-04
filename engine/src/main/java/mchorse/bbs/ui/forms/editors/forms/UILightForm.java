@@ -5,10 +5,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.panels.UILightFormPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UILightForm extends UIForm<LightForm>
-{
-    public UILightForm()
-    {
+public class UILightForm extends UIForm<LightForm> {
+    public UILightForm() {
         super();
 
         this.defaultPanel = new UILightFormPanel(this);

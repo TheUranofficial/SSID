@@ -13,9 +13,9 @@ import mchorse.bbs.graphics.texture.Texture;
 import mchorse.bbs.graphics.vao.VBOAttributes;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIContext;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.joml.Matrices;
+import mchorse.bbs.utils.pose.Transform;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -24,21 +24,17 @@ import org.lwjgl.opengl.GL30;
 import java.util.Arrays;
 import java.util.List;
 
-public class UISubtitleRenderer
-{
+public class UISubtitleRenderer {
     public static Shader blurShader;
 
-    private static void ensureShaderCreated(RenderingContext context)
-    {
-        if (blurShader == null)
-        {
+    private static void ensureShaderCreated(RenderingContext context) {
+        if (blurShader == null) {
             blurShader = new Shader(Link.assets("shaders/ui/vertex_uv_rgba_2d-blur.glsl"), VBOAttributes.VERTEX_UV_RGBA_2D);
             blurShader.onInitialize(CommonShaderAccess::initializeTexture).attachUBO(context.getUBO(), "u_matrices");
         }
     }
 
-    private static Framebuffer getTextFramebuffer()
-    {
+    private static Framebuffer getTextFramebuffer() {
         return BBS.getFramebuffers().getFramebuffer(Link.bbs("camera_subtitles"), (f) ->
         {
             Texture texture = BBS.getTextures().createTexture(Link.bbs("test"));
@@ -53,10 +49,8 @@ public class UISubtitleRenderer
         });
     }
 
-    public static void renderSubtitles(UIContext context, Framebuffer main, List<Subtitle> subtitles)
-    {
-        if (subtitles.isEmpty())
-        {
+    public static void renderSubtitles(UIContext context, Framebuffer main, List<Subtitle> subtitles) {
+        if (subtitles.isEmpty()) {
             return;
         }
 
@@ -74,12 +68,10 @@ public class UISubtitleRenderer
 
         GLStates.cullFaces(false);
 
-        for (Subtitle subtitle : subtitles)
-        {
+        for (Subtitle subtitle : subtitles) {
             float alpha = Colors.getAlpha(subtitle.color);
 
-            if (alpha <= 0)
-            {
+            if (alpha <= 0) {
                 continue;
             }
 
@@ -92,8 +84,7 @@ public class UISubtitleRenderer
 
             List<String> strings = subtitle.maxWidth <= 10 ? Arrays.asList(label) : context.font.split(label, subtitle.maxWidth);
 
-            for (String string : strings)
-            {
+            for (String string : strings) {
                 w = Math.max(w, context.font.getWidth(string.trim()));
             }
 
@@ -109,18 +100,14 @@ public class UISubtitleRenderer
 
             int yy = 5;
 
-            for (String string : strings)
-            {
+            for (String string : strings) {
                 string = string.trim();
 
                 int xx = 5 + (w - context.font.getWidth(string)) / 2;
 
-                if (Colors.getAlpha(subtitle.backgroundColor) > 0)
-                {
+                if (Colors.getAlpha(subtitle.backgroundColor) > 0) {
                     context.batcher.textCard(context.font, string, xx, yy, Colors.setA(subtitle.color, 1F), Colors.mulA(subtitle.backgroundColor, alpha), subtitle.backgroundOffset);
-                }
-                else
-                {
+                } else {
                     context.batcher.textShadow(context.font, string, xx, yy, Colors.setA(subtitle.color, 1F));
                 }
 

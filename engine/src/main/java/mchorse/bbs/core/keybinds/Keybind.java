@@ -8,20 +8,19 @@ import java.util.function.Consumer;
 
 /**
  * Keybind class
- * 
- * This bad boy stores information about the keybind and has utility 
- * methods for triggering a callback and checking whether this keybind 
+ * <p>
+ * This bad boy stores information about the keybind and has utility
+ * methods for triggering a callback and checking whether this keybind
  * is down.
  */
-public class Keybind
-{
+public class Keybind {
     /**
      * Identifier of this keybind
      */
     public final String id;
 
     /**
-     * Array of key codes which should be met in order for this keybind 
+     * Array of key codes which should be met in order for this keybind
      * to be considered down
      */
     public KeyCombo combo;
@@ -37,66 +36,58 @@ public class Keybind
     public Runnable onKeyReleased;
 
     /**
-     * How many times this keybind was pressed (GLFW seems to send 
+     * How many times this keybind was pressed (GLFW seems to send
      * multiple press events when the key is held so this allows)
      */
     private int counter = -1;
 
-    public Keybind(String id)
-    {
+    public Keybind(String id) {
         this(id, (Runnable) null);
     }
 
-    public Keybind(String id, Consumer<Boolean> callback)
-    {
+    public Keybind(String id, Consumer<Boolean> callback) {
         this.id = id;
         this.onKeyReleased = callback == null ? null : () -> callback.accept(true);
-        this.onKeyPressed = callback == null ? null :() -> callback.accept(false);
+        this.onKeyPressed = callback == null ? null : () -> callback.accept(false);
     }
 
-    public Keybind(String id, Runnable onKeyReleased)
-    {
+    public Keybind(String id, Runnable onKeyReleased) {
         this.id = id;
         this.onKeyReleased = onKeyReleased;
     }
 
-    public Keybind onPress(Runnable callback)
-    {
+    public Keybind onPress(Runnable callback) {
         this.onKeyPressed = callback;
 
         return this;
     }
 
     /**
-     * Set keycodes 
+     * Set keycodes
      */
-    public Keybind keys(int... keyCodes)
-    {
+    public Keybind keys(int... keyCodes) {
         this.combo = new KeyCombo(IKey.raw(this.id), keyCodes);
 
         return this;
     }
 
     /**
-     * Check whether this keybind is down. Useful to check somewhere in 
-     * the loop 
+     * Check whether this keybind is down. Useful to check somewhere in
+     * the loop
      */
-    public boolean isDown()
-    {
+    public boolean isDown() {
         return this.counter >= 0;
     }
 
     /**
-     * Check whether this key bind is down, but also supplying the key 
-     * code that was currently pressed or released 
+     * Check whether this key bind is down, but also supplying the key
+     * code that was currently pressed or released
      */
-    public boolean isDown(int inKey)
-    {
+    public boolean isDown(int inKey) {
         boolean result = true;
         boolean has = false;
 
-        for (int keyCode : this.combo.keys)
-        {
+        for (int keyCode : this.combo.keys) {
             if (inKey != keyCode) result = result && Window.isKeyPressed(keyCode);
             else has = true;
         }
@@ -108,32 +99,25 @@ public class Keybind
     }
 
     /**
-     * Trigger the callback was given to this keycode 
+     * Trigger the callback was given to this keycode
      */
-    public void apply(boolean release)
-    {
-        if (!release && this.counter > 0)
-        {
+    public void apply(boolean release) {
+        if (!release && this.counter > 0) {
             return;
         }
 
-        if (release)
-        {
+        if (release) {
             this.counter = -1;
         }
 
-        if (release && this.onKeyReleased != null)
-        {
+        if (release && this.onKeyReleased != null) {
             this.onKeyReleased.run();
-        }
-        else if (!release && this.onKeyPressed != null)
-        {
+        } else if (!release && this.onKeyPressed != null) {
             this.onKeyPressed.run();
         }
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.counter = -1;
     }
 }

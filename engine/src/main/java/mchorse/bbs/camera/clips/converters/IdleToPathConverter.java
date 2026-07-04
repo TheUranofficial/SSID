@@ -3,11 +3,9 @@ package mchorse.bbs.camera.clips.converters;
 import mchorse.bbs.camera.clips.overwrite.IdleClip;
 import mchorse.bbs.camera.clips.overwrite.PathClip;
 
-public class IdleToPathConverter implements IClipConverter<IdleClip, PathClip>
-{
+public class IdleToPathConverter implements IClipConverter<IdleClip, PathClip> {
     @Override
-    public PathClip convert(IdleClip clip)
-    {
+    public PathClip convert(IdleClip clip) {
         PathClip pathClip = new PathClip();
 
         pathClip.copy(clip);

@@ -4,8 +4,7 @@ import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.settings.values.base.BaseValue;
 
-public class Keyframe extends BaseValue
-{
+public class Keyframe extends BaseValue {
     public Keyframe prev;
     public Keyframe next;
 
@@ -20,138 +19,116 @@ public class Keyframe extends BaseValue
     private float lx = 5;
     private float ly;
 
-    public Keyframe(String id, long tick, double value)
-    {
+    public Keyframe(String id, long tick, double value) {
         this(id);
 
         this.tick = tick;
         this.value = value;
     }
 
-    public Keyframe(String id)
-    {
+    public Keyframe(String id) {
         super(id);
 
         this.prev = this;
         this.next = this;
     }
 
-    public long getTick()
-    {
+    public long getTick() {
         return this.tick;
     }
 
-    public void setTick(long tick)
-    {
+    public void setTick(long tick) {
         this.preNotifyParent();
         this.tick = tick;
         this.postNotifyParent();
     }
 
-    public double getValue()
-    {
+    public double getValue() {
         return this.value;
     }
 
-    public void setValue(double value)
-    {
+    public void setValue(double value) {
         this.preNotifyParent();
         this.value = value;
         this.postNotifyParent();
     }
 
-    public KeyframeInterpolation getInterpolation()
-    {
+    public KeyframeInterpolation getInterpolation() {
         return this.interp;
     }
 
-    public void setInterpolation(KeyframeInterpolation interp)
-    {
+    public void setInterpolation(KeyframeInterpolation interp) {
         this.preNotifyParent();
         this.interp = interp;
         this.postNotifyParent();
     }
 
-    public void setInterpolation(KeyframeInterpolation interp, KeyframeEasing easing)
-    {
+    public void setInterpolation(KeyframeInterpolation interp, KeyframeEasing easing) {
         this.preNotifyParent();
         this.interp = interp;
         this.easing = easing;
         this.postNotifyParent();
     }
 
-    public KeyframeEasing getEasing()
-    {
+    public KeyframeEasing getEasing() {
         return this.easing;
     }
 
-    public void setEasing(KeyframeEasing easing)
-    {
+    public void setEasing(KeyframeEasing easing) {
         this.preNotifyParent();
         this.easing = easing;
         this.postNotifyParent();
     }
 
-    public float getRx()
-    {
+    public float getRx() {
         return this.rx;
     }
 
-    public void setRx(float rx)
-    {
+    public void setRx(float rx) {
         this.preNotifyParent();
         this.rx = rx;
         this.postNotifyParent();
     }
 
-    public float getRy()
-    {
+    public float getRy() {
         return this.ry;
     }
 
-    public void setRy(float ry)
-    {
+    public void setRy(float ry) {
         this.preNotifyParent();
         this.ry = ry;
         this.postNotifyParent();
     }
 
-    public float getLx()
-    {
+    public float getLx() {
         return this.lx;
     }
 
-    public void setLx(float lx)
-    {
+    public void setLx(float lx) {
         this.preNotifyParent();
         this.lx = lx;
         this.postNotifyParent();
     }
 
-    public float getLy()
-    {
+    public float getLy() {
         return this.ly;
     }
 
-    public void setLy(float ly)
-    {
+    public void setLy(float ly) {
         this.preNotifyParent();
         this.ly = ly;
         this.postNotifyParent();
     }
 
-    public double interpolateTicks(Keyframe frame, double ticks)
-    {
+    public double interpolateTicks(Keyframe frame, double ticks) {
         return this.interp.interpolate(this, frame, (ticks - this.tick) / (frame.tick - this.tick));
     }
 
-    public double interpolate(Keyframe frame, double x)
-    {
+    public double interpolate(Keyframe frame, double x) {
         return this.interp.interpolate(this, frame, x);
     }
 
-    public Keyframe copy()
-    {
+    public Keyframe copy() {
         Keyframe frame = new Keyframe("", this.tick, this.value);
 
         frame.copy(this);
@@ -159,8 +136,7 @@ public class Keyframe extends BaseValue
         return frame;
     }
 
-    public void copy(Keyframe keyframe)
-    {
+    public void copy(Keyframe keyframe) {
         this.tick = keyframe.tick;
         this.value = keyframe.value;
         this.interp = keyframe.interp;
@@ -172,8 +148,7 @@ public class Keyframe extends BaseValue
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         MapType data = new MapType();
 
         data.putLong("tick", this.tick);
@@ -190,10 +165,8 @@ public class Keyframe extends BaseValue
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (!data.isMap())
-        {
+    public void fromData(BaseType data) {
+        if (!data.isMap()) {
             return;
         }
 

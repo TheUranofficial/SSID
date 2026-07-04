@@ -17,47 +17,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class FormArchitect extends MapFactory<Form, Function<Form, UIForm>>
-{
+public class FormArchitect extends MapFactory<Form, Function<Form, UIForm>> {
     public List<FormCategory> categories = new ArrayList<>();
 
-    public static File getUserCategoriesFile()
-    {
+    public static File getUserCategoriesFile() {
         return BBS.getConfigPath("forms.json");
     }
 
     @Override
-    public String getTypeKey()
-    {
+    public String getTypeKey() {
         return "id";
     }
 
-    public boolean has(MapType data)
-    {
-        if (data.has(this.getTypeKey()))
-        {
+    public boolean has(MapType data) {
+        if (data.has(this.getTypeKey())) {
             return this.has(Link.create(data.getString(this.getTypeKey())));
         }
 
         return false;
     }
 
-    public boolean has(Link id)
-    {
+    public boolean has(Link id) {
         return this.factory.containsKey(id);
     }
 
-    public UIForm getEditor(Form form)
-    {
-        if (form == null)
-        {
+    public UIForm getEditor(Form form) {
+        if (form == null) {
             return null;
         }
 
         Function<Form, UIForm> editor = this.getData(this.getType(form));
 
-        if (editor != null)
-        {
+        if (editor != null) {
             return editor.apply(form);
         }
 
@@ -66,14 +57,11 @@ public class FormArchitect extends MapFactory<Form, Function<Form, UIForm>>
 
     /* User categories */
 
-    public List<UserFormCategory> getUserCategories()
-    {
+    public List<UserFormCategory> getUserCategories() {
         List<UserFormCategory> categories = new ArrayList<>();
 
-        for (FormCategory category : this.categories)
-        {
-            if (category instanceof UserFormCategory)
-            {
+        for (FormCategory category : this.categories) {
+            if (category instanceof UserFormCategory) {
                 categories.add((UserFormCategory) category);
             }
         }
@@ -81,72 +69,54 @@ public class FormArchitect extends MapFactory<Form, Function<Form, UIForm>>
         return categories;
     }
 
-    public void readUserCategories()
-    {
+    public void readUserCategories() {
         this.readUserCategories(getUserCategoriesFile());
     }
 
-    public void readUserCategories(File file)
-    {
-        if (!file.exists())
-        {
+    public void readUserCategories(File file) {
+        if (!file.exists()) {
             return;
         }
 
-        try
-        {
+        try {
             MapType data = (MapType) DataToString.read(file);
 
-            for (String key : data.keys())
-            {
+            for (String key : data.keys()) {
                 UserFormCategory category = new UserFormCategory(IKey.raw(key));
 
                 category.fromData(data.getMap(key));
                 this.categories.add(category);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void writeUserCategories()
-    {
+    public void writeUserCategories() {
         this.writeUserCategories(getUserCategoriesFile());
     }
 
-    public void writeUserCategories(File file)
-    {
+    public void writeUserCategories(File file) {
         MapType data = new MapType(false);
 
-        for (UserFormCategory category : this.getUserCategories())
-        {
+        for (UserFormCategory category : this.getUserCategories()) {
             data.put(category.title.get(), category.toData());
         }
 
-        try
-        {
+        try {
             DataToString.write(file, data, true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addUserCategory(UserFormCategory category)
-    {
+    public void addUserCategory(UserFormCategory category) {
         int index = 0;
 
-        for (FormCategory formCat : BBS.getForms().categories)
-        {
-            if (formCat instanceof RecentFormCategory || formCat instanceof UserFormCategory)
-            {
+        for (FormCategory formCat : BBS.getForms().categories) {
+            if (formCat instanceof RecentFormCategory || formCat instanceof UserFormCategory) {
                 index += 1;
-            }
-            else
-            {
+            } else {
                 break;
             }
         }

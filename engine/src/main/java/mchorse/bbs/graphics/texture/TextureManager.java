@@ -16,34 +16,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TextureManager implements IDisposable, IWatchDogListener
-{
+public class TextureManager implements IDisposable, IWatchDogListener {
     public final Map<Link, Texture> textures = new HashMap<>();
     public AssetProvider provider;
 
     private Texture error;
     private TextureExtruder extruder = new TextureExtruder();
 
-    public TextureManager(AssetProvider provider)
-    {
+    public TextureManager(AssetProvider provider) {
         this.provider = provider;
     }
 
-    public TextureExtruder getExtruder()
-    {
+    public TextureExtruder getExtruder() {
         return this.extruder;
     }
 
-    private Texture getError()
-    {
-        if (this.error == null)
-        {
-            try
-            {
+    private Texture getError() {
+        if (this.error == null) {
+            try {
                 this.error = this.getTexture(Link.assets("textures/error.png"));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -51,42 +43,34 @@ public class TextureManager implements IDisposable, IWatchDogListener
         return this.error;
     }
 
-    public void bind(Link texture)
-    {
+    public void bind(Link texture) {
         this.getTexture(texture).bind();
     }
 
-    public void bind(Link texture, int unit)
-    {
+    public void bind(Link texture, int unit) {
         this.getTexture(texture).bind(unit);
     }
 
-    public boolean has(Link link)
-    {
+    public boolean has(Link link) {
         return this.getTexture(link) != this.getError();
     }
 
-    public void delete(Link link)
-    {
+    public void delete(Link link) {
         Texture texture = this.textures.remove(link);
 
-        if (texture != null)
-        {
+        if (texture != null) {
             texture.delete();
         }
     }
 
-    public Texture createTexture(Link link)
-    {
+    public Texture createTexture(Link link) {
         return this.createTexture(link, GL11.GL_NEAREST);
     }
 
-    public Texture createTexture(Link link, int filter)
-    {
+    public Texture createTexture(Link link, int filter) {
         Texture texture = this.textures.get(link);
 
-        if (texture == null || texture == this.getError())
-        {
+        if (texture == null || texture == this.getError()) {
             texture = new Texture();
             texture.setFilter(filter);
 
@@ -96,39 +80,30 @@ public class TextureManager implements IDisposable, IWatchDogListener
         return texture;
     }
 
-    public Pixels getPixels(Link link) throws Exception
-    {
+    public Pixels getPixels(Link link) throws Exception {
         Pixels pixels;
 
-        if (link instanceof MultiLink)
-        {
+        if (link instanceof MultiLink) {
             pixels = LinkUtils.getStreamForMultiLink((MultiLink) link);
-        }
-        else
-        {
+        } else {
             pixels = Pixels.fromPNGStream(this.provider.getAsset(link));
         }
 
         return pixels;
     }
 
-    public Texture getTexture(Link link)
-    {
+    public Texture getTexture(Link link) {
         return this.getTexture(link, GL11.GL_NEAREST);
     }
 
-    public Texture getTexture(Link link, int filter)
-    {
+    public Texture getTexture(Link link, int filter) {
         Texture texture = this.textures.get(link);
 
-        if (texture == null)
-        {
-            try
-            {
+        if (texture == null) {
+            try {
                 Pixels pixels = this.getPixels(link);
 
-                if (pixels != null)
-                {
+                if (pixels != null) {
                     texture = new Texture();
                     texture.setFilter(filter);
                     texture.uploadTexture(pixels);
@@ -138,9 +113,7 @@ public class TextureManager implements IDisposable, IWatchDogListener
 
                     this.textures.put(link, texture);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
 
                 texture = this.getError();
@@ -152,21 +125,17 @@ public class TextureManager implements IDisposable, IWatchDogListener
         return texture;
     }
 
-    public void reload()
-    {
+    public void reload() {
         this.reload(false);
     }
 
-    public void reload(boolean delete)
-    {
+    public void reload(boolean delete) {
         Iterator<Texture> it = this.textures.values().iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Texture texture = it.next();
 
-            if (texture.isRefreshable() || delete)
-            {
+            if (texture.isRefreshable() || delete) {
                 texture.delete();
 
                 it.remove();
@@ -178,8 +147,7 @@ public class TextureManager implements IDisposable, IWatchDogListener
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.reload(true);
     }
 
@@ -188,19 +156,16 @@ public class TextureManager implements IDisposable, IWatchDogListener
      * from "assets" source (which is in game's assets folder).
      */
     @Override
-    public void accept(Path path, WatchDogEvent event)
-    {
+    public void accept(Path path, WatchDogEvent event) {
         Link link = BBS.getProvider().getLink(path.toFile());
 
-        if (link == null)
-        {
+        if (link == null) {
             return;
         }
 
         Texture texture = this.textures.remove(link);
 
-        if (texture != null)
-        {
+        if (texture != null) {
             texture.delete();
         }
 

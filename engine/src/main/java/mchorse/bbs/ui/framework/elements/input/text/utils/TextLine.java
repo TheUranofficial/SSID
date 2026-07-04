@@ -6,41 +6,32 @@ import mchorse.bbs.utils.math.MathUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextLine
-{
+public class TextLine {
     public String text;
     public List<String> wrappedLines;
 
-    public TextLine(String text)
-    {
+    public TextLine(String text) {
         this.text = text;
     }
 
-    public void set(String text)
-    {
+    public void set(String text) {
         this.text = text;
     }
 
-    public int getLines()
-    {
+    public int getLines() {
         return this.wrappedLines == null ? 1 : this.wrappedLines.size();
     }
 
-    public void resetWrapping()
-    {
+    public void resetWrapping() {
         this.wrappedLines = null;
     }
 
-    public void calculateWrappedLines(FontRenderer font, int w)
-    {
+    public void calculateWrappedLines(FontRenderer font, int w) {
         List<String> wrappedLines = splitIntoLines(font, w);
 
-        if (wrappedLines.size() < 2)
-        {
+        if (wrappedLines.size() < 2) {
             this.wrappedLines = null;
-        }
-        else
-        {
+        } else {
             this.wrappedLines = wrappedLines;
         }
     }
@@ -49,12 +40,10 @@ public class TextLine
      * Shitty and inefficient algorithm to break lines which preserves
      * spaces and any other characters.
      */
-    private List<String> splitIntoLines(FontRenderer font, int w)
-    {
+    private List<String> splitIntoLines(FontRenderer font, int w) {
         List<String> lines = new ArrayList<>();
 
-        if (font.getWidth(this.text) < w)
-        {
+        if (font.getWidth(this.text) < w) {
             lines.add(this.text);
 
             return lines;
@@ -65,18 +54,15 @@ public class TextLine
         int c = this.text.length();
         int increment = c > 5 ? 3 : 1;
 
-        for (; right < c; right += increment)
-        {
+        for (; right < c; right += increment) {
             String string = this.text.substring(left, right);
             int sw = font.getWidth(string);
 
-            if (sw > w)
-            {
+            if (sw > w) {
                 int space = string.lastIndexOf(' ', right);
                 int diff = (right - left) - space;
 
-                if (space != -1 && diff < 12)
-                {
+                if (space != -1 && diff < 12) {
                     right -= diff - 1;
                     string = this.text.substring(left, right);
                 }
@@ -86,8 +72,7 @@ public class TextLine
             }
         }
 
-        if (left != right)
-        {
+        if (left != right) {
             lines.add(this.text.substring(left, MathUtils.clamp(right, 0, c)));
         }
 

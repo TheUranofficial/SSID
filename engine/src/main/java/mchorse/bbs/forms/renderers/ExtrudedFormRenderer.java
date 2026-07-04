@@ -11,20 +11,16 @@ import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.world.entities.Entity;
 
-public class ExtrudedFormRenderer extends FormRenderer<ExtrudedForm>
-{
-    public ExtrudedFormRenderer(ExtrudedForm form)
-    {
+public class ExtrudedFormRenderer extends FormRenderer<ExtrudedForm> {
+    public ExtrudedFormRenderer(ExtrudedForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         Link t = this.form.texture.get(context.getTransition());
 
-        if (t == null)
-        {
+        if (t == null) {
             return;
         }
 
@@ -44,13 +40,11 @@ public class ExtrudedFormRenderer extends FormRenderer<ExtrudedForm>
     }
 
     @Override
-    protected void render3D(Entity entity, RenderingContext context)
-    {
+    protected void render3D(Entity entity, RenderingContext context) {
         Link texture = this.form.texture.get(context.getTransition());
         VAO vao = context.getTextures().getExtruder().get(texture);
 
-        if (vao != null)
-        {
+        if (vao != null) {
             Shader shader = context.getShaders().get(VBOAttributes.VERTEX_NORMAL_UV_RGBA);
 
             context.getTextures().bind(texture);

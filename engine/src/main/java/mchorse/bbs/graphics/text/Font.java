@@ -4,22 +4,14 @@ import mchorse.bbs.BBS;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.graphics.text.format.BoldFontFormat;
-import mchorse.bbs.graphics.text.format.ColorFontFormat;
-import mchorse.bbs.graphics.text.format.IFontFormat;
-import mchorse.bbs.graphics.text.format.ItalicFontFormat;
-import mchorse.bbs.graphics.text.format.RainbowFontFormat;
-import mchorse.bbs.graphics.text.format.ResetFontFormat;
-import mchorse.bbs.graphics.text.format.ShakeFontFormat;
-import mchorse.bbs.graphics.text.format.WaveFontFormat;
+import mchorse.bbs.graphics.text.format.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Font implements IMapSerializable
-{
+public class Font implements IMapSerializable {
     public String name;
     public int height;
     public Glyph[] glyphs;
@@ -29,8 +21,7 @@ public class Font implements IMapSerializable
     public char boldChar;
     public char resetChar;
 
-    public static Font fromMap(MapType map)
-    {
+    public static Font fromMap(MapType map) {
         Font font = new Font();
 
         font.fromData(map);
@@ -38,8 +29,7 @@ public class Font implements IMapSerializable
         return font;
     }
 
-    public Font()
-    {
+    public Font() {
         this.registerFontFormat(new ColorFontFormat('0', 0xff000000));
         this.registerFontFormat(new ColorFontFormat('1', 0xff3d3d3d));
         this.registerFontFormat(new ColorFontFormat('2', 0xff858585));
@@ -63,33 +53,26 @@ public class Font implements IMapSerializable
         this.registerFontFormat(new ResetFontFormat('r'));
     }
 
-    private void registerFontFormat(IFontFormat format)
-    {
-        if (format instanceof BoldFontFormat)
-        {
+    private void registerFontFormat(IFontFormat format) {
+        if (format instanceof BoldFontFormat) {
             this.boldChar = format.getControlCharacter();
-        }
-        else if (format instanceof ResetFontFormat)
-        {
+        } else if (format instanceof ResetFontFormat) {
             this.resetChar = format.getControlCharacter();
         }
 
         this.formats.put((int) format.getControlCharacter(), format);
     }
 
-    public void setupGlyphs(List<Glyph> glyphs)
-    {
+    public void setupGlyphs(List<Glyph> glyphs) {
         int max = 0;
 
-        for (Glyph glyph : glyphs)
-        {
+        for (Glyph glyph : glyphs) {
             max = Math.max(max, glyph.character);
         }
 
         Glyph[] array = new Glyph[max + 1];
 
-        for (Glyph glyph : glyphs)
-        {
+        for (Glyph glyph : glyphs) {
             array[glyph.character] = glyph;
         }
 
@@ -97,12 +80,10 @@ public class Font implements IMapSerializable
     }
 
     /**
-     * Get glyph by given character 
+     * Get glyph by given character
      */
-    public Glyph getGlyph(char glyph)
-    {
-        if (glyph >= this.glyphs.length)
-        {
+    public Glyph getGlyph(char glyph) {
+        if (glyph >= this.glyphs.length) {
             return null;
         }
 
@@ -110,21 +91,17 @@ public class Font implements IMapSerializable
     }
 
     /**
-     * Get kerning of the right character relative to the left one 
+     * Get kerning of the right character relative to the left one
      */
-    public int getKerning(char left, char right)
-    {
+    public int getKerning(char left, char right) {
         Glyph l = this.getGlyph(left);
 
-        if (l == null || l.kernings.isEmpty())
-        {
+        if (l == null || l.kernings.isEmpty()) {
             return 0;
         }
 
-        for (Kerning kern : l.kernings)
-        {
-            if (kern.right == right)
-            {
+        for (Kerning kern : l.kernings) {
+            if (kern.right == right) {
                 return kern.kerning;
             }
         }
@@ -133,8 +110,7 @@ public class Font implements IMapSerializable
     }
 
     @Override
-    public void fromData(MapType map)
-    {
+    public void fromData(MapType map) {
         this.formats.clear();
         this.boldChar = '\0';
         this.resetChar = '\0';
@@ -144,16 +120,13 @@ public class Font implements IMapSerializable
 
         MapType formats = map.getMap("formats");
 
-        for (String key : formats.keys())
-        {
+        for (String key : formats.keys()) {
             BaseType baseType = formats.get(key);
 
-            if (baseType.isMap())
-            {
+            if (baseType.isMap()) {
                 IFontFormat format = BBS.getFactoryFontFormats().fromData(baseType.asMap());
 
-                if (format != null)
-                {
+                if (format != null) {
                     format.setControlCharacter(key);
                     this.registerFontFormat(format);
                 }
@@ -163,8 +136,7 @@ public class Font implements IMapSerializable
         MapType glyphData = map.getMap("glyphs");
         List<Glyph> glyphs = new ArrayList<>();
 
-        for (String key : glyphData.keys())
-        {
+        for (String key : glyphData.keys()) {
             Glyph glyph = new Glyph();
 
             glyph.fromData(glyphData.getMap(key));
@@ -176,23 +148,19 @@ public class Font implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putString("name", this.name);
         data.putInt("height", this.height);
 
         MapType formats = new MapType(false);
         MapType glyphs = new MapType(false);
 
-        for (IFontFormat format : this.formats.values())
-        {
+        for (IFontFormat format : this.formats.values()) {
             formats.put(String.valueOf(format.getControlCharacter()), BBS.getFactoryFontFormats().toData(format));
         }
 
-        for (Glyph glyph : this.glyphs)
-        {
-            if (glyph != null)
-            {
+        for (Glyph glyph : this.glyphs) {
+            if (glyph != null) {
                 MapType glyphData = glyph.toData();
 
                 glyphs.put(String.valueOf((int) glyph.character), glyphData);

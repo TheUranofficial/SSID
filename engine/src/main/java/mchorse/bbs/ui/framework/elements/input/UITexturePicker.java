@@ -39,12 +39,11 @@ import java.util.function.Consumer;
 
 /**
  * Texture picker GUI
- * 
- * This bad boy allows picking a texture from the file browser, and also 
+ * <p>
+ * This bad boy allows picking a texture from the file browser, and also
  * it allows creating multi-skins. See {@link MultiLink} for more information.
  */
-public class UITexturePicker extends UIElement implements IFileDropListener
-{
+public class UITexturePicker extends UIElement implements IFileDropListener {
     public UIElement right;
     public UITextbox text;
     public UIIcon close;
@@ -72,10 +71,8 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     private Timer lastChecked = new Timer(1000);
     private String typed = "";
 
-    public static UITexturePicker open(UIElement parent, Link current, Consumer<Link> callback)
-    {
-        if (!parent.getChildren(UITexturePicker.class).isEmpty())
-        {
+    public static UITexturePicker open(UIElement parent, Link current, Consumer<Link> callback) {
+        if (!parent.getChildren(UITexturePicker.class).isEmpty()) {
             return null;
         }
 
@@ -90,8 +87,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         return picker;
     }
 
-    public UITexturePicker(Consumer<Link> callback)
-    {
+    public UITexturePicker(Consumer<Link> callback) {
         super();
 
         this.right = new UIElement();
@@ -102,8 +98,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
 
             menu.action(Icons.COPY, UIKeys.TEXTURE_EDITOR_CONTEXT_COPY, this::copyLink);
 
-            if (location != null)
-            {
+            if (location != null) {
                 menu.action(Icons.PASTE, UIKeys.TEXTURE_EDITOR_CONTEXT_PASTE, () -> this.pasteLink(location));
             }
         });
@@ -113,8 +108,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         this.pixelEdit = new UIIcon(Icons.EDIT, (b) -> this.togglePixelEditor());
         this.picker = new UIFileLinkList(this::selectCurrent) {
             @Override
-            public void setPath(Link folder, boolean fastForward)
-            {
+            public void setPath(Link folder, boolean fastForward) {
                 super.setPath(folder, fastForward);
 
                 UITexturePicker.this.updateFolderButton();
@@ -161,23 +155,18 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         this.markContainer().eventPropagataion(EventPropagation.BLOCK);
     }
 
-    private Link parseLink()
-    {
+    private Link parseLink() {
         MapType map = Window.getClipboardMap();
 
         return map == null ? null : LinkUtils.create(map.get("link"));
     }
 
-    private void copyLink()
-    {
+    private void copyLink() {
         BaseType base = LinkUtils.toData(this.multiLink != null ? this.multiLink : this.current);
 
-        if (base == null)
-        {
+        if (base == null) {
             Window.setClipboard("");
-        }
-        else
-        {
+        } else {
             MapType map = new MapType();
 
             map.put("link", base);
@@ -186,22 +175,18 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         }
     }
 
-    private void pasteLink(Link location)
-    {
+    private void pasteLink(Link location) {
         this.setMulti(location, true);
     }
 
-    public void close()
-    {
+    public void close() {
         boolean wasVisible = this.hasParent();
 
         this.editor.close();
         this.removeFromParent();
 
-        if (this.callback != null && wasVisible)
-        {
-            if (this.multiLink != null)
-            {
+        if (this.callback != null && wasVisible) {
+            if (this.multiLink != null) {
                 this.multiLink.recalculateId();
             }
 
@@ -210,30 +195,23 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     }
 
     @Override
-    public void acceptFilePaths(String[] paths)
-    {
+    public void acceptFilePaths(String[] paths) {
         File target = BBS.getProvider().getFile(this.picker.path);
 
-        if (target == null || !target.isDirectory())
-        {
+        if (target == null || !target.isDirectory()) {
             return;
         }
 
-        for (String path : paths)
-        {
+        for (String path : paths) {
             File file = new File(path);
 
-            if (file.isFile())
-            {
+            if (file.isFile()) {
                 String name = file.getName();
                 File copy = IOUtils.findNonExistingFile(new File(target, name));
 
-                try
-                {
+                try {
                     Files.copy(file.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -242,31 +220,25 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         this.refresh();
     }
 
-    public void refresh()
-    {
+    public void refresh() {
         this.picker.update();
         this.updateFolderButton();
     }
 
-    public void openFolder()
-    {
+    public void openFolder() {
         File target = BBS.getProvider().getFile(this.picker.path);
 
-        if (target != null && target.isDirectory())
-        {
+        if (target != null && target.isDirectory()) {
             UIUtils.openFolder(target);
         }
     }
 
-    public void togglePixelEditor()
-    {
-        if (this.current == null || this.multiLink != null)
-        {
+    public void togglePixelEditor() {
+        if (this.current == null || this.multiLink != null) {
             return;
         }
 
-        if (this.pixelEditor == null)
-        {
+        if (this.pixelEditor == null) {
             this.pixelEditor = new UITextureEditor();
             this.pixelEditor.fillTexture(this.current);
             this.pixelEditor.setEditing(true);
@@ -278,9 +250,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
             this.pixelEditor.resize();
 
             this.add(this.pixelEditor);
-        }
-        else
-        {
+        } else {
             this.pixelEditor.fillTexture(null);
             this.pixelEditor.removeFromParent();
             this.pixelEditor = null;
@@ -290,23 +260,20 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         this.multi.setVisible(this.pixelEditor == null);
     }
 
-    public void updateFolderButton()
-    {
+    public void updateFolderButton() {
         File target = BBS.getProvider().getFile(this.picker.path);
 
         this.folder.setEnabled(target != null && target.isDirectory());
     }
 
-    public void fill(Link link)
-    {
+    public void fill(Link link) {
         this.setMulti(link, false);
     }
 
     /**
      * Add a {@link Link} to the MultiLink
      */
-    private void addMulti()
-    {
+    private void addMulti() {
         FilteredLink filtered = this.currentFiltered.copyFiltered();
 
         this.multiList.add(filtered);
@@ -317,47 +284,40 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     /**
      * Remove currently selected {@link Link} from multiLink
      */
-    private void removeMulti()
-    {
+    private void removeMulti() {
         int index = this.multiList.getIndex();
 
-        if (index >= 0 && this.multiList.getList().size() > 1)
-        {
+        if (index >= 0 && this.multiList.getList().size() > 1) {
             this.multiList.getList().remove(index);
             this.multiList.update();
             this.multiList.setIndex(index - 1);
 
-            if (this.multiList.getIndex() >= 0)
-            {
+            if (this.multiList.getIndex() >= 0) {
                 this.setFilteredLink(this.multiList.getCurrent().get(0));
             }
         }
     }
 
-    private void setFilteredLink(FilteredLink location)
-    {
+    private void setFilteredLink(FilteredLink location) {
         this.currentFiltered = location;
         this.displayCurrent(location.path);
         this.editor.setLink(location);
     }
 
-    private void toggleEditor()
-    {
+    private void toggleEditor() {
         this.editor.toggleVisible();
         this.right.setVisible(!this.editor.isVisible());
 
-        if (this.editor.isVisible())
-        {
+        if (this.editor.isVisible()) {
             this.editor.resetView();
         }
     }
 
     /**
-     * Display current resource location (it's just for visual, not 
+     * Display current resource location (it's just for visual, not
      * logic)
      */
-    protected void displayCurrent(Link link)
-    {
+    protected void displayCurrent(Link link) {
         this.current = link;
 
         this.text.setText(link == null ? "" : link.toString());
@@ -370,29 +330,21 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     /**
      * Select current resource location
      */
-    protected void selectCurrent(Link link)
-    {
-        if (link != null && !BBS.getTextures().has(link))
-        {
+    protected void selectCurrent(Link link) {
+        if (link != null && !BBS.getTextures().has(link)) {
             return;
         }
 
         this.current = link;
 
-        if (this.multiLink != null)
-        {
-            if (link == null && this.multiLink.children.size() == 1)
-            {
+        if (this.multiLink != null) {
+            if (link == null && this.multiLink.children.size() == 1) {
                 this.currentFiltered.path = null;
                 this.toggleMulti();
-            }
-            else
-            {
+            } else {
                 this.currentFiltered.path = link;
             }
-        }
-        else if (this.callback != null)
-        {
+        } else if (this.callback != null) {
             this.callback.accept(link);
         }
 
@@ -400,68 +352,51 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         this.text.setText(link.toString());
     }
 
-    protected void toggleMulti()
-    {
-        if (this.multiLink != null)
-        {
+    protected void toggleMulti() {
+        if (this.multiLink != null) {
             this.setMulti(this.multiLink.children.get(0).path, true);
-        }
-        else if (this.current != null)
-        {
+        } else if (this.current != null) {
             this.setMulti(new MultiLink(this.current.toString()), true);
-        }
-        else
-        {
+        } else {
             UIFileLinkList.FileLink link = this.picker.getCurrentFirst();
 
-            if (link != null)
-            {
+            if (link != null) {
                 this.setMulti(link.link, true);
             }
         }
     }
 
-    protected void setMulti(Link skin, boolean notify)
-    {
-        if (this.editor.isVisible())
-        {
+    protected void setMulti(Link skin, boolean notify) {
+        if (this.editor.isVisible()) {
             this.toggleEditor();
         }
 
         boolean show = skin instanceof MultiLink;
 
-        if (show)
-        {
+        if (show) {
             this.multiLink = (MultiLink) ((MultiLink) skin).copy();
             this.setFilteredLink(this.multiLink.children.get(0));
 
             this.multiList.setIndex(this.multiLink.children.isEmpty() ? -1 : 0);
             this.multiList.setList(this.multiLink.children);
 
-            if (this.current != null)
-            {
+            if (this.current != null) {
                 this.multiList.setIndex(0);
             }
 
             this.right.x(120).w(1F, -120);
-        }
-        else
-        {
+        } else {
             this.multiLink = null;
 
             this.right.x(0).w(1F);
             this.displayCurrent(skin);
         }
 
-        if (notify)
-        {
-            if (show && this.callback != null)
-            {
+        if (notify) {
+            if (show && this.callback != null) {
                 this.multiLink.recalculateId();
                 this.callback.accept(skin);
-            }
-            else
-            {
+            } else {
                 this.selectCurrent(skin);
             }
         }
@@ -474,35 +409,24 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     }
 
     @Override
-    public boolean subKeyPressed(UIContext context)
-    {
-        if (context.isPressed(GLFW.GLFW_KEY_ENTER))
-        {
+    public boolean subKeyPressed(UIContext context) {
+        if (context.isPressed(GLFW.GLFW_KEY_ENTER)) {
             UIFileLinkList.FileLink link = this.picker.getCurrentFirst();
 
-            if (link != null && link.folder)
-            {
+            if (link != null && link.folder) {
                 this.picker.setPath(link.link);
-            }
-            else if (link != null)
-            {
+            } else if (link != null) {
                 this.selectCurrent(link.link);
             }
 
             this.typed = "";
 
             return true;
-        }
-        else if (context.isHeld(GLFW.GLFW_KEY_UP))
-        {
+        } else if (context.isHeld(GLFW.GLFW_KEY_UP)) {
             return this.moveCurrent(-1, Window.isShiftPressed());
-        }
-        else if (context.isHeld(GLFW.GLFW_KEY_DOWN))
-        {
+        } else if (context.isHeld(GLFW.GLFW_KEY_DOWN)) {
             return this.moveCurrent(1, Window.isShiftPressed());
-        }
-        else if (context.isPressed(GLFW.GLFW_KEY_ESCAPE))
-        {
+        } else if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
             this.close();
 
             return true;
@@ -511,8 +435,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         return super.subKeyPressed(context);
     }
 
-    protected boolean moveCurrent(int factor, boolean top)
-    {
+    protected boolean moveCurrent(int factor, boolean top) {
         int index = this.picker.getIndex() + factor;
         int length = this.picker.getList().size();
 
@@ -529,32 +452,26 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     }
 
     @Override
-    public boolean subTextInput(UIContext context)
-    {
+    public boolean subTextInput(UIContext context) {
         return this.pickByTyping(context, context.getInputCharacter());
     }
 
-    protected boolean pickByTyping(UIContext context, char inputChar)
-    {
-        if (!context.font.hasCharacter(inputChar))
-        {
+    protected boolean pickByTyping(UIContext context, char inputChar) {
+        if (!context.font.hasCharacter(inputChar)) {
             return false;
         }
 
-        if (this.lastTyped.checkReset())
-        {
+        if (this.lastTyped.checkReset()) {
             this.typed = "";
         }
 
         this.typed += Character.toString(inputChar);
         this.lastTyped.mark();
 
-        for (UIFileLinkList.FileLink entry : this.picker.getList())
-        {
+        for (UIFileLinkList.FileLink entry : this.picker.getList()) {
             String name = entry.title;
 
-            if (name.startsWith(this.typed))
-            {
+            if (name.startsWith(this.typed)) {
                 this.picker.setCurrentScroll(entry);
 
                 return true;
@@ -565,22 +482,18 @@ public class UITexturePicker extends UIElement implements IFileDropListener
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         /* Refresh the list */
-        if (this.lastChecked.checkRepeat())
-        {
+        if (this.lastChecked.checkRepeat()) {
             File file = BBS.getProvider().getFile(this.picker.path);
             int scroll = this.picker.scroll.scroll;
 
-            if (file != null)
-            {
+            if (file != null) {
                 UIFileLinkList.FileLink selected = this.picker.getCurrentFirst();
 
                 this.picker.setPath(this.picker.path, false);
 
-                if (selected != null)
-                {
+                if (selected != null) {
                     this.picker.setCurrent(selected.link);
                 }
             }
@@ -591,33 +504,28 @@ public class UITexturePicker extends UIElement implements IFileDropListener
         /* Draw the background */
         context.batcher.gradientVBox(this.area.x, this.area.y, this.area.ex(), this.area.ey(), Colors.A50, Colors.A100);
 
-        if (this.multiList.isVisible())
-        {
+        if (this.multiList.isVisible()) {
             context.batcher.box(this.area.x, this.area.y, this.area.x + 120, this.area.ey(), 0xff181818);
             context.batcher.box(this.area.x, this.area.y, this.area.x + 120, this.area.y + 30, Colors.A25);
             context.batcher.gradientVBox(this.area.x, this.area.ey() - 20, this.buttons.area.ex(), this.area.ey(), 0, Colors.A50);
         }
 
-        if (this.editor.isVisible())
-        {
+        if (this.editor.isVisible()) {
             this.edit.area.render(context.batcher, Colors.A50 | BBSSettings.primaryColor.get());
         }
 
         super.render(context);
 
         /* Draw the overlays */
-        if (this.right.isVisible())
-        {
-            if (this.picker.getList().isEmpty())
-            {
+        if (this.right.isVisible()) {
+            if (this.picker.getList().isEmpty()) {
                 String label = UIKeys.TEXTURE_NO_DATA.get();
                 int w = context.font.getWidth(label);
 
                 context.batcher.text(label, this.picker.area.mx(w), this.picker.area.my() - 8);
             }
 
-            if (!this.lastTyped.check() && this.lastTyped.enabled)
-            {
+            if (!this.lastTyped.check() && this.lastTyped.enabled) {
                 int w = context.font.getWidth(this.typed);
                 int x = this.text.area.x;
                 int y = this.text.area.ey();
@@ -629,8 +537,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener
             Link link = this.current;
 
             /* Draw preview */
-            if (link != null)
-            {
+            if (link != null) {
                 Texture texture = context.render.getTextures().getTexture(link);
 
                 int w = texture.width;
@@ -641,16 +548,12 @@ public class UITexturePicker extends UIElement implements IFileDropListener
                 int fw = w;
                 int fh = h;
 
-                if (fw > 128 || fh > 128)
-                {
+                if (fw > 128 || fh > 128) {
                     fw = fh = 128;
 
-                    if (w > h)
-                    {
+                    if (w > h) {
                         fh = (int) ((h / (float) w) * fw);
-                    }
-                    else if (h > w)
-                    {
+                    } else if (h > w) {
                         fw = (int) ((w / (float) h) * fh);
                     }
                 }

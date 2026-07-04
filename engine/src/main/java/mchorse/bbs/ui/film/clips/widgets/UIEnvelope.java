@@ -1,7 +1,6 @@
 package mchorse.bbs.ui.film.clips.widgets;
 
 import mchorse.bbs.camera.utils.TimeUtils;
-import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.film.clips.UIClip;
 import mchorse.bbs.ui.film.utils.UICameraUtils;
@@ -17,8 +16,7 @@ import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.clips.Envelope;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UIEnvelope extends UIElement
-{
+public class UIEnvelope extends UIElement {
     public UIClip<? extends Clip> panel;
 
     public UIToggle enabled;
@@ -31,8 +29,7 @@ public class UIEnvelope extends UIElement
     public UIButton editKeyframes;
     public UICameraDopeSheetEditor channel;
 
-    public UIEnvelope(UIClip<? extends Clip> panel)
-    {
+    public UIEnvelope(UIClip<? extends Clip> panel) {
         super();
 
         this.panel = panel;
@@ -87,36 +84,29 @@ public class UIEnvelope extends UIElement
         this.column().vertical().stretch();
     }
 
-    private void toggleKeyframes(boolean toggled)
-    {
+    private void toggleKeyframes(boolean toggled) {
         this.removeAll();
 
         this.add(this.enabled);
 
-        if (toggled)
-        {
+        if (toggled) {
             this.add(this.editKeyframes);
-        }
-        else
-        {
+        } else {
             this.add(UI.row(this.pre, this.post), UI.row(this.fadeIn, this.fadeOut));
         }
 
         this.add(this.keyframes);
 
-        if (this.hasParent())
-        {
+        if (this.hasParent()) {
             this.getParent().resize();
 
-            if (toggled)
-            {
+            if (toggled) {
                 this.initiate();
             }
         }
     }
 
-    public void initiate()
-    {
+    public void initiate() {
         this.updateDuration();
         this.channel.resetView();
         this.channel.updateConverter();
@@ -127,8 +117,7 @@ public class UIEnvelope extends UIElement
         this.fillIntervals();
     }
 
-    public void fillData()
-    {
+    public void fillData() {
         Envelope envelope = this.get();
 
         this.enabled.setValue(envelope.enabled.get());
@@ -139,26 +128,22 @@ public class UIEnvelope extends UIElement
         this.toggleKeyframes(envelope.keyframes.get());
     }
 
-    private void fillIntervals()
-    {
+    private void fillIntervals() {
         Envelope envelope = this.get();
 
         this.fadeIn.setValue(TimeUtils.toTime(envelope.fadeIn.get().intValue()));
         this.fadeOut.setValue(TimeUtils.toTime(envelope.fadeOut.get().intValue()));
     }
 
-    public void updateDuration()
-    {
+    public void updateDuration() {
         this.channel.keyframes.duration = this.getDuration();
     }
 
-    public int getDuration()
-    {
+    public int getDuration() {
         return this.panel.clip.duration.get();
     }
 
-    public Envelope get()
-    {
+    public Envelope get() {
         return this.panel.clip.envelope;
     }
 }

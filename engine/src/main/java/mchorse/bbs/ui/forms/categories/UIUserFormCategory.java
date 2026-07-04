@@ -13,10 +13,8 @@ import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
 import mchorse.bbs.ui.framework.elements.overlay.UIPromptOverlayPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UIUserFormCategory extends UIFormCategory
-{
-    public UIUserFormCategory(FormCategory category, UIFormList list)
-    {
+public class UIUserFormCategory extends UIFormCategory {
+    public UIUserFormCategory(FormCategory category, UIFormList list) {
         super(category, list);
 
         this.context((menu) ->
@@ -37,18 +35,15 @@ public class UIUserFormCategory extends UIFormCategory
                 UIOverlay.addOverlay(this.getContext(), panel);
             });
 
-            try
-            {
+            try {
                 MapType data = Window.getClipboardMap();
                 Form form = FormUtils.fromData(data);
 
                 menu.action(Icons.PASTE, UIKeys.FORMS_CATEGORIES_CONTEXT_PASTE_FORM, () -> this.category.forms.add(form));
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
 
-            if (this.selected != null)
-            {
+            if (this.selected != null) {
                 menu.action(Icons.REMOVE, UIKeys.FORMS_CATEGORIES_CONTEXT_REMOVE_FORM, () ->
                 {
                     this.category.forms.remove(this.selected);
@@ -58,8 +53,7 @@ public class UIUserFormCategory extends UIFormCategory
         });
     }
 
-    private UserFormCategory getCategory()
-    {
+    private UserFormCategory getCategory() {
         return (UserFormCategory) this.category;
     }
 }

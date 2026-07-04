@@ -11,16 +11,14 @@ import mchorse.bbs.ui.framework.elements.events.UIRemovedEvent;
 import mchorse.bbs.ui.world.entities.UIVector3d;
 import mchorse.bbs.world.objects.PropObject;
 
-public class UIPropWorldObject extends UIWorldObject<PropObject>
-{
+public class UIPropWorldObject extends UIWorldObject<PropObject> {
     public UINestedEdit form;
     public UIToggle collidable;
     public UIVector3d hitbox;
 
     public UIPropTransform transforms;
 
-    public UIPropWorldObject()
-    {
+    public UIPropWorldObject() {
         super();
 
         this.form = new UINestedEdit((editing) ->
@@ -28,8 +26,7 @@ public class UIPropWorldObject extends UIWorldObject<PropObject>
             UIContext context = this.getContext();
             UIFormPalette palette = UIFormPalette.open(context.menu.overlay, editing, this.object.form, this::setForm);
 
-            if (palette != null)
-            {
+            if (palette != null) {
                 context.menu.main.setVisible(false);
 
                 palette.getEvents().register(UIRemovedEvent.class, (e) ->
@@ -50,17 +47,14 @@ public class UIPropWorldObject extends UIWorldObject<PropObject>
         this.add(this.collidable, this.hitbox, this.transforms.marginTop(8));
     }
 
-    private void setForm(Form form)
-    {
-        if (this.object != null)
-        {
+    private void setForm(Form form) {
+        if (this.object != null) {
             this.object.form = form;
         }
     }
 
     @Override
-    public void fillData(PropObject object)
-    {
+    public void fillData(PropObject object) {
         super.fillData(object);
 
         this.collidable.setValue(object.collidable);

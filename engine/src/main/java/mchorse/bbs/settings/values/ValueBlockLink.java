@@ -15,21 +15,17 @@ import mchorse.bbs.voxel.tilesets.BlockSet;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValueBlockLink extends BaseValueBasic<BlockLink> implements IValueUIProvider
-{
-    public ValueBlockLink(String id)
-    {
+public class ValueBlockLink extends BaseValueBasic<BlockLink> implements IValueUIProvider {
+    public ValueBlockLink(String id) {
         super(id, null);
     }
 
-    public IBlockVariant get(BlockSet set)
-    {
+    public IBlockVariant get(BlockSet set) {
         return set.getVariant(this.value);
     }
 
     @Override
-    public List<UIElement> getFields(UIElement ui)
-    {
+    public List<UIElement> getFields(UIElement ui) {
         IBlockVariant value = this.get(ui.getContext().menu.bridge.get(IBridgeWorld.class).getWorld().chunks.builder.models);
 
         UIElement element = new UIElement();
@@ -46,16 +42,13 @@ public class ValueBlockLink extends BaseValueBasic<BlockLink> implements IValueU
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return new StringType(this.value == null ? "" : this.value.toString());
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (data.isString())
-        {
+    public void fromData(BaseType data) {
+        if (data.isString()) {
             this.value = BlockLink.create(data.asString());
         }
     }

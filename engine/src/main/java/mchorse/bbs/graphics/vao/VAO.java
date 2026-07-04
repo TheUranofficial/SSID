@@ -11,12 +11,11 @@ import java.nio.IntBuffer;
 
 /**
  * VAO class
- * 
- * This class allows to create VAO and related VBOs much easier. Used for 
+ * <p>
+ * This class allows to create VAO and related VBOs much easier. Used for
  * rendering, of course.
  */
-public class VAO implements IDisposable
-{
+public class VAO implements IDisposable {
     public static final ByteBuffer DATA = MemoryUtil.memAlloc(8 * 1024 * 1024);
     public static final IntBuffer INDICES = MemoryUtil.memAllocInt(2 * 1024 * 1024);
 
@@ -46,24 +45,20 @@ public class VAO implements IDisposable
     public int vertices;
 
     /**
-     * Initialize VAO 
+     * Initialize VAO
      */
-    public VAO()
-    {
+    public VAO() {
         this.vao = GL30.glGenVertexArrays();
 
         this.bind();
     }
 
-    public VAO register(VBOAttributes attributes)
-    {
+    public VAO register(VBOAttributes attributes) {
         return this.register(GL15.GL_STATIC_DRAW, attributes);
     }
 
-    public VAO register(int usage, VBOAttributes attributes)
-    {
-        if (this.data == null)
-        {
+    public VAO register(int usage, VBOAttributes attributes) {
+        if (this.data == null) {
             this.data = new VBO(usage, attributes);
             this.data.init();
         }
@@ -71,13 +66,11 @@ public class VAO implements IDisposable
         return this;
     }
 
-    public VAO registerIndex()
-    {
+    public VAO registerIndex() {
         return this.registerIndex(GL15.GL_STATIC_DRAW);
     }
 
-    public VAO registerIndex(int usage)
-    {
+    public VAO registerIndex(int usage) {
         this.index = new VBO(usage);
         this.index.init();
 
@@ -87,8 +80,7 @@ public class VAO implements IDisposable
     /**
      * VAO MUST BE BOUND BEFORE UPLOADING THE DATA!
      */
-    public VAO uploadData(ByteBuffer buffer)
-    {
+    public VAO uploadData(ByteBuffer buffer) {
         this.bind();
         this.vertices = buffer.limit() / this.data.getBytes();
         this.data.uploadData(buffer);
@@ -99,8 +91,7 @@ public class VAO implements IDisposable
     /**
      * VAO MUST BE BOUND BEFORE UPLOADING THE DATA!
      */
-    public VAO uploadIndexData(IntBuffer buffer)
-    {
+    public VAO uploadIndexData(IntBuffer buffer) {
         this.count = buffer.limit();
         this.index.upload(buffer);
 
@@ -108,32 +99,28 @@ public class VAO implements IDisposable
     }
 
     /**
-     * Bind VAO 
+     * Bind VAO
      */
-    public void bind()
-    {
+    public void bind() {
         GL30.glBindVertexArray(this.vao);
     }
 
     /**
-     * Unbind VAO 
+     * Unbind VAO
      */
-    public void unbind()
-    {
+    public void unbind() {
         GL30.glBindVertexArray(0);
     }
 
     /**
      * Bind VAO and its VBOs for rendering
      */
-    public void bindForRender()
-    {
+    public void bindForRender() {
         this.bind();
 
         this.data.attributes.bindForRender();
 
-        if (this.index != null)
-        {
+        if (this.index != null) {
             this.index.bind(GL15.GL_ELEMENT_ARRAY_BUFFER);
         }
     }
@@ -141,46 +128,38 @@ public class VAO implements IDisposable
     /**
      * Render (managing shader state is your responsibility)
      */
-    public void renderElements()
-    {
+    public void renderElements() {
         this.renderElements(GL11.GL_TRIANGLES);
     }
 
-    public void renderElements(int mode)
-    {
+    public void renderElements(int mode) {
         GL11.glDrawElements(mode, this.count, GL11.GL_UNSIGNED_INT, 0);
     }
 
-    public void render(int mode)
-    {
+    public void render(int mode) {
         this.render(mode, this.vertices);
     }
 
-    public void render(int mode, int elements)
-    {
+    public void render(int mode, int elements) {
         GL11.glDrawArrays(mode, 0, elements);
     }
 
     /**
      * Draw VAO with triangles (assuming that you have filled)
      */
-    public void renderTriangles()
-    {
+    public void renderTriangles() {
         this.renderTriangles(this.vertices);
     }
 
-    public void renderTriangles(int count)
-    {
+    public void renderTriangles(int count) {
         this.render(GL11.GL_TRIANGLES, count);
     }
 
     /**
      * Unbind VAO and its VBOs after rendering
      */
-    public void unbindForRender()
-    {
-        if (this.index != null)
-        {
+    public void unbindForRender() {
+        if (this.index != null) {
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
@@ -193,19 +172,16 @@ public class VAO implements IDisposable
      * Delete VAO and VBOs
      */
     @Override
-    public void delete()
-    {
+    public void delete() {
         this.unbindForRender();
 
-        if (this.data != null)
-        {
+        if (this.data != null) {
             this.data.delete();
         }
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
-        if (this.index != null)
-        {
+        if (this.index != null) {
             this.index.delete();
         }
 

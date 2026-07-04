@@ -13,11 +13,10 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * Transformation editor GUI
- * 
+ * <p>
  * Must be exactly 190 by 70 (with extra 12 on top for labels)
  */
-public abstract class UITransform extends UIElement
-{
+public abstract class UITransform extends UIElement {
     public UITrackpad tx;
     public UITrackpad ty;
     public UITrackpad tz;
@@ -35,8 +34,7 @@ public abstract class UITransform extends UIElement
 
     private boolean renderLabels = true;
 
-    public UITransform()
-    {
+    public UITransform() {
         super();
 
         this.tx = new UITrackpad((value) -> this.internalSetT(value, this.ty.value, this.tz.value)).block();
@@ -110,15 +108,13 @@ public abstract class UITransform extends UIElement
         {
             ListType transforms = Window.getClipboardList();
 
-            if (transforms != null && transforms.size() < 9)
-            {
+            if (transforms != null && transforms.size() < 9) {
                 transforms = null;
             }
 
             menu.action(Icons.COPY, UIKeys.TRANSFORMS_CONTEXT_COPY, this::copyTransformations);
 
-            if (transforms != null)
-            {
+            if (transforms != null) {
                 final ListType innerList = transforms;
 
                 menu.action(Icons.PASTE, UIKeys.TRANSFORMS_CONTEXT_PASTE, () -> this.pasteAll(innerList));
@@ -133,19 +129,16 @@ public abstract class UITransform extends UIElement
         this.wh(190, 70);
     }
 
-    public UITransform noLabels()
-    {
+    public UITransform noLabels() {
         this.renderLabels = false;
 
         return this;
     }
 
-    public UITransform verticalCompact()
-    {
+    public UITransform verticalCompact() {
         this.vertical = true;
 
-        for (UITrackpad trackpad : this.getChildren(UITrackpad.class))
-        {
+        for (UITrackpad trackpad : this.getChildren(UITrackpad.class)) {
             trackpad.removeFromParent();
         }
 
@@ -160,111 +153,85 @@ public abstract class UITransform extends UIElement
         return this;
     }
 
-    private void syncScale(double value)
-    {
-        if (Window.isKeyPressed(GLFW.GLFW_KEY_SPACE))
-        {
+    private void syncScale(double value) {
+        if (Window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             this.fillS(value, value, value);
             this.internalSetS(value, value, value);
         }
     }
 
-    public void fillSetT(double x, double y, double z)
-    {
+    public void fillSetT(double x, double y, double z) {
         this.fillT(x, y, z);
         this.setT(x, y, z);
     }
 
-    public void fillSetS(double x, double y, double z)
-    {
+    public void fillSetS(double x, double y, double z) {
         this.fillS(x, y, z);
         this.setS(x, y, z);
     }
 
-    public void fillSetR(double x, double y, double z)
-    {
+    public void fillSetR(double x, double y, double z) {
         this.fillR(x, y, z);
         this.setR(x, y, z);
     }
 
-    public void fillSetR2(double x, double y, double z)
-    {
+    public void fillSetR2(double x, double y, double z) {
         this.fillR2(x, y, z);
         this.setR2(x, y, z);
     }
 
-    public void fillT(double x, double y, double z)
-    {
+    public void fillT(double x, double y, double z) {
         this.tx.setValue(x);
         this.ty.setValue(y);
         this.tz.setValue(z);
     }
 
-    public void fillS(double x, double y, double z)
-    {
+    public void fillS(double x, double y, double z) {
         this.sx.setValue(x);
         this.sy.setValue(y);
         this.sz.setValue(z);
     }
 
-    public void fillR(double x, double y, double z)
-    {
+    public void fillR(double x, double y, double z) {
         this.rx.setValue(x);
         this.ry.setValue(y);
         this.rz.setValue(z);
     }
 
-    public void fillR2(double x, double y, double z)
-    {
+    public void fillR2(double x, double y, double z) {
         this.r2x.setValue(x);
         this.r2y.setValue(y);
         this.r2z.setValue(z);
     }
-    
-    private void internalSetT(double x, double y, double z)
-    {
-        try
-        {
+
+    private void internalSetT(double x, double y, double z) {
+        try {
             this.setT(x, y, z);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void internalSetS(double x, double y, double z)
-    {
-        try
-        {
+    private void internalSetS(double x, double y, double z) {
+        try {
             this.setS(x, y, z);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void internalSetR(double x, double y, double z)
-    {
-        try
-        {
+    private void internalSetR(double x, double y, double z) {
+        try {
             this.setR(x, y, z);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void internalSetR2(double x, double y, double z)
-    {
-        try
-        {
+    private void internalSetR2(double x, double y, double z) {
+        try {
             this.setR2(x, y, z);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -277,8 +244,7 @@ public abstract class UITransform extends UIElement
 
     public abstract void setR2(double x, double y, double z);
 
-    private void copyTransformations()
-    {
+    private void copyTransformations() {
         ListType list = new ListType();
 
         list.addDouble(this.tx.value);
@@ -297,8 +263,7 @@ public abstract class UITransform extends UIElement
         Window.setClipboard(list);
     }
 
-    public void pasteAll(ListType list)
-    {
+    public void pasteAll(ListType list) {
         this.pasteTranslation(list);
         this.pasteScale(list);
         this.pasteRotation(list);
@@ -310,8 +275,7 @@ public abstract class UITransform extends UIElement
         this.r2z.setValueAndNotify(rotation.z);
     }
 
-    public void pasteTranslation(ListType list)
-    {
+    public void pasteTranslation(ListType list) {
         Vector3d translation = this.getVector(list, 0);
 
         this.tx.setValue(translation.x);
@@ -319,8 +283,7 @@ public abstract class UITransform extends UIElement
         this.tz.setValueAndNotify(translation.z);
     }
 
-    public void pasteScale(ListType list)
-    {
+    public void pasteScale(ListType list) {
         Vector3d scale = this.getVector(list, 3);
 
         this.sz.setValue(scale.z);
@@ -328,8 +291,7 @@ public abstract class UITransform extends UIElement
         this.sx.setValueAndNotify(scale.x);
     }
 
-    public void pasteRotation(ListType list)
-    {
+    public void pasteRotation(ListType list) {
         Vector3d rotation = this.getVector(list, 6);
 
         this.rx.setValue(rotation.x);
@@ -337,12 +299,10 @@ public abstract class UITransform extends UIElement
         this.rz.setValueAndNotify(rotation.z);
     }
 
-    private Vector3d getVector(ListType list, int offset)
-    {
+    private Vector3d getVector(ListType list, int offset) {
         Vector3d result = new Vector3d();
 
-        if (list.get(offset).isNumeric() && list.get(offset + 1).isNumeric() && list.get(offset + 2).isNumeric())
-        {
+        if (list.get(offset).isNumeric() && list.get(offset + 1).isNumeric() && list.get(offset + 2).isNumeric()) {
             result.x = list.get(offset).asNumeric().doubleValue();
             result.y = list.get(offset + 1).asNumeric().doubleValue();
             result.z = list.get(offset + 2).asNumeric().doubleValue();
@@ -351,8 +311,7 @@ public abstract class UITransform extends UIElement
         return result;
     }
 
-    protected void reset()
-    {
+    protected void reset() {
         this.fillSetT(0, 0, 0);
         this.fillSetS(1, 1, 1);
         this.fillSetR(0, 0, 0);
@@ -360,10 +319,8 @@ public abstract class UITransform extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (!this.vertical && this.renderLabels)
-        {
+    public void render(UIContext context) {
+        if (!this.vertical && this.renderLabels) {
             context.batcher.textShadow(UIKeys.TRANSFORMS_TRANSLATE.get(), this.tx.area.x, this.tx.area.y - 12);
             context.batcher.textShadow(UIKeys.TRANSFORMS_SCALE.get(), this.sx.area.x, this.sx.area.y - 12);
             context.batcher.textShadow(UIKeys.TRANSFORMS_ROTATE.get(), this.rx.area.x, this.rx.area.y - 12);

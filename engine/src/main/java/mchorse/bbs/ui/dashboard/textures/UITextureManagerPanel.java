@@ -17,8 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class UITextureManagerPanel extends UISidebarDashboardPanel
-{
+public class UITextureManagerPanel extends UISidebarDashboardPanel {
     private static final List<Link> FORBIDDEN_EXPORT = Collections.emptyList();
 
     public UITextureEditor viewer;
@@ -29,8 +28,7 @@ public class UITextureManagerPanel extends UISidebarDashboardPanel
 
     private Link link;
 
-    public UITextureManagerPanel(UIDashboard dashboard)
-    {
+    public UITextureManagerPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.viewer = new UITextureEditor();
@@ -53,13 +51,11 @@ public class UITextureManagerPanel extends UISidebarDashboardPanel
         this.keys().register(Keys.OPEN_DATA_MANAGER, icon::clickItself);
     }
 
-    public Link getLink()
-    {
+    public Link getLink() {
         return this.link;
     }
 
-    public void pickLink(Link link)
-    {
+    public void pickLink(Link link) {
         boolean forbidden = FORBIDDEN_EXPORT.contains(link);
 
         this.overlay.linear.setEnabled(link != null);
@@ -75,29 +71,23 @@ public class UITextureManagerPanel extends UISidebarDashboardPanel
             : UIKeys.TEXTURES_EDIT);
         this.viewer.setVisible(link != null);
 
-        if (link == null)
-        {
+        if (link == null) {
             this.link = null;
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 BBS.getTextures().bind(link);
 
                 this.overlay.linkLinear = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER) == GL11.GL_LINEAR;
                 this.link = link;
 
                 this.viewer.fillTexture(this.link);
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
     }
 
     @Override
-    public void requestNames()
-    {
+    public void requestNames() {
         Map<Link, Texture> map = BBS.getTextures().textures;
 
         this.overlay.textures.list.clear();
@@ -105,8 +95,7 @@ public class UITextureManagerPanel extends UISidebarDashboardPanel
         this.overlay.textures.list.sort();
         this.overlay.textures.list.update();
 
-        if (this.link == null && !this.overlay.textures.list.getList().isEmpty())
-        {
+        if (this.link == null && !this.overlay.textures.list.getList().isEmpty()) {
             this.link = this.overlay.textures.list.getList().get(0);
         }
 

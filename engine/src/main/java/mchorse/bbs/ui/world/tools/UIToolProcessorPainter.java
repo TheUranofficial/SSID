@@ -15,16 +15,13 @@ import org.joml.Vector3i;
 
 import java.util.Set;
 
-public abstract class UIToolProcessorPainter extends UIToolPainting
-{
-    public UIToolProcessorPainter(UIWorldEditorPanel editor)
-    {
+public abstract class UIToolProcessorPainter extends UIToolPainting {
+    public UIToolProcessorPainter(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    protected void placeBlock(RayTraceResult result, Vector3i center)
-    {
+    protected void placeBlock(RayTraceResult result, Vector3i center) {
         Vector3i min = new Vector3i(center).sub(this.size / 2, this.size / 2, this.size / 2);
         Vector3i max = new Vector3i(min).add(this.size - 1, this.size - 1, this.size - 1);
         Processor processor = this.createProcessor(result);
@@ -33,8 +30,7 @@ public abstract class UIToolProcessorPainter extends UIToolPainting
 
         Set<Vector3i> placed = processor.getPlaced();
 
-        if (placed != null)
-        {
+        if (placed != null) {
             this.placedBlocks.addAll(placed);
         }
     }
@@ -42,14 +38,12 @@ public abstract class UIToolProcessorPainter extends UIToolPainting
     protected abstract Processor createProcessor(RayTraceResult result);
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         super.render(context, result);
 
         Vector3i cursor = this.getCursor(result);
 
-        if (this.size > 1)
-        {
+        if (this.size > 1) {
             int half = this.size / 2;
 
             Draw.renderBox(context, cursor.x - half, cursor.y - half, cursor.z - half, this.size, this.size, this.size);
@@ -57,8 +51,7 @@ public abstract class UIToolProcessorPainter extends UIToolPainting
 
         Axis limit = UIToolPainting.getLimit();
 
-        if (limit != null)
-        {
+        if (limit != null) {
             Vector3i min = this.painting ? this.lastBlock : cursor;
 
             context.stack.push();

@@ -40,7 +40,7 @@ uniform float u_day_yaw;
 void main()
 {
     float VdotL = max0(dot(rotate(normalize(pass_uv), vec3(1.0, 0.0, 0.0), radians(u_day_yaw)), up));
-    
+
     out_color = vec4(sky_gradient(VdotL), 1.0);
     out_lighting = vec4(0.0, 0.0, 0.0, 0.0);
     out_vertex = vec4(pass_uv, 1.0);

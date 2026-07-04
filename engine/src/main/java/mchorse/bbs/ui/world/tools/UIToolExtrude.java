@@ -22,20 +22,17 @@ import mchorse.bbs.voxel.utils.BlockSelection;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
-public class UIToolExtrude extends UIToolSelectionBase
-{
+public class UIToolExtrude extends UIToolSelectionBase {
     private PlaneSelection plane;
     private ChunkDisplay display;
     private int times;
 
-    public UIToolExtrude(UIWorldEditorPanel editor)
-    {
+    public UIToolExtrude(UIWorldEditorPanel editor) {
         super(editor);
     }
 
     @Override
-    public UIIcon createButton()
-    {
+    public UIIcon createButton() {
         UIIcon icon = new UIIcon(Icons.UPLOAD, null);
 
         icon.tooltip(UIKeys.WORLD_EDITOR_TOOLS_EXTRUDE, Direction.RIGHT);
@@ -44,15 +41,13 @@ public class UIToolExtrude extends UIToolSelectionBase
     }
 
     @Override
-    public void begin(RayTraceResult result, int mouseButton)
-    {
+    public void begin(RayTraceResult result, int mouseButton) {
         super.begin(result, mouseButton);
 
         PlaneSelection plane = this.getSelection();
         BlockSelection selection = this.editor.getSelection();
 
-        if (selection.isEmpty() || plane == null)
-        {
+        if (selection.isEmpty() || plane == null) {
             return;
         }
 
@@ -68,12 +63,10 @@ public class UIToolExtrude extends UIToolSelectionBase
     }
 
     @Override
-    public void drag(RayTraceResult result)
-    {
+    public void drag(RayTraceResult result) {
         super.drag(result);
 
-        if (this.plane == null)
-        {
+        if (this.plane == null) {
             return;
         }
 
@@ -82,23 +75,17 @@ public class UIToolExtrude extends UIToolSelectionBase
         Vector3d center = selection.getCenter();
         Vector3d intersection = Vectors.intersectPlanePerpendicular(this.plane.axis, camera.position, camera.getMouseDirection(), center);
 
-        if (intersection != null)
-        {
+        if (intersection != null) {
             double diff = 0;
             int side = 0;
 
-            if (this.plane.axis == Axis.X)
-            {
+            if (this.plane.axis == Axis.X) {
                 diff = intersection.x - center.x;
                 side = this.display.chunk.w;
-            }
-            else if (this.plane.axis == Axis.Y)
-            {
+            } else if (this.plane.axis == Axis.Y) {
                 diff = intersection.y - center.y;
                 side = this.display.chunk.h;
-            }
-            else if (this.plane.axis == Axis.Z)
-            {
+            } else if (this.plane.axis == Axis.Z) {
                 diff = intersection.z - center.z;
                 side = this.display.chunk.d;
             }
@@ -108,18 +95,15 @@ public class UIToolExtrude extends UIToolSelectionBase
     }
 
     @Override
-    public void end(RayTraceResult result)
-    {
-        if (this.plane != null && this.display != null)
-        {
+    public void end(RayTraceResult result) {
+        if (this.plane != null && this.display != null) {
             this.display.delete();
 
             PlaneSelection plane = this.plane;
             BlockSelection selection = this.editor.getSelection();
             Chunk chunk = this.display.chunk;
 
-            for (int i = 0; i < this.times; i++)
-            {
+            for (int i = 0; i < this.times; i++) {
                 if (plane.axis == Axis.X) selection.move(plane.side * chunk.w, 0, 0);
                 else if (plane.axis == Axis.Y) selection.move(0, plane.side * chunk.h, 0);
                 else if (plane.axis == Axis.Z) selection.move(0, 0, plane.side * chunk.d);
@@ -140,14 +124,11 @@ public class UIToolExtrude extends UIToolSelectionBase
     }
 
     @Override
-    public void render(RenderingContext context, RayTraceResult result)
-    {
+    public void render(RenderingContext context, RayTraceResult result) {
         super.render(context, result);
 
-        if (this.plane != null)
-        {
-            if (this.display.display == null)
-            {
+        if (this.plane != null) {
+            if (this.display.display == null) {
                 context.getWorld().chunks.builder.build(context, this.display, null);
             }
 
@@ -168,8 +149,7 @@ public class UIToolExtrude extends UIToolSelectionBase
             shader.bind();
             vector.add(direction);
 
-            for (int i = 0; i < this.times; i++)
-            {
+            for (int i = 0; i < this.times; i++) {
                 stack.push();
                 stack.translateRelative(context.getCamera(), vector.x, vector.y, vector.z);
                 CommonShaderAccess.setModelView(shader, stack);

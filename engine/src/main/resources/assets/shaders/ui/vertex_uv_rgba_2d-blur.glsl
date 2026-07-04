@@ -45,7 +45,7 @@ vec4 texture_blur(sampler2D tex, vec2 uv, float blur)
 
     for (float d = 0.0; d < tau; d += tau / directions)
     {
-        for (float i= 1.0 / quality; i <= 1.0; i += 1.0 / quality)
+        for (float i = 1.0 / quality; i <= 1.0; i += 1.0 / quality)
         {
             color += texture(tex, uv + vec2(cos(d), sin(d)) * radius * i);
         }

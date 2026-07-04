@@ -5,12 +5,10 @@ import mchorse.bbs.data.types.MapType;
 
 import java.util.Collection;
 
-public interface IManager <T extends IDataSerializable>
-{
+public interface IManager<T extends IDataSerializable> {
     boolean exists(String name);
 
-    public default T create(String id)
-    {
+    public default T create(String id) {
         return this.create(id, null);
     }
 

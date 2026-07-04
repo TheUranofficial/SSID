@@ -5,20 +5,17 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelQuad
-{
+public class ModelQuad {
     public List<ModelVertex> vertices = new ArrayList<>();
     public Vector3f normal = new Vector3f();
 
-    public ModelQuad normal(float x, float y, float z)
-    {
+    public ModelQuad normal(float x, float y, float z) {
         this.normal.set(x, y, z);
 
         return this;
     }
 
-    public ModelQuad vertex(float x, float y, float z, float u, float v)
-    {
+    public ModelQuad vertex(float x, float y, float z, float u, float v) {
         ModelVertex vertex = new ModelVertex();
 
         vertex.vertex.set(x, y, z);

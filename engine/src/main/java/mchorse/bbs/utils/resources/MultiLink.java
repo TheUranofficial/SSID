@@ -10,65 +10,54 @@ import java.util.Objects;
 
 /**
  * Multiple resource location class
- * 
- * This bad boy allows constructing a single texture out of several 
+ * <p>
+ * This bad boy allows constructing a single texture out of several
  * {@link Link}s. It doesn't really make sense for other
  * types of resources beside pictures.
  */
-public class MultiLink extends Link implements IWritableLink
-{
+public class MultiLink extends Link implements IWritableLink {
     public List<FilteredLink> children = new ArrayList<>();
 
-    public static MultiLink from(BaseType data)
-    {
+    public static MultiLink from(BaseType data) {
         ListType list = BaseType.isList(data) ? (ListType) data : null;
 
-        if (list == null || list.size() == 0)
-        {
+        if (list == null || list.size() == 0) {
             return null;
         }
 
         MultiLink multi = new MultiLink();
 
-        try
-        {
+        try {
             multi.fromData(data);
 
             return multi;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return null;
     }
 
-    public MultiLink(String resourceName)
-    {
+    public MultiLink(String resourceName) {
         this();
         this.children.add(new FilteredLink(LinkUtils.create(resourceName)));
     }
 
-    public MultiLink(String resourceDomainIn, String resourcePathIn)
-    {
+    public MultiLink(String resourceDomainIn, String resourcePathIn) {
         this();
         this.children.add(new FilteredLink(LinkUtils.create(resourceDomainIn, resourcePathIn)));
     }
 
-    public MultiLink()
-    {
+    public MultiLink() {
         super("multi", "texture");
     }
 
-    public void recalculateId()
-    {
+    public void recalculateId() {
         this.hash = MultiLinkManager.getId(this);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof MultiLink)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof MultiLink) {
             MultiLink multi = (MultiLink) obj;
 
             return Objects.equals(this.children, multi.children);
@@ -78,10 +67,8 @@ public class MultiLink extends Link implements IWritableLink
     }
 
     @Override
-    public int hashCode()
-    {
-        if (this.hash == null)
-        {
+    public int hashCode() {
+        if (this.hash == null) {
             this.recalculateId();
         }
 
@@ -89,16 +76,13 @@ public class MultiLink extends Link implements IWritableLink
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         ListType list = new ListType();
 
-        for (FilteredLink child : this.children)
-        {
+        for (FilteredLink child : this.children) {
             BaseType element = child.toData();
 
-            if (element != null)
-            {
+            if (element != null) {
                 list.add(element);
             }
         }
@@ -107,28 +91,23 @@ public class MultiLink extends Link implements IWritableLink
     }
 
     @Override
-    public void fromData(BaseType element)
-    {
+    public void fromData(BaseType element) {
         ListType array = (ListType) element;
 
-        for (int i = 0; i < array.size(); i++)
-        {
+        for (int i = 0; i < array.size(); i++) {
             FilteredLink location = FilteredLink.from(array.get(i));
 
-            if (location != null)
-            {
+            if (location != null) {
                 this.children.add(location);
             }
         }
     }
 
     @Override
-    public Link copy()
-    {
+    public Link copy() {
         MultiLink newMulti = new MultiLink();
 
-        for (FilteredLink child : this.children)
-        {
+        for (FilteredLink child : this.children) {
             newMulti.children.add(child.copyFiltered());
         }
 

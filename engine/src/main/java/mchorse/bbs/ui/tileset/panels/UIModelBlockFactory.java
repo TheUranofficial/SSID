@@ -20,8 +20,7 @@ import mchorse.bbs.utils.resources.LinkUtils;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
 import org.joml.Vector2i;
 
-public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
-{
+public class UIModelBlockFactory<T extends BlockModelFactory> extends UIElement {
     public UIScrollView view;
 
     public UILabel title;
@@ -44,8 +43,7 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
     public UITileSetEditorPanel editor;
     public T model;
 
-    public UIModelBlockFactory(UITileSetEditorPanel editor)
-    {
+    public UIModelBlockFactory(UITileSetEditorPanel editor) {
         super();
 
         this.editor = editor;
@@ -96,8 +94,7 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
         this.add(this.view);
     }
 
-    protected void addCollisionBoxFields()
-    {
+    protected void addCollisionBoxFields() {
         this.cX = new UITrackpad((v) ->
         {
             this.model.collisionBox.x = v;
@@ -140,25 +137,21 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
         this.view.add(UI.row(this.cW, this.cH, this.cD));
     }
 
-    private void updateTitle()
-    {
+    private void updateTitle() {
         IKey type = UIKeys.C_BLOCK_MODEL.get(BBS.getFactoryBlockModels().getType(this.model));
 
         this.title.label = IKey.raw("%s (%s)").format(type, this.model.blockId.toString());
     }
 
-    private void showRename()
-    {
+    private void showRename() {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(UIKeys.GENERAL_RENAME, UIKeys.TILE_SET_GENERAL_RENAME_DESCRIPTION, this::renameBlockId);
 
         panel.text.setText(this.model.blockId.toString());
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 
-    private void renameBlockId(String s)
-    {
-        if (!s.contains(Link.SOURCE_SEPARATOR))
-        {
+    private void renameBlockId(String s) {
+        if (!s.contains(Link.SOURCE_SEPARATOR)) {
             return;
         }
 
@@ -168,8 +161,7 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
         this.updateTitle();
     }
 
-    protected void editUV(Vector2i uv)
-    {
+    protected void editUV(Vector2i uv) {
         UIUVEditorOverlayPanel panel = new UIUVEditorOverlayPanel(UIKeys.TILE_SET_GENERAL_EDIT_UV, this.editor.getBlockSet().atlas, this::recompile);
 
         panel.uv.setUVZoom(uv, 16, 16, 3);
@@ -177,14 +169,12 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 
-    public void recompile()
-    {
+    public void recompile() {
         this.model.compile();
         this.editor.dirty();
     }
 
-    public void fill(T model)
-    {
+    public void fill(T model) {
         this.model = model;
 
         this.collision.setValue(model.collision);
@@ -194,8 +184,7 @@ public class UIModelBlockFactory <T extends BlockModelFactory> extends UIElement
         this.color.setColor(model.color.getRGBColor());
         this.lighting.setValue(model.lighting);
 
-        if (this.cX != null)
-        {
+        if (this.cX != null) {
             this.cX.setValue(model.collisionBox.x);
             this.cY.setValue(model.collisionBox.y);
             this.cZ.setValue(model.collisionBox.z);

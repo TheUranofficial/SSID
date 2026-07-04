@@ -9,15 +9,12 @@ import mchorse.bbs.utils.colors.Color;
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
 import mchorse.bbs.utils.math.IInterpolation;
 
-public class ColorKeyframeFactory implements IGenericKeyframeFactory<Color>
-{
+public class ColorKeyframeFactory implements IGenericKeyframeFactory<Color> {
     private Color i = new Color();
 
     @Override
-    public Color fromData(BaseType data)
-    {
-        if (!data.isNumeric())
-        {
+    public Color fromData(BaseType data) {
+        if (!data.isNumeric()) {
             return new Color();
         }
 
@@ -25,20 +22,17 @@ public class ColorKeyframeFactory implements IGenericKeyframeFactory<Color>
     }
 
     @Override
-    public BaseType toData(Color value)
-    {
+    public BaseType toData(Color value) {
         return new IntType(value.getARGBColor());
     }
 
     @Override
-    public Color copy(Color value)
-    {
+    public Color copy(Color value) {
         return value.copy();
     }
 
     @Override
-    public Color interpolate(Color a, Color b, IInterpolation interpolation, float x)
-    {
+    public Color interpolate(Color a, Color b, IInterpolation interpolation, float x) {
         this.i.r = interpolation.interpolate(a.r, b.r, x);
         this.i.g = interpolation.interpolate(a.g, b.g, x);
         this.i.b = interpolation.interpolate(a.b, b.b, x);
@@ -48,8 +42,7 @@ public class ColorKeyframeFactory implements IGenericKeyframeFactory<Color>
     }
 
     @Override
-    public UIKeyframeFactory<Color> createUI(GenericKeyframe<Color> keyframe, UIPropertyEditor editor)
-    {
+    public UIKeyframeFactory<Color> createUI(GenericKeyframe<Color> keyframe, UIPropertyEditor editor) {
         return new UIColorKeyframeFactory(keyframe, editor);
     }
 }

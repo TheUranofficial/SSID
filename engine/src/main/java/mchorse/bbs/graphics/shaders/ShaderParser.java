@@ -3,8 +3,7 @@ package mchorse.bbs.graphics.shaders;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShaderParser
-{
+public class ShaderParser {
     public static final String SECTION_MARKER = "//@";
     public static final String UNIFORM = "\nuniform";
     public static final String DEFINE = "\n#define";
@@ -15,30 +14,25 @@ public class ShaderParser
     public Map<String, String> defines = new HashMap<>();
 
     /**
-     * Parse vertex and fragment shader code out of merged shader code.  
+     * Parse vertex and fragment shader code out of merged shader code.
      */
-    public void parse(String code)
-    {
+    public void parse(String code) {
         String lastKey = "";
         Map<String, String> sections = new HashMap<>();
 
         int index = 0;
 
-        while (index >= 0)
-        {
+        while (index >= 0) {
             int nextIndex = code.indexOf(SECTION_MARKER, index);
 
-            if (nextIndex >= 0)
-            {
+            if (nextIndex >= 0) {
                 sections.put(lastKey, code.substring(index, nextIndex));
 
                 int nameIndex = code.indexOf('\n', nextIndex);
 
                 lastKey = code.substring(nextIndex + SECTION_MARKER.length(), nameIndex).trim();
                 index = nameIndex + 1;
-            }
-            else
-            {
+            } else {
                 sections.put(lastKey, code.substring(index));
 
                 break;
@@ -57,16 +51,13 @@ public class ShaderParser
     /**
      * Parse uniforms out of the shader's code
      */
-    public void parseUniforms(String code)
-    {
+    public void parseUniforms(String code) {
         int index = 0;
 
-        while (index >= 0)
-        {
+        while (index >= 0) {
             int nextIndex = code.indexOf(UNIFORM, index);
 
-            if (nextIndex < 0)
-            {
+            if (nextIndex < 0) {
                 break;
             }
 
@@ -86,28 +77,23 @@ public class ShaderParser
     /**
      * Process uniform type (if a uniform array is provided, strip the size)
      */
-    private String processType(String type)
-    {
+    private String processType(String type) {
         int bracket = type.indexOf('[');
 
-        if (bracket >= 0)
-        {
+        if (bracket >= 0) {
             return type.substring(0, bracket) + "[]";
         }
 
         return type;
     }
 
-    public void parseDefines(String code)
-    {
+    public void parseDefines(String code) {
         int index = 0;
 
-        while (index >= 0)
-        {
+        while (index >= 0) {
             int nextIndex = code.indexOf(DEFINE, index);
 
-            if (nextIndex < 0)
-            {
+            if (nextIndex < 0) {
                 break;
             }
 

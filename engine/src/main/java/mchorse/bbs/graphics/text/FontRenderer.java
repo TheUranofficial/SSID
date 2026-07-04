@@ -17,8 +17,7 @@ import org.joml.Vector4f;
 
 import java.util.List;
 
-public class FontRenderer
-{
+public class FontRenderer {
     public static final char FORMATTING_CHARACTER = '§';
     public static final String FORMATTING_STRING = "§";
 
@@ -35,18 +34,15 @@ public class FontRenderer
     private Vector4f vector4 = new Vector4f();
     private Vector2f vector2 = new Vector2f();
 
-    public FontRenderer(Link texture, Font font)
-    {
+    public FontRenderer(Link texture, Font font) {
         this.texture = texture;
         this.font = font;
 
         this.updateSize();
     }
 
-    private Vector2f process(MatrixStack stack, float x, float y)
-    {
-        if (stack == null)
-        {
+    private Vector2f process(MatrixStack stack, float x, float y) {
+        if (stack == null) {
             return this.vector2.set(x, y);
         }
 
@@ -57,43 +53,36 @@ public class FontRenderer
         return this.vector2.set(this.vector4.x, this.vector4.y);
     }
 
-    private void updateSize()
-    {
+    private void updateSize() {
         Texture t = BBS.getTextures().getTexture(this.texture);
 
         this.w = t.width;
         this.h = t.height;
     }
 
-    public void setTime(float time)
-    {
+    public void setTime(float time) {
         this.context.time = time;
     }
 
-    public void update(FontRenderer newFontRenderer)
-    {
+    public void update(FontRenderer newFontRenderer) {
         this.font = newFontRenderer.font;
         this.texture = newFontRenderer.texture;
 
         this.updateSize();
     }
 
-    public int build(VAOBuilder builder, String label, int x, int y, int index, int c, boolean shadow)
-    {
+    public int build(VAOBuilder builder, String label, int x, int y, int index, int c, boolean shadow) {
         return this.build(null, builder, label, x, y, index, c, shadow);
     }
 
-    public int build(MatrixStack stack, VAOBuilder builder, String label, int x, int y, int index, int c, boolean shadow)
-    {
-        if (Colors.getAlpha(c) <= 0F)
-        {
+    public int build(MatrixStack stack, VAOBuilder builder, String label, int x, int y, int index, int c, boolean shadow) {
+        if (Colors.getAlpha(c) <= 0F) {
             c = Colors.setA(c, 1F);
         }
 
         ColoredTextBuilder2D textBuilder = ITextBuilder.colored2D;
 
-        if (shadow)
-        {
+        if (shadow) {
             int shadowColor = Colors.mulRGB(c, 0.15F);
 
             textBuilder.setMultiplicative(true);
@@ -104,13 +93,11 @@ public class FontRenderer
         return this.buildVAO(stack, x, y, label, builder, textBuilder.color(c), index);
     }
 
-    public int buildVAO(int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder)
-    {
+    public int buildVAO(int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder) {
         return this.buildVAO(null, lx, ly, text, builder, textBuilder, 0);
     }
 
-    public int buildVAO(MatrixStack stack, int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder, int j)
-    {
+    public int buildVAO(MatrixStack stack, int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder, int j) {
         final int VERTICES_PER_QUAD = 4;
 
         float tw = this.w;
@@ -124,16 +111,13 @@ public class FontRenderer
 
         this.context.reset();
 
-        for (int i = 0, c = text.length(); i < c; i++)
-        {
+        for (int i = 0, c = text.length(); i < c; i++) {
             char letter = text.charAt(i);
 
-            if (prev == FORMATTING_CHARACTER)
-            {
+            if (prev == FORMATTING_CHARACTER) {
                 IFontFormat format = this.font.formats.get((int) letter);
 
-                if (format != null)
-                {
+                if (format != null) {
                     format.apply(this.context);
                 }
 
@@ -144,29 +128,25 @@ public class FontRenderer
 
             Glyph glyph = this.font.getGlyph(letter);
 
-            if (glyph != null)
-            {
+            if (glyph != null) {
                 x += this.font.getKerning(prev, letter);
 
                 Area tile = glyph.tile;
 
-                if (tile.w != 0)
-                {
+                if (tile.w != 0) {
                     this.context.setup(i,
                         lx + x + glyph.offsetX,
                         ly + y + glyph.offsetY + h
                     );
 
-                    for (IFontFormat format : this.context.activeFormats)
-                    {
+                    for (IFontFormat format : this.context.activeFormats) {
                         format.process(context);
                     }
 
                     float rx = this.context.x;
                     float ry = this.context.y;
 
-                    if (glyph.emoji)
-                    {
+                    if (glyph.emoji) {
                         color = WHITE;
                     }
 
@@ -194,14 +174,12 @@ public class FontRenderer
                     textBuilder.put(builder, x3, y3, tile.x + tile.w, tile.y + tile.h, tw, th, color);
                     textBuilder.put(builder, x4, y4, tile.x + tile.w, tile.y, tw, th, color);
 
-                    if (!builder.hasIndex())
-                    {
+                    if (!builder.hasIndex()) {
                         textBuilder.put(builder, x1, y1, tile.x, tile.y, tw, th, color);
                         textBuilder.put(builder, x3, y3, tile.x + tile.w, tile.y + tile.h, tw, th, color);
                     }
 
-                    if (this.context.bold)
-                    {
+                    if (this.context.bold) {
                         p = this.process(stack, rx + skew + 1, ry);
                         float bx1 = p.x;
                         float by1 = p.y;
@@ -223,15 +201,13 @@ public class FontRenderer
                         textBuilder.put(builder, bx3, by3, tile.x + tile.w, tile.y + tile.h, tw, th, color);
                         textBuilder.put(builder, bx4, by4, tile.x + tile.w, tile.y, tw, th, color);
 
-                        if (!builder.hasIndex())
-                        {
+                        if (!builder.hasIndex()) {
                             textBuilder.put(builder, bx1, by1, tile.x, tile.y, tw, th, color);
                             textBuilder.put(builder, bx3, by3, tile.x + tile.w, tile.y + tile.h, tw, th, color);
                         }
                     }
 
-                    if (builder.hasIndex())
-                    {
+                    if (builder.hasIndex()) {
                         builder.index(j * VERTICES_PER_QUAD);
                         builder.index(j * VERTICES_PER_QUAD + 1);
                         builder.index(j * VERTICES_PER_QUAD + 2);
@@ -239,8 +215,7 @@ public class FontRenderer
                         builder.index(j * VERTICES_PER_QUAD);
                         builder.index(j * VERTICES_PER_QUAD + 2);
 
-                        if (this.context.bold)
-                        {
+                        if (this.context.bold) {
                             j += 1;
 
                             builder.index(j * VERTICES_PER_QUAD);
@@ -266,30 +241,25 @@ public class FontRenderer
         return j;
     }
 
-    public String limitToWidth(String str, int width)
-    {
+    public String limitToWidth(String str, int width) {
         return this.limitToWidth(str, "...", width);
     }
 
-    public String limitToWidth(String str, String suffix, int width)
-    {
-        if (str.isEmpty())
-        {
+    public String limitToWidth(String str, String suffix, int width) {
+        if (str.isEmpty()) {
             return str;
         }
 
         int w = this.getWidth(str);
 
-        if (w < width)
-        {
+        if (w < width) {
             return str;
         }
 
         int sw = this.getWidth(suffix);
         int i = str.length() - 1;
 
-        while (w + sw >= width && i > 0)
-        {
+        while (w + sw >= width && i > 0) {
             w -= this.getWidth(str.charAt(i));
             i -= 1;
         }
@@ -302,38 +272,31 @@ public class FontRenderer
     /**
      * Split given string according to the given width
      */
-    public List<String> split(String str, int width)
-    {
+    public List<String> split(String str, int width) {
         return this.splitter.split(this, str, width);
     }
 
-    public boolean hasCharacter(char character)
-    {
+    public boolean hasCharacter(char character) {
         return this.font.getGlyph(character) != null;
     }
 
     /**
      * Calculate the width of given string (new lines are ignored)
      */
-    public int getWidth(String str)
-    {
+    public int getWidth(String str) {
         char previous = 0;
         int x = 0;
         boolean bold = false;
 
-        for (int i = 0, c = str.length(); i < c; i++)
-        {
+        for (int i = 0, c = str.length(); i < c; i++) {
             char character = str.charAt(i);
             Glyph glyph = this.font.getGlyph(character);
 
-            if (glyph == null || character == FORMATTING_CHARACTER || previous == FORMATTING_CHARACTER)
-            {
-                if (previous == FORMATTING_CHARACTER && character == this.font.boldChar)
-                {
+            if (glyph == null || character == FORMATTING_CHARACTER || previous == FORMATTING_CHARACTER) {
+                if (previous == FORMATTING_CHARACTER && character == this.font.boldChar) {
                     bold = true;
                 }
-                if (previous == FORMATTING_CHARACTER && character == this.font.resetChar)
-                {
+                if (previous == FORMATTING_CHARACTER && character == this.font.resetChar) {
                     bold = false;
                 }
 
@@ -349,35 +312,29 @@ public class FontRenderer
         return x;
     }
 
-    public int getWidth(char character)
-    {
+    public int getWidth(char character) {
         return this.getWidth(character, '\0');
     }
 
-    public int getWidth(char character, char previous)
-    {
-        if (character == FORMATTING_CHARACTER || previous == FORMATTING_CHARACTER)
-        {
+    public int getWidth(char character, char previous) {
+        if (character == FORMATTING_CHARACTER || previous == FORMATTING_CHARACTER) {
             return 0;
         }
 
         Glyph glyph = this.font.getGlyph(character);
 
-        if (glyph == null)
-        {
+        if (glyph == null) {
             return 0;
         }
 
         return this.font.getKerning(previous, character) + glyph.advance + 1;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return this.font.height;
     }
 
-    public void bindTexture(RenderingContext context)
-    {
+    public void bindTexture(RenderingContext context) {
         context.getTextures().bind(this.texture);
     }
 }

@@ -2,12 +2,7 @@ package mchorse.bbs.ui.particles.sections;
 
 import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.math.molang.MolangParser;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeBase;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeBox;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeDisc;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeEntityAABB;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapePoint;
-import mchorse.bbs.particles.components.shape.ParticleComponentShapeSphere;
+import mchorse.bbs.particles.components.shape.*;
 import mchorse.bbs.particles.components.shape.directions.ShapeDirectionInwards;
 import mchorse.bbs.particles.components.shape.directions.ShapeDirectionVector;
 import mchorse.bbs.ui.UIKeys;
@@ -19,8 +14,7 @@ import mchorse.bbs.ui.framework.elements.utils.UILabel;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.ui.utils.UI;
 
-public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<ParticleComponentShapeBase>
-{
+public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<ParticleComponentShapeBase> {
     public UIButton offsetX;
     public UIButton offsetY;
     public UIButton offsetZ;
@@ -36,8 +30,7 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
     public UIButton y;
     public UIButton z;
 
-    public UIParticleSchemeShapeSection(UIParticleSchemePanel parent)
-    {
+    public UIParticleSchemeShapeSection(UIParticleSchemePanel parent) {
         super(parent);
 
         this.offsetX = new UIButton(UIKeys.GENERAL_X, (b) ->
@@ -81,16 +74,12 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
         this.fields.add(this.direction, this.surface);
     }
 
-    private void updateNormalDimension(int index)
-    {
-        if (this.component instanceof ParticleComponentShapeBox)
-        {
+    private void updateNormalDimension(int index) {
+        if (this.component instanceof ParticleComponentShapeBox) {
             ParticleComponentShapeBox box = (ParticleComponentShapeBox) this.component;
 
             this.editMoLang("shape.size_" + index, (str) -> box.halfDimensions[index] = this.parse(str, box.halfDimensions[index]), box.halfDimensions[index]);
-        }
-        else if (this.component instanceof ParticleComponentShapeDisc)
-        {
+        } else if (this.component instanceof ParticleComponentShapeDisc) {
             ParticleComponentShapeDisc disc = (ParticleComponentShapeDisc) this.component;
 
             this.editMoLang("shape.normal_" + index, (str) -> disc.normal[index] = this.parse(str, disc.normal[index]), disc.normal[index]);
@@ -98,14 +87,12 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
     }
 
     @Override
-    public IKey getTitle()
-    {
+    public IKey getTitle() {
         return UIKeys.SNOWSTORM_SHAPE_TITLE;
     }
 
     @Override
-    protected void fillModes(UICirculate button)
-    {
+    protected void fillModes(UICirculate button) {
         button.addLabel(UIKeys.SNOWSTORM_SHAPE_POINT);
         button.addLabel(UIKeys.SNOWSTORM_SHAPE_BOX);
         button.addLabel(UIKeys.SNOWSTORM_SHAPE_SPHERE);
@@ -114,47 +101,35 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
     }
 
     @Override
-    protected void restoreInfo(ParticleComponentShapeBase component, ParticleComponentShapeBase old)
-    {
+    protected void restoreInfo(ParticleComponentShapeBase component, ParticleComponentShapeBase old) {
         component.offset = old.offset;
         component.direction = old.direction;
         component.surface = old.surface;
 
-        if (component instanceof ParticleComponentShapeSphere && old instanceof ParticleComponentShapeSphere)
-        {
+        if (component instanceof ParticleComponentShapeSphere && old instanceof ParticleComponentShapeSphere) {
             ((ParticleComponentShapeSphere) component).radius = ((ParticleComponentShapeSphere) old).radius;
         }
     }
 
     @Override
-    protected Class<ParticleComponentShapeBase> getBaseClass()
-    {
+    protected Class<ParticleComponentShapeBase> getBaseClass() {
         return ParticleComponentShapeBase.class;
     }
 
     @Override
-    protected Class getDefaultClass()
-    {
+    protected Class getDefaultClass() {
         return ParticleComponentShapePoint.class;
     }
 
     @Override
-    protected Class getModeClass(int value)
-    {
-        if (value == 1)
-        {
+    protected Class getModeClass(int value) {
+        if (value == 1) {
             return ParticleComponentShapeBox.class;
-        }
-        else if (value == 2)
-        {
+        } else if (value == 2) {
             return ParticleComponentShapeSphere.class;
-        }
-        else if (value == 3)
-        {
+        } else if (value == 3) {
             return ParticleComponentShapeDisc.class;
-        }
-        else if (value == 4)
-        {
+        } else if (value == 4) {
             return ParticleComponentShapeEntityAABB.class;
         }
 
@@ -162,8 +137,7 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
     }
 
     @Override
-    protected void fillData()
-    {
+    protected void fillData() {
         super.fillData();
 
         this.direction.fillData();
@@ -175,13 +149,11 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
         this.xyz.removeFromParent();
         this.surface.removeFromParent();
 
-        if (this.component instanceof ParticleComponentShapeSphere)
-        {
+        if (this.component instanceof ParticleComponentShapeSphere) {
             this.fields.add(this.radiusLabel, this.radius);
         }
 
-        if (this.component instanceof ParticleComponentShapeBox || this.component instanceof ParticleComponentShapeDisc)
-        {
+        if (this.component instanceof ParticleComponentShapeBox || this.component instanceof ParticleComponentShapeDisc) {
             this.label.label = this.component instanceof ParticleComponentShapeBox ? UIKeys.SNOWSTORM_SHAPE_BOX_SIZE : UIKeys.SNOWSTORM_SHAPE_NORMAL;
 
             this.fields.add(this.label);
@@ -193,8 +165,7 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
         this.resizeParent();
     }
 
-    public static class UIDirectionSection extends UIElement
-    {
+    public static class UIDirectionSection extends UIElement {
         public UIParticleSchemeShapeSection parent;
 
         public UICirculate mode;
@@ -203,8 +174,7 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
         public UIButton y;
         public UIButton z;
 
-        public UIDirectionSection(UIParticleSchemeShapeSection parent)
-        {
+        public UIDirectionSection(UIParticleSchemeShapeSection parent) {
             super();
 
             this.parent = parent;
@@ -212,16 +182,11 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
             {
                 int value = this.mode.getValue();
 
-                if (value == 0)
-                {
+                if (value == 0) {
                     this.parent.component.direction = ShapeDirectionInwards.OUTWARDS;
-                }
-                else if (value == 1)
-                {
+                } else if (value == 1) {
                     this.parent.component.direction = ShapeDirectionInwards.INWARDS;
-                }
-                else
-                {
+                } else {
                     this.parent.component.direction = new ShapeDirectionVector(MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO);
                 }
 
@@ -256,22 +221,17 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
             this.add(UI.row(5, 0, 20, UI.label(UIKeys.SNOWSTORM_SHAPE_DIRECTION, 20).labelAnchor(0, 0.5F), this.mode));
         }
 
-        private ShapeDirectionVector getVector()
-        {
+        private ShapeDirectionVector getVector() {
             return (ShapeDirectionVector) this.parent.component.direction;
         }
 
-        public void fillData()
-        {
+        public void fillData() {
             boolean isVector = this.parent.component.direction instanceof ShapeDirectionVector;
             int value = 0;
 
-            if (this.parent.component.direction == ShapeDirectionInwards.INWARDS)
-            {
+            if (this.parent.component.direction == ShapeDirectionInwards.INWARDS) {
                 value = 1;
-            }
-            else if (isVector)
-            {
+            } else if (isVector) {
                 value = 2;
             }
 
@@ -279,8 +239,7 @@ public class UIParticleSchemeShapeSection extends UIParticleSchemeModeSection<Pa
 
             this.xyz.removeFromParent();
 
-            if (isVector)
-            {
+            if (isVector) {
                 this.add(this.xyz);
             }
 

@@ -12,21 +12,17 @@ import mchorse.bbs.utils.keyframes.generic.GenericKeyframeChannel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FormProperties extends ValueGroup
-{
+public class FormProperties extends ValueGroup {
     public final Map<String, GenericKeyframeChannel> properties = new HashMap<>();
 
-    public FormProperties(String id)
-    {
+    public FormProperties(String id) {
         super(id);
     }
 
-    public GenericKeyframeChannel getOrCreate(Form form, String key)
-    {
+    public GenericKeyframeChannel getOrCreate(Form form, String key) {
         BaseValue value = this.get(key);
 
-        if (value instanceof GenericKeyframeChannel)
-        {
+        if (value instanceof GenericKeyframeChannel) {
             return (GenericKeyframeChannel) value;
         }
 
@@ -35,10 +31,8 @@ public class FormProperties extends ValueGroup
         return property != null ? this.create(property) : null;
     }
 
-    public GenericKeyframeChannel create(IFormProperty property)
-    {
-        if (property.canCreateChannel())
-        {
+    public GenericKeyframeChannel create(IFormProperty property) {
+        if (property.canCreateChannel()) {
             String key = FormUtils.getPropertyPath(property);
             GenericKeyframeChannel channel = property.createChannel(key);
 
@@ -52,25 +46,21 @@ public class FormProperties extends ValueGroup
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
+    public void fromData(BaseType data) {
         super.fromData(data);
 
         this.properties.clear();
 
-        if (!data.isMap())
-        {
+        if (!data.isMap()) {
             return;
         }
 
         MapType map = data.asMap();
 
-        for (String key : map.keys())
-        {
+        for (String key : map.keys()) {
             MapType mapType = map.getMap(key);
 
-            if (mapType.isEmpty())
-            {
+            if (mapType.isEmpty()) {
                 continue;
             }
 
@@ -78,8 +68,7 @@ public class FormProperties extends ValueGroup
 
             property.fromData(mapType);
 
-            if (property.getFactory() != null)
-            {
+            if (property.getFactory() != null) {
                 this.properties.put(key, property);
                 this.add(property);
             }

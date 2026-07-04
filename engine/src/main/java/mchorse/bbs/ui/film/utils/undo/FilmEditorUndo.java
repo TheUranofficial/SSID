@@ -9,8 +9,7 @@ import org.joml.Vector2i;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FilmEditorUndo implements IUndo<ValueGroup>
-{
+public abstract class FilmEditorUndo implements IUndo<ValueGroup> {
     /* Timeline */
     public int tick;
     public ClipsData cameraClips;
@@ -23,31 +22,23 @@ public abstract class FilmEditorUndo implements IUndo<ValueGroup>
     private KeyframeSelection propertiesBefore = new KeyframeSelection();
     private KeyframeSelection propertiesAfter = new KeyframeSelection();
 
-    public KeyframeSelection getKeyframeSelection(boolean redo)
-    {
+    public KeyframeSelection getKeyframeSelection(boolean redo) {
         return redo ? this.keyframesAfter : this.keyframesBefore;
     }
 
-    public KeyframeSelection getPropertiesSelection(boolean redo)
-    {
+    public KeyframeSelection getPropertiesSelection(boolean redo) {
         return redo ? this.propertiesAfter : this.propertiesBefore;
     }
 
-    public void editor(UIFilmPanel editor)
-    {
+    public void editor(UIFilmPanel editor) {
         UIClips cameraClips = editor.cameraClips.clips;
         UIClips voiceLineClips = editor.screenplay.editor.clips;
 
-        if (editor.screenplay.isVisible())
-        {
+        if (editor.screenplay.isVisible()) {
             this.panel = 2;
-        }
-        else if (editor.replays.isVisible())
-        {
+        } else if (editor.replays.isVisible()) {
             this.panel = 1;
-        }
-        else
-        {
+        } else {
             this.panel = 0;
         }
 
@@ -64,8 +55,7 @@ public abstract class FilmEditorUndo implements IUndo<ValueGroup>
             : editor.replays.propertyEditor.properties.createSelection();
     }
 
-    public void selectedBefore(List<Integer> cameraClipsSelection, List<Integer> voiceLineSelection, KeyframeSelection keyframe, KeyframeSelection properties)
-    {
+    public void selectedBefore(List<Integer> cameraClipsSelection, List<Integer> voiceLineSelection, KeyframeSelection keyframe, KeyframeSelection properties) {
         this.cameraClips.selectedBefore.clear();
         this.cameraClips.selectedBefore.addAll(cameraClipsSelection);
 
@@ -76,16 +66,14 @@ public abstract class FilmEditorUndo implements IUndo<ValueGroup>
         this.propertiesBefore = properties;
     }
 
-    public static class KeyframeSelection
-    {
+    public static class KeyframeSelection {
         public List<List<Integer>> selected = new ArrayList<>();
         public Vector2i current = new Vector2i(-1, -1);
         public double min;
         public double max;
     }
 
-    public static class ClipsData
-    {
+    public static class ClipsData {
         public double viewMin;
         public double viewMax;
         public int scroll;
@@ -93,8 +81,7 @@ public abstract class FilmEditorUndo implements IUndo<ValueGroup>
         public List<Integer> selectedBefore = new ArrayList<>();
         public List<Integer> selectedAfter = new ArrayList<>();
 
-        public ClipsData(UIClips clips)
-        {
+        public ClipsData(UIClips clips) {
             this.viewMin = clips.scale.getMinValue();
             this.viewMax = clips.scale.getMaxValue();
             this.scroll = clips.vertical.scroll;
@@ -103,13 +90,11 @@ public abstract class FilmEditorUndo implements IUndo<ValueGroup>
             this.selectedBefore.addAll(this.selectedAfter);
         }
 
-        public List<Integer> getSelection(boolean redo)
-        {
+        public List<Integer> getSelection(boolean redo) {
             return redo ? this.selectedAfter : this.selectedBefore;
         }
 
-        public void apply(UIClips clips)
-        {
+        public void apply(UIClips clips) {
             clips.scale.view(this.viewMin, this.viewMax);
             clips.vertical.scrollTo(this.scroll);
         }

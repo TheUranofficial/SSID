@@ -46,12 +46,12 @@ uniform sampler2D u_texture;
 void main()
 {
     vec4 albedo = texture(u_texture, pass_uv) * u_color;
-    
+
     if (albedo.a < 0.9)
     {
         discard;
     }
-    
+
     out_color = albedo * pass_rgba;
     out_vertex = vec4(pass_vertex.xyz, 1);
     out_normal = vec4(pass_normal, 1);

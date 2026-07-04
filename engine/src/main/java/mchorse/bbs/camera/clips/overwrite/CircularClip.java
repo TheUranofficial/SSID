@@ -10,8 +10,7 @@ import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.clips.ClipContext;
 import mchorse.bbs.utils.math.MathUtils;
 
-public class CircularClip extends CameraClip
-{
+public class CircularClip extends CameraClip {
     /**
      * Center point of circular fixture
      */
@@ -42,8 +41,7 @@ public class CircularClip extends CameraClip
      */
     public final ValueFloat fov = new ValueFloat("fov", 70F);
 
-    public CircularClip()
-    {
+    public CircularClip() {
         super();
 
         this.add(this.start);
@@ -55,15 +53,13 @@ public class CircularClip extends CameraClip
     }
 
     @Override
-    public void fromCamera(Camera camera)
-    {
+    public void fromCamera(Camera camera) {
         this.start.get().set(camera);
         this.pitch.set(MathUtils.toDeg(camera.rotation.x));
     }
 
     @Override
-    public void applyClip(ClipContext context, Position position)
-    {
+    public void applyClip(ClipContext context, Position position) {
         int duration = this.duration.get();
         float progress = (context.relativeTick + context.transition) / duration;
         float angle = MathUtils.toRad(this.offset.get() + progress * this.circles.get());
@@ -84,14 +80,12 @@ public class CircularClip extends CameraClip
     }
 
     @Override
-    public Clip create()
-    {
+    public Clip create() {
         return new CircularClip();
     }
 
     @Override
-    protected void breakDownClip(Clip original, int offset)
-    {
+    protected void breakDownClip(Clip original, int offset) {
         super.breakDownClip(original, offset);
 
         CircularClip circular = (CircularClip) original;

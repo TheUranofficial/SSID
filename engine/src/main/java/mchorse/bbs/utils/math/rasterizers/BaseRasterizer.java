@@ -4,32 +4,27 @@ import org.joml.Vector2i;
 
 import java.util.Set;
 
-public abstract class BaseRasterizer
-{
+public abstract class BaseRasterizer {
     public float start;
     public float end;
     public float step;
 
-    public void setupRange(float start, float end, float step)
-    {
+    public void setupRange(float start, float end, float step) {
         this.start = start;
         this.end = end;
         this.step = step;
     }
 
-    public void solve(Set<Vector2i> points)
-    {
+    public void solve(Set<Vector2i> points) {
         Vector2i prev = null;
         float i = this.start;
         float min = Math.min(this.start, this.end);
         float max = Math.max(this.start, this.end);
 
-        while (i >= min && i <= max)
-        {
+        while (i >= min && i <= max) {
             Vector2i current = this.calculate(i);
 
-            if (current.equals(prev) || (prev != null && this.hasTwoAdjacentNeighbors(current, prev, i)))
-            {
+            if (current.equals(prev) || (prev != null && this.hasTwoAdjacentNeighbors(current, prev, i))) {
                 i += this.step;
 
                 continue;
@@ -42,13 +37,11 @@ public abstract class BaseRasterizer
         }
     }
 
-    private boolean hasTwoAdjacentNeighbors(Vector2i current, Vector2i prev, float i)
-    {
+    private boolean hasTwoAdjacentNeighbors(Vector2i current, Vector2i prev, float i) {
         Vector2i next = current;
         float newI = i + this.step;
 
-        while (next.equals(current))
-        {
+        while (next.equals(current)) {
             next = this.calculate(newI);
             newI += this.step;
         }

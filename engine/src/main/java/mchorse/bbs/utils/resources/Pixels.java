@@ -15,8 +15,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class Pixels implements IDisposable
-{
+public class Pixels implements IDisposable {
     private ByteBuffer buffer;
     public final int width;
     public final int height;
@@ -27,22 +26,19 @@ public class Pixels implements IDisposable
     /**
      * Create pixels object from given PNG stream
      */
-    public static Pixels fromPNGStream(InputStream stream) throws IOException
-    {
+    public static Pixels fromPNGStream(InputStream stream) throws IOException {
         ByteBuffer image = IOUtils.readByteBuffer(stream, 8 * 1024);
         ByteBuffer pixels;
         int w;
         int h;
         int bitsPerPixel;
 
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
             IntBuffer bits = stack.mallocInt(1);
 
-            if (!STBImage.stbi_info_from_memory(image, width, height, bits))
-            {
+            if (!STBImage.stbi_info_from_memory(image, width, height, bits)) {
                 throw new RuntimeException("Failed to read image information: " + STBImage.stbi_failure_reason());
             }
 
@@ -58,10 +54,8 @@ public class Pixels implements IDisposable
         return new Pixels(pixels, w, h, bitsPerPixel);
     }
 
-    public static Pixels fromTexture(Texture texture)
-    {
-        if (!texture.isValid())
-        {
+    public static Pixels fromTexture(Texture texture) {
+        if (!texture.isValid()) {
             return null;
         }
 
@@ -74,14 +68,11 @@ public class Pixels implements IDisposable
         return new Pixels(buffer, texture.width, texture.height);
     }
 
-    public static Pixels fromIntArray(int width, int height, int[] data)
-    {
+    public static Pixels fromIntArray(int width, int height, int[] data) {
         Pixels pixels = fromSize(width, height);
 
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
                 int i = x + y * width;
 
                 pixels.setColor(x, y, Colors.COLOR.set(data[i], true));
@@ -91,14 +82,12 @@ public class Pixels implements IDisposable
         return pixels;
     }
 
-    public static Pixels fromSize(int w, int h)
-    {
+    public static Pixels fromSize(int w, int h) {
         ByteBuffer buffer = MemoryUtil.memAlloc(w * h * 4);
 
         buffer.position(0);
 
-        for (int i = 0, c = w * h; i < c; i++)
-        {
+        for (int i = 0, c = w * h; i < c; i++) {
             buffer.put((byte) 0);
             buffer.put((byte) 0);
             buffer.put((byte) 0);
@@ -108,48 +97,39 @@ public class Pixels implements IDisposable
         return new Pixels(buffer, w, h);
     }
 
-    public Pixels(ByteBuffer buffer, int w, int h)
-    {
+    public Pixels(ByteBuffer buffer, int w, int h) {
         this(buffer, w, h, 4);
     }
 
-    public Pixels(ByteBuffer buffer, int w, int h, int bits)
-    {
+    public Pixels(ByteBuffer buffer, int w, int h, int bits) {
         this.buffer = buffer;
         this.width = w;
         this.height = h;
         this.bits = bits;
     }
 
-    public ByteBuffer getBuffer()
-    {
+    public ByteBuffer getBuffer() {
         return this.buffer;
     }
 
-    public int toIndex(int x, int y)
-    {
+    public int toIndex(int x, int y) {
         return x + y * this.width;
     }
 
-    public int toX(int index)
-    {
+    public int toX(int index) {
         return index % this.width;
     }
 
-    public int toY(int index)
-    {
+    public int toY(int index) {
         return index / this.width;
     }
 
-    public int getCount()
-    {
+    public int getCount() {
         return this.width * this.height;
     }
 
-    public Color getColor(int index)
-    {
-        if (index < 0 || index >= this.width * this.height)
-        {
+    public Color getColor(int index) {
+        if (index < 0 || index >= this.width * this.height) {
             return null;
         }
 
@@ -162,37 +142,30 @@ public class Pixels implements IDisposable
         return this.color;
     }
 
-    public Color getColor(int x, int y)
-    {
+    public Color getColor(int x, int y) {
         return this.getColor(this.toIndex(x, y));
     }
 
-    public void setColor(int index, Color color)
-    {
+    public void setColor(int index, Color color) {
         this.buffer.position(index * this.bits);
         this.buffer.put((byte) (color.r * 0xff));
         this.buffer.put((byte) (color.g * 0xff));
         this.buffer.put((byte) (color.b * 0xff));
 
-        if (this.bits == 4)
-        {
+        if (this.bits == 4) {
             this.buffer.put((byte) (color.a * 0xff));
         }
     }
 
-    public void setColor(int x, int y, Color color)
-    {
+    public void setColor(int x, int y, Color color) {
         this.setColor(this.toIndex(x, y), color);
     }
 
-    public void draw(Pixels pixels, int x, int y)
-    {
+    public void draw(Pixels pixels, int x, int y) {
         Color color = new Color();
 
-        for (int i = Math.max(x, 0), ic = Math.min(x + pixels.width, this.width); i < ic; i++)
-        {
-            for (int j = Math.max(y, 0), jc = Math.min(y + pixels.height, this.height); j < jc; j++)
-            {
+        for (int i = Math.max(x, 0), ic = Math.min(x + pixels.width, this.width); i < ic; i++) {
+            for (int j = Math.max(y, 0), jc = Math.min(y + pixels.height, this.height); j < jc; j++) {
                 int px = i - x;
                 int py = j - y;
 
@@ -209,14 +182,11 @@ public class Pixels implements IDisposable
         }
     }
 
-    public void draw(Pixels pixels, int x, int y, int w, int h)
-    {
+    public void draw(Pixels pixels, int x, int y, int w, int h) {
         Color color = new Color();
 
-        for (int i = Math.max(x, 0), ic = Math.min(x + w, this.width); i < ic; i++)
-        {
-            for (int j = Math.max(y, 0), jc = Math.min(y + h, this.height); j < jc; j++)
-            {
+        for (int i = Math.max(x, 0), ic = Math.min(x + w, this.width); i < ic; i++) {
+            for (int j = Math.max(y, 0), jc = Math.min(y + h, this.height); j < jc; j++) {
                 float fx = (i - x) / (float) w;
                 float fy = (j - y) / (float) h;
                 int px = (int) (pixels.width * fx);
@@ -235,39 +205,31 @@ public class Pixels implements IDisposable
         }
     }
 
-    public void drawRect(int x, int y, int w, int h, int c)
-    {
+    public void drawRect(int x, int y, int w, int h, int c) {
         Color color = new Color().set(c);
 
-        for (int i = Math.max(x, 0), ic = Math.min(x + w, this.width); i < ic; i++)
-        {
-            for (int j = Math.max(y, 0), jc = Math.min(y + h, this.height); j < jc; j++)
-            {
+        for (int i = Math.max(x, 0), ic = Math.min(x + w, this.width); i < ic; i++) {
+            for (int j = Math.max(y, 0), jc = Math.min(y + h, this.height); j < jc; j++) {
                 this.setColor(i, j, color);
             }
         }
     }
 
-    public int[] getARGB()
-    {
+    public int[] getARGB() {
         int[] colors = new int[this.width * this.height * 4];
 
-        for (int i = 0, c = this.getCount(); i < c; i++)
-        {
+        for (int i = 0, c = this.getCount(); i < c; i++) {
             colors[i] = this.getColor(i).getARGBColor();
         }
 
         return colors;
     }
 
-    public Pixels createCopy(int x, int y, int w, int h)
-    {
+    public Pixels createCopy(int x, int y, int w, int h) {
         Pixels pixels = fromSize(w, h);
 
-        for (int i = 0; i < w; i++)
-        {
-            for (int j = 0; j < h; j++)
-            {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
                 Color color = this.getColor(x + i, y + j);
 
                 pixels.setColor(i, j, color);
@@ -277,18 +239,15 @@ public class Pixels implements IDisposable
         return pixels;
     }
 
-    public void rewindBuffer()
-    {
-        if (this.buffer != null)
-        {
+    public void rewindBuffer() {
+        if (this.buffer != null) {
             this.buffer.position(0);
             this.buffer.limit(this.buffer.capacity());
         }
     }
 
     @Override
-    public void delete()
-    {
+    public void delete() {
         MemoryUtil.memFree(this.buffer);
 
         this.buffer = null;

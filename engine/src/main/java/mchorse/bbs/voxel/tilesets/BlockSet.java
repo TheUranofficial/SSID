@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BlockSet implements IMapSerializable
-{
+public class BlockSet implements IMapSerializable {
     public final Link id;
 
     /**
@@ -65,8 +64,7 @@ public class BlockSet implements IMapSerializable
 
     private Map<Link, Integer> lastIndices = new HashMap<>();
 
-    public BlockSet(Link id)
-    {
+    public BlockSet(Link id) {
         this.id = id;
 
         this.air = new BlockVariant(new BlockLink("bbs", "air"), 0);
@@ -79,34 +77,28 @@ public class BlockSet implements IMapSerializable
      * After factories were edited in this block set, block set has to be rebuilt
      * to take in account changes in the structure.
      */
-    public void rebuild()
-    {
+    public void rebuild() {
         int total = 0;
         int i = 0;
 
         this.lastIndices.clear();
         this.variantMap.clear();
 
-        for (BlockModelFactory factory : this.factories)
-        {
+        for (BlockModelFactory factory : this.factories) {
             factory.variants.clear();
             factory.compile();
 
-            for (BlockModel model : factory.models.list)
-            {
+            for (BlockModel model : factory.models.list) {
                 BlockVariantDelegate delegate = i < this.variants.size() ? this.variants.get(i) : null;
                 int globalId = i + 1;
                 int blockVariantId = this.getAndIncrementBlockVariantId(factory.blockId);
                 BlockVariant variant = this.createVariant(model, blockVariantId, globalId);
 
-                if (delegate == null)
-                {
+                if (delegate == null) {
                     delegate = new BlockVariantDelegate(variant);
 
                     this.variants.add(delegate);
-                }
-                else
-                {
+                } else {
                     delegate.variant = variant;
                 }
 
@@ -118,18 +110,15 @@ public class BlockSet implements IMapSerializable
             total += factory.models.list.size();
         }
 
-        if (total < this.variants.size())
-        {
+        if (total < this.variants.size()) {
             this.variants.subList(total, this.variants.size()).clear();
         }
     }
 
-    public void registerFactory(BlockModelFactory factory)
-    {
+    public void registerFactory(BlockModelFactory factory) {
         factory.compile();
 
-        for (BlockModel model : factory.models.list)
-        {
+        for (BlockModel model : factory.models.list) {
             int globalId = this.variants.size() + 1;
             int blockVariantId = this.getAndIncrementBlockVariantId(factory.blockId);
             BlockVariant variant = this.createVariant(model, blockVariantId, globalId);
@@ -141,26 +130,21 @@ public class BlockSet implements IMapSerializable
         this.factories.add(factory);
     }
 
-    private int getAndIncrementBlockVariantId(Link blockId)
-    {
+    private int getAndIncrementBlockVariantId(Link blockId) {
         Integer id = this.lastIndices.get(blockId);
 
-        if (id == null)
-        {
+        if (id == null) {
             id = 0;
 
             this.lastIndices.put(blockId, 1);
-        }
-        else
-        {
+        } else {
             this.lastIndices.put(blockId, id + 1);
         }
 
         return id;
     }
 
-    private BlockVariant createVariant(BlockModel model, int blockVariantId, int globalId)
-    {
+    private BlockVariant createVariant(BlockModel model, int blockVariantId, int globalId) {
         BlockVariant variant = new BlockVariant(new BlockLink(model.factory.blockId, blockVariantId), globalId);
 
         variant.setModel(model);
@@ -169,65 +153,53 @@ public class BlockSet implements IMapSerializable
         return variant;
     }
 
-    public IBlockVariant get(int numerical)
-    {
-        if (numerical == 0)
-        {
+    public IBlockVariant get(int numerical) {
+        if (numerical == 0) {
             return this.air;
-        }
-        else if (numerical > 0 && numerical <= this.variants.size())
-        {
+        } else if (numerical > 0 && numerical <= this.variants.size()) {
             return this.variants.get(numerical - 1);
         }
 
         return this.error;
     }
 
-    public IBlockVariant getVariant(BlockLink link)
-    {
+    public IBlockVariant getVariant(BlockLink link) {
         return this.getVariant(link, this.air);
     }
 
-    public IBlockVariant getVariant(BlockLink link, IBlockVariant defaultValue)
-    {
+    public IBlockVariant getVariant(BlockLink link, IBlockVariant defaultValue) {
         return this.variantMap.getOrDefault(link, defaultValue);
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType models = new ListType();
 
-        if (this.atlas != null)
-        {
+        if (this.atlas != null) {
             data.put("atlas", LinkUtils.toData(this.atlas));
         }
 
         data.putInt("atlasWidth", this.atlasWidth);
         data.putInt("atlasHeight", this.atlasHeight);
 
-        for (BlockModelFactory block : this.factories)
-        {
+        for (BlockModelFactory block : this.factories) {
             models.add(BBS.getFactoryBlockModels().toData(block));
         }
 
-        if (models.size() > 0)
-        {
+        if (models.size() > 0) {
             data.put("blocks", models);
         }
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.atlas = LinkUtils.create(data.get("atlas"));
         this.atlasWidth = data.getInt("atlasWidth", this.atlasWidth);
         this.atlasHeight = data.getInt("atlasHeight", this.atlasHeight);
 
         ListType blocks = data.getList("blocks");
 
-        for (BaseType element : blocks)
-        {
+        for (BaseType element : blocks) {
             MapType blockType = (MapType) element;
             BlockModelFactory factory = BBS.getFactoryBlockModels().fromData(blockType);
 

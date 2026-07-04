@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EventManager
-{
+public class EventManager {
     protected Map<Class, List<Consumer>> events = new HashMap<>();
 
-    public <T extends UIEvent> void register(Class<T> event, Consumer<T> callback)
-    {
-        if (callback == null)
-        {
+    public <T extends UIEvent> void register(Class<T> event, Consumer<T> callback) {
+        if (callback == null) {
             return;
         }
 
@@ -22,21 +19,17 @@ public class EventManager
         events.add(callback);
     }
 
-    public void emit(UIEvent event)
-    {
+    public void emit(UIEvent event) {
         List<Consumer> events = this.events.get(event.getClass());
 
-        if (events != null)
-        {
-            for (Consumer callback : events)
-            {
+        if (events != null) {
+            for (Consumer callback : events) {
                 callback.accept(event);
             }
         }
     }
 
-    public void remove(Class event)
-    {
+    public void remove(Class event) {
         this.events.remove(event);
     }
 }

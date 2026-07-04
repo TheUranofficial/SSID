@@ -6,15 +6,12 @@ import mchorse.bbs.camera.data.Position;
 import mchorse.bbs.utils.keyframes.KeyframeEasing;
 import mchorse.bbs.utils.keyframes.KeyframeInterpolation;
 
-public class PathToKeyframeConverter implements IClipConverter<PathClip, KeyframeClip>
-{
+public class PathToKeyframeConverter implements IClipConverter<PathClip, KeyframeClip> {
     @Override
-    public KeyframeClip convert(PathClip path)
-    {
+    public KeyframeClip convert(PathClip path) {
         int c = path.size();
 
-        if (c <= 1)
-        {
+        if (c <= 1) {
             return null;
         }
 
@@ -29,8 +26,7 @@ public class PathToKeyframeConverter implements IClipConverter<PathClip, Keyfram
 
         long x;
 
-        for (int i = 0; i < path.size(); i++)
-        {
+        for (int i = 0; i < path.size(); i++) {
             Position point = path.points.get(i);
 
             x = (int) (i / (c - 1F) * duration);

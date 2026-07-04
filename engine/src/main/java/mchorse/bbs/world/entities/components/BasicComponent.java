@@ -6,15 +6,11 @@ import mchorse.bbs.utils.AABB;
 import mchorse.bbs.utils.joml.Matrices;
 import mchorse.bbs.utils.math.Interpolations;
 import mchorse.bbs.utils.math.MathUtils;
-import mchorse.bbs.voxel.raytracing.RayTraceResult;
-import mchorse.bbs.voxel.raytracing.RayTraceType;
-import mchorse.bbs.voxel.raytracing.RayTracer;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class BasicComponent extends Component
-{
+public class BasicComponent extends Component {
     /* Position and orientation */
     public Vector3d position = new Vector3d();
     public Vector3d prevPosition = new Vector3d();
@@ -45,27 +41,23 @@ public class BasicComponent extends Component
 
     public float prevPrevRotationZ;
 
-    public void setPosition(double x, double y, double z)
-    {
+    public void setPosition(double x, double y, double z) {
         this.position.set(x, y, z);
         this.hitbox.setPosition(x - this.hitbox.w / 2, y, z - this.hitbox.d / 2);
     }
 
-    public void setRotation(float pitch, float yaw)
-    {
+    public void setRotation(float pitch, float yaw) {
         this.rotation.x = pitch;
         this.rotation.y = yaw;
     }
 
-    public Vector3f getLook()
-    {
+    public Vector3f getLook() {
         return Matrices.rotation(this.rotation.x, MathUtils.PI - this.rotation.y);
     }
 
     /* Hitbox size */
 
-    public void setHitboxSize(float width, float height)
-    {
+    public void setHitboxSize(float width, float height) {
         this.hitboxWidth = width;
         this.hitboxHeight = height;
 
@@ -73,19 +65,16 @@ public class BasicComponent extends Component
         this.hitbox.h = this.hitboxWidth;
     }
 
-    public float getHeight()
-    {
+    public float getHeight() {
         return this.hitboxHeight * (this.sneak ? this.sneakMultiplier : 1F);
     }
 
-    public float getEyeHeight()
-    {
+    public float getEyeHeight() {
         return this.getHeight() * this.eyeHeight;
     }
 
     @Override
-    public void preUpdate()
-    {
+    public void preUpdate() {
         this.hitbox.w = this.hitbox.d = this.hitboxWidth;
         this.hitbox.h = this.getHeight();
 
@@ -97,31 +86,26 @@ public class BasicComponent extends Component
 
         this.updateBodyYaw();
 
-        if (this.manualControl)
-        {
+        if (this.manualControl) {
             return;
         }
 
-        if (!this.grounded)
-        {
+        if (!this.grounded) {
             this.velocity.y -= 0.06F;
 
-            if (this.velocity.y < 0)
-            {
+            if (this.velocity.y < 0) {
                 this.fall -= this.velocity.y;
             }
         }
 
         float slowdown = this.grounded ? 0.7F : 0.95F;
 
-        if (this.velocity.x != 0)
-        {
+        if (this.velocity.x != 0) {
             if (Math.abs(this.velocity.x) < 0.001F) this.velocity.x = 0;
             else this.velocity.x *= slowdown;
         }
 
-        if (this.velocity.z != 0)
-        {
+        if (this.velocity.z != 0) {
             if (Math.abs(this.velocity.z) < 0.001F) this.velocity.z = 0;
             else this.velocity.z *= slowdown;
         }
@@ -147,12 +131,10 @@ public class BasicComponent extends Component
     }
 
     @Override
-    public void postUpdate()
-    {
+    public void postUpdate() {
         super.postUpdate();
 
-        if (!this.manualControl)
-        {
+        if (!this.manualControl) {
             this.position.add(this.velocity);
         }
 
@@ -161,40 +143,33 @@ public class BasicComponent extends Component
         this.ticks++;
     }
 
-    protected void updateBodyYaw()
-    {
+    protected void updateBodyYaw() {
         Vector2f a = new Vector2f(this.velocity.x, this.velocity.z);
         float z = this.rotation.z;
 
-        if (a.lengthSquared() > 0.001F)
-        {
+        if (a.lengthSquared() > 0.001F) {
             float v = MathUtils.wrapToCircle(-a.normalize().angle(new Vector2f(0, -1)));
             float z2 = MathUtils.wrapToCircle(z);
             float v2 = v - z2 + z;
 
-            if (Math.abs(v2 - z) > MathUtils.PI)
-            {
+            if (Math.abs(v2 - z) > MathUtils.PI) {
                 v2 -= Math.copySign(MathUtils.PI * 2, v2 - z);
             }
 
             this.rotation.z = Interpolations.lerp(this.rotation.z, v2, 0.5F);
-        }
-        else
-        {
+        } else {
             this.rotation.z = Interpolations.lerp(z, this.rotation.y, 0.5F);
         }
 
         float bodyYawDiff = this.rotation.z - this.rotation.y;
 
-        if (Math.abs(bodyYawDiff) >= MathUtils.PI / 3)
-        {
+        if (Math.abs(bodyYawDiff) >= MathUtils.PI / 3) {
             this.rotation.z = this.rotation.y + Math.copySign(MathUtils.PI / 3, bodyYawDiff);
         }
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         data.putString("name", this.name);
         data.put("position", DataStorageUtils.vector3dToData(this.position));
         data.put("rotation", DataStorageUtils.vector3fToData(this.rotation));
@@ -204,8 +179,7 @@ public class BasicComponent extends Component
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         this.name = data.getString("name");
 
         Vector3d position = DataStorageUtils.vector3dFromData(data.getList("position"));

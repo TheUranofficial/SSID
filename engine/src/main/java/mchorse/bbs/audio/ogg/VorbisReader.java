@@ -14,10 +14,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-public class VorbisReader
-{
-    public static Wave read(Link link, InputStream stream) throws IOException
-    {
+public class VorbisReader {
+    public static Wave read(Link link, InputStream stream) throws IOException {
         try (
             STBVorbisInfo info = STBVorbisInfo.malloc();
             MemoryStack stack = MemoryStack.stackPush()
@@ -27,8 +25,7 @@ public class VorbisReader
             IntBuffer error = stack.mallocInt(1);
             long decoder = STBVorbis.stb_vorbis_open_memory(buffer, error, null);
 
-            if (decoder == MemoryUtil.NULL)
-            {
+            if (decoder == MemoryUtil.NULL) {
                 throw new RuntimeException("Failed to read " + link.toString() + " Vorbis audio... Error code: " + error.get());
             }
 
@@ -44,8 +41,7 @@ public class VorbisReader
 
             ByteBuffer byteBuffer = MemoryUtil.memAlloc(size * 2);
 
-            for (int i = 0, c = samples.limit(); i < c; i++)
-            {
+            for (int i = 0, c = samples.limit(); i < c; i++) {
                 byteBuffer.putShort(samples.get());
             }
 
@@ -53,8 +49,7 @@ public class VorbisReader
 
             byte[] finalBytes = new byte[byteBuffer.limit()];
 
-            for (int i = 0, c = byteBuffer.limit(); i < c; i++)
-            {
+            for (int i = 0, c = byteBuffer.limit(); i < c; i++) {
                 finalBytes[i] = byteBuffer.get();
             }
 

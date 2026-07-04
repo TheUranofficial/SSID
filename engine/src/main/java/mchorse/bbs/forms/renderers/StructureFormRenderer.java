@@ -17,16 +17,13 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-public class StructureFormRenderer extends FormRenderer<StructureForm>
-{
-    public StructureFormRenderer(StructureForm form)
-    {
+public class StructureFormRenderer extends FormRenderer<StructureForm> {
+    public StructureFormRenderer(StructureForm form) {
         super(form);
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         context.batcher.flush();
 
         ChunkBuilder chunkBuilder = context.menu.bridge.get(IBridgeWorld.class).getChunkBuilder();
@@ -34,8 +31,7 @@ public class StructureFormRenderer extends FormRenderer<StructureForm>
         int x = (x2 + x1) / 2;
         int y = (y2 + y1) / 2;
 
-        if (display != null)
-        {
+        if (display != null) {
             Shader shader = context.render.getShaders().get(chunkBuilder.getAttributes());
 
             Matrix4f model = new Matrix4f();
@@ -67,9 +63,7 @@ public class StructureFormRenderer extends FormRenderer<StructureForm>
             texture.setFilter(filter);
 
             GLStates.setupDepthFunction2D();
-        }
-        else
-        {
+        } else {
             String label = "N/A";
 
             x -= context.font.getWidth(label) / 2;
@@ -80,13 +74,11 @@ public class StructureFormRenderer extends FormRenderer<StructureForm>
     }
 
     @Override
-    protected void render3D(Entity entity, RenderingContext context)
-    {
+    protected void render3D(Entity entity, RenderingContext context) {
         ChunkBuilder chunkBuilder = context.getWorld().bridge.get(IBridgeWorld.class).getChunkBuilder();
         ChunkDisplay display = BBS.getStructures().getCachedChunk(this.form.structure.get(), context, chunkBuilder);
 
-        if (display != null)
-        {
+        if (display != null) {
             Shader basic = context.getShaders().get(chunkBuilder.getAttributes());
 
             context.stack.push();

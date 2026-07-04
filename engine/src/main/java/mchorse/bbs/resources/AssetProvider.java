@@ -4,49 +4,34 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class AssetProvider
-{
+public class AssetProvider {
     private Map<String, List<ISourcePack>> sourcePacks = new HashMap<>();
 
-    public void registerFirst(ISourcePack pack)
-    {
+    public void registerFirst(ISourcePack pack) {
         this.sourcePacks.computeIfAbsent(pack.getPrefix(), (k) -> new ArrayList<>()).add(0, pack);
     }
 
-    public void register(ISourcePack pack)
-    {
+    public void register(ISourcePack pack) {
         this.sourcePacks.computeIfAbsent(pack.getPrefix(), (k) -> new ArrayList<>()).add(pack);
     }
 
-    public Collection<String> getSourceKeys()
-    {
+    public Collection<String> getSourceKeys() {
         return this.sourcePacks.keySet();
     }
 
-    private List<ISourcePack> getPacks(String source)
-    {
+    private List<ISourcePack> getPacks(String source) {
         List<ISourcePack> sourcePacks = this.sourcePacks.get(source);
 
         return sourcePacks == null ? Collections.emptyList() : sourcePacks;
     }
 
-    public InputStream getAsset(Link link) throws IOException
-    {
+    public InputStream getAsset(Link link) throws IOException {
         List<ISourcePack> packs = this.getPacks(link.source);
 
-        for (ISourcePack pack : packs)
-        {
-            if (pack.hasAsset(link))
-            {
+        for (ISourcePack pack : packs) {
+            if (pack.hasAsset(link)) {
                 return pack.getAsset(link);
             }
         }
@@ -54,16 +39,13 @@ public class AssetProvider
         throw new FileNotFoundException("Asset " + link + " couldn't be found!");
     }
 
-    public File getFile(Link link)
-    {
+    public File getFile(Link link) {
         List<ISourcePack> packs = this.getPacks(link.source);
 
-        for (ISourcePack pack : packs)
-        {
+        for (ISourcePack pack : packs) {
             File file = pack.getFile(link);
 
-            if (file != null)
-            {
+            if (file != null) {
                 return file;
             }
         }
@@ -71,16 +53,12 @@ public class AssetProvider
         return null;
     }
 
-    public Link getLink(File file)
-    {
-        for (List<ISourcePack> sourcePacks : this.sourcePacks.values())
-        {
-            for (ISourcePack sourcePack : sourcePacks)
-            {
+    public Link getLink(File file) {
+        for (List<ISourcePack> sourcePacks : this.sourcePacks.values()) {
+            for (ISourcePack sourcePack : sourcePacks) {
                 Link link = sourcePack.getLink(file);
 
-                if (link != null)
-                {
+                if (link != null) {
                     return link;
                 }
             }
@@ -89,18 +67,15 @@ public class AssetProvider
         return null;
     }
 
-    public Collection<Link> getLinksFromPath(Link link)
-    {
+    public Collection<Link> getLinksFromPath(Link link) {
         return this.getLinksFromPath(link, true);
     }
 
-    public Collection<Link> getLinksFromPath(Link link, boolean recursive)
-    {
+    public Collection<Link> getLinksFromPath(Link link, boolean recursive) {
         Set<Link> links = new HashSet<>();
         List<ISourcePack> packs = this.getPacks(link.source);
 
-        for (ISourcePack pack : packs)
-        {
+        for (ISourcePack pack : packs) {
             pack.getLinksFromPath(links, link, recursive);
         }
 

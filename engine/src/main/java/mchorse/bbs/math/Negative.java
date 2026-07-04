@@ -2,37 +2,31 @@ package mchorse.bbs.math;
 
 /**
  * Negative operator class
- *
+ * <p>
  * This class is responsible for inverting given value
  */
-public class Negative extends Wrapper
-{
-    public Negative(IExpression expression)
-    {
+public class Negative extends Wrapper {
+    public Negative(IExpression expression) {
         super(expression);
     }
 
     @Override
-    protected void process()
-    {
+    protected void process() {
         this.result.set(this.doubleValue());
     }
 
     @Override
-    public double doubleValue()
-    {
+    public double doubleValue() {
         return -this.expression.doubleValue();
     }
 
     @Override
-    public boolean booleanValue()
-    {
+    public boolean booleanValue() {
         return Operation.isTrue(this.doubleValue());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "-" + this.expression.toString();
     }
 }

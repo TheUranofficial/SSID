@@ -4,19 +4,16 @@ import mchorse.bbs.camera.data.Position;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.settings.values.ValueGroup;
 
-public class ValuePosition extends ValueGroup
-{
+public class ValuePosition extends ValueGroup {
     private Position position;
     private ValuePoint pointDelegate;
     private ValueAngle angleDelegate;
 
-    public ValuePosition(String id)
-    {
+    public ValuePosition(String id) {
         this(id, new Position());
     }
 
-    public ValuePosition(String id, Position position)
-    {
+    public ValuePosition(String id, Position position) {
         super(id);
 
         this.position = position;
@@ -27,37 +24,31 @@ public class ValuePosition extends ValueGroup
         this.add(this.angleDelegate);
     }
 
-    public ValuePoint getPoint()
-    {
+    public ValuePoint getPoint() {
         return this.pointDelegate;
     }
 
-    public ValueAngle getAngle()
-    {
+    public ValueAngle getAngle() {
         return this.angleDelegate;
     }
 
-    public Position get()
-    {
+    public Position get() {
         return this.position;
     }
 
-    public void set(Position position)
-    {
+    public void set(Position position) {
         this.preNotifyParent();
         this.position.set(position);
         this.postNotifyParent();
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         return this.position.toData();
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
+    public void fromData(BaseType data) {
         this.position.fromData(data.asMap());
     }
 }

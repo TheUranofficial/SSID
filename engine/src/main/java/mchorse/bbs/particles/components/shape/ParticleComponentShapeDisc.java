@@ -14,19 +14,16 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class ParticleComponentShapeDisc extends ParticleComponentShapeSphere
-{
+public class ParticleComponentShapeDisc extends ParticleComponentShapeSphere {
     public MolangExpression[] normal = {MolangParser.ZERO, MolangParser.ONE, MolangParser.ZERO};
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         super.toData(data);
 
         ListType list = new ListType();
 
-        for (MolangExpression expression : this.normal)
-        {
+        for (MolangExpression expression : this.normal) {
             list.add(expression.toData());
         }
 
@@ -34,40 +31,30 @@ public class ParticleComponentShapeDisc extends ParticleComponentShapeSphere
     }
 
     @Override
-    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException
-    {
-        if (!data.isMap())
-        {
+    public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
+        if (!data.isMap()) {
             return super.fromData(data, parser);
         }
 
         MapType map = data.asMap();
 
-        if (map.has("plane_normal"))
-        {
+        if (map.has("plane_normal")) {
             BaseType normal = map.get("plane_normal");
 
-            if (normal.isString())
-            {
+            if (normal.isString()) {
                 String axis = normal.asString().toLowerCase();
 
-                if (axis.equals("x"))
-                {
+                if (axis.equals("x")) {
                     this.normal[0] = MolangParser.ONE;
                     this.normal[1] = MolangParser.ZERO;
-                }
-                else if (axis.equals("z"))
-                {
+                } else if (axis.equals("z")) {
                     this.normal[1] = MolangParser.ZERO;
                     this.normal[2] = MolangParser.ONE;
                 }
-            }
-            else
-            {
+            } else {
                 ListType array = map.getList("plane_normal");
 
-                if (array.size() >= 3)
-                {
+                if (array.size() >= 3) {
                     this.normal[0] = parser.parseData(array.get(0));
                     this.normal[1] = parser.parseData(array.get(1));
                     this.normal[2] = parser.parseData(array.get(2));
@@ -79,16 +66,14 @@ public class ParticleComponentShapeDisc extends ParticleComponentShapeSphere
     }
 
     @Override
-    public void apply(ParticleEmitter emitter, Particle particle)
-    {
+    public void apply(ParticleEmitter emitter, Particle particle) {
         float centerX = (float) this.offset[0].get();
         float centerY = (float) this.offset[1].get();
         float centerZ = (float) this.offset[2].get();
 
         Vector3f forward = new Vector3f((float) this.normal[0].get(), (float) this.normal[1].get(), (float) this.normal[2].get());
 
-        if (forward.distanceSquared(0, 0, 0) == 0)
-        {
+        if (forward.distanceSquared(0, 0, 0) == 0) {
             forward.set(0, 1, 0);
         }
 

@@ -6,10 +6,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.ui.framework.elements.input.UITexturePicker;
 
-public class UIParticleForm extends UIForm<ParticleForm>
-{
-    public UIParticleForm()
-    {
+public class UIParticleForm extends UIForm<ParticleForm> {
+    public UIParticleForm() {
         super();
 
         this.registerDefaultPanels();
@@ -20,8 +18,7 @@ public class UIParticleForm extends UIForm<ParticleForm>
         {
             Link texture = this.form.texture.get();
 
-            if (this.form.getEmitter() != null && texture == null)
-            {
+            if (this.form.getEmitter() != null && texture == null) {
                 texture = this.form.getEmitter().scheme.texture;
             }
 

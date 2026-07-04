@@ -5,8 +5,7 @@ import mchorse.bbs.bridge.IBridge;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ClipContext <T extends Clip, E>
-{
+public abstract class ClipContext<T extends Clip, E> {
     /**
      * Tick since the beginning of the camera profile.
      */
@@ -46,18 +45,15 @@ public abstract class ClipContext <T extends Clip, E>
 
     public IBridge bridge;
 
-    public ClipContext setup(int ticks, float transition)
-    {
+    public ClipContext setup(int ticks, float transition) {
         return this.setup(ticks, ticks, transition);
     }
 
-    public ClipContext setup(int ticks, int relativeTick, float transition)
-    {
+    public ClipContext setup(int ticks, int relativeTick, float transition) {
         return this.setup(ticks, relativeTick, transition, 0);
     }
 
-    public ClipContext setup(int ticks, int relativeTick, float transition, int currentLayer)
-    {
+    public ClipContext setup(int ticks, int relativeTick, float transition, int currentLayer) {
         this.count = 0;
         this.ticks = ticks;
         this.relativeTick = relativeTick;
@@ -72,10 +68,8 @@ public abstract class ClipContext <T extends Clip, E>
     /**
      * Apply clips underneath currently running
      */
-    public boolean applyUnderneath(int ticks, float transition, E position)
-    {
-        if (this.currentLayer > 0)
-        {
+    public boolean applyUnderneath(int ticks, float transition, E position) {
+        if (this.currentLayer > 0) {
             int lastLayer = this.currentLayer;
             int lastTicks = this.ticks;
             int lastRelativeTicks = this.relativeTick;
@@ -86,10 +80,8 @@ public abstract class ClipContext <T extends Clip, E>
 
             boolean applied = false;
 
-            for (Clip clip : this.clips.getClips(ticks, lastLayer))
-            {
-                if (this.apply(clip, position))
-                {
+            for (Clip clip : this.clips.getClips(ticks, lastLayer)) {
+                if (this.apply(clip, position)) {
                     applied = true;
                 }
             }

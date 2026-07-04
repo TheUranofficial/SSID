@@ -1,7 +1,6 @@
 package mchorse.bbs.cubic;
 
 import mchorse.bbs.game.entities.components.PlayerComponent;
-import mchorse.bbs.math.Variable;
 import mchorse.bbs.math.molang.MolangParser;
 import mchorse.bbs.math.molang.expressions.MolangExpression;
 import mchorse.bbs.utils.Axis;
@@ -9,10 +8,8 @@ import mchorse.bbs.utils.math.Interpolations;
 import mchorse.bbs.world.entities.Entity;
 import mchorse.bbs.world.entities.components.BasicComponent;
 
-public class MolangHelper
-{
-    public static void registerVars(MolangParser parser)
-    {
+public class MolangHelper {
+    public static void registerVars(MolangParser parser) {
         parser.register("query.anim_time");
         parser.register("query.ground_speed");
         parser.register("query.yaw_speed");
@@ -37,8 +34,7 @@ public class MolangHelper
         parser.register("extra2.y");
     }
 
-    public static void setMolangVariables(MolangParser parser, Entity target, float frame, float transition)
-    {
+    public static void setMolangVariables(MolangParser parser, Entity target, float frame, float transition) {
         double dx = 0;
         double dz = 0;
         double yawSpeed = 0;
@@ -47,8 +43,7 @@ public class MolangHelper
         double velocity = 0;
         double age = 0;
 
-        if (target != null)
-        {
+        if (target != null) {
             BasicComponent basic = target.basic;
             float yawHead = Interpolations.lerp(basic.prevRotation.y, basic.rotation.y, transition);
             float bodyYaw = Interpolations.lerp(basic.prevRotation.z, basic.rotation.z, transition);
@@ -62,8 +57,7 @@ public class MolangHelper
 
             /* There is still a tiny bit of vertical velocity (gravity) when an
              * entity stands still, so set it to zero in that case */
-            if (basic.grounded && basic.velocity.y < 0 && (Math.abs(dx) < 0.001 || Math.abs(dz) < 0.001))
-            {
+            if (basic.grounded && basic.velocity.y < 0 && (Math.abs(dx) < 0.001 || Math.abs(dz) < 0.001)) {
                 velocity = 0;
             }
 
@@ -71,8 +65,7 @@ public class MolangHelper
 
             PlayerComponent playerComponent = target.get(PlayerComponent.class);
 
-            if (playerComponent != null)
-            {
+            if (playerComponent != null) {
                 float[] prev = playerComponent.prevSticks;
                 float[] sticks = playerComponent.sticks;
 
@@ -86,9 +79,7 @@ public class MolangHelper
                 parser.setValue("extra1.y", Interpolations.lerp(prev[7], sticks[7], transition));
                 parser.setValue("extra2.x", Interpolations.lerp(prev[8], sticks[8], transition));
                 parser.setValue("extra2.y", Interpolations.lerp(prev[9], sticks[9], transition));
-            }
-            else
-            {
+            } else {
                 parser.setValue("joystick.l_x", 0);
                 parser.setValue("joystick.l_y", 0);
                 parser.setValue("joystick.r_x", 0);
@@ -100,9 +91,7 @@ public class MolangHelper
                 parser.setValue("extra2.x", 0);
                 parser.setValue("extra2.y", 0);
             }
-        }
-        else
-        {
+        } else {
             parser.setValue("joystick.l_x", 0);
             parser.setValue("joystick.l_y", 0);
             parser.setValue("joystick.r_x", 0);
@@ -128,26 +117,21 @@ public class MolangHelper
 
     /**
      * Get value from given value of a keyframe (end or start)
-     *
+     * <p>
      * This method is responsible for processing keyframe value, because
      * for some reason constant values are exported in radians, while molang
      * expressions are in degrees
-     *
+     * <p>
      * Plus X and Y axis of rotation are inverted for some reason ...
      */
-    public static double getValue(MolangExpression value, Component component, Axis axis)
-    {
+    public static double getValue(MolangExpression value, Component component, Axis axis) {
         double out = value.get();
 
-        if (component == Component.ROTATION)
-        {
-            if (axis == Axis.X || axis == Axis.Y)
-            {
+        if (component == Component.ROTATION) {
+            if (axis == Axis.X || axis == Axis.Y) {
                 out *= -1;
             }
-        }
-        else if (component == Component.SCALE)
-        {
+        } else if (component == Component.SCALE) {
             out = out - 1;
         }
 
@@ -158,8 +142,7 @@ public class MolangHelper
      * Component enum determines which part of the animation is being
      * calculated
      */
-    public static enum Component
-    {
+    public static enum Component {
         POSITION, ROTATION, SCALE
     }
 }

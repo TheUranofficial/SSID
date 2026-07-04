@@ -15,8 +15,7 @@ import mchorse.bbs.world.entities.architect.EntityArchitect;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ChunkCell implements IDisposable
-{
+public abstract class ChunkCell implements IDisposable {
     public ChunkManager manager;
 
     public final Set<Entity> entities = new HashSet<>();
@@ -27,20 +26,17 @@ public abstract class ChunkCell implements IDisposable
 
     public final AABBi bounds = new AABBi();
 
-    public ChunkCell(ChunkManager manager)
-    {
+    public ChunkCell(ChunkManager manager) {
         this.manager = manager;
     }
 
-    public void addEntity(Entity entity)
-    {
+    public void addEntity(Entity entity) {
         this.entities.add(entity);
 
         this.saveLater();
     }
 
-    public void removeEntity(Entity entity)
-    {
+    public void removeEntity(Entity entity) {
         this.entities.remove(entity);
 
         this.saveLater();
@@ -75,8 +71,7 @@ public abstract class ChunkCell implements IDisposable
     /**
      * Set block at global block coordinates.
      */
-    public boolean setBlock(int x, int y, int z, IBlockVariant block, boolean priority)
-    {
+    public boolean setBlock(int x, int y, int z, IBlockVariant block, boolean priority) {
         x -= this.bounds.x;
         y -= this.bounds.y;
         z -= this.bounds.z;
@@ -87,8 +82,7 @@ public abstract class ChunkCell implements IDisposable
     /**
      * Set block at local block coordinates relative to current cell's bounds.
      */
-    public boolean setBlockLocal(int x, int y, int z, IBlockVariant block)
-    {
+    public boolean setBlockLocal(int x, int y, int z, IBlockVariant block) {
         return this.setBlockLocal(x, y, z, block, false);
     }
 
@@ -102,12 +96,10 @@ public abstract class ChunkCell implements IDisposable
     /**
      * Set block lighting
      */
-    public void setLighting(int x, int y, int z, int lighting)
-    {
+    public void setLighting(int x, int y, int z, int lighting) {
         ChunkDisplay display = this.getDisplay(x, y, z);
 
-        if (display != null)
-        {
+        if (display != null) {
             display.chunk.setLighting(x - display.x, y - display.y, z - display.z, lighting);
         }
     }
@@ -115,8 +107,7 @@ public abstract class ChunkCell implements IDisposable
     /**
      * Mark as unsaved so the chunk would get saved later.
      */
-    public void saveLater()
-    {
+    public void saveLater() {
         this.unsaved = true;
     }
 
@@ -132,8 +123,7 @@ public abstract class ChunkCell implements IDisposable
      */
     public abstract void copy(ChunkCell cell);
 
-    public MapType toData()
-    {
+    public MapType toData() {
         MapType data = new MapType();
 
         this.toData(data);
@@ -141,14 +131,11 @@ public abstract class ChunkCell implements IDisposable
         return data;
     }
 
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType entities = new ListType();
 
-        for (Entity entity : this.entities)
-        {
-            if (entity.canBeSaved)
-            {
+        for (Entity entity : this.entities) {
+            if (entity.canBeSaved) {
                 entities.add(entity.toData());
             }
         }
@@ -156,18 +143,14 @@ public abstract class ChunkCell implements IDisposable
         data.put("entities", entities);
     }
 
-    public void fromData(EntityArchitect architect, MapType data)
-    {
-        if (data.has("entities"))
-        {
+    public void fromData(EntityArchitect architect, MapType data) {
+        if (data.has("entities")) {
             this.entities.clear();
 
-            for (BaseType entityType : data.getList("entities"))
-            {
+            for (BaseType entityType : data.getList("entities")) {
                 Entity e = architect.create((MapType) entityType);
 
-                if (this.bounds.contains(e.basic.position))
-                {
+                if (this.bounds.contains(e.basic.position)) {
                     this.entities.add(e);
                 }
             }

@@ -27,35 +27,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelFormRenderer extends FormRenderer<ModelForm>
-{
+public class ModelFormRenderer extends FormRenderer<ModelForm> {
     private Matrix4f uiMatrix = new Matrix4f();
     private Map<String, Matrix4f> bones = new HashMap<>();
 
     private Entity entity = EntityArchitect.createDummy();
 
-    public ModelFormRenderer(ModelForm form)
-    {
+    public ModelFormRenderer(ModelForm form) {
         super(form);
     }
 
     @Override
-    public List<String> getBones()
-    {
+    public List<String> getBones() {
         return new ArrayList<>(this.form.getModel().model.getAllGroupKeys());
     }
 
     @Override
-    public void renderUI(UIContext context, int x1, int y1, int x2, int y2)
-    {
+    public void renderUI(UIContext context, int x1, int y1, int x2, int y2) {
         context.batcher.flush();
 
         this.form.ensureAnimator();
 
         CubicModel model = this.form.getModel();
 
-        if (this.form.getAnimator() != null && model != null)
-        {
+        if (this.form.getAnimator() != null && model != null) {
             context.render.stack.push();
             context.render.stack.getNormalMatrix().scale(1, -1, 1);
 
@@ -103,14 +98,12 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
     }
 
     @Override
-    public void render3D(Entity entity, RenderingContext context)
-    {
+    public void render3D(Entity entity, RenderingContext context) {
         this.form.ensureAnimator();
 
         CubicModel model = this.form.getModel();
 
-        if (this.form.getAnimator() != null && model != null)
-        {
+        if (this.form.getAnimator() != null && model != null) {
             Link link = this.form.texture.get(context.getTransition());
             Link texture = link == null ? model.texture : link;
 
@@ -138,27 +131,22 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
     }
 
     @Override
-    protected void handlePicking(UIRenderingContext context)
-    {
+    protected void handlePicking(UIRenderingContext context) {
         CubicModel model = this.form.getModel();
 
-        if (model == null || model.model == null)
-        {
+        if (model == null || model.model == null) {
             return;
         }
 
-        for (ModelGroup group : model.model.getOrderedGroups())
-        {
+        for (ModelGroup group : model.model.getOrderedGroups()) {
             context.getStencil().addPicking(this.form, group.id);
         }
     }
 
-    private void captureMatrices(CubicModel model)
-    {
+    private void captureMatrices(CubicModel model) {
         List<Matrix4f> matrices = model.getRenderer().getMatrices();
 
-        for (ModelGroup group : model.model.getAllGroups())
-        {
+        for (ModelGroup group : model.model.getAllGroups()) {
             Matrix4f matrix = new Matrix4f(matrices.get(group.index));
 
             matrix.translate(
@@ -172,20 +160,15 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
     }
 
     @Override
-    public void renderBodyParts(Entity target, RenderingContext context)
-    {
-        for (BodyPart part : this.form.parts.getAll())
-        {
+    public void renderBodyParts(Entity target, RenderingContext context) {
+        for (BodyPart part : this.form.parts.getAll()) {
             Matrix4f matrix = this.bones.get(part.bone);
 
             context.stack.push();
 
-            if (matrix != null)
-            {
+            if (matrix != null) {
                 context.stack.multiply(matrix);
-            }
-            else
-            {
+            } else {
                 context.stack.rotateY(MathUtils.PI);
             }
 
@@ -198,8 +181,7 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
     }
 
     @Override
-    public void collectMatrices(Entity entity, MatrixStack stack, Map<String, Matrix4f> matrices, String prefix, float transition)
-    {
+    public void collectMatrices(Entity entity, MatrixStack stack, Map<String, Matrix4f> matrices, String prefix, float transition) {
         stack.push();
         stack.multiply(this.form.transform.get(transition).createMatrix());
 
@@ -208,8 +190,7 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
         /* Collect bones and add them to matrix list */
         CubicModel model = this.form.getModel();
 
-        if (this.form.getAnimator() != null && model != null)
-        {
+        if (this.form.getAnimator() != null && model != null) {
             CubicModelAnimator.resetPose(model.model);
 
             this.form.getAnimator().applyActions(entity, model.model, transition);
@@ -220,8 +201,7 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
             this.captureMatrices(model);
         }
 
-        for (Map.Entry<String, Matrix4f> entry : this.bones.entrySet())
-        {
+        for (Map.Entry<String, Matrix4f> entry : this.bones.entrySet()) {
             stack.push();
             stack.multiply(entry.getValue());
             matrices.put(StringUtils.combinePaths(prefix, entry.getKey()), new Matrix4f(stack.getModelMatrix()));
@@ -231,22 +211,17 @@ public class ModelFormRenderer extends FormRenderer<ModelForm>
         int i = 0;
 
         /* Recursively do the same thing with body parts */
-        for (BodyPart part : this.form.parts.getAll())
-        {
+        for (BodyPart part : this.form.parts.getAll()) {
             Form form = part.getForm();
 
-            if (form != null)
-            {
+            if (form != null) {
                 Matrix4f matrix = this.bones.get(part.bone);
 
                 stack.push();
 
-                if (matrix != null)
-                {
+                if (matrix != null) {
                     stack.multiply(matrix);
-                }
-                else
-                {
+                } else {
                     stack.rotateY(MathUtils.PI);
                 }
 

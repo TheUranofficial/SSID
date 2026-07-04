@@ -1,12 +1,7 @@
 package mchorse.bbs.settings.ui;
 
 import mchorse.bbs.l10n.keys.IKey;
-import mchorse.bbs.settings.values.ValueBoolean;
-import mchorse.bbs.settings.values.ValueDouble;
-import mchorse.bbs.settings.values.ValueFloat;
-import mchorse.bbs.settings.values.ValueInt;
-import mchorse.bbs.settings.values.ValueLong;
-import mchorse.bbs.settings.values.ValueString;
+import mchorse.bbs.settings.values.*;
 import mchorse.bbs.settings.values.base.BaseValue;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
@@ -19,35 +14,29 @@ import mchorse.bbs.ui.utils.UI;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIValueFactory
-{
+public class UIValueFactory {
     /* Language key factories */
 
-    public static String getTitleKey(BaseValue value)
-    {
+    public static String getTitleKey(BaseValue value) {
         return value.getId() + ".config.title";
     }
 
-    public static String getCategoryTitleKey(BaseValue value)
-    {
+    public static String getCategoryTitleKey(BaseValue value) {
         return getValueLabelKey(value) + ".title";
     }
 
-    public static String getCategoryTooltipKey(BaseValue value)
-    {
+    public static String getCategoryTooltipKey(BaseValue value) {
         return getValueLabelKey(value) + ".tooltip";
     }
 
-    public static String getValueLabelKey(BaseValue value)
-    {
+    public static String getValueLabelKey(BaseValue value) {
         List<String> segments = value.getPathSegments();
         String prefix = segments.remove(0);
 
         return prefix + ".config." + String.join(".", segments);
     }
 
-    public static String getValueCommentKey(BaseValue value)
-    {
+    public static String getValueCommentKey(BaseValue value) {
         List<String> segments = value.getPathSegments();
         String prefix = segments.remove(0);
 
@@ -56,8 +45,7 @@ public class UIValueFactory
 
     /* UI element factories */
 
-    public static UIToggle booleanUI(ValueBoolean value, Consumer<UIToggle> callback)
-    {
+    public static UIToggle booleanUI(ValueBoolean value, Consumer<UIToggle> callback) {
         UIToggle booleanToogle = new UIToggle(IKey.lang(getValueLabelKey(value)), value.get(), callback == null ? (toggle) -> value.set(toggle.getValue()) : (toggle) ->
         {
             value.set(toggle.getValue());
@@ -69,8 +57,7 @@ public class UIValueFactory
         return booleanToogle;
     }
 
-    public static UITrackpad intUI(ValueInt value, Consumer<Double> callback)
-    {
+    public static UITrackpad intUI(ValueInt value, Consumer<Double> callback) {
         UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.intValue()) : (v) ->
         {
             value.set(v.intValue());
@@ -84,8 +71,7 @@ public class UIValueFactory
         return trackpad;
     }
 
-    public static UIColor colorUI(ValueInt value, Consumer<Integer> callback)
-    {
+    public static UIColor colorUI(ValueInt value, Consumer<Integer> callback) {
         UIColor color = new UIColor(callback == null ? value::set : (integer) ->
         {
             value.set(integer);
@@ -94,8 +80,7 @@ public class UIValueFactory
 
         color.tooltip(IKey.lang(getValueCommentKey(value)));
 
-        if (value.getSubtype() == ValueInt.Subtype.COLOR_ALPHA)
-        {
+        if (value.getSubtype() == ValueInt.Subtype.COLOR_ALPHA) {
             color.withAlpha();
         }
 
@@ -104,8 +89,7 @@ public class UIValueFactory
         return color;
     }
 
-    public static UITrackpad longUI(ValueLong value, Consumer<Double> callback)
-    {
+    public static UITrackpad longUI(ValueLong value, Consumer<Double> callback) {
         UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.longValue()) : (v) ->
         {
             value.set(v.longValue());
@@ -119,8 +103,7 @@ public class UIValueFactory
         return trackpad;
     }
 
-    public static UITrackpad floatUI(ValueFloat value, Consumer<Double> callback)
-    {
+    public static UITrackpad floatUI(ValueFloat value, Consumer<Double> callback) {
         UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.floatValue()) : (v) ->
         {
             value.set(v.floatValue());
@@ -134,8 +117,7 @@ public class UIValueFactory
         return trackpad;
     }
 
-    public static UITrackpad doubleUI(ValueDouble value, Consumer<Double> callback)
-    {
+    public static UITrackpad doubleUI(ValueDouble value, Consumer<Double> callback) {
         UITrackpad trackpad = new UITrackpad(callback == null ? value::set : (v) ->
         {
             value.set(v);
@@ -149,8 +131,7 @@ public class UIValueFactory
         return trackpad;
     }
 
-    public static UITextbox stringUI(ValueString value, Consumer<String> callback)
-    {
+    public static UITextbox stringUI(ValueString value, Consumer<String> callback) {
         UITextbox textbox = new UITextbox(10000, callback == null ? value::set : (string) ->
         {
             value.set(string);
@@ -163,8 +144,7 @@ public class UIValueFactory
         return textbox;
     }
 
-    public static UIElement column(UIElement control, BaseValue value)
-    {
+    public static UIElement column(UIElement control, BaseValue value) {
         UIElement element = new UIElement();
 
         control.removeTooltip();
@@ -174,13 +154,11 @@ public class UIValueFactory
         return commetTooltip(element, value);
     }
 
-    public static UILabel label(BaseValue value)
-    {
+    public static UILabel label(BaseValue value) {
         return UI.label(IKey.lang(UIValueFactory.getValueLabelKey(value)), 0).labelAnchor(0, 0.5F);
     }
 
-    public static UIElement commetTooltip(UIElement element, BaseValue value)
-    {
+    public static UIElement commetTooltip(UIElement element, BaseValue value) {
         element.tooltip(IKey.lang(UIValueFactory.getValueCommentKey(value)));
 
         return element;

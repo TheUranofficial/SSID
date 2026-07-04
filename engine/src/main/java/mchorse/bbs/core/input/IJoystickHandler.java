@@ -1,7 +1,6 @@
 package mchorse.bbs.core.input;
 
-public interface IJoystickHandler
-{
+public interface IJoystickHandler {
     /**
      * Game pad button handler.
      *

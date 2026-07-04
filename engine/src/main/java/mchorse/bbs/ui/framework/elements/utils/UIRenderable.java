@@ -6,72 +6,60 @@ import mchorse.bbs.ui.utils.Area;
 
 import java.util.function.Consumer;
 
-public class UIRenderable implements IUIElement
-{
+public class UIRenderable implements IUIElement {
     public Consumer<UIContext> callback;
 
-    public UIRenderable(Consumer<UIContext> callback)
-    {
+    public UIRenderable(Consumer<UIContext> callback) {
         this.callback = callback;
     }
 
     @Override
-    public void resize()
-    {}
+    public void resize() {
+    }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return false;
     }
 
     @Override
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return true;
     }
 
     @Override
-    public boolean mouseClicked(UIContext context)
-    {
+    public boolean mouseClicked(UIContext context) {
         return false;
     }
 
     @Override
-    public boolean mouseScrolled(UIContext context)
-    {
+    public boolean mouseScrolled(UIContext context) {
         return false;
     }
 
     @Override
-    public boolean mouseReleased(UIContext context)
-    {
+    public boolean mouseReleased(UIContext context) {
         return false;
     }
 
     @Override
-    public boolean keyPressed(UIContext context)
-    {
+    public boolean keyPressed(UIContext context) {
         return false;
     }
 
     @Override
-    public boolean textInput(UIContext context)
-    {
+    public boolean textInput(UIContext context) {
         return false;
     }
 
     @Override
-    public boolean canBeRendered(Area viewport)
-    {
+    public boolean canBeRendered(Area viewport) {
         return true;
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.callback != null)
-        {
+    public void render(UIContext context) {
+        if (this.callback != null) {
             this.callback.accept(context);
         }
     }

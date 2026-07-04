@@ -12,8 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class BodyPartManager implements IMapSerializable
-{
+public class BodyPartManager implements IMapSerializable {
     /**
      * Form owner of this body part manager.
      */
@@ -21,63 +20,48 @@ public class BodyPartManager implements IMapSerializable
 
     private final List<BodyPart> parts = new ArrayList<>();
 
-    public BodyPartManager(Form owner)
-    {
+    public BodyPartManager(Form owner) {
         this.owner = owner;
     }
 
-    public Form getOwner()
-    {
+    public Form getOwner() {
         return this.owner;
     }
 
-    public List<BodyPart> getAll()
-    {
+    public List<BodyPart> getAll() {
         return Collections.unmodifiableList(this.parts);
     }
 
-    public void addBodyPart(BodyPart part)
-    {
+    public void addBodyPart(BodyPart part) {
         part.setManager(this);
 
         this.parts.add(part);
     }
 
-    public void removeBodyPart(BodyPart part)
-    {
-        if (this.parts.remove(part))
-        {
+    public void removeBodyPart(BodyPart part) {
+        if (this.parts.remove(part)) {
             part.setManager(null);
         }
     }
 
-    public void update(Entity target)
-    {
-        for (BodyPart part : this.parts)
-        {
+    public void update(Entity target) {
+        for (BodyPart part : this.parts) {
             part.update(target);
         }
     }
 
-    public void tween(BodyPartManager parts, int duration, IInterpolation interpolation, int offset, boolean playing)
-    {
-        if (this.parts.size() > parts.parts.size())
-        {
-            while (this.parts.size() != parts.parts.size())
-            {
+    public void tween(BodyPartManager parts, int duration, IInterpolation interpolation, int offset, boolean playing) {
+        if (this.parts.size() > parts.parts.size()) {
+            while (this.parts.size() != parts.parts.size()) {
                 this.parts.remove(this.parts.size() - 1);
             }
-        }
-        else if (this.parts.size() < parts.parts.size())
-        {
-            for (int i = this.parts.size(); i < parts.parts.size(); i++)
-            {
+        } else if (this.parts.size() < parts.parts.size()) {
+            for (int i = this.parts.size(); i < parts.parts.size(); i++) {
                 this.parts.add(parts.parts.get(i).copy());
             }
         }
 
-        for (int i = 0, c = this.parts.size(); i < c; i++)
-        {
+        for (int i = 0, c = this.parts.size(); i < c; i++) {
             BodyPart thisPart = this.parts.get(i);
             BodyPart otherPart = parts.parts.get(i);
 
@@ -86,15 +70,12 @@ public class BodyPartManager implements IMapSerializable
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof BodyPartManager)
-        {
+        if (obj instanceof BodyPartManager) {
             return Objects.equals(this.parts, ((BodyPartManager) obj).parts);
         }
 
@@ -102,37 +83,30 @@ public class BodyPartManager implements IMapSerializable
     }
 
     @Override
-    public void toData(MapType data)
-    {
+    public void toData(MapType data) {
         ListType parts = new ListType();
 
-        for (BodyPart bodypart : this.parts)
-        {
+        for (BodyPart bodypart : this.parts) {
             parts.add(bodypart.toData());
         }
 
-        if (!parts.isEmpty())
-        {
+        if (!parts.isEmpty()) {
             data.put("parts", parts);
         }
     }
 
     @Override
-    public void fromData(MapType data)
-    {
+    public void fromData(MapType data) {
         ListType parts = data.getList("parts");
 
-        for (BodyPart part : this.parts)
-        {
+        for (BodyPart part : this.parts) {
             part.setManager(null);
         }
 
         this.parts.clear();
 
-        for (BaseType partData : parts)
-        {
-            if (!partData.isMap())
-            {
+        for (BaseType partData : parts) {
+            if (!partData.isMap()) {
                 continue;
             }
 

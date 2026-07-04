@@ -8,14 +8,12 @@ import mchorse.bbs.world.World;
 
 import java.util.List;
 
-public class WorldEditorBlocksUndo extends BlocksUndo
-{
+public class WorldEditorBlocksUndo extends BlocksUndo {
     public UIWorldEditorPanel editor;
     public BlockSelection before = new BlockSelection();
     public BlockSelection after = new BlockSelection();
 
-    public WorldEditorBlocksUndo(UIWorldEditorPanel editor, List<BlockDiff> blocks, BlockSelection before, BlockSelection after)
-    {
+    public WorldEditorBlocksUndo(UIWorldEditorPanel editor, List<BlockDiff> blocks, BlockSelection before, BlockSelection after) {
         super(blocks);
 
         this.editor = editor;
@@ -24,8 +22,7 @@ public class WorldEditorBlocksUndo extends BlocksUndo
     }
 
     @Override
-    public void undo(World context)
-    {
+    public void undo(World context) {
         super.undo(context);
 
         this.editor.getSelection().copy(this.before);
@@ -33,8 +30,7 @@ public class WorldEditorBlocksUndo extends BlocksUndo
     }
 
     @Override
-    public void redo(World context)
-    {
+    public void redo(World context) {
         super.redo(context);
 
         this.editor.getSelection().copy(this.after);

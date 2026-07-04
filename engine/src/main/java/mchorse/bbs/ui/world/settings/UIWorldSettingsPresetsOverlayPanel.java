@@ -20,8 +20,7 @@ import mchorse.bbs.world.WorldSettings;
 import java.io.File;
 import java.util.function.Consumer;
 
-public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel
-{
+public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel {
     public static final String SUFFIX = ".json";
 
     public UIScrollView editor;
@@ -33,8 +32,7 @@ public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel
     private Consumer<WorldSettings> callback;
     private File settingsFolder;
 
-    public UIWorldSettingsPresetsOverlayPanel(WorldSettings current, Consumer<WorldSettings> callback)
-    {
+    public UIWorldSettingsPresetsOverlayPanel(WorldSettings current, Consumer<WorldSettings> callback) {
         super(UIKeys.WORLD_SETTINGS_PRESETS_TITLE);
 
         this.current = current;
@@ -45,19 +43,15 @@ public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel
 
         this.settings = new UISearchList<>(new UIStringList((l) ->
         {
-            try
-            {
+            try {
                 WorldSettings settings = new WorldSettings();
 
                 settings.fromData((MapType) DataToString.read(this.getFile(l.get(0))));
 
-                if (this.callback != null)
-                {
+                if (this.callback != null) {
                     this.callback.accept(settings);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }));
@@ -71,15 +65,12 @@ public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel
                 UIKeys.WORLD_SETTINGS_PRESETS_SAVE_DESCRIPTION,
                 (str) ->
                 {
-                    try
-                    {
+                    try {
                         DataToString.write(this.getFile(str), this.current.toData(), true);
 
                         this.updateList();
                         this.settings.list.setCurrentScroll(str);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -92,35 +83,29 @@ public class UIWorldSettingsPresetsOverlayPanel extends UIOverlayPanel
         this.icons.add(this.save);
     }
 
-    private File getFile(String id)
-    {
+    private File getFile(String id) {
         return new File(this.settingsFolder, id + SUFFIX);
     }
 
-    private void updateList()
-    {
+    private void updateList() {
         this.settings.list.clear();
 
-        for (File file : this.settingsFolder.listFiles())
-        {
+        for (File file : this.settingsFolder.listFiles()) {
             String name = file.getName();
 
-            if (name.endsWith(SUFFIX))
-            {
+            if (name.endsWith(SUFFIX)) {
                 this.settings.list.add(name.substring(0, name.length() - SUFFIX.length()));
             }
         }
     }
 
     @Override
-    protected void renderBackground(UIContext context)
-    {
+    protected void renderBackground(UIContext context) {
         super.renderBackground(context);
 
         UIList<String> list = this.settings.list;
 
-        if (list.getList().isEmpty())
-        {
+        if (list.getList().isEmpty()) {
             context.batcher.wallText(context.font, UIKeys.WORLD_SETTINGS_PRESETS_EMPTY.get(), list.area.x(0.25F), list.area.my(), Colors.WHITE, list.area.w / 2, 12, 0.5F, 0.5F);
         }
     }

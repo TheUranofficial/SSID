@@ -1,15 +1,10 @@
 package mchorse.bbs.utils.joml;
 
-import mchorse.bbs.utils.math.MathUtils;
-import org.joml.Matrix3d;
-import org.joml.Matrix3f;
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.joml.*;
 
-public class Matrices
-{
+import java.lang.Math;
+
+public class Matrices {
     public static final Matrix3f EMPTY_3F = new Matrix3f();
     public static final Matrix3d EMPTY_3D = new Matrix3d();
     public static final Matrix4f EMPTY_4F = new Matrix4f();
@@ -31,8 +26,7 @@ public class Matrices
     private static final Vector3f lerpVa = new Vector3f();
     private static final Vector3f lerpVb = new Vector3f();
 
-    public static Vector3f rotate(Vector3f vector, float pitch, float yaw)
-    {
+    public static Vector3f rotate(Vector3f vector, float pitch, float yaw) {
         rotation.identity();
         rotation.rotateY(yaw);
         rotation.rotateX(pitch);
@@ -41,19 +35,16 @@ public class Matrices
         return vector;
     }
 
-    public static Vector3f rotation(float pitch, float yaw)
-    {
+    public static Vector3f rotation(float pitch, float yaw) {
         return rotate(forward.set(0, 0, 1), pitch, yaw);
     }
 
-    public static Matrix3f direction(Vector3f forward)
-    {
+    public static Matrix3f direction(Vector3f forward) {
         Matrix3f direction = new Matrix3f();
         Vector3f right = new Vector3f(0, 1, 0);
         Vector3f up = new Vector3f(forward);
 
-        if (right.equals(forward))
-        {
+        if (right.equals(forward)) {
             right.set(1, 0, 0);
         }
 
@@ -73,13 +64,11 @@ public class Matrices
         return direction;
     }
 
-    public static Matrix4f lerp(Matrix4f a, Matrix4f b, float t)
-    {
+    public static Matrix4f lerp(Matrix4f a, Matrix4f b, float t) {
         return lerp(a, b, t, TEMP_4F);
     }
 
-    public static Matrix4f lerp(Matrix4f a, Matrix4f b, float t, Matrix4f dest)
-    {
+    public static Matrix4f lerp(Matrix4f a, Matrix4f b, float t, Matrix4f dest) {
         Quaternionf q1 = lerpQa.setFromNormalized(lerpA.set(a));
         Quaternionf q2 = lerpQb.setFromNormalized(lerpB.set(b));
 
@@ -91,34 +80,28 @@ public class Matrices
         return dest;
     }
 
-    public static String toString(Matrix3f m)
-    {
+    public static String toString(Matrix3f m) {
         return m.m00() + ", " + m.m10() + ", " + m.m20() + "\n" +
             m.m01() + ", " + m.m11() + ", " + m.m21() + "\n" +
             m.m02() + ", " + m.m12() + ", " + m.m22();
     }
 
-    public static String toString(Matrix4f m)
-    {
+    public static String toString(Matrix4f m) {
         return m.m00() + ", " + m.m10() + ", " + m.m20() + ", " + m.m30() + "\n" +
             m.m01() + ", " + m.m11() + ", " + m.m21() + ", " + m.m31() + "\n" +
             m.m02() + ", " + m.m12() + ", " + m.m22() + ", " + m.m32() + "\n" +
             m.m03() + ", " + m.m13() + ", " + m.m23() + ", " + m.m33() + "\n";
     }
 
-    public static Vector3f getEulerXYZ(Matrix3f m)
-    {
+    public static Vector3f getEulerXYZ(Matrix3f m) {
         double yaw = Math.atan2(m.m02, Math.sqrt(m.m00 * m.m00 + m.m01 * m.m01));
         double pitch = Math.atan2(m.m12, m.m22);
         double roll = Math.atan2(m.m01, m.m00);
 
-        if (m.m00 < 0)
-        {
+        if (m.m00 < 0) {
             yaw = -yaw + Math.PI;
             pitch = -pitch;
-        }
-        else
-        {
+        } else {
             yaw += Math.PI;
         }
 

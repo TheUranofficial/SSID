@@ -10,20 +10,18 @@ import java.util.function.Consumer;
 
 /**
  * Color GUI element
- *
+ * <p>
  * This class is responsible for providing a way to edit colors, this element
  * itself is not editing the color, the picker element is the one that does color editing
  */
-public class UIColor extends UIElement
-{
+public class UIColor extends UIElement {
     public UIColorPicker picker;
     public boolean label = true;
     public Direction direction;
 
     private UIElement target;
 
-    public UIColor(Consumer<Integer> callback)
-    {
+    public UIColor(Consumer<Integer> callback) {
         super();
 
         this.picker = new UIColorPicker(callback);
@@ -32,52 +30,43 @@ public class UIColor extends UIElement
         this.direction(Direction.BOTTOM).h(20);
     }
 
-    public UIColor withTarget(UIElement target)
-    {
+    public UIColor withTarget(UIElement target) {
         this.target = target;
 
         return this;
     }
 
-    public UIColor withAlpha()
-    {
+    public UIColor withAlpha() {
         this.picker.editAlpha();
 
         return this;
     }
 
-    public UIColor direction(Direction direction)
-    {
+    public UIColor direction(Direction direction) {
         this.direction = direction;
         this.picker.anchor(1 - direction.anchorX, 1 - direction.anchorY);
 
         return this;
     }
 
-    public UIColor onTop()
-    {
+    public UIColor onTop() {
         return this.direction(Direction.TOP);
     }
 
-    public UIColor noLabel()
-    {
+    public UIColor noLabel() {
         this.label = false;
 
         return this;
     }
 
-    public void setColor(int color)
-    {
+    public void setColor(int color) {
         this.picker.setColor(color);
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (this.area.isInside(context))
-        {
-            if (!this.picker.hasParent())
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (this.area.isInside(context)) {
+            if (!this.picker.hasParent()) {
                 int x = context.globalX(this.area.x(this.direction.anchorX) + 2 * this.direction.factorX);
                 int y = context.globalY(this.area.y(this.direction.anchorY) + 2 * this.direction.factorY);
 
@@ -86,9 +75,7 @@ public class UIColor extends UIElement
                 target.add(this.picker);
                 this.picker.setup(x, y);
                 this.picker.resize();
-            }
-            else
-            {
+            } else {
                 this.picker.removeFromParent();
             }
 
@@ -99,19 +86,16 @@ public class UIColor extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         int padding = 0;
 
         this.picker.renderRect(context.batcher, this.area.x, this.area.y, this.area.ex(), this.area.ey());
 
-        if (this.area.isInside(context))
-        {
+        if (this.area.isInside(context)) {
             this.area.render(context.batcher, Colors.A12, padding);
         }
 
-        if (this.label)
-        {
+        if (this.label) {
             String label = this.picker.color.stringify(this.picker.editAlpha);
 
             context.batcher.textCard(context.font, label, this.area.mx(context.font.getWidth(label)), this.area.my(context.font.getHeight() - 1), Colors.WHITE, Colors.A25, 1);

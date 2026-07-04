@@ -25,18 +25,7 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.UIUtils;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.utils.keys.KeyCombo;
-import mchorse.bbs.ui.world.tools.UITool;
-import mchorse.bbs.ui.world.tools.UIToolArc;
-import mchorse.bbs.ui.world.tools.UIToolCube;
-import mchorse.bbs.ui.world.tools.UIToolCylinder;
-import mchorse.bbs.ui.world.tools.UIToolExtrude;
-import mchorse.bbs.ui.world.tools.UIToolFloodFill;
-import mchorse.bbs.ui.world.tools.UIToolLine;
-import mchorse.bbs.ui.world.tools.UIToolPaste;
-import mchorse.bbs.ui.world.tools.UIToolSelection;
-import mchorse.bbs.ui.world.tools.UIToolSmooth;
-import mchorse.bbs.ui.world.tools.UIToolSphere;
-import mchorse.bbs.ui.world.tools.UIToolSpray;
+import mchorse.bbs.ui.world.tools.*;
 import mchorse.bbs.ui.world.tools.schematic.UISchematicOverlayPanel;
 import mchorse.bbs.ui.world.utils.WorldEditorChunkProxy;
 import mchorse.bbs.utils.Axis;
@@ -49,13 +38,7 @@ import mchorse.bbs.voxel.Chunk;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.StructureManager;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
-import mchorse.bbs.voxel.processor.CopyProcessor;
-import mchorse.bbs.voxel.processor.CylinderProcessor;
-import mchorse.bbs.voxel.processor.FillProcessor;
-import mchorse.bbs.voxel.processor.PasteProcessor;
-import mchorse.bbs.voxel.processor.Processor;
-import mchorse.bbs.voxel.processor.SphereProcessor;
-import mchorse.bbs.voxel.processor.WallProcessor;
+import mchorse.bbs.voxel.processor.*;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.raytracing.RayTraceType;
 import mchorse.bbs.voxel.raytracing.RayTracer;
@@ -73,16 +56,11 @@ import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListener
-{
+public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListener {
     /* UI fields */
     public UIButton block;
 
@@ -144,8 +122,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     private UndoManager<World> undoManager = new UndoManager<>();
     private ChunkProxy proxy;
 
-    public UIWorldEditorPanel(UIDashboard dashboard)
-    {
+    public UIWorldEditorPanel(UIDashboard dashboard) {
         super(dashboard);
 
         this.proxy = new WorldEditorChunkProxy(this, dashboard.bridge.get(IBridgeWorld.class).getWorld().chunks, this.undoManager);
@@ -169,13 +146,11 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         {
             this.currentTool.button.area.render(context.batcher, Colors.A50 | BBSSettings.primaryColor.get());
 
-            if (this.factoryVariant)
-            {
+            if (this.factoryVariant) {
                 this.factory.area.render(context.batcher, Colors.A50 | BBSSettings.primaryColor.get());
             }
 
-            if (this.proxy.isMaskEnabled())
-            {
+            if (this.proxy.isMaskEnabled()) {
                 this.mask.area.render(context.batcher, Colors.A50 | BBSSettings.primaryColor.get());
             }
         });
@@ -185,8 +160,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.actionBar = new UIScrollView();
         this.actionBar.preRender((context) ->
         {
-            if (this.selectionBar.isVisible())
-            {
+            if (this.selectionBar.isVisible()) {
                 this.toggleSelection.area.render(context.batcher, Colors.A50);
             }
         });
@@ -254,8 +228,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
         this.toolBar.add(this.factory, this.mask);
 
-        for (UITool tool : this.tools)
-        {
+        for (UITool tool : this.tools) {
             tool.button.callback = this::switchTool;
 
             this.toolBar.add(tool.button);
@@ -275,8 +248,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
         int i = 1;
 
-        for (UITool tool : this.tools)
-        {
+        for (UITool tool : this.tools) {
             KeyCombo combo = UIUtils.createCombo(tool.button.tooltip.getLabel(), GLFW.GLFW_KEY_0, i);
 
             this.keys().register(combo, tool.button::clickItself).category(toolsCategory);
@@ -291,12 +263,9 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.keys().register(Keys.WE_DESELECT, this::deselect).category(selectionCategory).active(selected);
         this.keys().register(Keys.WE_MASK, () ->
         {
-            if (Window.isShiftPressed())
-            {
+            if (Window.isShiftPressed()) {
                 this.getContext().replaceContextMenu(new UIMaskContextMenu(this.proxy));
-            }
-            else
-            {
+            } else {
                 this.proxy.setMaskEnabled(!this.proxy.getMaskEnabled());
             }
 
@@ -327,71 +296,56 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.setVariant(this.proxy.getSet().get(1));
     }
 
-    private void openBlockPicker(UIButton uiButton)
-    {
+    private void openBlockPicker(UIButton uiButton) {
         this.picker.resize();
         this.add(this.picker);
     }
 
-    public void setVariant(IBlockVariant variant)
-    {
+    public void setVariant(IBlockVariant variant) {
         this.variantToPlace = variant;
 
         this.picker.removeFromParent();
     }
 
-    public IBlockVariant getVariant(RayTraceResult result)
-    {
-        if (this.factoryVariant)
-        {
+    public IBlockVariant getVariant(RayTraceResult result) {
+        if (this.factoryVariant) {
             return this.variantToPlace.getModel().factory.getVariantForBuilding(result);
         }
 
         return this.variantToPlace;
     }
 
-    public IBridge getBridge()
-    {
+    public IBridge getBridge() {
         return this.dashboard.bridge;
     }
 
-    public IBlockVariant getVariant()
-    {
+    public IBlockVariant getVariant() {
         return this.variantToPlace;
     }
 
-    public ChunkProxy getProxy()
-    {
+    public ChunkProxy getProxy() {
         return this.proxy;
     }
 
-    public BlockSelection getSelection()
-    {
+    public BlockSelection getSelection() {
         return this.selection;
     }
 
-    public Chunk getBuffer()
-    {
+    public Chunk getBuffer() {
         return this.buffer;
     }
 
-    public void setBuffer(Chunk chunk)
-    {
+    public void setBuffer(Chunk chunk) {
         this.buffer = chunk;
     }
 
-    private void switchTool(UIIcon b)
-    {
-        for (UITool tool : this.tools)
-        {
-            if (tool.button == b)
-            {
-                if (this.currentTool != null)
-                {
+    private void switchTool(UIIcon b) {
+        for (UITool tool : this.tools) {
+            if (tool.button == b) {
+                if (this.currentTool != null) {
                     UIElement panel = this.currentTool.getPanel();
 
-                    if (panel != null)
-                    {
+                    if (panel != null) {
                         panel.removeFromParent();
                     }
                 }
@@ -400,8 +354,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
                 UIElement panel = tool.getPanel();
 
-                if (panel != null)
-                {
+                if (panel != null) {
                     panel.relative(this.block).y(25);
                     panel.resize();
 
@@ -413,15 +366,13 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         }
     }
 
-    private void deselect()
-    {
+    private void deselect() {
         this.selected = false;
         this.selection = new BlockSelection();
         this.updateSelection();
     }
 
-    private void copy(UIIcon b)
-    {
+    private void copy(UIIcon b) {
         Vector3i size = this.selection.getSize();
 
         this.buffer = new Chunk(size.x, size.y, size.z, this.proxy.getAir());
@@ -429,10 +380,8 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.process(new CopyProcessor(this.buffer));
     }
 
-    private void paste(UIIcon b)
-    {
-        if (this.buffer == null)
-        {
+    private void paste(UIIcon b) {
+        if (this.buffer == null) {
             return;
         }
 
@@ -441,14 +390,12 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.proxy.end();
     }
 
-    private void cut(UIIcon b)
-    {
+    private void cut(UIIcon b) {
         this.copy(b);
         this.fillClear(b);
     }
 
-    private void rotate(int direction)
-    {
+    private void rotate(int direction) {
         this.applyMatrixToBuffer(new Matrix3f().rotateY(-direction * MathUtils.PI / 2F), (a) ->
         {
             BlockModelFactory factory = a.getModel().factory;
@@ -457,8 +404,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         });
     }
 
-    private void flip(Matrix3f matrix, Axis axis)
-    {
+    private void flip(Matrix3f matrix, Axis axis) {
         this.applyMatrixToBuffer(matrix, (a) ->
         {
             BlockModelFactory factory = a.getModel().factory;
@@ -467,10 +413,8 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         });
     }
 
-    private void applyMatrixToBuffer(Matrix3f matrix, Function<IBlockVariant, IBlockVariant> filter)
-    {
-        if (this.buffer == null)
-        {
+    private void applyMatrixToBuffer(Matrix3f matrix, Function<IBlockVariant, IBlockVariant> filter) {
+        if (this.buffer == null) {
             return;
         }
 
@@ -494,12 +438,9 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
         min.set(transform);
 
-        for (int x = 0; x < this.buffer.w; x++)
-        {
-            for (int y = 0; y < this.buffer.h; y++)
-            {
-                for (int z = 0; z < this.buffer.d; z++)
-                {
+        for (int x = 0; x < this.buffer.w; x++) {
+            for (int y = 0; y < this.buffer.h; y++) {
+                for (int z = 0; z < this.buffer.d; z++) {
                     IBlockVariant block = this.buffer.getBlock(x, y, z);
                     int lighting = this.buffer.getLighting(x, y, z);
 
@@ -519,23 +460,19 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.buffer = chunk;
     }
 
-    private void fillClear(UIIcon b)
-    {
+    private void fillClear(UIIcon b) {
         this.process(new FillProcessor(this.proxy.getAir(), false));
     }
 
-    private void setPosition(int x, int y, int z)
-    {
+    private void setPosition(int x, int y, int z) {
         this.selection.setPosition(x, y, z);
     }
 
-    private void setSize(int x, int y, int z)
-    {
+    private void setSize(int x, int y, int z) {
         this.selection.setSize(x, y, z);
     }
 
-    private void process(Processor processor)
-    {
+    private void process(Processor processor) {
         Vector3i max = new Vector3i(this.selection.getMax()).sub(1, 1, 1);
 
         this.proxy.begin();
@@ -543,13 +480,11 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.proxy.end();
     }
 
-    private void pickBlock()
-    {
+    private void pickBlock() {
         this.setVariant(this.proxy.getChunks().getBlock(this.result.block.x, this.result.block.y, this.result.block.z));
     }
 
-    private void selectFloating()
-    {
+    private void selectFloating() {
         boolean upOnly = Window.isShiftPressed();
         Vector3i block = this.result.block;
         Vector3i min = new Vector3i(block);
@@ -559,8 +494,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
         toCheck.add(block);
 
-        while (!toCheck.isEmpty())
-        {
+        while (!toCheck.isEmpty()) {
             Vector3i p = toCheck.pop();
             Vector3i top = new Vector3i(p).add(0, 1, 0);
             Vector3i bottom = new Vector3i(p).add(0, -1, 0);
@@ -588,35 +522,29 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         this.updateSelection();
     }
 
-    private boolean canTraverseFurther(Vector3i block, Vector3i origin, Set<Vector3i> checked)
-    {
+    private boolean canTraverseFurther(Vector3i block, Vector3i origin, Set<Vector3i> checked) {
         int max = Math.max(Math.max(Math.abs(origin.x - block.x), Math.abs(origin.y - block.y)), Math.abs(origin.z - block.z));
 
         return max <= 50 && this.proxy.getChunks().hasBlock(block.x, block.y, block.z) && !checked.contains(block);
     }
 
-    private void moveCenter()
-    {
+    private void moveCenter() {
         this.dashboard.orbit.position.set(this.result.block.x, this.result.block.y, this.result.block.z).add(0.5D, 0.5D, 0.5D);
     }
 
-    private void moveSelectionCenter()
-    {
+    private void moveSelectionCenter() {
         this.dashboard.orbit.position.set(this.selection.getCenter());
     }
 
-    private void undo(UIIcon b)
-    {
+    private void undo(UIIcon b) {
         this.undoManager.undo(this.dashboard.bridge.get(IBridgeWorld.class).getWorld());
     }
 
-    private void redo(UIIcon b)
-    {
+    private void redo(UIIcon b) {
         this.undoManager.redo(this.dashboard.bridge.get(IBridgeWorld.class).getWorld());
     }
 
-    public void updateSelection()
-    {
+    public void updateSelection() {
         Vector3i min = this.selection.getMin();
         Vector3i max = this.selection.getMax();
 
@@ -629,29 +557,23 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public void reloadWorld()
-    {
+    public void reloadWorld() {
         super.reloadWorld();
 
         this.proxy = new WorldEditorChunkProxy(this, dashboard.bridge.get(IBridgeWorld.class).getWorld().chunks, this.undoManager);
     }
 
     @Override
-    public void update()
-    {
-        if (this.activeTool && !this.selecting)
-        {
+    public void update() {
+        if (this.activeTool && !this.selecting) {
             this.currentTool.drag(this.result);
         }
     }
 
     @Override
-    public boolean subMouseClicked(UIContext context)
-    {
-        if (((context.mouseButton == 0 && !Window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) || context.mouseButton == 1) && !this.result.type.isMissed())
-        {
-            if (Window.isCtrlPressed() && context.mouseButton == 0)
-            {
+    public boolean subMouseClicked(UIContext context) {
+        if (((context.mouseButton == 0 && !Window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) || context.mouseButton == 1) && !this.result.type.isMissed()) {
+            if (Window.isCtrlPressed() && context.mouseButton == 0) {
                 this.selecting = true;
                 this.selected = true;
                 this.selection.setA(this.result.block);
@@ -660,8 +582,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
                 return true;
             }
 
-            if (Window.isAltPressed() && context.mouseButton == 0 && this.selected)
-            {
+            if (Window.isAltPressed() && context.mouseButton == 0 && this.selected) {
                 Vector3i size = this.selection.getSize();
 
                 this.selection.setPosition(this.result.block.x - size.x / 2, this.result.block.y + 1, this.result.block.z - size.z / 2);
@@ -680,16 +601,11 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public boolean subMouseScrolled(UIContext context)
-    {
-        if (Window.isCtrlPressed())
-        {
-            if (this.result.normal.equals(Vectors.EMPTY_3I))
-            {
+    public boolean subMouseScrolled(UIContext context) {
+        if (Window.isCtrlPressed()) {
+            if (this.result.normal.equals(Vectors.EMPTY_3I)) {
                 this.noHitDistance = Math.max(this.noHitDistance + (int) Math.copySign(1, context.mouseWheel), 0);
-            }
-            else
-            {
+            } else {
                 this.hitDistance = Math.max(this.hitDistance + (int) Math.copySign(1, context.mouseWheel), 1);
             }
 
@@ -700,22 +616,18 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public boolean subMouseReleased(UIContext context)
-    {
-        if (this.activeTool && this.currentTool.lastMouseButton == context.mouseButton)
-        {
+    public boolean subMouseReleased(UIContext context) {
+        if (this.activeTool && this.currentTool.lastMouseButton == context.mouseButton) {
             this.activeTool = false;
             this.currentTool.end(this.result);
         }
 
-        if (this.selecting)
-        {
+        if (this.selecting) {
             this.selected = this.selection.getSize().length() > 1;
             this.updateSelection();
         }
 
-        if (context.mouseButton == 0)
-        {
+        if (context.mouseButton == 0) {
             this.selecting = false;
         }
 
@@ -723,23 +635,19 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         FontRenderer font = context.font;
 
-        if (this.selecting && !this.result.type.isMissed())
-        {
+        if (this.selecting && !this.result.type.isMissed()) {
             this.selection.setB(this.result.block);
             this.updateSelection();
         }
 
-        if (!this.variantToPlace.isAir())
-        {
+        if (!this.variantToPlace.isAir()) {
             this.renderBlockPreview(context, font);
         }
 
-        if (this.selectionBar.isVisible())
-        {
+        if (this.selectionBar.isVisible()) {
             this.selectionBar.area.render(context.batcher, Colors.A50);
         }
 
@@ -748,8 +656,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         int x = this.area.x + 12;
         int y = this.area.h - 12 - context.font.getHeight();
 
-        if (this.selected)
-        {
+        if (this.selected) {
             Vector3i size = this.selection.getSize();
             String label = size.x + "x" + size.y + "x" + size.z + " (" + (size.x * size.y * size.z) + " blocks)";
 
@@ -758,8 +665,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
             y -= 12;
         }
 
-        if (this.result.type == RayTraceType.BLOCK)
-        {
+        if (this.result.type == RayTraceType.BLOCK) {
             Vector3i block = this.result.block;
             String label = "(" + block.x + ", " + block.y + ", " + block.z + ")";
 
@@ -767,8 +673,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         }
     }
 
-    private void renderBlockPreview(UIContext context, FontRenderer font)
-    {
+    private void renderBlockPreview(UIContext context, FontRenderer font) {
         int x = this.block.area.ex() + 17;
         int y = this.block.area.y + 10;
         int scale = 20;
@@ -783,10 +688,8 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public void renderInWorld(RenderingContext context)
-    {
-        if (!this.canBeSeen())
-        {
+    public void renderInWorld(RenderingContext context) {
+        if (!this.canBeSeen()) {
             return;
         }
 
@@ -795,8 +698,7 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
 
         RayTracer.trace(this.result, this.proxy.getChunks(), position, direction, 128, true, this.rayHandle);
 
-        if (this.result.type.isMissed())
-        {
+        if (this.result.type.isMissed()) {
             Vector3d newPosition = new Vector3d(direction);
 
             newPosition.mul(this.noHitDistance);
@@ -809,16 +711,14 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
             this.result.origin.set(position);
         }
 
-        if (!this.result.type.isMissed())
-        {
+        if (!this.result.type.isMissed()) {
             this.result.normal.mul(this.hitDistance);
             Draw.renderBlockAABB(context, this.proxy.getChunks(), this.result.block.x, this.result.block.y, this.result.block.z);
             Draw.renderBlockAABB(context, this.proxy.getChunks(), this.result.block.x + this.result.normal.x, this.result.block.y + this.result.normal.y, this.result.block.z + this.result.normal.z);
             this.currentTool.render(context, this.result);
         }
 
-        if (this.selected)
-        {
+        if (this.selected) {
             Vector3i size = this.selection.getSize();
             Vector3i min = this.selection.getMin();
 
@@ -827,10 +727,8 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
     }
 
     @Override
-    public void acceptFilePaths(String[] paths)
-    {
-        if (paths.length == 0)
-        {
+    public void acceptFilePaths(String[] paths) {
+        if (paths.length == 0) {
             return;
         }
 
@@ -840,26 +738,21 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         /* If the path is to a .schematic file, then we show a special overlay panel that
          * lets us edit the block palette before inserting it into the copy-paste buffer
          * of the world editor! */
-        if (!file.getName().toLowerCase().endsWith(StructureManager.SCHEMATIC))
-        {
+        if (!file.getName().toLowerCase().endsWith(StructureManager.SCHEMATIC)) {
             return;
         }
 
-        try
-        {
+        try {
             CompoundTag tag = (CompoundTag) NBTUtil.read(file).getTag();
             UISchematicOverlayPanel schematic = new UISchematicOverlayPanel(models, tag, (c) ->
             {
-                if (c != null)
-                {
+                if (c != null) {
                     this.setBuffer(c);
                 }
             });
 
             UIOverlay.addOverlay(this.getContext(), schematic, 0.8F, 0.8F);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

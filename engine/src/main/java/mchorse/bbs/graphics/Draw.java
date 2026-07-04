@@ -12,31 +12,26 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-public class Draw
-{
+public class Draw {
     private static final Quad top = new Quad();
     private static final Quad bottom = new Quad();
     private static final Matrix4f rotate = new Matrix4f();
 
-    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d)
-    {
+    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d) {
         renderBox(context, x, y, z, w, h, d, 1, 1, 1);
     }
 
-    public static void renderBlockAABB(RenderingContext context, IBlockAccessor blockAccessor, int x, int y, int z)
-    {
+    public static void renderBlockAABB(RenderingContext context, IBlockAccessor blockAccessor, int x, int y, int z) {
         AABB box = blockAccessor.getBlock(x, y, z).getModel().collisionBox;
 
         Draw.renderBox(context, x + box.x, y + box.y, z + box.z, box.w, box.h, box.d);
     }
 
-    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d, float r, float g, float b)
-    {
+    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d, float r, float g, float b) {
         renderBox(context, x, y, z, w, h, d, r, g, b, 1F);
     }
 
-    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d, float r, float g, float b, float a)
-    {
+    public static void renderBox(RenderingContext context, double x, double y, double z, double w, double h, double d, float r, float g, float b, float a) {
         context.stack.push();
         context.stack.identity();
         context.stack.translateRelative(context.getCamera(), x, y, z);
@@ -79,18 +74,17 @@ public class Draw
     /**
      * Fill a quad for {@link VBOAttributes#VERTEX_NORMAL_UV_RGBA}. Points should
      * be supplied in this order:
-     *
-     *     3 -------> 4
-     *     ^
-     *     |
-     *     |
-     *     2 <------- 1
-     *
+     * <p>
+     * 3 -------> 4
+     * ^
+     * |
+     * |
+     * 2 <------- 1
+     * <p>
      * I.e. bottom left, bottom right, top left, top right, where left is -X and right is +X,
      * in case of a quad on fixed on Z axis.
      */
-    public static void fillTexturedNormalQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, float r, float g, float b, float a, float nx, float ny, float nz)
-    {
+    public static void fillTexturedNormalQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, float r, float g, float b, float a, float nx, float ny, float nz) {
         /* 1 - BL, 2 - BR, 3 - TR, 4 - TL */
         builder.xyz(x2, y2, z2).normal(nx, ny, nz).uv(u1, v2).rgba(r, g, b, a);
         builder.xyz(x1, y1, z1).normal(nx, ny, nz).uv(u2, v2).rgba(r, g, b, a);
@@ -104,18 +98,17 @@ public class Draw
     /**
      * Fill a quad for {@link VBOAttributes#VERTEX_UV_RGBA}. Points should
      * be supplied in this order:
-     *
-     *     3 -------> 4
-     *     ^
-     *     |
-     *     |
-     *     2 <------- 1
-     *
+     * <p>
+     * 3 -------> 4
+     * ^
+     * |
+     * |
+     * 2 <------- 1
+     * <p>
      * I.e. bottom left, bottom right, top left, top right, where left is -X and right is +X,
      * in case of a quad on fixed on Z axis.
      */
-    public static void fillTexturedQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, float r, float g, float b, float a)
-    {
+    public static void fillTexturedQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, float r, float g, float b, float a) {
         /* 1 - BL, 2 - BR, 3 - TR, 4 - TL */
         builder.xyz(x2, y2, z2).uv(u1, v2).rgba(r, g, b, a);
         builder.xyz(x1, y1, z1).uv(u2, v2).rgba(r, g, b, a);
@@ -126,18 +119,15 @@ public class Draw
         builder.xyz(x3, y3, z3).uv(u1, v1).rgba(r, g, b, a);
     }
 
-    public static void fillQuad(VAOBuilder builder, Quad quad, float r, float g, float b, float a)
-    {
+    public static void fillQuad(VAOBuilder builder, Quad quad, float r, float g, float b, float a) {
         fillQuad(builder, quad.p1, quad.p2, quad.p3, quad.p4, r, g, b, a);
     }
 
-    public static void fillQuad(VAOBuilder builder, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float r, float g, float b, float a)
-    {
+    public static void fillQuad(VAOBuilder builder, Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float r, float g, float b, float a) {
         fillQuad(builder, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z, p4.x, p4.y, p4.z, r, g, b, a);
     }
 
-    public static void fillQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float r, float g, float b, float a)
-    {
+    public static void fillQuad(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float r, float g, float b, float a) {
         /* 1 - BR, 2 - BL, 3 - TL, 4 - TR */
         builder.xyz(x1, y1, z1).rgba(r, g, b, a);
         builder.xyz(x2, y2, z2).rgba(r, g, b, a);
@@ -147,13 +137,11 @@ public class Draw
         builder.xyz(x4, y4, z4).rgba(r, g, b, a);
     }
 
-    public static void fillBox(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b)
-    {
+    public static void fillBox(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b) {
         fillBox(builder, x1, y1, z1, x2, y2, z2, r, g, b, 1F);
     }
 
-    public static void fillBox(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a)
-    {
+    public static void fillBox(VAOBuilder builder, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a) {
         /* X */
         fillQuad(builder, x1, y1, z2, x1, y2, z2, x1, y2, z1, x1, y1, z1, r, g, b, a);
         fillQuad(builder, x2, y1, z1, x2, y2, z1, x2, y2, z2, x2, y1, z2, r, g, b, a);
@@ -167,8 +155,7 @@ public class Draw
         fillQuad(builder, x1, y1, z2, x2, y1, z2, x2, y2, z2, x1, y2, z2, r, g, b, a);
     }
 
-    public static void fillLine(VAOBuilder builder, float thickness, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a)
-    {
+    public static void fillLine(VAOBuilder builder, float thickness, float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a) {
         float length = new Vector3f(x2, y2, z2).sub(x1, y1, z1).length();
         float dx = x2 - x1;
         float dy = y2 - y1;
@@ -208,8 +195,7 @@ public class Draw
         fillQuad(builder, bottom.p4, bottom.p3, top.p3, top.p4, r, g, b, a);
     }
 
-    public static void axis(VAOBuilder builder, float length, float thickness)
-    {
+    public static void axis(VAOBuilder builder, float length, float thickness) {
         fillBox(builder, thickness, -thickness, -thickness, length, thickness, thickness, 1, 0, 0, 1);
         fillBox(builder, -thickness, -thickness, -thickness, thickness, length, thickness, 0, 1, 0, 1);
         fillBox(builder, -thickness, -thickness, thickness, thickness, thickness, length, 0, 0, 1, 1);

@@ -16,8 +16,7 @@ import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector2i;
 
-public class UIUVEditor extends UICanvasEditor
-{
+public class UIUVEditor extends UICanvasEditor {
     public UITrackpad u;
     public UITrackpad v;
 
@@ -28,8 +27,7 @@ public class UIUVEditor extends UICanvasEditor
     private int tileW;
     private int tileH;
 
-    public UIUVEditor(Link atlas, Runnable callback)
-    {
+    public UIUVEditor(Link atlas, Runnable callback) {
         Texture texture = BBS.getTextures().getTexture(atlas);
 
         this.atlas = atlas;
@@ -64,16 +62,13 @@ public class UIUVEditor extends UICanvasEditor
         this.add(element);
     }
 
-    private void runCallback()
-    {
-        if (this.callback != null)
-        {
+    private void runCallback() {
+        if (this.callback != null) {
             this.callback.run();
         }
     }
 
-    public void setUV(Vector2i uv)
-    {
+    public void setUV(Vector2i uv) {
         this.uv = uv;
 
         this.scaleX.set(0, 0.75F);
@@ -83,8 +78,7 @@ public class UIUVEditor extends UICanvasEditor
         this.v.setValue(uv.y);
     }
 
-    public void setUVZoom(Vector2i uv, int w, int h, float zoom)
-    {
+    public void setUVZoom(Vector2i uv, int w, int h, float zoom) {
         this.setUV(uv);
 
         this.tileW = w;
@@ -93,8 +87,7 @@ public class UIUVEditor extends UICanvasEditor
         this.jumpTo(uv, w, h, zoom);
     }
 
-    private void jumpTo(Vector2i uv, int w, int h, float zoom)
-    {
+    private void jumpTo(Vector2i uv, int w, int h, float zoom) {
         this.scaleX.setZoom(zoom);
         this.scaleY.setZoom(zoom);
         this.scaleX.setShift(uv.x - (this.getWidth() - w) / 2);
@@ -102,24 +95,20 @@ public class UIUVEditor extends UICanvasEditor
     }
 
     @Override
-    protected void startDragging(UIContext context)
-    {
+    protected void startDragging(UIContext context) {
         super.startDragging(context);
 
-        if (this.mouse == 0)
-        {
+        if (this.mouse == 0) {
             this.lastT = this.uv.x;
             this.lastV = this.uv.y;
         }
     }
 
     @Override
-    protected void dragging(UIContext context)
-    {
+    protected void dragging(UIContext context) {
         super.dragging(context);
 
-        if (this.dragging && this.mouse == 0)
-        {
+        if (this.dragging && this.mouse == 0) {
             double dx = (context.mouseX - this.lastX) / this.scaleX.getZoom();
             double dy = (context.mouseY - this.lastY) / this.scaleY.getZoom();
 
@@ -129,8 +118,7 @@ public class UIUVEditor extends UICanvasEditor
             this.uv.x = (int) (dx) + (int) this.lastT;
             this.uv.y = (int) (dy) + (int) this.lastV;
 
-            if (Window.isAltPressed())
-            {
+            if (Window.isAltPressed()) {
                 this.uv.x = MathUtils.toChunk(this.uv.x, 16) * 16;
                 this.uv.y = MathUtils.toChunk(this.uv.y, 16) * 16;
             }
@@ -143,8 +131,7 @@ public class UIUVEditor extends UICanvasEditor
     }
 
     @Override
-    protected void renderCanvasFrame(UIContext context)
-    {
+    protected void renderCanvasFrame(UIContext context) {
         Area area = this.calculate(-this.w / 2, -this.h / 2, -this.w / 2 + this.w, -this.h / 2 + this.h);
 
         context.batcher.fullTexturedBox(context.render.getTextures().getTexture(this.atlas), area.x, area.y, area.w, area.h);

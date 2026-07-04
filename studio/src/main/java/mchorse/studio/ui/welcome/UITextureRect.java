@@ -8,24 +8,20 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.utils.colors.Colors;
 
-public class UITextureRect extends UIElement
-{
+public class UITextureRect extends UIElement {
     public Link texture;
     public Area rect;
     public String label;
 
-    public UITextureRect(Link texture, Area rect, String label)
-    {
+    public UITextureRect(Link texture, Area rect, String label) {
         this.texture = texture;
         this.rect = rect;
         this.label = label;
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.texture != null)
-        {
+    public void render(UIContext context) {
+        if (this.texture != null) {
             Texture texture = context.render.getTextures().getTexture(this.texture);
             boolean hover = this.area.isInside(context);
             int offset = 2;

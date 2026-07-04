@@ -10,11 +10,7 @@ import mchorse.bbs.graphics.vao.VBOAttributes;
 import mchorse.bbs.math.IExpression;
 import mchorse.bbs.math.Variable;
 import mchorse.bbs.particles.ParticleScheme;
-import mchorse.bbs.particles.components.IComponentEmitterInitialize;
-import mchorse.bbs.particles.components.IComponentEmitterUpdate;
-import mchorse.bbs.particles.components.IComponentParticleInitialize;
-import mchorse.bbs.particles.components.IComponentParticleRender;
-import mchorse.bbs.particles.components.IComponentParticleUpdate;
+import mchorse.bbs.particles.components.*;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIRenderingContext;
 import mchorse.bbs.utils.math.MathUtils;
@@ -24,14 +20,9 @@ import org.joml.Matrix3f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ParticleEmitter
-{
+public class ParticleEmitter {
     public ParticleScheme scheme;
     public List<Particle> particles = new ArrayList<>();
     public Map<String, IExpression> variables;
@@ -84,33 +75,27 @@ public class ParticleEmitter
     private Variable varEmitterRandom3;
     private Variable varEmitterRandom4;
 
-    public double getAge()
-    {
+    public double getAge() {
         return this.getAge(0);
     }
 
-    public double getAge(float transition)
-    {
+    public double getAge(float transition) {
         return !this.paused ? (this.age + transition) / 20.0 : this.age / 20.0;
     }
 
-    public void setTarget(Entity target)
-    {
+    public void setTarget(Entity target) {
         this.target = target;
         this.world = target == null ? null : target.world;
     }
 
-    public void setWorld(World world)
-    {
+    public void setWorld(World world) {
         this.world = world;
     }
 
-    public void setScheme(ParticleScheme scheme)
-    {
+    public void setScheme(ParticleScheme scheme) {
         this.scheme = scheme;
 
-        if (this.scheme == null)
-        {
+        if (this.scheme == null) {
             return;
         }
 
@@ -121,16 +106,14 @@ public class ParticleEmitter
         this.setupVariables();
         this.setEmitterVariables(0);
 
-        for (IComponentEmitterInitialize component : this.scheme.emitterInitializes)
-        {
+        for (IComponentEmitterInitialize component : this.scheme.emitterInitializes) {
             component.apply(this);
         }
     }
 
     /* Variable related code */
 
-    public void setupVariables()
-    {
+    public void setupVariables() {
         this.varIndex = this.scheme.parser.variables.get("variable.particle_index");
         this.varAge = this.scheme.parser.variables.get("variable.particle_age");
         this.varLifetime = this.scheme.parser.variables.get("variable.particle_lifetime");
@@ -147,8 +130,7 @@ public class ParticleEmitter
         this.varEmitterRandom4 = this.scheme.parser.variables.get("variable.emitter_random_4");
     }
 
-    public void setParticleVariables(Particle particle, float transition)
-    {
+    public void setParticleVariables(Particle particle, float transition) {
         if (this.varIndex != null) this.varIndex.set(particle.index);
         if (this.varAge != null) this.varAge.set(particle.getAge(transition));
         if (this.varLifetime != null) this.varLifetime.set(particle.lifetime / 20.0);
@@ -160,8 +142,7 @@ public class ParticleEmitter
         this.scheme.updateCurves();
     }
 
-    public void setEmitterVariables(float transition)
-    {
+    public void setEmitterVariables(float transition) {
         if (this.varEmitterAge != null) this.varEmitterAge.set(this.getAge(transition));
         if (this.varEmitterLifetime != null) this.varEmitterLifetime.set(this.lifetime / 20.0);
         if (this.varEmitterRandom1 != null) this.varEmitterRandom1.set(this.random1);
@@ -172,48 +153,37 @@ public class ParticleEmitter
         this.scheme.updateCurves();
     }
 
-    public void parseVariables(Map<String, String> variables)
-    {
+    public void parseVariables(Map<String, String> variables) {
         this.variables = new HashMap<>();
 
-        for (Map.Entry<String, String> entry : variables.entrySet())
-        {
+        for (Map.Entry<String, String> entry : variables.entrySet()) {
             this.parseVariable(entry.getKey(), entry.getValue());
         }
     }
 
-    public void parseVariable(String name, String expression)
-    {
-        try
-        {
+    public void parseVariable(String name, String expression) {
+        try {
             this.variables.put(name, this.scheme.parser.parse(expression));
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
     }
 
-    public void replaceVariables()
-    {
-        if (this.variables == null)
-        {
+    public void replaceVariables() {
+        if (this.variables == null) {
             return;
         }
 
-        for (Map.Entry<String, IExpression> entry : this.variables.entrySet())
-        {
+        for (Map.Entry<String, IExpression> entry : this.variables.entrySet()) {
             Variable var = this.scheme.parser.variables.get(entry.getKey());
 
-            if (var != null)
-            {
+            if (var != null) {
                 var.set(entry.getValue().get().doubleValue());
             }
         }
     }
 
-    public void start()
-    {
-        if (this.playing)
-        {
+    public void start() {
+        if (this.playing) {
             return;
         }
 
@@ -222,10 +192,8 @@ public class ParticleEmitter
         this.playing = true;
     }
 
-    public void stop()
-    {
-        if (!this.playing)
-        {
+    public void stop() {
+        if (!this.playing) {
             return;
         }
 
@@ -240,25 +208,21 @@ public class ParticleEmitter
     /**
      * Update this current emitter
      */
-    public void update()
-    {
-        if (this.scheme == null)
-        {
+    public void update() {
+        if (this.scheme == null) {
             return;
         }
 
         this.setEmitterVariables(0);
 
-        for (IComponentEmitterUpdate component : this.scheme.emitterUpdates)
-        {
+        for (IComponentEmitterUpdate component : this.scheme.emitterUpdates) {
             component.update(this);
         }
 
         this.setEmitterVariables(0);
         this.updateParticles();
 
-        if (!this.paused)
-        {
+        if (!this.paused) {
             this.age += 1;
         }
     }
@@ -266,18 +230,15 @@ public class ParticleEmitter
     /**
      * Update all particles
      */
-    private void updateParticles()
-    {
+    private void updateParticles() {
         Iterator<Particle> it = this.particles.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Particle particle = it.next();
 
             this.updateParticle(particle);
 
-            if (particle.dead)
-            {
+            if (particle.dead) {
                 it.remove();
             }
         }
@@ -286,14 +247,12 @@ public class ParticleEmitter
     /**
      * Update a single particle
      */
-    private void updateParticle(Particle particle)
-    {
+    private void updateParticle(Particle particle) {
         particle.update(this);
 
         this.setParticleVariables(particle, 0);
 
-        for (IComponentParticleUpdate component : this.scheme.particleUpdates)
-        {
+        for (IComponentParticleUpdate component : this.scheme.particleUpdates) {
             component.update(this, particle);
         }
     }
@@ -301,10 +260,8 @@ public class ParticleEmitter
     /**
      * Spawn a particle
      */
-    public void spawnParticle()
-    {
-        if (!this.running)
-        {
+    public void spawnParticle() {
+        if (!this.running) {
             return;
         }
 
@@ -314,8 +271,7 @@ public class ParticleEmitter
     /**
      * Create a new particle
      */
-    private Particle createParticle(boolean forceRelative)
-    {
+    private Particle createParticle(boolean forceRelative) {
         Particle particle = new Particle(this.index);
 
         this.index += 1;
@@ -323,13 +279,11 @@ public class ParticleEmitter
         this.setParticleVariables(particle, 0);
         particle.setupMatrix(this);
 
-        for (IComponentParticleInitialize component : this.scheme.particleInitializes)
-        {
+        for (IComponentParticleInitialize component : this.scheme.particleInitializes) {
             component.apply(this, particle);
         }
 
-        if (particle.relativePosition && !particle.relativeRotation)
-        {
+        if (particle.relativePosition && !particle.relativeRotation) {
             Vector3f vec = new Vector3f().set(particle.position);
 
             particle.matrix.transform(vec);
@@ -338,8 +292,7 @@ public class ParticleEmitter
             particle.position.z = vec.z;
         }
 
-        if (!(particle.relativePosition && particle.relativeRotation))
-        {
+        if (!(particle.relativePosition && particle.relativeRotation)) {
             particle.position.add(this.lastGlobal);
             particle.initialPosition.add(this.lastGlobal);
         }
@@ -354,22 +307,18 @@ public class ParticleEmitter
     /**
      * Render the particle on screen
      */
-    public void renderUI(UIRenderingContext context)
-    {
-        if (this.scheme == null)
-        {
+    public void renderUI(UIRenderingContext context) {
+        if (this.scheme == null) {
             return;
         }
 
         float transition = context.getTransition();
         List<IComponentParticleRender> list = this.scheme.getComponents(IComponentParticleRender.class);
 
-        if (!list.isEmpty())
-        {
+        if (!list.isEmpty()) {
             this.bindTexture();
 
-            if (this.uiParticle == null || this.uiParticle.dead)
-            {
+            if (this.uiParticle == null || this.uiParticle.dead) {
                 this.uiParticle = this.createParticle(true);
             }
 
@@ -380,8 +329,7 @@ public class ParticleEmitter
 
             VAOBuilder builder = context.batcher.begin(VBOAttributes.VERTEX_UV_RGBA_2D, context.getTextures().getTexture(this.scheme.texture));
 
-            for (IComponentParticleRender render : list)
-            {
+            for (IComponentParticleRender render : list) {
                 render.renderUI(this.uiParticle, builder, transition);
             }
 
@@ -392,10 +340,8 @@ public class ParticleEmitter
     /**
      * Render all the particles in this particle emitter
      */
-    public void render(RenderingContext context, Shader shader)
-    {
-        if (this.scheme == null)
-        {
+    public void render(RenderingContext context, Shader shader) {
+        if (this.scheme == null) {
             return;
         }
 
@@ -403,25 +349,21 @@ public class ParticleEmitter
 
         List<IComponentParticleRender> renders = this.scheme.particleRender;
 
-        for (IComponentParticleRender component : renders)
-        {
+        for (IComponentParticleRender component : renders) {
             component.preRender(this, transition);
         }
 
-        if (!this.particles.isEmpty())
-        {
+        if (!this.particles.isEmpty()) {
             VAOBuilder builder = context.getVAO().setup(shader);
 
             this.bindTexture();
             builder.begin();
 
-            for (Particle particle : this.particles)
-            {
+            for (Particle particle : this.particles) {
                 this.setEmitterVariables(transition);
                 this.setParticleVariables(particle, transition);
 
-                for (IComponentParticleRender component : renders)
-                {
+                for (IComponentParticleRender component : renders) {
                     component.render(this, particle, builder, transition);
                 }
             }
@@ -431,19 +373,16 @@ public class ParticleEmitter
             GLStates.cullFaces(true);
         }
 
-        for (IComponentParticleRender component : renders)
-        {
+        for (IComponentParticleRender component : renders) {
             component.postRender(this, transition);
         }
     }
 
-    private void bindTexture()
-    {
+    private void bindTexture() {
         BBS.getTextures().bind(this.texture == null ? this.scheme.texture : this.texture);
     }
 
-    public void setupCameraProperties(Camera camera)
-    {
+    public void setupCameraProperties(Camera camera) {
         this.cYaw = 180 - MathUtils.toDeg(camera.rotation.y);
         this.cPitch = MathUtils.toDeg(camera.rotation.x);
         this.cX = camera.position.x;

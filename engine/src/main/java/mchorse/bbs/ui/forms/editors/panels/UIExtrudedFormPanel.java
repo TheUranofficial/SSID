@@ -6,12 +6,10 @@ import mchorse.bbs.ui.forms.editors.forms.UIForm;
 import mchorse.bbs.ui.framework.elements.buttons.UIButton;
 import mchorse.bbs.ui.framework.elements.input.UITexturePicker;
 
-public class UIExtrudedFormPanel extends UIFormPanel<ExtrudedForm>
-{
+public class UIExtrudedFormPanel extends UIFormPanel<ExtrudedForm> {
     public UIButton pick;
 
-    public UIExtrudedFormPanel(UIForm editor)
-    {
+    public UIExtrudedFormPanel(UIForm editor) {
         super(editor);
 
         this.pick = new UIButton(UIKeys.FORMS_EDITORS_BILLBOARD_PICK_TEXTURE, (b) ->

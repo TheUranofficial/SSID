@@ -30,8 +30,7 @@ import mchorse.bbs.utils.colors.Colors;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIFormEditor extends UIElement implements IUIFormList
-{
+public class UIFormEditor extends UIElement implements IUIFormList {
     private static final int TREE_WIDTH = 140;
     private static boolean TOGGLED = true;
 
@@ -58,8 +57,7 @@ public class UIFormEditor extends UIElement implements IUIFormList
 
     private Consumer<Form> callback;
 
-    public UIFormEditor(UIFormPalette palette)
-    {
+    public UIFormEditor(UIFormPalette palette) {
         this.palette = palette;
 
         this.formsArea = new UIElement();
@@ -127,84 +125,69 @@ public class UIFormEditor extends UIElement implements IUIFormList
         this.add(this.formsArea, this.editArea);
     }
 
-    public void pickFormFromRenderer(Pair<Form, String> pair)
-    {
+    public void pickFormFromRenderer(Pair<Form, String> pair) {
         this.forms.setCurrentForm(pair.a);
         this.pickForm(this.forms.getCurrentFirst());
 
-        if (!pair.b.isEmpty())
-        {
+        if (!pair.b.isEmpty()) {
             this.editor.pickBone(pair.b);
         }
     }
 
-    private void toggleSidebar()
-    {
+    private void toggleSidebar() {
         this.formsArea.toggleVisible();
         this.toggleSidebar.both(this.formsArea.isVisible() ? Icons.LEFTLOAD : Icons.RIGHTLOAD);
 
-        if (this.formsArea.isVisible())
-        {
+        if (this.formsArea.isVisible()) {
             this.editArea.x(TREE_WIDTH).w(1F, -TREE_WIDTH);
-        }
-        else
-        {
+        } else {
             this.editArea.x(0).w(1F);
         }
 
         this.editArea.resize();
     }
 
-    private void createFormContextMenu(ContextMenuManager menu)
-    {
+    private void createFormContextMenu(ContextMenuManager menu) {
         UIForms.FormEntry current = this.forms.getCurrentFirst();
 
-        if (current != null)
-        {
+        if (current != null) {
             menu.action(Icons.ADD, UIKeys.FORMS_EDITOR_CONTEXT_ADD, () -> this.addBodyPart(new BodyPart()));
 
-            if (current.part != null)
-            {
+            if (current.part != null) {
                 menu.action(Icons.COPY, UIKeys.FORMS_EDITOR_CONTEXT_COPY, this::copyBodyPart);
             }
 
             MapType data = Window.getClipboardMap("_FormEditorBodyPart");
 
-            if (data != null)
-            {
+            if (data != null) {
                 menu.action(Icons.PASTE, UIKeys.FORMS_EDITOR_CONTEXT_PASTE, () -> this.pasteBodyPart(data));
             }
 
-            if (current.part != null)
-            {
+            if (current.part != null) {
                 menu.action(Icons.REMOVE, UIKeys.FORMS_EDITOR_CONTEXT_REMOVE, this::removeBodyPart);
             }
         }
     }
 
-    private void addBodyPart(BodyPart part)
-    {
+    private void addBodyPart(BodyPart part) {
         UIForms.FormEntry current = this.forms.getCurrentFirst();
 
         current.getForm().parts.addBodyPart(part);
         this.refreshFormList();
     }
 
-    private void copyBodyPart()
-    {
+    private void copyBodyPart() {
         Window.setClipboard(this.forms.getCurrentFirst().part.toData(), "_FormEditorBodyPart");
     }
 
-    private void pasteBodyPart(MapType data)
-    {
+    private void pasteBodyPart(MapType data) {
         BodyPart part = new BodyPart();
 
         part.fromData(data);
         this.addBodyPart(part);
     }
 
-    private void removeBodyPart()
-    {
+    private void removeBodyPart() {
         int index = this.forms.getIndex();
         UIForms.FormEntry current = this.forms.getCurrentFirst();
 
@@ -215,12 +198,10 @@ public class UIFormEditor extends UIElement implements IUIFormList
         this.pickForm(this.forms.getCurrentFirst());
     }
 
-    private void pickForm(UIForms.FormEntry entry)
-    {
+    private void pickForm(UIForms.FormEntry entry) {
         this.bodyPartData.setVisible(entry.part != null);
 
-        if (entry.part != null)
-        {
+        if (entry.part != null) {
             this.enabled.setValue(entry.part.enabled);
             this.useTarget.setValue(entry.part.useTarget);
             this.bone.clear();
@@ -236,8 +217,7 @@ public class UIFormEditor extends UIElement implements IUIFormList
         this.switchEditor(entry.getForm());
     }
 
-    public void openFormList(Form current, Consumer<Form> callback)
-    {
+    public void openFormList(Form current, Consumer<Form> callback) {
         UIFormEditorList list = new UIFormEditorList(this);
 
         list.setSelected(current);
@@ -248,17 +228,14 @@ public class UIFormEditor extends UIElement implements IUIFormList
         this.add(list);
     }
 
-    public boolean isEditing()
-    {
+    public boolean isEditing() {
         return this.form != null;
     }
 
-    public boolean edit(Form form)
-    {
+    public boolean edit(Form form) {
         this.form = null;
 
-        if (form == null)
-        {
+        if (form == null) {
             return false;
         }
 
@@ -266,12 +243,10 @@ public class UIFormEditor extends UIElement implements IUIFormList
 
         this.bodyPartData.setVisible(false);
 
-        if (this.switchEditor(form))
-        {
+        if (this.switchEditor(form)) {
             this.form = form;
 
-            if (TOGGLED != this.formsArea.isVisible())
-            {
+            if (TOGGLED != this.formsArea.isVisible()) {
                 this.toggleSidebar();
             }
 
@@ -287,25 +262,21 @@ public class UIFormEditor extends UIElement implements IUIFormList
         return false;
     }
 
-    public void refreshFormList()
-    {
+    public void refreshFormList() {
         UIForms.FormEntry current = this.forms.getCurrentFirst();
 
         this.forms.setForm(this.form);
         this.forms.setCurrentScroll(current);
     }
 
-    public boolean switchEditor(Form form)
-    {
+    public boolean switchEditor(Form form) {
         UIForm editor = BBS.getForms().getEditor(form);
 
-        if (editor == null)
-        {
+        if (editor == null) {
             return false;
         }
 
-        if (this.editor != null)
-        {
+        if (this.editor != null) {
             this.editor.removeFromParent();
         }
 
@@ -325,8 +296,7 @@ public class UIFormEditor extends UIElement implements IUIFormList
         return true;
     }
 
-    public Form finish()
-    {
+    public Form finish() {
         Form form = this.form;
 
         this.exit();
@@ -340,36 +310,30 @@ public class UIFormEditor extends UIElement implements IUIFormList
     }
 
     @Override
-    public void exit()
-    {
+    public void exit() {
         this.callback = null;
 
         List<UIFormList> children = this.getChildren(UIFormList.class);
 
-        if (!children.isEmpty())
-        {
+        if (!children.isEmpty()) {
             children.get(0).removeFromParent();
         }
     }
 
     @Override
-    public void toggleEditor()
-    {}
+    public void toggleEditor() {
+    }
 
     @Override
-    public void accept(Form form)
-    {
-        if (this.callback != null)
-        {
+    public void accept(Form form) {
+        if (this.callback != null) {
             this.callback.accept(form);
         }
     }
 
     @Override
-    public void render(UIContext context)
-    {
-        if (this.formsArea.isVisible())
-        {
+    public void render(UIContext context) {
+        if (this.formsArea.isVisible()) {
             this.formsArea.area.render(context.batcher, Colors.A50);
         }
 

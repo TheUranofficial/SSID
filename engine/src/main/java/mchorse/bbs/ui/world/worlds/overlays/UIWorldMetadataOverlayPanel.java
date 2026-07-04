@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
-{
+public class UIWorldMetadataOverlayPanel extends UIOverlayPanel {
     public UIScrollView view;
 
     public UITextbox id;
@@ -67,8 +66,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
 
     private boolean iDontCare;
 
-    public UIWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback, Set<String> existing)
-    {
+    public UIWorldMetadataOverlayPanel(BlockSet blocks, Consumer<UIWorldMetadataOverlayPanel> callback, Set<String> existing) {
         super(UIKeys.WORLDS_OPTIONS_TITLE);
 
         this.blocks = blocks;
@@ -92,8 +90,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
             this.resize();
         });
 
-        for (Link generator : this.generators)
-        {
+        for (Link generator : this.generators) {
             this.generator.addLabel(IKey.raw(generator.toString()));
         }
 
@@ -126,17 +123,14 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.rebuild();
     }
 
-    public WorldMetadata getMetadata()
-    {
+    public WorldMetadata getMetadata() {
         return this.metadata;
     }
 
-    public void setMetadata(WorldMetadata metadata)
-    {
+    public void setMetadata(WorldMetadata metadata) {
         this.metadata = metadata;
 
-        if (this.metadata == null)
-        {
+        if (this.metadata == null) {
             return;
         }
 
@@ -156,22 +150,17 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.rebuild();
     }
 
-    private Link getGenerator(int value)
-    {
-        if (value >= 0 && value < this.generators.size())
-        {
+    private Link getGenerator(int value) {
+        if (value >= 0 && value < this.generators.size()) {
             return this.generators.get(value);
         }
 
         return Generator.DEFAULT;
     }
 
-    private int getGenerator(Link value)
-    {
-        for (int i = 0; i < this.generators.size(); i++)
-        {
-            if (this.generators.get(i).equals(value.toString()))
-            {
+    private int getGenerator(Link value) {
+        for (int i = 0; i < this.generators.size(); i++) {
+            if (this.generators.get(i).equals(value.toString())) {
                 return i;
             }
         }
@@ -179,13 +168,11 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         return 0;
     }
 
-    private void verifyId(String world)
-    {
+    private void verifyId(String world) {
         this.id.setColor(this.existing.contains(world) ? Colors.NEGATIVE : Colors.WHITE);
     }
 
-    protected void rebuild()
-    {
+    protected void rebuild() {
         int color = Colors.A50 | BBSSettings.primaryColor.get();
 
         this.view.removeAll();
@@ -194,8 +181,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_GENERATOR_OPTIONS).background(color));
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_SEED).marginTop(6), this.seed, this.generator.marginBottom(12));
 
-        if (this.metadata != null)
-        {
+        if (this.metadata != null) {
             this.view.add(this.generatorOptions);
 
             this.rebuildGeneratorSpecificOptions();
@@ -206,8 +192,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_CHUNK_SIZE).marginTop(6), this.chunkSize);
         this.view.add(this.compress, this.column.marginBottom(12));
 
-        if (this.column.getValue())
-        {
+        if (this.column.getValue()) {
             this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_OPTIONS).background(color));
             this.view.add(UI.row(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_BASE, 20).labelAnchor(0, 0.5F), this.columnBase));
             this.view.add(UI.row(UI.label(UIKeys.WORLDS_OPTIONS_COLUMN_HEIGHT, 20).labelAnchor(0, 0.5F), this.columnHeight).marginBottom(12));
@@ -215,8 +200,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
 
         this.view.add(UI.label(UIKeys.WORLDS_OPTIONS_GENERATION_LIMIT).background(color).marginBottom(6), this.x.marginBottom(6));
 
-        if (!this.column.getValue())
-        {
+        if (!this.column.getValue()) {
             this.view.add(this.y.marginBottom(6));
         }
 
@@ -226,8 +210,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.view.resize();
     }
 
-    protected void rebuildGeneratorSpecificOptions()
-    {
+    protected void rebuildGeneratorSpecificOptions() {
         int color = Colors.A50 | BBSSettings.primaryColor.get();
 
         Generator generator = Generator.forName(this.getGenerator(this.generator.getValue()));
@@ -236,16 +219,12 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.gen = generator;
         this.generatorOptions.removeAll();
 
-        if (!generatorOptions.isEmpty())
-        {
+        if (!generatorOptions.isEmpty()) {
             this.generatorOptions.add(UI.label(UIKeys.WORLDS_OPTIONS_GENERATOR_OPTIONS).background(color));
 
-            for (BaseValue value : generatorOptions)
-            {
-                if (value instanceof IValueUIProvider)
-                {
-                    for (UIElement element : ((IValueUIProvider) value).getFields(this))
-                    {
+            for (BaseValue value : generatorOptions) {
+                if (value instanceof IValueUIProvider) {
+                    for (UIElement element : ((IValueUIProvider) value).getFields(this)) {
                         this.generatorOptions.add(element);
                     }
                 }
@@ -253,27 +232,21 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         }
     }
 
-    private void submit(UIButton b)
-    {
-        if (this.callback == null)
-        {
+    private void submit(UIButton b) {
+        if (this.callback == null) {
             return;
         }
 
-        if (this.cannotSubmitWorldId())
-        {
+        if (this.cannotSubmitWorldId()) {
             return;
         }
 
-        if (this.gen != null)
-        {
-            for (BaseValue value : this.gen.getValues())
-            {
+        if (this.gen != null) {
+            for (BaseValue value : this.gen.getValues()) {
                 this.metadata.metadata.put(value.getPath(), value.toData());
             }
 
-            if (this.cannotSubmitWithEmptyGeneratorValues())
-            {
+            if (this.cannotSubmitWithEmptyGeneratorValues()) {
                 return;
             }
         }
@@ -282,10 +255,8 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         this.close();
     }
 
-    protected boolean cannotSubmitWorldId()
-    {
-        if (this.id.getText().trim().isEmpty())
-        {
+    protected boolean cannotSubmitWorldId() {
+        if (this.id.getText().trim().isEmpty()) {
             UIOverlay.addOverlay(this.getContext(), new UIMessageOverlayPanel(
                 UIKeys.GENERAL_WARNING,
                 UIKeys.WORLDS_OPTIONS_WARNING_WORLD_ID
@@ -297,10 +268,8 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         return false;
     }
 
-    protected boolean cannotSubmitWithEmptyGeneratorValues()
-    {
-        if (this.isMetadataEmpty(this.metadata.metadata) && !this.iDontCare)
-        {
+    protected boolean cannotSubmitWithEmptyGeneratorValues() {
+        if (this.isMetadataEmpty(this.metadata.metadata) && !this.iDontCare) {
             UIOverlay.addOverlay(this.getContext(), new UIConfirmOverlayPanel(
                 UIKeys.GENERAL_WARNING,
                 UIKeys.WORLDS_OPTIONS_WARNING_EMPTY_DATA,
@@ -313,22 +282,15 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel
         return false;
     }
 
-    private boolean isMetadataEmpty(MapType data)
-    {
-        for (String key : data.keys())
-        {
+    private boolean isMetadataEmpty(MapType data) {
+        for (String key : data.keys()) {
             BaseType type = data.get(key);
 
-            if (type.isString() && !type.asString().trim().isEmpty())
-            {
+            if (type.isString() && !type.asString().trim().isEmpty()) {
                 return false;
-            }
-            else if (type.isList() && !type.asList().isEmpty())
-            {
+            } else if (type.isList() && !type.asList().isEmpty()) {
                 return false;
-            }
-            else if (type.isMap() && !type.asMap().isEmpty())
-            {
+            } else if (type.isMap() && !type.asMap().isEmpty()) {
                 return false;
             }
         }

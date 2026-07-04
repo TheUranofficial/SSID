@@ -3,33 +3,24 @@ package mchorse.bbs.math.molang.expressions;
 import mchorse.bbs.math.Variable;
 import mchorse.bbs.math.molang.MolangParser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
-public class MolangMultiStatement extends MolangExpression
-{
+public class MolangMultiStatement extends MolangExpression {
     public List<MolangExpression> expressions = new ArrayList<>();
     public Map<String, Variable> locals = new HashMap<>();
 
-    public MolangMultiStatement(MolangParser context)
-    {
+    public MolangMultiStatement(MolangParser context) {
         super(context);
     }
 
     @Override
-    public double get()
-    {
+    public double get() {
         double value = 0;
 
-        for (MolangExpression expression : this.expressions)
-        {
+        for (MolangExpression expression : this.expressions) {
             value = expression.get();
 
-            if (expression instanceof MolangValue && ((MolangValue) expression).returns)
-            {
+            if (expression instanceof MolangValue && ((MolangValue) expression).returns) {
                 break;
             }
         }
@@ -38,12 +29,10 @@ public class MolangMultiStatement extends MolangExpression
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringJoiner builder = new StringJoiner("; ");
 
-        for (MolangExpression expression : this.expressions)
-        {
+        for (MolangExpression expression : this.expressions) {
             builder.add(expression.toString());
         }
 

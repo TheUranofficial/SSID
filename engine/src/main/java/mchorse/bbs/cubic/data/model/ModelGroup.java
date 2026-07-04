@@ -5,8 +5,7 @@ import mchorse.bbs.utils.pose.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelGroup
-{
+public class ModelGroup {
     public final String id;
     public List<ModelGroup> children = new ArrayList<>();
     public List<ModelCube> cubes = new ArrayList<>();
@@ -17,8 +16,7 @@ public class ModelGroup
     public Transform initial = new Transform();
     public Transform current = new Transform();
 
-    public ModelGroup(String id)
-    {
+    public ModelGroup(String id) {
         this.id = id;
     }
 }

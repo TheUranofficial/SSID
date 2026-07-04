@@ -13,54 +13,45 @@ import java.util.List;
 
 /**
  * Keyframe channel
- *
+ * <p>
  * This class is responsible for storing individual keyframes and also
  * interpolating between them.
  */
-public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
-{
+public class GenericKeyframeChannel<T> extends ValueList<GenericKeyframe<T>> {
     private IGenericKeyframeFactory<T> factory;
 
-    public GenericKeyframeChannel(String id, IGenericKeyframeFactory<T> factory)
-    {
+    public GenericKeyframeChannel(String id, IGenericKeyframeFactory<T> factory) {
         super(id);
 
         this.factory = factory;
     }
 
-    public IGenericKeyframeFactory<T> getFactory()
-    {
+    public IGenericKeyframeFactory<T> getFactory() {
         return this.factory;
     }
 
     /* Read only */
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.list.isEmpty();
     }
 
-    public List<GenericKeyframe<T>> getKeyframes()
-    {
+    public List<GenericKeyframe<T>> getKeyframes() {
         return Collections.unmodifiableList(this.list);
     }
 
-    public boolean has(int index)
-    {
+    public boolean has(int index) {
         return index >= 0 && index < this.list.size();
     }
 
-    public GenericKeyframe<T> get(int index)
-    {
+    public GenericKeyframe<T> get(int index) {
         return this.has(index) ? this.list.get(index) : null;
     }
 
-    public GenericKeyframeSegment find(float ticks)
-    {
+    public GenericKeyframeSegment find(float ticks) {
         Pair<GenericKeyframe<T>, GenericKeyframe<T>> pair = this.findSegment(ticks);
 
-        if (pair == null)
-        {
+        if (pair == null) {
             return null;
         }
 
@@ -74,27 +65,23 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
     /**
      * Find a keyframe segment at given ticks
      */
-    public Pair<GenericKeyframe<T>, GenericKeyframe<T>> findSegment(float ticks)
-    {
+    public Pair<GenericKeyframe<T>, GenericKeyframe<T>> findSegment(float ticks) {
         /* No keyframes, no values */
-        if (this.list.isEmpty())
-        {
+        if (this.list.isEmpty()) {
             return null;
         }
 
         /* Check whether given ticks are outside keyframe channel's range */
         GenericKeyframe<T> prev = this.list.get(0);
 
-        if (ticks <= prev.getTick())
-        {
+        if (ticks <= prev.getTick()) {
             return new Pair<>(prev, prev);
         }
 
         int size = this.list.size();
         GenericKeyframe<T> last = this.list.get(size - 1);
 
-        if (ticks >= last.getTick())
-        {
+        if (ticks >= last.getTick()) {
             return new Pair<>(last, last);
         }
 
@@ -102,24 +89,19 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
         int low = 0;
         int high = size - 1;
 
-        while (low <= high)
-        {
+        while (low <= high) {
             int mid = low + (high - low) / 2;
 
-            if (this.list.get(mid).getTick() < ticks)
-            {
+            if (this.list.get(mid).getTick() < ticks) {
                 low = mid + 1;
-            }
-            else
-            {
+            } else {
                 high = mid - 1;
             }
         }
 
         GenericKeyframe<T> b = this.list.get(low);
 
-        if (b.getTick() == Math.floor(ticks) && low < size - 1)
-        {
+        if (b.getTick() == Math.floor(ticks) && low < size - 1) {
             low += 1;
             b = this.list.get(low);
         }
@@ -131,10 +113,8 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
 
     /* Write only */
 
-    public void remove(int index)
-    {
-        if (index < 0 || index > this.list.size() - 1)
-        {
+    public void remove(int index) {
+        if (index < 0 || index > this.list.size() - 1) {
             return;
         }
 
@@ -146,25 +126,22 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
 
     /**
      * Insert a keyframe at given tick with given value
-     *
+     * <p>
      * This method is useful as it's not creating keyframes every time you
      * need to add some value, but rather inserts in correct order or
      * overwrites existing keyframe.
-     *
+     * <p>
      * Also, it returns index at which it was inserted.
      */
-    public int insert(long tick, T value)
-    {
+    public int insert(long tick, T value) {
         this.preNotifyParent();
 
         GenericKeyframe<T> prev;
 
-        if (!this.list.isEmpty())
-        {
+        if (!this.list.isEmpty()) {
             prev = this.list.get(0);
 
-            if (tick < prev.getTick())
-            {
+            if (tick < prev.getTick()) {
                 this.add(0, new GenericKeyframe<>("", this.factory, tick, value));
                 this.sort();
 
@@ -177,18 +154,15 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
         prev = null;
         int index = 0;
 
-        for (GenericKeyframe<T> frame : this.list)
-        {
-            if (frame.getTick() == tick)
-            {
+        for (GenericKeyframe<T> frame : this.list) {
+            if (frame.getTick() == tick) {
                 frame.setValue(value);
                 this.postNotifyParent();
 
                 return index;
             }
 
-            if (prev != null && tick > prev.getTick() && tick < frame.getTick())
-            {
+            if (prev != null && tick > prev.getTick() && tick < frame.getTick()) {
                 break;
             }
 
@@ -203,22 +177,19 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
         return index;
     }
 
-    public void sort()
-    {
+    public void sort() {
         this.list.sort((a, b) -> (int) (a.getTick() - b.getTick()));
 
         this.sync();
     }
 
     @Override
-    protected GenericKeyframe<T> create(String id)
-    {
+    protected GenericKeyframe<T> create(String id) {
         return new GenericKeyframe<>(id, this.factory);
     }
 
     @Override
-    public BaseType toData()
-    {
+    public BaseType toData() {
         MapType data = new MapType();
 
         data.put("keyframes", super.toData());
@@ -228,10 +199,8 @@ public class GenericKeyframeChannel <T> extends ValueList<GenericKeyframe<T>>
     }
 
     @Override
-    public void fromData(BaseType data)
-    {
-        if (!data.isMap())
-        {
+    public void fromData(BaseType data) {
+        if (!data.isMap()) {
             return;
         }
 

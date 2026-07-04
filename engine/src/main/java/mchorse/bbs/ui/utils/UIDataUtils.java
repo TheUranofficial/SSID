@@ -16,15 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UIDataUtils
-{
-    public static void requestNames(ContentType type, Consumer<List<String>> consumer)
-    {
+public class UIDataUtils {
+    public static void requestNames(ContentType type, Consumer<List<String>> consumer) {
         consumer.accept(new ArrayList<>(type.getManager().getKeys()));
     }
 
-    public static void openPicker(UIContext context, ContentType type, String value, Consumer<String> callback)
-    {
+    public static void openPicker(UIContext context, ContentType type, String value, Consumer<String> callback) {
         requestNames(type, (names) ->
         {
             clearEmptyFolders(names);
@@ -36,21 +33,17 @@ public class UIDataUtils
         });
     }
 
-    private static void clearEmptyFolders(List<String> names)
-    {
+    private static void clearEmptyFolders(List<String> names) {
         Iterator<String> it = names.iterator();
 
-        while (it.hasNext())
-        {
-            if (it.next().endsWith("/"))
-            {
+        while (it.hasNext()) {
+            if (it.next().endsWith("/")) {
                 it.remove();
             }
         }
     }
 
-    public static void renderRightClickHere(UIContext context, Area area)
-    {
+    public static void renderRightClickHere(UIContext context, Area area) {
         int primary = BBSSettings.primaryColor.get();
         double ticks = context.getTickTransition() % 80D;
         double factor = Math.abs(ticks / 80D * 2 - 1F);

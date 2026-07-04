@@ -8,8 +8,7 @@ import mchorse.bbs.utils.keyframes.KeyframeInterpolation;
 import mchorse.bbs.utils.math.Interpolation;
 import org.lwjgl.glfw.GLFW;
 
-public enum InterpolationType
-{
+public enum InterpolationType {
     LINEAR(Interpolation.LINEAR, KeyframeInterpolation.LINEAR), CUBIC("cubic", KeyframeInterpolation.CUBIC, GLFW.GLFW_KEY_X), HERMITE("hermite", KeyframeInterpolation.HERMITE, GLFW.GLFW_KEY_H),
     /* Quadratic interpolations */
     QUAD_IN(Interpolation.QUAD_IN, KeyframeInterpolation.QUAD, KeyframeEasing.IN), QUAD_OUT(Interpolation.QUAD_OUT, KeyframeInterpolation.QUAD, KeyframeEasing.OUT), QUAD_INOUT(Interpolation.QUAD_INOUT, KeyframeInterpolation.QUAD, KeyframeEasing.INOUT),
@@ -32,12 +31,9 @@ public enum InterpolationType
     public KeyframeEasing easing = KeyframeEasing.IN;
     private int keybind;
 
-    public static InterpolationType fromInterp(Interpolation interp)
-    {
-        for (InterpolationType type : values())
-        {
-            if (type.function == interp)
-            {
+    public static InterpolationType fromInterp(Interpolation interp) {
+        for (InterpolationType type : values()) {
+            if (type.function == interp) {
                 return type;
             }
         }
@@ -45,69 +41,56 @@ public enum InterpolationType
         return LINEAR;
     }
 
-    private InterpolationType(String name)
-    {
+    private InterpolationType(String name) {
         this.name = name;
     }
 
-    private InterpolationType(String name, KeyframeInterpolation interp)
-    {
+    private InterpolationType(String name, KeyframeInterpolation interp) {
         this(name, interp, KeyframeEasing.IN);
     }
 
-    private InterpolationType(String name, KeyframeInterpolation interp, int keybind)
-    {
+    private InterpolationType(String name, KeyframeInterpolation interp, int keybind) {
         this(name, interp, KeyframeEasing.IN);
 
         this.keybind = keybind;
     }
 
-    private InterpolationType(String name, KeyframeInterpolation interp, KeyframeEasing easing)
-    {
+    private InterpolationType(String name, KeyframeInterpolation interp, KeyframeEasing easing) {
         this.name = name;
         this.interp = interp;
         this.easing = easing;
     }
 
-    private InterpolationType(Interpolation function)
-    {
+    private InterpolationType(Interpolation function) {
         this.name = function.key;
         this.function = function;
     }
 
-    private InterpolationType(Interpolation function, KeyframeInterpolation interp)
-    {
+    private InterpolationType(Interpolation function, KeyframeInterpolation interp) {
         this(function, interp, KeyframeEasing.IN);
     }
 
-    private InterpolationType(Interpolation function, KeyframeInterpolation interp, KeyframeEasing easing)
-    {
+    private InterpolationType(Interpolation function, KeyframeInterpolation interp, KeyframeEasing easing) {
         this.name = function.key;
         this.function = function;
         this.interp = interp;
         this.easing = easing;
     }
 
-    public void setupKeybind(ContextAction action, IKey category)
-    {
-        if (this.function != null)
-        {
+    public void setupKeybind(ContextAction action, IKey category) {
+        if (this.function != null) {
             this.function.setupKeybind(action, category);
-        }
-        else
-        {
+        } else {
             action.key(category, this.keybind);
         }
     }
 
-    public IKey getName()
-    {
+    public IKey getName() {
         return UIKeys.C_INTERPOLATION.get(this.name);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.name;
     }
 }

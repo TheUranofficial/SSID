@@ -14,8 +14,7 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.colors.Color;
 
-public class UIBillboardFormPanel extends UIFormPanel<BillboardForm>
-{
+public class UIBillboardFormPanel extends UIFormPanel<BillboardForm> {
     public UIButton pick;
     public UIToggle billboard;
 
@@ -27,8 +26,7 @@ public class UIBillboardFormPanel extends UIFormPanel<BillboardForm>
     public UITrackpad offsetY;
     public UITrackpad rotation;
 
-    public UIBillboardFormPanel(UIForm editor)
-    {
+    public UIBillboardFormPanel(UIForm editor) {
         super(editor);
 
         this.pick = new UIButton(UIKeys.FORMS_EDITORS_BILLBOARD_PICK_TEXTURE, (b) ->
@@ -56,8 +54,7 @@ public class UIBillboardFormPanel extends UIFormPanel<BillboardForm>
     }
 
     @Override
-    public void startEdit(BillboardForm form)
-    {
+    public void startEdit(BillboardForm form) {
         super.startEdit(form);
 
         this.billboard.setValue(form.billboard.get());

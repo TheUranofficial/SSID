@@ -2,8 +2,7 @@ package mchorse.bbs.ui.framework.elements;
 
 import mchorse.bbs.ui.framework.UIContext;
 
-public interface IFocusedUIElement
-{
+public interface IFocusedUIElement {
     public boolean isFocused();
 
     public void focus(UIContext context);

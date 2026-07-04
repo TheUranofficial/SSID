@@ -6,13 +6,11 @@ import mchorse.bbs.forms.renderers.FormRenderer;
 import mchorse.bbs.forms.renderers.LightFormRenderer;
 import mchorse.bbs.utils.colors.Color;
 
-public class LightForm extends Form
-{
+public class LightForm extends Form {
     public final ColorProperty color = new ColorProperty(this, "color", Color.white());
     public final FloatProperty distance = new FloatProperty(this, "distance", 1F);
 
-    public LightForm()
-    {
+    public LightForm() {
         super();
 
         this.register(this.color);
@@ -20,8 +18,7 @@ public class LightForm extends Form
     }
 
     @Override
-    protected FormRenderer createRenderer()
-    {
+    protected FormRenderer createRenderer() {
         return new LightFormRenderer(this);
     }
 }

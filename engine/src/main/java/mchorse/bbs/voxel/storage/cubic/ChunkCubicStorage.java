@@ -10,16 +10,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChunkCubicStorage extends ChunkStorage
-{
-    public ChunkCubicStorage(File folder, WorldMetadata metadata)
-    {
+public class ChunkCubicStorage extends ChunkStorage {
+    public ChunkCubicStorage(File folder, WorldMetadata metadata) {
         super(folder, metadata);
     }
 
     @Override
-    protected File getFile(ChunkCell cell)
-    {
+    protected File getFile(ChunkCell cell) {
         int x = MathUtils.toChunk(cell.bounds.x, cell.manager.s);
         int y = MathUtils.toChunk(cell.bounds.y, cell.manager.s);
         int z = MathUtils.toChunk(cell.bounds.z, cell.manager.s);
@@ -28,23 +25,19 @@ public class ChunkCubicStorage extends ChunkStorage
     }
 
     @Override
-    public List<ChunkCell> getCells(ChunkManager manager)
-    {
+    public List<ChunkCell> getCells(ChunkManager manager) {
         List<ChunkCell> cells = new ArrayList<>();
 
-        for (File file : this.folder.listFiles())
-        {
+        for (File file : this.folder.listFiles()) {
             String name = file.getName();
 
-            if (!name.endsWith(".dat"))
-            {
+            if (!name.endsWith(".dat")) {
                 continue;
             }
 
             String[] fragments = name.split("\\.");
 
-            if (fragments.length == 4)
-            {
+            if (fragments.length == 4) {
                 int x = Integer.parseInt(fragments[0]);
                 int y = Integer.parseInt(fragments[1]);
                 int z = Integer.parseInt(fragments[2]);

@@ -4,18 +4,13 @@ import mchorse.bbs.data.types.BaseType;
 
 import java.io.IOException;
 
-public interface IDataStorage
-{
+public interface IDataStorage {
     public BaseType read() throws IOException;
 
-    public default BaseType readSilently()
-    {
-        try
-        {
+    public default BaseType readSilently() {
+        try {
             return this.read();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -24,16 +19,12 @@ public interface IDataStorage
 
     public void write(BaseType type) throws IOException;
 
-    public default boolean writeSilently(BaseType type)
-    {
-        try
-        {
+    public default boolean writeSilently(BaseType type) {
+        try {
             this.write(type);
 
             return true;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

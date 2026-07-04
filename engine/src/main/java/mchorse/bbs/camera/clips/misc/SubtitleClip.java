@@ -6,16 +6,15 @@ import mchorse.bbs.camera.values.ValueTransform;
 import mchorse.bbs.settings.values.ValueBoolean;
 import mchorse.bbs.settings.values.ValueFloat;
 import mchorse.bbs.settings.values.ValueInt;
-import mchorse.bbs.utils.pose.Transform;
 import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.clips.ClipContext;
 import mchorse.bbs.utils.colors.Colors;
+import mchorse.bbs.utils.pose.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubtitleClip extends CameraClip
-{
+public class SubtitleClip extends CameraClip {
     public ValueInt x = new ValueInt("x", 0);
     public ValueInt y = new ValueInt("y", 0);
     public ValueFloat size = new ValueFloat("size", 10F);
@@ -34,17 +33,13 @@ public class SubtitleClip extends CameraClip
 
     private Subtitle subtitle = new Subtitle();
 
-    public static List<Subtitle> getSubtitles(ClipContext context)
-    {
+    public static List<Subtitle> getSubtitles(ClipContext context) {
         Object object = context.clipData.get("subtitles");
         List<Subtitle> subtitles;
 
-        if (object instanceof List)
-        {
+        if (object instanceof List) {
             subtitles = (List<Subtitle>) object;
-        }
-        else
-        {
+        } else {
             subtitles = new ArrayList<>();
 
             context.clipData.put("subtitles", subtitles);
@@ -53,8 +48,7 @@ public class SubtitleClip extends CameraClip
         return subtitles;
     }
 
-    public SubtitleClip()
-    {
+    public SubtitleClip() {
         this.add(this.x);
         this.add(this.y);
         this.add(this.size);
@@ -73,8 +67,7 @@ public class SubtitleClip extends CameraClip
     }
 
     @Override
-    protected void applyClip(ClipContext context, Position position)
-    {
+    protected void applyClip(ClipContext context, Position position) {
         List<Subtitle> subtitles = getSubtitles(context);
         float factor = this.envelope.factorEnabled(this.duration.get(), context.relativeTick + context.transition);
         int color = Colors.setA(this.color.get(), factor);
@@ -88,8 +81,7 @@ public class SubtitleClip extends CameraClip
     }
 
     @Override
-    protected Clip create()
-    {
+    protected Clip create() {
         return new SubtitleClip();
     }
 }

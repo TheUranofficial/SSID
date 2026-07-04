@@ -25,15 +25,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This GUI is responsible for drawing replays available in the 
+ * This GUI is responsible for drawing replays available in the
  * director thing
  */
-public class UIReplayList extends UIList<Replay>
-{
+public class UIReplayList extends UIList<Replay> {
     public UIFilmPanel panel;
 
-    public UIReplayList(Consumer<List<Replay>> callback, UIFilmPanel panel)
-    {
+    public UIReplayList(Consumer<List<Replay>> callback, UIFilmPanel panel) {
         super(callback);
 
         this.panel = panel;
@@ -43,13 +41,11 @@ public class UIReplayList extends UIList<Replay>
         {
             menu.action(Icons.ADD, UIKeys.SCENE_REPLAYS_CONTEXT_ADD, this::addReplay);
 
-            if (this.isSelected())
-            {
+            if (this.isSelected()) {
                 menu.action(Icons.DUPE, UIKeys.SCENE_REPLAYS_CONTEXT_DUPE, this::dupeReplay);
                 menu.action(Icons.REMOVE, UIKeys.SCENE_REPLAYS_CONTEXT_REMOVE, this::removeReplay);
 
-                if (this.isSelected())
-                {
+                if (this.isSelected()) {
                     menu.action(Icons.POSE, UIKeys.SCENE_REPLAYS_CONTEXT_PICK_FORM, () -> this.openFormEditor(this.getCurrentFirst().form, false));
                     menu.action(Icons.EDIT, UIKeys.SCENE_REPLAYS_CONTEXT_EDIT_FORM, () -> this.openFormEditor(this.getCurrentFirst().form, true));
                 }
@@ -57,8 +53,7 @@ public class UIReplayList extends UIList<Replay>
         });
     }
 
-    private void openFormEditor(ValueForm form, boolean editing)
-    {
+    private void openFormEditor(ValueForm form, boolean editing) {
         UIFormPalette palette = UIFormPalette.open(this.getParentContainer(), editing, form.get(), (f) ->
         {
             form.set(f);
@@ -68,8 +63,7 @@ public class UIReplayList extends UIList<Replay>
         palette.updatable();
     }
 
-    private void addReplay()
-    {
+    private void addReplay() {
         World world = this.getContext().menu.bridge.get(IBridgeWorld.class).getWorld();
         RayTraceResult result = new RayTraceResult();
         Camera camera = this.panel.getCamera();
@@ -77,16 +71,14 @@ public class UIReplayList extends UIList<Replay>
         RayTracer.trace(result, world.chunks, camera.position, camera.getLookDirection(), 64F);
         Vector3d position = new Vector3d(result.hit);
 
-        if (result.type != RayTraceType.BLOCK)
-        {
+        if (result.type != RayTraceType.BLOCK) {
             position.set(camera.getLookDirection()).mul(5F).add(camera.position);
         }
 
         this.addReplay(position, camera.rotation.x, camera.rotation.y + MathUtils.PI);
     }
 
-    public void addReplay(Vector3d position, float pitch, float yaw)
-    {
+    public void addReplay(Vector3d position, float pitch, float yaw) {
         Film film = this.panel.getData();
         Replay replay = film.replays.addReplay();
 
@@ -105,16 +97,13 @@ public class UIReplayList extends UIList<Replay>
         this.openFormEditor(replay.form, false);
     }
 
-    private void updateFilmEditor()
-    {
+    private void updateFilmEditor() {
         this.panel.getController().createEntities();
         this.panel.replays.updateChannelsList();
     }
 
-    private void dupeReplay()
-    {
-        if (this.isDeselected())
-        {
+    private void dupeReplay() {
+        if (this.isDeselected()) {
             return;
         }
 
@@ -129,10 +118,8 @@ public class UIReplayList extends UIList<Replay>
         this.updateFilmEditor();
     }
 
-    private void removeReplay()
-    {
-        if (this.isDeselected())
-        {
+    private void removeReplay() {
+        if (this.isDeselected()) {
             return;
         }
 
@@ -150,12 +137,10 @@ public class UIReplayList extends UIList<Replay>
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         this.area.render(context.batcher, Colors.A100);
 
-        if (this.getList().size() < 3)
-        {
+        if (this.getList().size() < 3) {
             UIDataUtils.renderRightClickHere(context, this.area);
         }
 
@@ -163,22 +148,19 @@ public class UIReplayList extends UIList<Replay>
     }
 
     @Override
-    protected String elementToString(UIContext context, int i, Replay element)
-    {
+    protected String elementToString(UIContext context, int i, Replay element) {
         Form form = element.form.get();
 
         return form == null ? "-" : context.font.limitToWidth(form.getIdOrName(), this.area.w - 20);
     }
 
     @Override
-    protected void renderElementPart(UIContext context, Replay element, int i, int x, int y, boolean hover, boolean selected)
-    {
+    protected void renderElementPart(UIContext context, Replay element, int i, int x, int y, boolean hover, boolean selected) {
         super.renderElementPart(context, element, i, x, y, hover, selected);
 
         Form form = element.form.get();
 
-        if (form != null)
-        {
+        if (form != null) {
             x += this.area.w - 30;
 
             context.batcher.clip(x, y, 40, 20, context);

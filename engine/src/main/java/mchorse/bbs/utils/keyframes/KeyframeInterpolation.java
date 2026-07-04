@@ -9,63 +9,50 @@ import mchorse.bbs.utils.math.Interpolations;
 import mchorse.bbs.utils.math.MathUtils;
 import org.lwjgl.glfw.GLFW;
 
-public enum KeyframeInterpolation
-{
-    CONST("const")
-    {
+public enum KeyframeInterpolation {
+    CONST("const") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             return KeyframeInterpolations.CONSTANT;
         }
 
         @Override
-        public void setupKeybind(ContextAction action, IKey category)
-        {
+        public void setupKeybind(ContextAction action, IKey category) {
             action.key(category, GLFW.GLFW_KEY_T, GLFW.GLFW_KEY_LEFT_SHIFT);
         }
     },
-    LINEAR("linear")
-    {
+    LINEAR("linear") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             return Interpolation.LINEAR;
         }
     },
-    QUAD("quad")
-    {
+    QUAD("quad") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.QUAD_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.QUAD_OUT;
 
             return Interpolation.QUAD_INOUT;
         }
     },
-    CUBIC("cubic")
-    {
+    CUBIC("cubic") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.CUBIC_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.CUBIC_OUT;
 
             return Interpolation.CUBIC_INOUT;
         }
     },
-    HERMITE("hermite")
-    {
+    HERMITE("hermite") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             return KeyframeInterpolations.HERMITE;
         }
 
         @Override
-        public double interpolate(Keyframe a, Keyframe b, double x)
-        {
+        public double interpolate(Keyframe a, Keyframe b, double x) {
             double v0 = a.prev.getValue();
             double v1 = a.getValue();
             double v2 = b.getValue();
@@ -75,33 +62,27 @@ public enum KeyframeInterpolation
         }
 
         @Override
-        public void setupKeybind(ContextAction action, IKey category)
-        {
+        public void setupKeybind(ContextAction action, IKey category) {
             action.key(category, GLFW.GLFW_KEY_H, GLFW.GLFW_KEY_LEFT_SHIFT);
         }
     },
-    EXP("exp")
-    {
+    EXP("exp") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.EXP_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.EXP_OUT;
 
             return Interpolation.EXP_INOUT;
         }
     },
-    BEZIER("bezier")
-    {
+    BEZIER("bezier") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             return KeyframeInterpolations.BEZIER;
         }
 
         @Override
-        public double interpolate(Keyframe a, Keyframe b, double x)
-        {
+        public double interpolate(Keyframe a, Keyframe b, double x) {
             if (x <= 0) return a.getValue();
             if (x >= 1) return b.getValue();
 
@@ -126,82 +107,67 @@ public enum KeyframeInterpolation
         }
 
         @Override
-        public void setupKeybind(ContextAction action, IKey category)
-        {
+        public void setupKeybind(ContextAction action, IKey category) {
             action.key(category, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_LEFT_SHIFT);
         }
     },
-    BACK("back")
-    {
+    BACK("back") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.BACK_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.BACK_OUT;
 
             return Interpolation.BACK_INOUT;
         }
     },
-    ELASTIC("elastic")
-    {
+    ELASTIC("elastic") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.ELASTIC_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.ELASTIC_OUT;
 
             return Interpolation.ELASTIC_INOUT;
         }
     },
-    BOUNCE("bounce")
-    {
+    BOUNCE("bounce") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.BOUNCE_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.BOUNCE_OUT;
 
             return Interpolation.BOUNCE_INOUT;
         }
     },
-    SINE("sine")
-    {
+    SINE("sine") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.SINE_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.SINE_OUT;
 
             return Interpolation.SINE_INOUT;
         }
     },
-    QUART("quart")
-    {
+    QUART("quart") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.QUART_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.QUART_OUT;
 
             return Interpolation.QUART_INOUT;
         }
     },
-    QUINT("quint")
-    {
+    QUINT("quint") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.QUINT_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.QUINT_OUT;
 
             return Interpolation.QUINT_INOUT;
         }
     },
-    CIRCLE("circle")
-    {
+    CIRCLE("circle") {
         @Override
-        public IInterpolation from(KeyframeEasing easing)
-        {
+        public IInterpolation from(KeyframeEasing easing) {
             if (easing == KeyframeEasing.IN) return Interpolation.CIRCLE_IN;
             if (easing == KeyframeEasing.OUT) return Interpolation.CIRCLE_OUT;
 
@@ -211,40 +177,33 @@ public enum KeyframeInterpolation
 
     public final String key;
 
-    private KeyframeInterpolation(String key)
-    {
+    private KeyframeInterpolation(String key) {
         this.key = key;
     }
 
-    public IInterpolation from(KeyframeEasing easing)
-    {
+    public IInterpolation from(KeyframeEasing easing) {
         return null;
     }
 
-    public IKey getKey()
-    {
+    public IKey getKey() {
         return UIKeys.C_INTERPOLATION.get(this.key);
     }
 
-    public double interpolate(Keyframe a, Keyframe b, double x)
-    {
+    public double interpolate(Keyframe a, Keyframe b, double x) {
         IInterpolation interpolation = this.from(a.getEasing());
 
         return interpolation == null ? a.getValue() : interpolation.interpolate(a.getValue(), b.getValue(), x);
     }
 
-    public void setupKeybind(ContextAction action, IKey category)
-    {
+    public void setupKeybind(ContextAction action, IKey category) {
         IInterpolation interpolation = this.from(KeyframeEasing.IN);
 
-        if (interpolation instanceof Interpolation)
-        {
+        if (interpolation instanceof Interpolation) {
             ((Interpolation) interpolation).setupKeybind(action, category);
         }
     }
 
-    public boolean isBezier()
-    {
+    public boolean isBezier() {
         return this == BEZIER;
     }
 }

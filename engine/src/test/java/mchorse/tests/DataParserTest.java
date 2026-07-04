@@ -10,11 +10,9 @@ import mchorse.bbs.graphics.text.FontRenderer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DataParserTest
-{
+public class DataParserTest {
     @Test
-    public void testBackslashParsing()
-    {
+    public void testBackslashParsing() {
         String string = "Test \\";
         String toParse = DataToString.escapeQuoted(string) + ", ABC";
         DataParser parser = new DataParser(toParse);
@@ -27,8 +25,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testSimpleMap()
-    {
+    public void testSimpleMap() {
         MapType map = new MapType();
 
         map.putString("a", "ABC");
@@ -46,8 +43,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testSimpleList()
-    {
+    public void testSimpleList() {
         ListType list = new ListType();
 
         list.addString("ABC");
@@ -65,8 +61,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testEscapedStrings()
-    {
+    public void testEscapedStrings() {
         StringType string = new StringType("\"ABC\"");
 
         BaseType parsed = DataParser.parse("\"\\\"ABC\\\"\"");
@@ -75,8 +70,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testEscapedStrings2()
-    {
+    public void testEscapedStrings2() {
         MapType data = new MapType();
 
         data.putString("message", "Hello traveler ${state(\"name\")}!");
@@ -88,8 +82,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testMixedData()
-    {
+    public void testMixedData() {
         MapType map = new MapType();
         ListType a = new ListType();
 
@@ -113,8 +106,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testNewlinesData()
-    {
+    public void testNewlinesData() {
         MapType map = new MapType();
 
         map.putString("a", "Hi!\nHow are you?");
@@ -126,8 +118,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testQuotedKeys()
-    {
+    public void testQuotedKeys() {
         MapType map = new MapType();
 
         map.putString("a", "a");
@@ -139,8 +130,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testExtraOptions()
-    {
+    public void testExtraOptions() {
         MapType map = new MapType();
 
         map.putBool("a", false);
@@ -153,8 +143,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testNestedQuotes()
-    {
+    public void testNestedQuotes() {
         MapType map = new MapType();
 
         map.putString("a", "{id:\"model\",model:\"normie\",name:\"\\\"boss\\\"\"}");
@@ -165,8 +154,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testEscapeCharacters()
-    {
+    public void testEscapeCharacters() {
         MapType map = new MapType();
         String json = "{a:\"\\n\\u00A7\\\\\"}";
 
@@ -178,8 +166,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testNewlines()
-    {
+    public void testNewlines() {
         MapType map = new MapType();
         String value = "Hello,\nWorld!";
 
@@ -192,8 +179,7 @@ public class DataParserTest
     }
 
     @Test
-    public void testNewlineEscaping()
-    {
+    public void testNewlineEscaping() {
         String toEscape = "Hello,\nWorld!";
         String expected = "Hello,\\nWorld!";
 

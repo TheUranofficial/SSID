@@ -6,14 +6,12 @@ import mchorse.bbs.ui.tileset.UITileSetEditorPanel;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelEach;
 
-public class UIModelBlockEach extends UIModelBlockVertical<BlockModelEach>
-{
+public class UIModelBlockEach extends UIModelBlockVertical<BlockModelEach> {
     public UIButton back;
     public UIButton right;
     public UIButton left;
 
-    public UIModelBlockEach(UITileSetEditorPanel editor)
-    {
+    public UIModelBlockEach(UITileSetEditorPanel editor) {
         super(editor);
 
         this.back = new UIButton(UIKeys.TILE_SET_EACH_BACK, (b) -> this.editUV(this.model.backUV));

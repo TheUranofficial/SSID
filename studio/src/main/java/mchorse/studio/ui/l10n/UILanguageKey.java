@@ -17,8 +17,7 @@ import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.studio.ui.UIKeysApp;
 
-public class UILanguageKey extends UIElement
-{
+public class UILanguageKey extends UIElement {
     public UILabel key;
     public UIElement content;
     public UIText base;
@@ -29,8 +28,7 @@ public class UILanguageKey extends UIElement
     private String original;
     private Runnable callback;
 
-    public UILanguageKey(UILanguageEditorOverlayPanel panel, LangKey langKey, String base, String reference, Runnable callback)
-    {
+    public UILanguageKey(UILanguageEditorOverlayPanel panel, LangKey langKey, String base, String reference, Runnable callback) {
         this.panel = panel;
         this.langKey = langKey;
         this.original = base;
@@ -40,8 +38,7 @@ public class UILanguageKey extends UIElement
         this.key.labelAnchor(0, 0.5F).h(20);
         this.key.tooltip(IKey.raw(langKey.key), Direction.BOTTOM);
 
-        if (langKey.content.length() >= 60)
-        {
+        if (langKey.content.length() >= 60) {
             UITextarea<TextLine> textarea = new UITextarea<>(this::setContent);
 
             textarea.setText(langKey.content);
@@ -49,9 +46,7 @@ public class UILanguageKey extends UIElement
             textarea.h(80);
 
             this.content = textarea;
-        }
-        else
-        {
+        } else {
             UITextbox textbox = new UITextbox(10000, this::setContent);
 
             textbox.setText(langKey.content);
@@ -68,57 +63,46 @@ public class UILanguageKey extends UIElement
             menu.action(Icons.COPY, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_COPY_KEY, () -> Window.setClipboard(this.langKey.key));
             menu.action(Icons.COPY, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_COPY_ORIGINAL, () -> Window.setClipboard(this.original));
 
-            if (this.panel.hasMarked(this.langKey.key))
-            {
+            if (this.panel.hasMarked(this.langKey.key)) {
                 menu.action(Icons.CLOSE, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_UNMARK_COMPLETED, () -> this.panel.setMarked(this.langKey.key, false));
-            }
-            else
-            {
+            } else {
                 menu.action(Icons.CHECKMARK, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_MARK_COMPLETED, () -> this.panel.setMarked(this.langKey.key, true));
             }
         });
 
         this.add(this.key, this.content, this.base);
 
-        if (!reference.isEmpty())
-        {
+        if (!reference.isEmpty()) {
             this.add(this.reference = new UIText().text(reference).padding(5));
         }
     }
 
-    private void setContent(String t)
-    {
+    private void setContent(String t) {
         this.langKey.content = t;
 
-        if (this.callback != null)
-        {
+        if (this.callback != null) {
             this.callback.run();
         }
     }
 
-    public LangKey getLangKey()
-    {
+    public LangKey getLangKey() {
         return this.langKey;
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         int color = Colors.A100 | BBSSettings.primaryColor.get();
 
         this.base.area.render(context.batcher, Colors.mulRGB(color, 0.25F));
 
-        if (this.reference != null)
-        {
+        if (this.reference != null) {
             this.reference.area.render(context.batcher, Colors.mulRGB(color, 0.125F));
         }
 
-        if (!this.isStillSame())
-        {
+        if (!this.isStillSame()) {
             int checkColor = Colors.A100 | Colors.POSITIVE;
 
-            if (this.panel.hasMarked(this.langKey.key))
-            {
+            if (this.panel.hasMarked(this.langKey.key)) {
                 checkColor = Colors.A100 | Colors.ACTIVE;
             }
 
@@ -128,8 +112,7 @@ public class UILanguageKey extends UIElement
         super.render(context);
     }
 
-    public boolean isStillSame()
-    {
+    public boolean isStillSame() {
         return this.langKey.content.equals(this.original) && !this.panel.hasMarked(this.langKey.key);
     }
 }

@@ -20,8 +20,7 @@ import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.undo.IUndo;
 
-public abstract class UIClip <T extends Clip> extends UIElement
-{
+public abstract class UIClip<T extends Clip> extends UIElement {
     public static final IKey CATEGORY = UIKeys.CAMERA_PANELS_KEYS_TITLE;
 
     public T clip;
@@ -37,13 +36,11 @@ public abstract class UIClip <T extends Clip> extends UIElement
 
     public UIScrollView panels;
 
-    public static UILabel label(IKey key)
-    {
+    public static UILabel label(IKey key) {
         return UI.label(key).background(() -> BBSSettings.primaryColor(Colors.A50));
     }
 
-    public UIClip(T clip, IUIClipsDelegate editor)
-    {
+    public UIClip(T clip, IUIClipsDelegate editor) {
         this.clip = clip;
         this.editor = editor;
 
@@ -75,11 +72,10 @@ public abstract class UIClip <T extends Clip> extends UIElement
         this.add(this.panels);
     }
 
-    protected void registerUI()
-    {}
+    protected void registerUI() {
+    }
 
-    protected void registerPanels()
-    {
+    protected void registerPanels() {
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_TITLE), this.title);
         this.panels.add(this.enabled.marginBottom(6));
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_METRICS), UI.row(this.layer, this.tick), this.duration);
@@ -87,31 +83,26 @@ public abstract class UIClip <T extends Clip> extends UIElement
         this.addEnvelopes();
     }
 
-    protected void addEnvelopes()
-    {
+    protected void addEnvelopes() {
         this.panels.add(UIClip.label(UIKeys.CAMERA_PANELS_ENVELOPES_TITLE).marginTop(12), this.envelope);
     }
 
-    public void handleUndo(IUndo<ValueGroup> undo, boolean redo)
-    {
+    public void handleUndo(IUndo<ValueGroup> undo, boolean redo) {
         this.fillData();
     }
 
-    protected void updateDuration(int duration)
-    {
+    protected void updateDuration(int duration) {
         this.envelope.updateDuration();
     }
 
-    public void cameraEditorWasOpened()
-    {}
+    public void cameraEditorWasOpened() {
+    }
 
-    public void editClip(Position position)
-    {
+    public void editClip(Position position) {
         this.fillData();
     }
 
-    public void fillData()
-    {
+    public void fillData() {
         TimeUtils.configure(this.tick, 0);
         TimeUtils.configure(this.duration, 1);
 
@@ -124,8 +115,7 @@ public abstract class UIClip <T extends Clip> extends UIElement
     }
 
     @Override
-    public void render(UIContext context)
-    {
+    public void render(UIContext context) {
         context.batcher.gradientHBox(this.area.x - 40, this.area.y, this.area.ex() - 40, this.area.ey(), 0, Colors.A25);
         context.batcher.box(this.area.ex() - 40, this.area.y, this.area.ex(), this.area.ey(), Colors.A25);
 

@@ -5,10 +5,8 @@ import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.forms.editors.panels.UICameraFormPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 
-public class UICameraForm extends UIForm<CameraForm>
-{
-    public UICameraForm()
-    {
+public class UICameraForm extends UIForm<CameraForm> {
+    public UICameraForm() {
         super();
 
         this.defaultPanel = new UICameraFormPanel(this);

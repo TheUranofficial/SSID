@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudioShaders
-{
+public class StudioShaders {
     private ShaderPipeline pipeline;
 
     public Framebuffer gbuffer;
@@ -35,30 +34,25 @@ public class StudioShaders
     public Vector3d prevPosition = new Vector3d();
     public int frames;
 
-    public StudioShaders(ShaderPipeline pipeline)
-    {
+    public StudioShaders(ShaderPipeline pipeline) {
         this.pipeline = pipeline;
     }
 
-    public void reload()
-    {
+    public void reload() {
         /* Clean up */
-        if (this.gbuffer != null)
-        {
+        if (this.gbuffer != null) {
             this.gbuffer.delete();
 
             this.gbuffer = null;
         }
 
-        if (this.shadow != null)
-        {
+        if (this.shadow != null) {
             this.shadow.delete();
 
             this.shadow = null;
         }
 
-        for (Stage stage : this.stages)
-        {
+        for (Stage stage : this.stages) {
             stage.framebuffer.delete();
         }
 
@@ -71,20 +65,17 @@ public class StudioShaders
 
         this.gbuffer = this.setup(gbuffers);
 
-        for (int i = 0; i < compositeBuffers.size(); i++)
-        {
+        for (int i = 0; i < compositeBuffers.size(); i++) {
             Texture texture = compositeBuffers.get(i);
             ShaderBuffer buffer = this.pipeline.composite.get(i);
 
             this.textures.put(buffer.name, new Buffer(texture, buffer));
         }
 
-        for (ShaderStage shaderStage : this.pipeline.stages)
-        {
+        for (ShaderStage shaderStage : this.pipeline.stages) {
             List<Texture> output = new ArrayList<>();
 
-            for (String outputTexture : shaderStage.output)
-            {
+            for (String outputTexture : shaderStage.output) {
                 output.add(this.textures.get(outputTexture).texture);
             }
 
@@ -99,15 +90,13 @@ public class StudioShaders
 
                 if (shadowmap != null) shadowmap.set(0);
 
-                for (ShaderBuffer buffer : this.pipeline.gbuffers)
-                {
+                for (ShaderBuffer buffer : this.pipeline.gbuffers) {
                     UniformInt uniform = shader.getUniform(buffer.name, UniformInt.class);
 
                     if (uniform != null) uniform.set(i++);
                 }
 
-                for (String bufferName : shaderStage.input)
-                {
+                for (String bufferName : shaderStage.input) {
                     UniformInt uniform = shader.getUniform(bufferName, UniformInt.class);
 
                     if (uniform != null) uniform.set(i++);
@@ -116,16 +105,14 @@ public class StudioShaders
 
             List<Texture> inputs = new ArrayList<>();
 
-            for (String input : shaderStage.input)
-            {
+            for (String input : shaderStage.input) {
                 inputs.add(this.textures.get(input).texture);
             }
 
             this.stages.add(new Stage(stageShader, framebuffer, inputs));
         }
 
-        if (this.pipeline.shadowMap)
-        {
+        if (this.pipeline.shadowMap) {
             Framebuffer framebuffer = new Framebuffer();
             Texture texture = new Texture();
 
@@ -140,17 +127,14 @@ public class StudioShaders
         }
     }
 
-    public int getTextureIndex()
-    {
+    public int getTextureIndex() {
         return this.pipeline.shadowMap ? 1 : 0;
     }
 
-    private List<Texture> setupTextures(List<ShaderBuffer> buffers)
-    {
+    private List<Texture> setupTextures(List<ShaderBuffer> buffers) {
         List<Texture> textures = new ArrayList<>();
 
-        for (ShaderBuffer buffer : buffers)
-        {
+        for (ShaderBuffer buffer : buffers) {
             Texture texture = new Texture();
 
             texture.bind();
@@ -165,20 +149,17 @@ public class StudioShaders
         return textures;
     }
 
-    private Framebuffer setup(List<Texture> textures)
-    {
+    private Framebuffer setup(List<Texture> textures) {
         int colors = 0;
 
         Framebuffer framebuffer = new Framebuffer().enableAdvancedClearing();
 
-        for (Texture texture : textures)
-        {
+        for (Texture texture : textures) {
             TextureFormat format = texture.getFormat();
 
             framebuffer.attach(texture, format.attachment + (format.isColor() ? colors : 0));
 
-            if (format.isColor())
-            {
+            if (format.isColor()) {
                 colors += 1;
             }
         }
@@ -188,37 +169,31 @@ public class StudioShaders
         return framebuffer;
     }
 
-    public void resize(int w, int h)
-    {
+    public void resize(int w, int h) {
         this.gbuffer.resize(w, h);
 
-        for (Stage stage : this.stages)
-        {
+        for (Stage stage : this.stages) {
             stage.framebuffer.resize(w, h);
         }
     }
 
-    public static class Stage
-    {
+    public static class Stage {
         public Shader shader;
         public Framebuffer framebuffer;
         public List<Texture> inputs;
 
-        public Stage(Shader shader, Framebuffer framebuffer, List<Texture> inputs)
-        {
+        public Stage(Shader shader, Framebuffer framebuffer, List<Texture> inputs) {
             this.shader = shader;
             this.framebuffer = framebuffer;
             this.inputs = inputs;
         }
     }
 
-    public static class Buffer
-    {
+    public static class Buffer {
         public Texture texture;
         public ShaderBuffer buffer;
 
-        public Buffer(Texture texture, ShaderBuffer buffer)
-        {
+        public Buffer(Texture texture, ShaderBuffer buffer) {
             this.texture = texture;
             this.buffer = buffer;
         }
