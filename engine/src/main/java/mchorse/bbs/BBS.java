@@ -11,6 +11,7 @@ import mchorse.bbs.camera.clips.modifiers.*;
 import mchorse.bbs.camera.clips.overwrite.*;
 import mchorse.bbs.core.Engine;
 import mchorse.bbs.cubic.model.ModelManager;
+import mchorse.bbs.events.base.EventBus;
 import mchorse.bbs.events.register.*;
 import mchorse.bbs.forms.FormArchitect;
 import mchorse.bbs.forms.categories.FormCategory;
@@ -61,7 +62,6 @@ import mchorse.bbs.world.entities.components.Component;
 import mchorse.bbs.world.entities.components.FormComponent;
 import mchorse.bbs.world.objects.PropObject;
 import mchorse.bbs.world.objects.WorldObject;
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -70,10 +70,7 @@ import java.util.function.Consumer;
  * BBS's global god object.
  */
 public class BBS {
-    public static final EventBus events = EventBus.builder()
-        .logNoSubscriberMessages(false)
-        .sendNoSubscriberEvent(false)
-        .build();
+    public static final EventBus events = new EventBus();
 
     private static Engine engine;
     private static File gameFolder;

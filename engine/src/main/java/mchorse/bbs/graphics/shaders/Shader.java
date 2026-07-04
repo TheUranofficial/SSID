@@ -85,10 +85,6 @@ public final class Shader implements IDisposable {
         this.defines.putAll(defines);
     }
 
-    public Map<String, String> getDefines() {
-        return this.defines;
-    }
-
     public void setImported(Set<Link> imported) {
         this.imported.clear();
         this.imported.addAll(imported);

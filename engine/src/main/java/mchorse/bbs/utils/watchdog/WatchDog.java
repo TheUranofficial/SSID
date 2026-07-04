@@ -18,7 +18,6 @@ public class WatchDog implements Runnable {
 
     private WatchService service;
     private Map<WatchKey, Path> keys = new HashMap<>();
-    private Thread thread;
     private boolean stopThread;
 
     public WatchDog(File folder) {
@@ -44,9 +43,9 @@ public class WatchDog implements Runnable {
     }
 
     private void registerFolderRecursive(final Path path) throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(path, new SimpleFileVisitor<>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 WatchDog.this.registerFolder(dir);
 
                 return FileVisitResult.CONTINUE;
@@ -55,9 +54,9 @@ public class WatchDog implements Runnable {
     }
 
     public void start() {
-        this.thread = new Thread(this);
+        Thread thread = new Thread(this);
 
-        this.thread.start();
+        thread.start();
     }
 
     public void stop() {
@@ -125,17 +124,19 @@ public class WatchDog implements Runnable {
                 }
             }
 
-            WatchDogEvent type = WatchDogEvent.CREATED;
+            WatchDogEvent type;
 
-            if (kind == StandardWatchEventKinds.ENTRY_MODIFY) type = WatchDogEvent.MODIFIED;
-            else if (kind == StandardWatchEventKinds.ENTRY_DELETE) type = WatchDogEvent.DELETED;
+            if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                type = WatchDogEvent.MODIFIED;
+            } else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+                type = WatchDogEvent.DELETED;
+            } else {
+                type = WatchDogEvent.CREATED;
+            }
 
-            final WatchDogEvent finalType = type;
-
-            BBS.getEngine().scheduledRunnables.add(() ->
-            {
+            BBS.getEngine().scheduledRunnables.add(() -> {
                 for (IWatchDogListener listener : this.listeners) {
-                    listener.accept(file, finalType);
+                    listener.accept(file, type);
                 }
             });
         }
@@ -143,9 +144,7 @@ public class WatchDog implements Runnable {
         if (!key.reset()) {
             this.keys.remove(key);
 
-            if (this.keys.isEmpty()) {
-                return false;
-            }
+            return !this.keys.isEmpty();
         }
 
         return true;

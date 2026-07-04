@@ -24,9 +24,6 @@ public class JavaLauncher {
         StringJoiner joiner = new StringJoiner(File.pathSeparator);
         String slash = File.separator;
 
-        /* Nashorn (for scripting) */
-        joiner.add(System.getProperty("java.home") + slash + "lib" + slash + "ext" + slash + "nashorn.jar");
-
         for (File file : folder.listFiles()) {
             String name = file.getName();
 

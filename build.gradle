@@ -21,8 +21,7 @@ subprojects {
         implementation "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
         implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
         implementation "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
-        implementation "org.greenrobot:eventbus-java:3.3.1"
-        implementation "org.joml:joml:1.9.2"
+        implementation "org.joml:joml:1.10.9"
         implementation "com.github.Querz:NBT:6.1"
     }
 }

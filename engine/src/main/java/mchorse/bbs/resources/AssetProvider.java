@@ -10,11 +10,11 @@ public class AssetProvider {
     private Map<String, List<ISourcePack>> sourcePacks = new HashMap<>();
 
     public void registerFirst(ISourcePack pack) {
-        this.sourcePacks.computeIfAbsent(pack.getPrefix(), (k) -> new ArrayList<>()).add(0, pack);
+        this.sourcePacks.computeIfAbsent(pack.getPrefix(), ignored -> new ArrayList<>()).addFirst(pack);
     }
 
     public void register(ISourcePack pack) {
-        this.sourcePacks.computeIfAbsent(pack.getPrefix(), (k) -> new ArrayList<>()).add(pack);
+        this.sourcePacks.computeIfAbsent(pack.getPrefix(), ignored -> new ArrayList<>()).add(pack);
     }
 
     public Collection<String> getSourceKeys() {

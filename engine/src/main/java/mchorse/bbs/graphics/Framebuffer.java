@@ -48,7 +48,7 @@ public class Framebuffer implements IDisposable {
     }
 
     public Texture getMainTexture() {
-        return this.textures.get(0);
+        return this.textures.getFirst();
     }
 
     /**

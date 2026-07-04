@@ -13,9 +13,7 @@ import org.lwjgl.opengl.GL20;
 
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -24,19 +22,13 @@ import java.util.regex.Pattern;
  * This class is responsible for creating, managing and deleting shaders
  */
 public class ShaderManager implements IDisposable, IWatchDogListener {
-    public static final Pattern pattern = Pattern.compile("^[\t ]*#import \\\"([\\w /_.:]+)\\\"\\s*$", Pattern.MULTILINE);
+    public static final Pattern pattern = Pattern.compile("^[\t ]*#import \"([\\w /_.:]+)\"\\s*$", Pattern.MULTILINE);
 
     public AssetProvider provider;
     public Set<Shader> programs = new HashSet<>();
 
-    private Consumer<Boolean> reloadCallback;
-
     public ShaderManager(AssetProvider provider) {
         this.provider = provider;
-    }
-
-    public void setReloadCallback(Consumer<Boolean> callback) {
-        this.reloadCallback = callback;
     }
 
     public void buildShader(Shader program, Link linkToCode) throws Exception {
@@ -110,10 +102,6 @@ public class ShaderManager implements IDisposable, IWatchDogListener {
         for (Shader shader : this.programs) {
             shader.reload();
         }
-
-        if (this.reloadCallback != null) {
-            this.reloadCallback.accept(true);
-        }
     }
 
     @Override
@@ -133,21 +121,10 @@ public class ShaderManager implements IDisposable, IWatchDogListener {
             return;
         }
 
-        Iterator<Shader> it = this.programs.iterator();
-        int i = 0;
-
-        while (it.hasNext()) {
-            Shader program = it.next();
-
+        for (Shader program : this.programs) {
             if (program.name.equals(link) || program.getImported().contains(link)) {
                 program.reload();
-
-                i += 1;
             }
-        }
-
-        if (this.reloadCallback != null && i > 0) {
-            this.reloadCallback.accept(false);
         }
     }
 }

@@ -10,6 +10,7 @@ import mchorse.bbs.data.DataToString;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.ListType;
 import mchorse.bbs.data.types.MapType;
+import mchorse.bbs.events.base.EventBus;
 import mchorse.bbs.events.register.RegisterArchitectBlueprintsEvent;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.utils.AABB;
@@ -26,7 +27,6 @@ import mchorse.bbs.world.entities.Entity;
 import mchorse.bbs.world.entities.architect.EntityArchitect;
 import mchorse.bbs.world.entities.architect.blueprints.PlayerEntityBlueprint;
 import mchorse.bbs.world.objects.WorldObject;
-import org.greenrobot.eventbus.EventBus;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -53,16 +53,12 @@ public class World implements ITickable, IDisposable {
     public final EntityArchitect architect;
     public final WorldSettings settings = new WorldSettings();
 
-    private EventBus eventBus;
-
     private File objectsFile;
     private File settingsFile;
 
     public World(IBridge bridge, ChunkFactory factory, Generator generator) {
         this.bridge = bridge;
         this.architect = this.createArchitect();
-
-        this.eventBus = new EventBus();
 
         this.name = factory.getMetadata().name;
         this.folder = factory.folder;
@@ -80,10 +76,6 @@ public class World implements ITickable, IDisposable {
         BBS.events.post(new RegisterArchitectBlueprintsEvent(this));
 
         return architect;
-    }
-
-    public EventBus getEventBus() {
-        return this.eventBus;
     }
 
     public void initialize(ChunkFactory factory) {
