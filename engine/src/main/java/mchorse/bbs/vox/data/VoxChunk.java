@@ -4,7 +4,7 @@ import mchorse.bbs.audio.BinaryChunk;
 
 /**
  * This represents a data chunk information in the VOX file
- * (not used anywhere outside of vox reader class)
+ * (not used anywhere outside vox reader class)
  */
 public class VoxChunk extends BinaryChunk {
     public int chunks;

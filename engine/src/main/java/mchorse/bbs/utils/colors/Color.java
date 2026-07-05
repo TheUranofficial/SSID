@@ -127,9 +127,7 @@ public class Color {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Color) {
-            Color color = (Color) obj;
-
+        if (obj instanceof Color color) {
             return color.getARGBColor() == this.getARGBColor();
         }
 

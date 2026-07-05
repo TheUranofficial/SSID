@@ -6,7 +6,6 @@ import mchorse.bbs.settings.values.ValueGroup;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.dashboard.UIDashboard;
 import mchorse.bbs.ui.dashboard.panels.UIDataDashboardPanel;
-import mchorse.bbs.ui.film.UIFilmPanel;
 import mchorse.bbs.ui.particles.UIParticleSchemePanel;
 import mchorse.bbs.utils.manager.IManager;
 
@@ -15,7 +14,6 @@ import java.util.function.Supplier;
 
 public class ContentType {
     public static final ContentType PARTICLES = new ContentType("particles", UIKeys.OVERLAYS_PARTICLE_EFFECT, BBSData::getParticles, (dashboard) -> dashboard.getPanel(UIParticleSchemePanel.class));
-    public static final ContentType FILMS = new ContentType("films", UIKeys.OVERLAYS_PARTICLE_EFFECT, BBSData::getFilms, (dashboard) -> dashboard.getPanel(UIFilmPanel.class));
 
     private final String id;
     private IKey label;

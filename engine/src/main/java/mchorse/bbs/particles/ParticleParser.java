@@ -28,8 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ParticleParser {
-    /* TODO: Rewrite */
-    public static final String PREFIX = new String(Base64.getDecoder().decode("bWluZWNyYWZ0Og=="));
+    public static final String PREFIX = "minecraft:";
 
     public Map<String, Class<? extends ParticleComponentBase>> components = new HashMap<>();
 

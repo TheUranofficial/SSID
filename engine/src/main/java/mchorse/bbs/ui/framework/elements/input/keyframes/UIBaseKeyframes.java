@@ -1,7 +1,6 @@
 package mchorse.bbs.ui.framework.elements.input.keyframes;
 
 import mchorse.bbs.graphics.window.Window;
-import mchorse.bbs.ui.film.utils.undo.FilmEditorUndo;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.Area;
@@ -341,19 +340,4 @@ public abstract class UIBaseKeyframes<T> extends UIElement {
     }
 
     protected abstract T moving(UIContext context, int mouseX, int mouseY);
-
-    /* Undo/Redo */
-
-    public FilmEditorUndo.KeyframeSelection createSelection() {
-        FilmEditorUndo.KeyframeSelection selection = new FilmEditorUndo.KeyframeSelection();
-
-        selection.min = this.scaleX.getMinValue();
-        selection.max = this.scaleX.getMaxValue();
-
-        return selection;
-    }
-
-    public void applySelection(FilmEditorUndo.KeyframeSelection selection) {
-        this.scaleX.view(selection.min, selection.max);
-    }
 }

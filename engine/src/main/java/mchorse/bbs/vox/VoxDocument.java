@@ -42,18 +42,18 @@ public class VoxDocument {
 
         this.index = 0;
 
-        if (this.nodes.size() == 0) {
+        if (this.nodes.isEmpty()) {
             /* Legacy mode */
             Matrix3f identity = new Matrix3f();
 
             for (Vox chunk : this.chunks) {
-                Vector3f position = new Vector3f(0, 0, (chunk.d - 1) / 2);
+                Vector3f position = new Vector3f(0, 0, (float) (chunk.d - 1) / 2);
 
                 nodes.add(new LimbNode(chunk, identity, position, this.index == 0 ? "vox" : "vox_" + this.index));
                 this.index++;
             }
         } else {
-            this.generateNodes((VoxTransform) this.nodes.get(0), nodes, matStack, vecStack);
+            this.generateNodes((VoxTransform) this.nodes.getFirst(), nodes, matStack, vecStack);
         }
 
         return nodes;
@@ -75,7 +75,7 @@ public class VoxDocument {
 
         Matrix3f parentMat;
         Vector3f parentVec;
-        Matrix4f trans = transform.transforms.get(0);
+        Matrix4f trans = transform.transforms.getFirst();
 
         if (matStack.isEmpty()) {
             parentMat = new Matrix3f(trans);
@@ -93,9 +93,7 @@ public class VoxDocument {
         matStack.push(parentMat);
         vecStack.push(parentVec);
 
-        if (child instanceof VoxGroup) {
-            VoxGroup group = (VoxGroup) child;
-
+        if (child instanceof VoxGroup group) {
             for (int id : group.ids) {
                 this.index += 1;
                 this.generateNodes((VoxTransform) this.nodes.get(id), nodes, matStack, vecStack);
@@ -105,7 +103,7 @@ public class VoxDocument {
             Vector3f vec = vecStack.pop();
 
             if (!hidden) {
-                Vox chunk = this.chunks.get(((VoxShape) child).modelAttrs.get(0).id);
+                Vox chunk = this.chunks.get(((VoxShape) child).modelAttrs.getFirst().id);
 
                 nodes.add(new LimbNode(chunk, mat, vec, name));
             }

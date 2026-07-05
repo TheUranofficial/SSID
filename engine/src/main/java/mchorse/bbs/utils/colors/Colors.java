@@ -104,7 +104,7 @@ public class Colors {
     public static int parse(String color, int orDefault) {
         try {
             return parseWithException(color);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return orDefault;
@@ -135,7 +135,7 @@ public class Colors {
     /**
      * Convert HSV to RGB. All input values are expected to be 0..1.
      *
-     * @link https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+     * @link <a href="https://www.rapidtables.com/convert/color/hsv-to-rgb.html">...</a>
      */
     public static Color HSVtoRGB(Color color, float h, float s, float v) {
         h *= 360;
@@ -175,7 +175,7 @@ public class Colors {
      * The given color will be populated with HSV to red, green and blue
      * respectively in 0..1 value range.
      *
-     * @link https://www.rapidtables.com/convert/color/rgb-to-hsv.html
+     * @link <a href="https://www.rapidtables.com/convert/color/rgb-to-hsv.html">...</a>
      */
     public static Color RGBtoHSV(Color color, float r, float g, float b) {
         float max = Math.max(r, Math.max(g, b));

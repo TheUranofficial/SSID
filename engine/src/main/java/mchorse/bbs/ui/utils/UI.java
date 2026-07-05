@@ -1,20 +1,11 @@
 package mchorse.bbs.ui.utils;
 
 import mchorse.bbs.BBS;
-import mchorse.bbs.BBSSettings;
 import mchorse.bbs.l10n.keys.IKey;
-import mchorse.bbs.ui.UIKeys;
-import mchorse.bbs.ui.film.utils.UICameraUtils;
-import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.UIScrollView;
 import mchorse.bbs.ui.framework.elements.utils.UILabel;
-import mchorse.bbs.ui.utils.context.ContextAction;
-import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.keyframes.KeyframeInterpolation;
-
-import java.util.function.Consumer;
 
 public class UI {
     public static UIElement row(UIElement... elements) {
@@ -93,22 +84,5 @@ public class UI {
         scrollView.column(margin).vertical().stretch().scroll().width(width).padding(padding);
 
         return scrollView;
-    }
-
-    public static void keyframeInterps(UIContext context, KeyframeInterpolation current, Consumer<KeyframeInterpolation> consumer) {
-        context.replaceContextMenu((menu) ->
-        {
-            for (KeyframeInterpolation interpolation : KeyframeInterpolation.values()) {
-                ContextAction action;
-
-                if (interpolation == current) {
-                    action = menu.action(Icons.ADD, UIKeys.C_INTERPOLATION.get(interpolation.key), BBSSettings.primaryColor.get(), () -> consumer.accept(interpolation));
-                } else {
-                    action = menu.action(Icons.ADD, UIKeys.C_INTERPOLATION.get(interpolation.key), () -> consumer.accept(interpolation));
-                }
-
-                interpolation.setupKeybind(action, UICameraUtils.KEYS_CATEGORY);
-            }
-        });
     }
 }

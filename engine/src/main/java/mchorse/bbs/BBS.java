@@ -2,13 +2,6 @@ package mchorse.bbs;
 
 import mchorse.bbs.audio.SoundManager;
 import mchorse.bbs.bridge.IBridge;
-import mchorse.bbs.camera.clips.ClipFactoryData;
-import mchorse.bbs.camera.clips.converters.*;
-import mchorse.bbs.camera.clips.misc.AudioClip;
-import mchorse.bbs.camera.clips.misc.SubtitleClip;
-import mchorse.bbs.camera.clips.misc.VoicelineClip;
-import mchorse.bbs.camera.clips.modifiers.*;
-import mchorse.bbs.camera.clips.overwrite.*;
 import mchorse.bbs.core.Engine;
 import mchorse.bbs.cubic.model.ModelManager;
 import mchorse.bbs.events.base.EventBus;
@@ -35,7 +28,6 @@ import mchorse.bbs.settings.Settings;
 import mchorse.bbs.settings.SettingsBuilder;
 import mchorse.bbs.settings.SettingsManager;
 import mchorse.bbs.ui.UIKeys;
-import mchorse.bbs.ui.film.clips.*;
 import mchorse.bbs.ui.font.format.UIBaseFontFormat;
 import mchorse.bbs.ui.font.format.UIColorFontFormat;
 import mchorse.bbs.ui.forms.editors.forms.*;
@@ -48,7 +40,6 @@ import mchorse.bbs.ui.world.entities.components.UIEntityComponent;
 import mchorse.bbs.ui.world.entities.components.UIFormEntityComponent;
 import mchorse.bbs.ui.world.objects.objects.UIPropWorldObject;
 import mchorse.bbs.ui.world.objects.objects.UIWorldObject;
-import mchorse.bbs.utils.clips.Clip;
 import mchorse.bbs.utils.factory.MapFactory;
 import mchorse.bbs.voxel.StructureManager;
 import mchorse.bbs.voxel.generation.Generator;
@@ -97,8 +88,6 @@ public class BBS {
 
     /* Data factories */
     private static MapFactory<WorldObject, Class<? extends UIWorldObject>> factoryWorldObjects;
-    private static MapFactory<Clip, ClipFactoryData> factoryCameraClips;
-    private static MapFactory<Clip, ClipFactoryData> factoryScreenplayClips;
     private static MapFactory<BlockModelFactory, BlockModelFactoryData> factoryBlockModels;
     private static MapFactory<Generator, Void> factoryGenerators;
     private static MapFactory<Component, Class<? extends UIEntityComponent>> factoryEntityComponents;
@@ -222,14 +211,6 @@ public class BBS {
         return factoryWorldObjects;
     }
 
-    public static MapFactory<Clip, ClipFactoryData> getFactoryCameraClips() {
-        return factoryCameraClips;
-    }
-
-    public static MapFactory<Clip, ClipFactoryData> getFactoryScreenplayClips() {
-        return factoryScreenplayClips;
-    }
-
     public static MapFactory<BlockModelFactory, BlockModelFactoryData> getFactoryBlockModels() {
         return factoryBlockModels;
     }
@@ -347,38 +328,6 @@ public class BBS {
         /* Register world objects */
         factoryWorldObjects = new MapFactory<WorldObject, Class<? extends UIWorldObject>>()
             .register(Link.bbs("prop"), PropObject.class, UIPropWorldObject.class);
-
-        /* Register camera clips */
-        factoryCameraClips = new MapFactory<Clip, ClipFactoryData>()
-            .register(Link.bbs("idle"), IdleClip.class, new ClipFactoryData(Icons.FRUSTUM, 0x159e64, UIIdleClip.class)
-                .withConverter(Link.bbs("dolly"), new IdleToDollyConverter())
-                .withConverter(Link.bbs("path"), new IdleToPathConverter())
-                .withConverter(Link.bbs("keyframe"), new IdleToKeyframeConverter()))
-            .register(Link.bbs("dolly"), DollyClip.class, new ClipFactoryData(Icons.CAMERA, 0xffa500, UIDollyClip.class)
-                .withConverter(Link.bbs("idle"), IdleConverter.CONVERTER)
-                .withConverter(Link.bbs("path"), new DollyToPathConverter())
-                .withConverter(Link.bbs("keyframe"), new DollyToKeyframeConverter())
-                .withConverter(Link.bbs("dolly"), new PathToDollyConverter()))
-            .register(Link.bbs("circular"), CircularClip.class, new ClipFactoryData(Icons.OUTLINE_SPHERE, 0x4ba03e, UICircularClip.class)
-                .withConverter(Link.bbs("idle"), IdleConverter.CONVERTER))
-            .register(Link.bbs("path"), PathClip.class, new ClipFactoryData(Icons.GALLERY, 0x6820ad, UIPathClip.class)
-                .withConverter(Link.bbs("idle"), IdleConverter.CONVERTER))
-            .register(Link.bbs("keyframe"), KeyframeClip.class, new ClipFactoryData(Icons.CURVES, 0xde2e9f, UIKeyframeClip.class)
-                .withConverter(Link.bbs("idle"), IdleConverter.CONVERTER)
-                .withConverter(Link.bbs("keyframe"), new PathToKeyframeConverter()))
-            .register(Link.bbs("translate"), TranslateClip.class, new ClipFactoryData(Icons.UPLOAD, 0x4ba03e, UITranslateClip.class))
-            .register(Link.bbs("angle"), AngleClip.class, new ClipFactoryData(Icons.ARC, 0xd77a0a, UIAngleClip.class))
-            .register(Link.bbs("drag"), DragClip.class, new ClipFactoryData(Icons.FADING, 0x4baff7, UIDragClip.class))
-            .register(Link.bbs("shake"), ShakeClip.class, new ClipFactoryData(Icons.EXCHANGE, 0x159e64, UIShakeClip.class))
-            .register(Link.bbs("math"), MathClip.class, new ClipFactoryData(Icons.GRAPH, 0x6820ad, UIMathClip.class))
-            .register(Link.bbs("look"), LookClip.class, new ClipFactoryData(Icons.VISIBLE, 0x197fff, UILookClip.class))
-            .register(Link.bbs("orbit"), OrbitClip.class, new ClipFactoryData(Icons.GLOBE, 0xd82253, UIOrbitClip.class))
-            .register(Link.bbs("remapper"), RemapperClip.class, new ClipFactoryData(Icons.TIME, 0x222222, UIRemapperClip.class))
-            .register(Link.bbs("audio"), AudioClip.class, new ClipFactoryData(Icons.SOUND, 0xffc825, UIAudioClip.class))
-            .register(Link.bbs("subtitle"), SubtitleClip.class, new ClipFactoryData(Icons.FONT, 0x888899, UISubtitleClip.class));
-
-        factoryScreenplayClips = new MapFactory<Clip, ClipFactoryData>()
-            .register(Link.bbs("voice_line"), VoicelineClip.class, new ClipFactoryData(Icons.SOUND, 0xffc825, UIVoicelineClip.class));
 
         /* Register forms */
         forms = new FormArchitect();

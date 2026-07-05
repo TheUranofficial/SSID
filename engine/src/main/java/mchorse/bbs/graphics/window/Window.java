@@ -343,7 +343,7 @@ public class Window {
             String string = GLFW.glfwGetClipboardString(WINDOW);
 
             return string == null ? "" : string;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return "";

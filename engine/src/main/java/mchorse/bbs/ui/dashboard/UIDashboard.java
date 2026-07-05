@@ -31,7 +31,6 @@ import mchorse.bbs.ui.dashboard.panels.UIDashboardPanels;
 import mchorse.bbs.ui.dashboard.textures.UITextureManagerPanel;
 import mchorse.bbs.ui.dashboard.utils.UIGraphPanel;
 import mchorse.bbs.ui.dashboard.utils.UIOrbitCamera;
-import mchorse.bbs.ui.film.UIFilmPanel;
 import mchorse.bbs.ui.font.UIFontPanel;
 import mchorse.bbs.ui.framework.UIBaseMenu;
 import mchorse.bbs.ui.framework.UIRenderingContext;
@@ -91,14 +90,7 @@ public class UIDashboard extends UIBaseMenu {
 
         /* Setup panels */
         this.panels = new UIDashboardPanels();
-        this.panels.getEvents().register(UIDashboardPanels.PanelEvent.class, (e) ->
-        {
-            this.orbitUI.setControl(this.panels.isFlightSupported());
-
-            if (e.lastPanel instanceof UIFilmPanel) {
-                this.orbit.setup(this.bridge.get(IBridgeCamera.class).getCamera());
-            }
-        });
+        this.panels.getEvents().register(UIDashboardPanels.PanelEvent.class, ignored -> this.orbitUI.setControl(this.panels.isFlightSupported()));
         this.panels.relative(this.viewport).full();
         this.registerPanels();
 
@@ -108,18 +100,11 @@ public class UIDashboard extends UIBaseMenu {
 
         this.settingsPanel = new UISettingsOverlayPanel();
 
-        this.settings = new UIIcon(Icons.SETTINGS, (b) ->
-        {
-            UIOverlay.addOverlayRight(this.context, this.settingsPanel, 240);
-        });
+        this.settings = new UIIcon(Icons.SETTINGS, ignored -> UIOverlay.addOverlayRight(this.context, this.settingsPanel, 240));
         this.settings.tooltip(UIKeys.CONFIG_TITLE, Direction.TOP);
-        this.worlds = new UIIcon(Icons.GLOBE, (b) ->
-        {
-            UIOverlay.addOverlay(this.context, new UIWorldsOverlayPanel(this.bridge));
-        });
+        this.worlds = new UIIcon(Icons.GLOBE, ignored -> UIOverlay.addOverlay(this.context, new UIWorldsOverlayPanel(this.bridge)));
         this.worlds.tooltip(UIKeys.WORLD_WORLDS, Direction.TOP);
-        this.worldSettings = new UIIcon(Icons.GEAR, (b) ->
-        {
+        this.worldSettings = new UIIcon(Icons.GEAR, ignored -> {
             UIWorldSettingsOverlayPanel settings = new UIWorldSettingsOverlayPanel(this.bridge.get(IBridgeWorld.class).getWorld().settings);
             UIOverlay overlay = UIOverlay.addOverlayRight(this.context, settings, 200);
 
@@ -246,9 +231,7 @@ public class UIDashboard extends UIBaseMenu {
     }
 
     protected void registerPanels() {
-        this.panels.registerPanel(new UIFilmPanel(this), UIKeys.FILM_TITLE, Icons.FILM);
-
-        this.panels.registerPanel(new UIWorldEditorPanel(this), UIKeys.WORLD_WORLD_EDITOR, Icons.BLOCK).marginLeft(10);
+        this.panels.registerPanel(new UIWorldEditorPanel(this), UIKeys.WORLD_WORLD_EDITOR, Icons.BLOCK);
         this.panels.registerPanel(new UIWorldObjectsPanel(this), UIKeys.WORLD_OBJECT_EDITOR, Icons.SPHERE);
         this.panels.registerPanel(new UIEntitiesPanel(this), UIKeys.WORLD_ENTITY_EDITOR, Icons.POSE);
         this.panels.registerPanel(new UITileSetEditorPanel(this), UIKeys.TILE_SET_TITLE, Icons.STAIR);
@@ -328,8 +311,8 @@ public class UIDashboard extends UIBaseMenu {
         if (this.panels.panel != null && this.panels.panel.needsBackground()) {
             this.background(context);
         } else {
-            context.batcher.gradientVBox(0, 0, this.width, this.height / 8, Colors.A25, 0);
-            context.batcher.gradientVBox(0, this.height - this.height / 8, this.width, this.height, 0, Colors.A25);
+            context.batcher.gradientVBox(0, 0, this.width, (float) this.height / 8, Colors.A25, 0);
+            context.batcher.gradientVBox(0, this.height - (float) this.height / 8, this.width, this.height, 0, Colors.A25);
         }
     }
 

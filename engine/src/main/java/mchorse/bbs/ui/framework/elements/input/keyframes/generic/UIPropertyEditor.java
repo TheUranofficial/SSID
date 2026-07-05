@@ -2,18 +2,13 @@ package mchorse.bbs.ui.framework.elements.input.keyframes.generic;
 
 import mchorse.bbs.data.types.ListType;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.forms.properties.IFormProperty;
 import mchorse.bbs.graphics.window.Window;
 import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.settings.values.base.BaseValue;
 import mchorse.bbs.ui.Keys;
 import mchorse.bbs.ui.UIKeys;
-import mchorse.bbs.ui.film.IUIClipsDelegate;
-import mchorse.bbs.ui.film.utils.UICameraUtils;
-import mchorse.bbs.ui.film.utils.keyframes.UICameraDopeSheetEditor;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
-import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
 import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs.ui.framework.elements.input.keyframes.IAxisConverter;
@@ -23,11 +18,9 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.CollectionUtils;
 import mchorse.bbs.utils.keyframes.generic.GenericKeyframe;
-import mchorse.bbs.utils.keyframes.generic.GenericKeyframeChannel;
 import mchorse.bbs.utils.keyframes.generic.factories.IGenericKeyframeFactory;
 import mchorse.bbs.utils.keyframes.generic.factories.KeyframeFactories;
 import mchorse.bbs.utils.math.IInterpolation;
-import mchorse.bbs.utils.math.Interpolation;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -40,7 +33,6 @@ public class UIPropertyEditor extends UIElement {
     public UIToggle instant;
     public UITrackpad tick;
     public UITrackpad duration;
-    public UIIcon interp;
     public UIKeyframeFactory editor;
 
     public UIProperties properties;
@@ -52,7 +44,7 @@ public class UIPropertyEditor extends UIElement {
 
     protected List<BaseValue> valueChannels = new ArrayList<>();
 
-    public UIPropertyEditor(IUIClipsDelegate delegate) {
+    public UIPropertyEditor() {
         super();
 
         InterpolationTooltip tooltip = new InterpolationTooltip(0F, 1F, () ->
@@ -74,19 +66,14 @@ public class UIPropertyEditor extends UIElement {
         this.tick.limit(Integer.MIN_VALUE, Integer.MAX_VALUE, true).tooltip(UIKeys.KEYFRAMES_TICK);
         this.duration = new UITrackpad((v) -> this.setDuration(v.intValue()));
         this.duration.limit(0, Integer.MAX_VALUE, true).tooltip(UIKeys.KEYFRAMES_FORCED_DURATION);
-        this.interp = new UIIcon(Icons.GRAPH, (b) ->
-        {
-            UICameraUtils.interps(this.getContext(), (Interpolation) this.properties.getCurrent().getInterpolation(), this::pickInterpolation);
-        });
-        this.interp.tooltip(tooltip);
 
-        this.properties = new UIProperties(delegate, this::fillData);
+        this.properties = new UIProperties(this::fillData);
         this.properties.relative(this).full();
 
         /* Add all elements */
         this.add(this.properties, this.frameButtons);
         this.frameButtons.add(this.instant);
-        this.frameButtons.add(UI.row(5, this.interp, this.tick, this.duration));
+        this.frameButtons.add(UI.row(5, this.tick, this.duration));
 
         this.context((menu) ->
         {
@@ -129,31 +116,10 @@ public class UIPropertyEditor extends UIElement {
             }
         }).inside().category(category);
 
-        this.interp.keys().register(Keys.KEYFRAMES_INTERP, this.interp::clickItself).category(category);
-
         this.updateConverter();
     }
 
-    public void setChannels(List<GenericKeyframeChannel> properties, List<IFormProperty> property, List<Integer> colors) {
-        List<UIProperty> sheets = this.properties.properties;
-
-        sheets.clear();
-        this.properties.clearSelection();
-
-        this.valueChannels.clear();
-
-        for (int i = 0; i < properties.size(); i++) {
-            GenericKeyframeChannel channel = properties.get(i);
-
-            this.valueChannels.add(channel);
-            sheets.add(new UIProperty(channel.getId(), IKey.raw(channel.getId()), colors.get(i), channel, property.get(i)));
-        }
-
-        this.frameButtons.setVisible(false);
-    }
-
     public void updateConverter() {
-        this.setConverter(UICameraDopeSheetEditor.CONVERTER);
     }
 
     public void setConverter(IAxisConverter converter) {
