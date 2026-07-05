@@ -6,23 +6,26 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Folder based manager
  */
 public abstract class FolderManager<T extends ValueGroup> implements IManager<T> {
-    protected File folder;
-    protected long lastCheck;
+    protected Supplier<File> folder;
 
-    public FolderManager(File folder) {
-        if (folder != null) {
-            this.folder = folder;
-            this.folder.mkdirs();
-        }
+    public FolderManager(Supplier<File> folder) {
+        this.folder = folder;
     }
 
     public File getFolder() {
-        return this.folder;
+        File file = this.folder.get();
+
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        return file;
     }
 
     @Override
@@ -35,9 +38,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
         File file = this.getFile(from);
 
         if (file != null && file.exists()) {
-            if (file.renameTo(this.getFile(to))) {
-                return true;
-            }
+            return file.renameTo(this.getFile(to));
         }
 
         return false;
@@ -73,9 +74,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
         File folder = this.getFolder(from);
 
         if (folder.isDirectory()) {
-            if (folder.renameTo(this.getFolder(to))) {
-                return true;
-            }
+            return folder.renameTo(this.getFolder(to));
         }
 
         return false;
@@ -88,9 +87,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
         File folder = this.getFolder(this.normalizePath(path));
 
         if (folder.isDirectory()) {
-            if (folder.delete()) {
-                return true;
-            }
+            return folder.delete();
         }
 
         return false;
@@ -108,7 +105,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
             return set;
         }
 
-        this.recursiveFind(set, this.folder, "");
+        this.recursiveFind(set, this.getFolder(), "");
 
         return set;
     }
@@ -140,7 +137,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
             return null;
         }
 
-        return new File(this.folder, name + this.getExtension());
+        return new File(this.getFolder(), name + this.getExtension());
     }
 
     public File getFolder(String path) {
@@ -148,7 +145,7 @@ public abstract class FolderManager<T extends ValueGroup> implements IManager<T>
             return null;
         }
 
-        return new File(this.folder, path);
+        return new File(this.getFolder(), path);
     }
 
     protected String getExtension() {

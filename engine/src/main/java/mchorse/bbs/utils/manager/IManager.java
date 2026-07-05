@@ -5,22 +5,22 @@ import mchorse.bbs.data.types.MapType;
 
 import java.util.Collection;
 
-public interface IManager<T extends IDataSerializable> {
+public interface IManager<T extends IDataSerializable<?>> {
     boolean exists(String name);
 
-    public default T create(String id) {
+    default T create(String id) {
         return this.create(id, null);
     }
 
-    public T create(String id, MapType data);
+    T create(String id, MapType data);
 
-    public T load(String id);
+    T load(String id);
 
-    public boolean save(String name, MapType mapType);
+    boolean save(String name, MapType mapType);
 
-    public boolean rename(String from, String to);
+    boolean rename(String from, String to);
 
-    public boolean delete(String name);
+    boolean delete(String name);
 
-    public Collection<String> getKeys();
+    Collection<String> getKeys();
 }

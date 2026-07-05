@@ -13,7 +13,7 @@ public class BBSData {
     }
 
     public static void load(File folder, IBridge bridge) {
-        particles = new ParticleManager(new File(folder, "particles"));
+        particles = new ParticleManager(() -> new File(folder, "particles"));
     }
 
     public static void delete() {
