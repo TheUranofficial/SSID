@@ -18,7 +18,6 @@ import mchorse.bbs.utils.joml.Matrices;
 import mchorse.bbs.world.World;
 import com.theuran.test.TestEngine;
 import com.theuran.test.settings.TestSettings;
-import com.theuran.test.ui.welcome.UIWelcomeMenu;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Locale;
@@ -46,17 +45,17 @@ public class UIScreen implements IEngine, IFileDropListener {
             this.dashboard.reloadWorld(world);
         }
 
-        if (TestSettings.welcome.get()) {
-            this.showMenu(this.getDashboard());
-        } else {
+        if (!TestSettings.firstRun.get()) {
             String id = this.getLanguageCode();
 
             if (!BBSSettings.language.get().equals(id)) {
                 BBSSettings.language.set(id);
             }
 
-            this.showMenu(new UIWelcomeMenu(this.engine));
+            TestSettings.firstRun.set(true);
         }
+
+        this.showMenu(this.getDashboard());
     }
 
     private String getLanguageCode() {
@@ -95,7 +94,6 @@ public class UIScreen implements IEngine, IFileDropListener {
     public UIDashboard getDashboard() {
         if (this.dashboard == null) {
             this.dashboard = new UIDashboard(this.engine);
-            this.dashboard.main.keys().register(KeysApp.WELCOME, () -> this.showMenu(new UIWelcomeMenu(this.engine)));
         }
 
         return this.dashboard;

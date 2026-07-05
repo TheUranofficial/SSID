@@ -1,5 +1,7 @@
 package com.theuran.test.ui.utility;
 
+import com.theuran.test.ui.UIKeysApp;
+import com.theuran.test.ui.l10n.UILanguageEditorOverlayPanel;
 import mchorse.bbs.BBS;
 import mchorse.bbs.bridge.IBridgeWorld;
 import mchorse.bbs.graphics.window.Window;
@@ -18,8 +20,6 @@ import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.UIUtils;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.StringUtils;
-import com.theuran.test.ui.UIKeysApp;
-import com.theuran.test.ui.l10n.UILanguageEditorOverlayPanel;
 
 import java.io.File;
 
@@ -38,73 +38,73 @@ public class UIUtilityOverlayPanel extends UIOverlayPanel {
         this.view = UI.scrollView(5, 10, 140);
         this.view.relative(this.content).full();
 
-        UIButton openGameDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_GAME_FOLDER, (b) -> this.openFolder(BBS.getGameFolder()));
-        UIButton openAudioDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_AUDIO_FOLDER, (b) -> this.openFolder(BBS.getAssetsPath("audio")));
-        UIButton openModelsDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_MODELS_FOLDER, (b) -> this.openFolder(BBS.getAssetsPath("models")));
+        UIButton openGameDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_GAME_FOLDER, ignored -> this.openFolder(BBS.getGameFolder()));
+        UIButton openAudioDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_AUDIO_FOLDER, ignored -> this.openFolder(BBS.getAssetsPath("audio")));
+        UIButton openModelsDirectory = new UIButton(UIKeysApp.UTILITY_OPEN_MODELS_FOLDER, ignored -> this.openFolder(BBS.getAssetsPath("models")));
 
-        UIIcon shaders = new UIIcon(Icons.SPHERE, (b) ->
-        {
+        UIIcon shaders = new UIIcon(Icons.SPHERE, ignored -> {
             this.print("Reloading shaders!");
             BBS.getShaders().reload();
             this.close();
         });
+
         shaders.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_SHADERS);
-        UIIcon textures = new UIIcon(Icons.MATERIAL, (b) ->
-        {
+
+        UIIcon textures = new UIIcon(Icons.MATERIAL, ignored -> {
             this.print("Reloading textures!");
             BBS.getTextures().reload();
             this.close();
         });
+
         textures.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_TEXTURES);
-        UIIcon language = new UIIcon(Icons.GLOBE, (b) ->
-        {
+
+        UIIcon language = new UIIcon(Icons.GLOBE, ignored -> {
             this.print("Reloading languages!");
             BBS.getL10n().reload();
             this.close();
         });
+
         language.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_LANG);
-        UIIcon models = new UIIcon(Icons.POSE, (b) ->
-        {
+
+        UIIcon models = new UIIcon(Icons.POSE, ignored -> {
             this.print("Reloading models");
             BBS.getModels().reload();
             this.close();
         });
+
         models.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_MODELS);
-        UIIcon sounds = new UIIcon(Icons.SOUND, (b) ->
-        {
+
+        UIIcon sounds = new UIIcon(Icons.SOUND, ignored -> {
             this.print("Reloading sounds");
             BBS.getSounds().deleteSounds();
             this.close();
         });
+
         sounds.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_SOUNDS);
-        UIIcon terrain = new UIIcon(Icons.TREE, (b) ->
-        {
+
+        UIIcon terrain = new UIIcon(Icons.TREE, ignored -> {
             this.print("Forcing chunk loader");
             this.getContext().menu.bridge.get(IBridgeWorld.class).getWorld().chunks.buildChunks(BBS.getRender(), true);
             this.close();
         });
+
         terrain.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_TERRAIN);
 
-        this.width = new UITrackpad((v) ->
-        {
-            Window.setSize((int) this.width.getValue(), (int) this.height.getValue());
-        });
-        this.height = new UITrackpad((v) ->
-        {
-            Window.setSize((int) this.width.getValue(), (int) this.height.getValue());
-        });
+        this.width = new UITrackpad(ignored -> Window.setSize((int) this.width.getValue(), (int) this.height.getValue()));
+        this.height = new UITrackpad(ignored -> Window.setSize((int) this.width.getValue(), (int) this.height.getValue()));
 
         this.width.delayedInput().limit(2, 4096, true).values(2, 1, 10).setValue(Window.width);
         this.height.delayedInput().limit(2, 4096, true).values(2, 1, 10).setValue(Window.height);
 
-        UIButton analyze = new UIButton(UIKeysApp.UTILITY_ANALYZE_LANG, (b) -> this.analyzeLanguageStrings());
-        UIButton compile = new UIButton(UIKeysApp.UTILITY_COMPILE_LANG, (b) -> this.compileLanguageStrings());
-        UIButton langEditor = new UIButton(UIKeysApp.UTILITY_LANG_EDITOR, (b) -> this.openLangEditor());
+        UIButton analyze = new UIButton(UIKeysApp.UTILITY_ANALYZE_LANG, ignored -> this.analyzeLanguageStrings());
+        UIButton compile = new UIButton(UIKeysApp.UTILITY_COMPILE_LANG, ignored -> this.compileLanguageStrings());
+        UIButton langEditor = new UIButton(UIKeysApp.UTILITY_LANG_EDITOR, ignored -> this.openLangEditor());
 
         this.view.add(UI.label(UIKeysApp.UTILITY_OPEN_FOLDER), UI.row(openGameDirectory, openModelsDirectory, openAudioDirectory).marginBottom(8));
         this.view.add(UI.label(UIKeysApp.UTILITY_RELOAD_LABEL), UI.row(shaders, textures, language, models, sounds, terrain).marginBottom(8));
         this.view.add(UI.column(UI.label(UIKeysApp.UTILITY_RESIZE_WINDOW), UI.row(this.width, this.height)).marginBottom(8));
         this.view.add(UI.label(UIKeysApp.UTILITY_LANG_LABEL), UI.row(analyze, compile), langEditor);
+
         this.content.add(this.view);
     }
 
@@ -130,6 +130,7 @@ public class UIUtilityOverlayPanel extends UIOverlayPanel {
         L10nUtils.compile(BBS.getExportFolder(), BBS.getL10n().getStrings());
 
         UIMessageFolderOverlayPanel panel = new UIMessageFolderOverlayPanel(UIKeys.GENERAL_SUCCESS, UIKeysApp.UTILITY_COMPILE_LANG_DESCRIPTION, BBS.getExportFolder());
+
         UIOverlay.addOverlay(this.getContext(), panel);
     }
 

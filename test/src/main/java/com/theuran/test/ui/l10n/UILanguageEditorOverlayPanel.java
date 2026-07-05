@@ -73,21 +73,21 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
         this.target.mkdirs();
         this.markedFile = new File(getLangEditorFolder(), "marked.json");
 
-        this.save = new UIIcon(Icons.SAVED, (b) -> this.save());
+        this.save = new UIIcon(Icons.SAVED, ignored -> this.save());
         this.save.tooltip(UIKeysApp.LANGUAGE_EDITOR_SAVE);
-        this.folder = new UIIcon(Icons.FOLDER, (b) -> UIUtils.openFolder(this.target));
+        this.folder = new UIIcon(Icons.FOLDER, ignored -> UIUtils.openFolder(this.target));
         this.folder.tooltip(UIKeysApp.LANGUAGE_EDITOR_FOLDER);
-        this.changeReference = new UIIcon(Icons.REFRESH, (b) -> this.changeReference());
+        this.changeReference = new UIIcon(Icons.REFRESH, ignored -> this.changeReference());
         this.changeReference.tooltip(UIKeysApp.LANGUAGE_EDITOR_REFERENCE);
-        this.copy = new UIIcon(Icons.COPY, (b) -> this.copy());
+        this.copy = new UIIcon(Icons.COPY, ignored -> this.copy());
         this.copy.tooltip(UIKeysApp.LANGUAGE_EDITOR_COPY);
-        this.paste = new UIIcon(Icons.PASTE, (b) -> this.paste());
+        this.paste = new UIIcon(Icons.PASTE, ignored -> this.paste());
         this.paste.tooltip(UIKeysApp.LANGUAGE_EDITOR_PASTE);
         this.completion = UI.label(IKey.EMPTY);
         this.completion.background(Colors.A50 | BBSSettings.primaryColor.get()).labelAnchor(1F, 0.55F);
         this.completion.relative(this.icons).x(-8).wh(160, 20).anchorX(1F);
 
-        this.missing = new UIIcon(Icons.SEARCH, (b) -> this.viewOnlyMissing());
+        this.missing = new UIIcon(Icons.SEARCH, ignored -> this.viewOnlyMissing());
         this.missing.tooltip(UIKeysApp.LANGUAGE_EDITOR_MISSING);
         this.search = new UITextbox(this::search);
         this.search.placeholder(UIKeys.GENERAL_SEARCH);
@@ -125,7 +125,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
     private void readMarkedStrings() {
         try {
             this.markedKeys = DataToString.mapFromString(IOUtils.readText(this.markedFile));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -169,7 +169,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
                 String string = IOUtils.readText(BBS.getProvider().getAsset(link));
 
                 base.combine(DataToString.mapFromString(string));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -186,7 +186,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
         int i = 0;
 
         for (UILanguageKey key : this.keys) {
-            if (!key.isStillSame()) {
+            if (key.isStillDifferent()) {
                 i += 1;
             }
         }
@@ -203,7 +203,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
         Map<String, LangKey> keyMap = new HashMap<>();
 
         for (UILanguageKey key : this.keys) {
-            if (!key.isStillSame() && !this.markedKeys.has(key.getLangKey().key)) {
+            if (key.isStillDifferent() && !this.markedKeys.has(key.getLangKey().key)) {
                 LangKey langKey = key.getLangKey();
 
                 keyMap.put(langKey.key, langKey);
@@ -217,8 +217,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
 
     private void changeReference() {
         List<Label<String>> labels = BBS.getL10n().getSupportedLanguageLabels();
-        UILabelOverlayPanel<String> panel = new UILabelOverlayPanel<>(UIKeysApp.LANGUAGE_EDITOR_REFERENCE_TITLE, labels, (str) ->
-        {
+        UILabelOverlayPanel<String> panel = new UILabelOverlayPanel<>(UIKeysApp.LANGUAGE_EDITOR_REFERENCE_TITLE, labels, str -> {
             referenceLanguage = str.value;
 
             this.rebuildEditor();
@@ -235,7 +234,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
         MapType translated = new MapType(false);
 
         for (UILanguageKey key : this.keys) {
-            if (!key.isStillSame()) {
+            if (key.isStillDifferent()) {
                 keys.add(key.getLangKey());
             }
         }
@@ -261,8 +260,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
     }
 
     private void paste() {
-        UITextareaOverlayPanel panel = new UITextareaOverlayPanel(UIKeys.GENERAL_PASTE, UIKeysApp.LANGUAGE_EDITOR_PASTE_DESCRIPTION, (t) ->
-        {
+        UITextareaOverlayPanel panel = new UITextareaOverlayPanel(UIKeys.GENERAL_PASTE, UIKeysApp.LANGUAGE_EDITOR_PASTE_DESCRIPTION, (t) -> {
             MapType map = DataToString.mapFromString(t);
 
             if (map == null) {
@@ -293,7 +291,7 @@ public class UILanguageEditorOverlayPanel extends UIOverlayPanel {
         for (UILanguageKey ui : this.keys) {
             LangKey langKey = ui.getLangKey();
 
-            if (this.viewMissing && !ui.isStillSame()) {
+            if (this.viewMissing && ui.isStillDifferent()) {
                 continue;
             }
 

@@ -58,8 +58,7 @@ public class UILanguageKey extends UIElement {
 
         this.column(0).vertical().stretch();
 
-        this.context((menu) ->
-        {
+        this.context((menu) -> {
             menu.action(Icons.COPY, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_COPY_KEY, () -> Window.setClipboard(this.langKey.key));
             menu.action(Icons.COPY, UIKeysApp.LANGUAGE_EDITOR_CONTEXT_COPY_ORIGINAL, () -> Window.setClipboard(this.original));
 
@@ -99,7 +98,7 @@ public class UILanguageKey extends UIElement {
             this.reference.area.render(context.batcher, Colors.mulRGB(color, 0.125F));
         }
 
-        if (!this.isStillSame()) {
+        if (this.isStillDifferent()) {
             int checkColor = Colors.A100 | Colors.POSITIVE;
 
             if (this.panel.hasMarked(this.langKey.key)) {
@@ -112,7 +111,7 @@ public class UILanguageKey extends UIElement {
         super.render(context);
     }
 
-    public boolean isStillSame() {
-        return this.langKey.content.equals(this.original) && !this.panel.hasMarked(this.langKey.key);
+    public boolean isStillDifferent() {
+        return !this.langKey.content.equals(this.original) || this.panel.hasMarked(this.langKey.key);
     }
 }
