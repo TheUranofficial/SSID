@@ -17,7 +17,7 @@ public abstract class DataStorage implements IDataStorage {
         char c = (char) dataInput.readByte();
         char d = (char) dataInput.readByte();
 
-        String header = new String(new char[]{a, b, c, d});
+        String header = new String(new char[] {a, b, c, d});
 
         if (!header.equals("BBS1")) {
             throw new IllegalStateException("Given input stream has in invalid format! Header value is: " + header);

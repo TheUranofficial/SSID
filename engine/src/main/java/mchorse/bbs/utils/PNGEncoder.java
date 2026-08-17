@@ -155,7 +155,7 @@ public class PNGEncoder {
     private void writeCRC(byte[] bytes) {
         CRC32 crc32 = new CRC32();
 
-        crc32.update(bytes.length == 0 ? new byte[]{0} : bytes);
+        crc32.update(bytes.length == 0 ? new byte[] {0} : bytes);
 
         long crc = crc32.getValue();
         int b1 = (int) ((crc >> 24) & 0xff);

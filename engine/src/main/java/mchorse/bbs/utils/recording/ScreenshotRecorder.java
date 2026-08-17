@@ -185,7 +185,7 @@ public class ScreenshotRecorder {
         }
 
         public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[]{this.flavor};
+            return new DataFlavor[] {this.flavor};
         }
 
         public boolean isDataFlavorSupported(DataFlavor flavor) {

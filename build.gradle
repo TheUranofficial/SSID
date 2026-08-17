@@ -24,4 +24,8 @@ subprojects {
         implementation "org.joml:joml:1.10.9"
         implementation "com.github.Querz:NBT:6.1"
     }
+
+    tasks.withType(Test).configureEach {
+        failOnNoDiscoveredTests = false
+    }
 }

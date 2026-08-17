@@ -23,7 +23,6 @@ import mchorse.bbs.particles.components.rate.ParticleComponentRateSteady;
 import mchorse.bbs.particles.components.shape.*;
 import mchorse.bbs.resources.Link;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 

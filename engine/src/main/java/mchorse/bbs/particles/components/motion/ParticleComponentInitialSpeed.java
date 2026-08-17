@@ -26,7 +26,7 @@ public class ParticleComponentInitialSpeed extends ParticleComponentBase impleme
     @Override
     public ParticleComponentBase fromData(BaseType data, MolangParser parser) throws MolangException {
         if (data.isList()) {
-            this.direction = new MolangExpression[]{MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
+            this.direction = new MolangExpression[] {MolangParser.ZERO, MolangParser.ZERO, MolangParser.ZERO};
 
             ParticleUtils.vectorFromList(data.asList(), this.direction, parser);
         } else if (BaseType.isPrimitive(data)) {

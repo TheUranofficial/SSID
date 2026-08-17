@@ -2,7 +2,7 @@ package mchorse.bbs.settings.ui;
 
 import mchorse.bbs.BBS;
 import mchorse.bbs.BBSSettings;
-import mchorse.bbs.l10n.keys.IKey;
+import mchorse.bbs.l10n.L10n;
 import mchorse.bbs.settings.Settings;
 import mchorse.bbs.settings.values.base.BaseValue;
 import mchorse.bbs.settings.values.core.ValueGroup;
@@ -42,7 +42,7 @@ public class UISettingsOverlayPanel extends UIOverlayPanel {
                 this.selectConfig(settings.getId(), b);
             });
 
-            icon.tooltip(IKey.lang(UIValueFactory.getTitleKey(settings)), Direction.LEFT);
+            icon.tooltip(L10n.lang(UIValueFactory.getTitleKey(settings)), Direction.LEFT);
             this.icons.add(icon);
         }
 
@@ -75,10 +75,10 @@ public class UISettingsOverlayPanel extends UIOverlayPanel {
             String catTitleKey = UIValueFactory.getCategoryTitleKey(category);
             String catTooltipKey = UIValueFactory.getCategoryTooltipKey(category);
 
-            UILabel label = UI.label(IKey.lang(catTitleKey)).labelAnchor(0, 1).background(() -> BBSSettings.primaryColor(Colors.A50));
+            UILabel label = UI.label(L10n.lang(catTitleKey)).labelAnchor(0, 1).background(() -> BBSSettings.primaryColor(Colors.A50));
             List<UIElement> options = new ArrayList<>();
 
-            label.tooltip(IKey.lang(catTooltipKey), Direction.BOTTOM);
+            label.tooltip(L10n.lang(catTooltipKey), Direction.BOTTOM);
             this.options.add(label);
 
             for (BaseValue value : category.getAll()) {

@@ -1,6 +1,6 @@
 package mchorse.bbs.settings.ui;
 
-import mchorse.bbs.l10n.keys.IKey;
+import mchorse.bbs.l10n.L10n;
 import mchorse.bbs.settings.values.base.BaseValue;
 import mchorse.bbs.settings.values.core.ValueString;
 import mchorse.bbs.settings.values.numeric.ValueBoolean;
@@ -50,12 +50,12 @@ public class UIValueFactory {
     /* UI element factories */
 
     public static UIToggle booleanUI(ValueBoolean value, Consumer<UIToggle> callback) {
-        UIToggle booleanToogle = new UIToggle(IKey.lang(getValueLabelKey(value)), value.get(), callback == null ? (toggle) -> value.set(toggle.getValue()) : (toggle) -> {
+        UIToggle booleanToogle = new UIToggle(L10n.lang(getValueLabelKey(value)), value.get(), callback == null ? (toggle) -> value.set(toggle.getValue()) : (toggle) -> {
             value.set(toggle.getValue());
             callback.accept(toggle);
         });
 
-        booleanToogle.tooltip(IKey.lang(getValueCommentKey(value)));
+        booleanToogle.tooltip(L10n.lang(getValueCommentKey(value)));
 
         return booleanToogle;
     }
@@ -68,7 +68,7 @@ public class UIValueFactory {
 
         trackpad.limit(value.getMin(), value.getMax(), true).delayedInput();
         trackpad.setValue(value.get());
-        trackpad.tooltip(IKey.lang(getValueCommentKey(value)));
+        trackpad.tooltip(L10n.lang(getValueCommentKey(value)));
 
         return trackpad;
     }
@@ -80,7 +80,7 @@ public class UIValueFactory {
             callback.accept(integer);
         });
 
-        color.tooltip(IKey.lang(getValueCommentKey(value)));
+        color.tooltip(L10n.lang(getValueCommentKey(value)));
 
         if (value.getSubtype() == ValueInt.Subtype.COLOR_ALPHA) {
             color.withAlpha();
@@ -100,7 +100,7 @@ public class UIValueFactory {
 
         trackpad.limit(value.getMin(), value.getMax()).delayedInput();
         trackpad.setValue(value.get());
-        trackpad.tooltip(IKey.lang(getValueCommentKey(value)));
+        trackpad.tooltip(L10n.lang(getValueCommentKey(value)));
 
         return trackpad;
     }
@@ -114,7 +114,7 @@ public class UIValueFactory {
 
         trackpad.limit(value.getMin(), value.getMax()).delayedInput();
         trackpad.setValue(value.get().floatValue());
-        trackpad.tooltip(IKey.lang(getValueCommentKey(value)));
+        trackpad.tooltip(L10n.lang(getValueCommentKey(value)));
 
         return trackpad;
     }
@@ -127,7 +127,7 @@ public class UIValueFactory {
         });
 
         textbox.setText(value.get());
-        textbox.tooltip(IKey.lang(getValueLabelKey(value)));
+        textbox.tooltip(L10n.lang(getValueLabelKey(value)));
 
         return textbox;
     }
@@ -143,11 +143,11 @@ public class UIValueFactory {
     }
 
     public static UILabel label(BaseValue value) {
-        return UI.label(IKey.lang(UIValueFactory.getValueLabelKey(value)), 0).labelAnchor(0, 0.5F);
+        return UI.label(L10n.lang(UIValueFactory.getValueLabelKey(value)), 0).labelAnchor(0, 0.5F);
     }
 
     public static UIElement commetTooltip(UIElement element, BaseValue value) {
-        element.tooltip(IKey.lang(UIValueFactory.getValueCommentKey(value)));
+        element.tooltip(L10n.lang(UIValueFactory.getValueCommentKey(value)));
 
         return element;
     }
