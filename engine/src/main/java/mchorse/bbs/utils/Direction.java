@@ -1,6 +1,6 @@
 package mchorse.bbs.utils;
 
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 
 public enum Direction {
     TOP(0.5F, 0F), LEFT(0F, 0.5F), BOTTOM(0.5F, 1F), RIGHT(1F, 0.5F);
@@ -13,8 +13,8 @@ public enum Direction {
     private Direction(float anchorX, float anchorY) {
         this.anchorX = anchorX;
         this.anchorY = anchorY;
-        this.factorX = (int) Interpolations.lerp(-1, 1, anchorX);
-        this.factorY = (int) Interpolations.lerp(-1, 1, anchorY);
+        this.factorX = (int) Lerps.lerp(-1, 1, anchorX);
+        this.factorY = (int) Lerps.lerp(-1, 1, anchorY);
     }
 
     public boolean isHorizontal() {

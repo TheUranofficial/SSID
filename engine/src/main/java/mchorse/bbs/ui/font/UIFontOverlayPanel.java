@@ -14,9 +14,9 @@ import mchorse.bbs.ui.framework.elements.overlay.UIOverlayPanel;
 import mchorse.bbs.ui.framework.elements.overlay.UIPromptOverlayPanel;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.icons.Icons;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.StringUtils;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 import mchorse.bbs.utils.resources.Pixels;
 
 import java.util.List;

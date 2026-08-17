@@ -1,7 +1,8 @@
 package mchorse.bbs.utils.manager;
 
+import mchorse.bbs.BBSSettings;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.settings.values.ValueGroup;
+import mchorse.bbs.settings.values.core.ValueGroup;
 import mchorse.bbs.utils.StringUtils;
 import mchorse.bbs.utils.manager.storage.IDataStorage;
 import mchorse.bbs.utils.manager.storage.JSONLikeStorage;
@@ -60,7 +61,16 @@ public abstract class BaseManager<T extends ValueGroup> extends FolderManager<T>
         try {
             if (this.backUps) {
                 String path = file.getParentFile().getAbsolutePath();
-                String backupFileName = new SimpleDateFormat("yyyy_MM_dd_HH").format(new Date());
+                Date date = new Date();
+                String backupFileName = new SimpleDateFormat("yyyy_MM_dd_HH").format(date);
+
+                if (BBSSettings.editorMinutesBackup.get()) {
+                    String minutes = new SimpleDateFormat("mm").format(date);
+                    int m = (int) Math.floor(Integer.parseInt(minutes) / 10f);
+
+                    backupFileName += "_" + m + "0";
+                }
+
                 String filename = StringUtils.fileName(id);
                 File backupFile = new File(path, "_" + filename + "/" + filename + "." + backupFileName + this.getExtension());
 

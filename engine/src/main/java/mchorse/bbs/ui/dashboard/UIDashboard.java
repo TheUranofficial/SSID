@@ -47,10 +47,10 @@ import mchorse.bbs.ui.world.objects.UIWorldObjectsPanel;
 import mchorse.bbs.ui.world.settings.UIWorldSettingsOverlayPanel;
 import mchorse.bbs.ui.world.worlds.UIWorldsOverlayPanel;
 import mchorse.bbs.utils.Direction;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Colors;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.utils.joml.Matrices;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
 import mchorse.bbs.world.World;
 import mchorse.bbs.world.entities.Entity;
 import mchorse.bbs.world.entities.architect.EntityArchitect;
@@ -297,8 +297,8 @@ public class UIDashboard extends UIBaseMenu {
 
             BasicComponent basic = this.walker.basic;
 
-            basic.velocity.x = Interpolations.lerp(basic.velocity.x, direction.x, 0.25F);
-            basic.velocity.z = Interpolations.lerp(basic.velocity.z, direction.z, 0.25F);
+            basic.velocity.x = Lerps.lerp(basic.velocity.x, direction.x, 0.25F);
+            basic.velocity.z = Lerps.lerp(basic.velocity.z, direction.z, 0.25F);
         }
     }
 

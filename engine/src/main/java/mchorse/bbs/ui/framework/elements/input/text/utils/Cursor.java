@@ -1,6 +1,6 @@
 package mchorse.bbs.ui.framework.elements.input.text.utils;
 
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 public class Cursor {
     public int line;

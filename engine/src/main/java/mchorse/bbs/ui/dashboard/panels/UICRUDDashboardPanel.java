@@ -17,10 +17,7 @@ public abstract class UICRUDDashboardPanel extends UISidebarDashboardPanel {
         super(dashboard);
 
         this.overlay = this.createOverlayPanel();
-        this.openOverlay = new UIIcon(Icons.MORE, (b) ->
-        {
-            UIOverlay.addOverlayRight(this.getContext(), this.overlay, 200, 20);
-        });
+        this.openOverlay = new UIIcon(Icons.MORE, ignored -> UIOverlay.addOverlay(this.getContext(), this.overlay, 200, 20));
 
         this.iconBar.prepend(this.openOverlay);
 

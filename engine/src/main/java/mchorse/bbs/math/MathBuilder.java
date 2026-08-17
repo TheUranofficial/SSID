@@ -135,7 +135,7 @@ public class MathBuilder {
      */
     public String[] breakdown(String expression) throws Exception {
         /* If given string have illegal characters, then it can't be parsed */
-        if (this.strict && !expression.matches("^[\\w\\d\\s_+-/*%^&|<>=!?:.,()\"'@~\\[\\]]+$")) {
+        if (this.strict && !expression.matches("^[\\w\\s_+-/*%^&|<>=!?:.,()\"'@~\\[\\]]+$")) {
             throw new Exception("Given expression '" + expression + "' contains illegal characters!");
         }
 
@@ -197,7 +197,7 @@ public class MathBuilder {
                 }
 
                 /* Push buffer and operator */
-                if (buffer.length() > 0) {
+                if (!buffer.isEmpty()) {
                     symbols.add(buffer.toString());
                     buffer = new StringBuilder();
                 }
@@ -210,7 +210,7 @@ public class MathBuilder {
                 }
             } else if (s.equals("(")) {
                 /* Push a list of symbols */
-                if (buffer.length() > 0) {
+                if (!buffer.isEmpty()) {
                     symbols.add(buffer.toString());
                     buffer = new StringBuilder();
                 }
@@ -243,7 +243,7 @@ public class MathBuilder {
             }
         }
 
-        if (buffer.length() > 0) {
+        if (!buffer.isEmpty()) {
             symbols.add(buffer.toString());
         }
 
@@ -256,9 +256,7 @@ public class MathBuilder {
     private List<Object> trimSymbols(List<Object> symbols) {
         List<Object> newSymbols = new ArrayList<>();
 
-        for (int i = 0; i < symbols.size(); i++) {
-            Object value = symbols.get(i);
-
+        for (Object value : symbols) {
             if (value instanceof String) {
                 String string = ((String) value).trim();
 
@@ -266,7 +264,7 @@ public class MathBuilder {
                     newSymbols.add(string);
                 }
             } else {
-                newSymbols.add(this.trimSymbols((List) value));
+                newSymbols.add(this.trimSymbols((List<Object>) value));
             }
         }
 
@@ -284,7 +282,6 @@ public class MathBuilder {
      * However, beside parsing operations, it's also can return one or
      * two item sized symbol lists.
      */
-    @SuppressWarnings("unchecked")
     public IExpression parseSymbols(List<Object> symbols) throws Exception {
         IExpression ternary = this.tryTernary(symbols);
 
@@ -296,7 +293,7 @@ public class MathBuilder {
 
         /* Constant, variable or group (parenthesis) */
         if (size == 1) {
-            return this.expressionFromObject(symbols.get(0));
+            return this.expressionFromObject(symbols.getFirst());
         }
 
         /* Function */
@@ -431,7 +428,7 @@ public class MathBuilder {
      * needs the name of the function and list of args (which can't be
      * stored in one object).
      * <p>
-     * This method will constructs {@link IExpression}s from list of args
+     * This method will construct {@link IExpression}s from list of args
      * mixed with operators, groups, values and commas. And then plug it
      * in to a class constructor with given name.
      */
@@ -476,9 +473,8 @@ public class MathBuilder {
 
         Class<? extends Function> function = this.functions.get(first);
         Constructor<? extends Function> ctor = function.getConstructor(IExpression[].class, String.class);
-        Function func = ctor.newInstance(values.toArray(new IExpression[values.size()]), first);
 
-        return func;
+        return ctor.newInstance(values.toArray(new IExpression[0]), first);
     }
 
     /**
@@ -488,11 +484,8 @@ public class MathBuilder {
      * based on the input object. It can create constants, variables and
      * groups.
      */
-    @SuppressWarnings("unchecked")
     public IExpression expressionFromObject(Object object) throws Exception {
-        if (object instanceof String) {
-            String symbol = (String) object;
-
+        if (object instanceof String symbol) {
             /* Variable and constant negation */
             if (symbol.startsWith("!")) {
                 return new Negate(this.expressionFromObject(symbol.substring(1)));

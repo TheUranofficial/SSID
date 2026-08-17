@@ -2,7 +2,7 @@ package mchorse.bbs.voxel.tilesets.geometry;
 
 import mchorse.bbs.graphics.vao.VAOBuilder;
 import mchorse.bbs.graphics.vao.VBOAttributes;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import org.joml.Vector2f;
@@ -173,7 +173,7 @@ public class QuadGeometry extends BlockGeometry {
             ? builder.lighting(nx + (int) this.vertex.x, ny + (int) this.vertex.y, nz + (int) this.vertex.z)
             : base;
 
-        return (float) Interpolations.bilerp(0.5, 0.5, base, side1, side2, corner) / 15F;
+        return (float) Lerps.bilerp(0.5, 0.5, base, side1, side2, corner) / 15F;
     }
 
     private void computeAOs(ChunkBuilder builder, int nx, int ny, int nz) {

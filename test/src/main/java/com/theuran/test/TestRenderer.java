@@ -6,7 +6,6 @@ import mchorse.bbs.core.IComponent;
 import mchorse.bbs.data.DataToString;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.events.RenderWorldEvent;
-import mchorse.bbs.forms.forms.Form;
 import mchorse.bbs.graphics.*;
 import mchorse.bbs.graphics.shaders.CommonShaderAccess;
 import mchorse.bbs.graphics.shaders.Shader;
@@ -26,7 +25,7 @@ import mchorse.bbs.utils.IOUtils;
 import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.joml.Matrices;
 import mchorse.bbs.utils.joml.Vectors;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.ChunkRenderer;
 import mchorse.bbs.voxel.storage.ChunkArrayManager;
 import mchorse.bbs.voxel.storage.ChunkManager;
@@ -209,13 +208,6 @@ public class TestRenderer implements IComponent {
     public void update() {
         this.dummy.basic.ticks += 1;
         this.ticks += 1;
-
-        Form skyForm = this.engine.world.settings.skyForm;
-
-        if (skyForm != null) {
-            this.dummy.setWorld(this.engine.world);
-            skyForm.update(this.dummy);
-        }
     }
 
     @Override
@@ -476,14 +468,6 @@ public class TestRenderer implements IComponent {
         this.sky.unbindForRender();
 
         GLStates.depthMask(true);
-
-        Form skyForm = this.engine.world.settings.skyForm;
-
-        if (skyForm != null) {
-            this.dummy.setWorld(this.engine.world);
-            skyForm.getRenderer().render(this.dummy, this.context);
-        }
-
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
     }
 

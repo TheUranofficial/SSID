@@ -3,15 +3,11 @@ package mchorse.bbs;
 import mchorse.bbs.audio.SoundManager;
 import mchorse.bbs.bridge.IBridge;
 import mchorse.bbs.core.Engine;
-import mchorse.bbs.cubic.model.ModelManager;
 import mchorse.bbs.events.base.EventBus;
-import mchorse.bbs.events.register.*;
-import mchorse.bbs.forms.FormArchitect;
-import mchorse.bbs.forms.categories.FormCategory;
-import mchorse.bbs.forms.categories.ModelFormCategory;
-import mchorse.bbs.forms.categories.ParticleFormCategory;
-import mchorse.bbs.forms.categories.RecentFormCategory;
-import mchorse.bbs.forms.forms.*;
+import mchorse.bbs.events.register.RegisterCoreEvent;
+import mchorse.bbs.events.register.RegisterFactoriesEvent;
+import mchorse.bbs.events.register.RegisterL10nEvent;
+import mchorse.bbs.events.register.RegisterSettingsEvent;
 import mchorse.bbs.graphics.FramebufferManager;
 import mchorse.bbs.graphics.RenderingContext;
 import mchorse.bbs.graphics.shaders.ShaderManager;
@@ -27,18 +23,17 @@ import mchorse.bbs.resources.packs.InternalAssetsSourcePack;
 import mchorse.bbs.settings.Settings;
 import mchorse.bbs.settings.SettingsBuilder;
 import mchorse.bbs.settings.SettingsManager;
-import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.font.format.UIBaseFontFormat;
 import mchorse.bbs.ui.font.format.UIColorFontFormat;
-import mchorse.bbs.ui.forms.editors.forms.*;
-import mchorse.bbs.ui.tileset.panels.*;
+import mchorse.bbs.ui.tileset.panels.UIModelBlockEach;
+import mchorse.bbs.ui.tileset.panels.UIModelBlockFactory;
+import mchorse.bbs.ui.tileset.panels.UIModelBlockVertical;
+import mchorse.bbs.ui.tileset.panels.UIModelBlockWithCollision;
 import mchorse.bbs.ui.utils.icons.Icon;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.utils.keys.KeybindSettings;
 import mchorse.bbs.ui.world.entities.components.UIBasicEntityComponent;
 import mchorse.bbs.ui.world.entities.components.UIEntityComponent;
-import mchorse.bbs.ui.world.entities.components.UIFormEntityComponent;
-import mchorse.bbs.ui.world.objects.objects.UIPropWorldObject;
 import mchorse.bbs.ui.world.objects.objects.UIWorldObject;
 import mchorse.bbs.utils.factory.MapFactory;
 import mchorse.bbs.voxel.StructureManager;
@@ -50,8 +45,6 @@ import mchorse.bbs.voxel.tilesets.factory.*;
 import mchorse.bbs.world.entities.components.BasicComponent;
 import mchorse.bbs.world.entities.components.CollisionComponent;
 import mchorse.bbs.world.entities.components.Component;
-import mchorse.bbs.world.entities.components.FormComponent;
-import mchorse.bbs.world.objects.PropObject;
 import mchorse.bbs.world.objects.WorldObject;
 
 import java.io.File;
@@ -80,8 +73,6 @@ public class BBS {
 
     /* Foundation services */
     private static SettingsManager configs;
-    private static FormArchitect forms;
-    private static ModelManager models;
     private static RenderingContext render = new RenderingContext();
     private static L10n l10n;
     private static StructureManager structures;
@@ -187,14 +178,6 @@ public class BBS {
         return framebuffers;
     }
 
-    public static FormArchitect getForms() {
-        return forms;
-    }
-
-    public static ModelManager getModels() {
-        return models;
-    }
-
     public static RenderingContext getRender() {
         return render;
     }
@@ -255,11 +238,9 @@ public class BBS {
      */
     public static void registerFoundation() {
         configs = new SettingsManager();
-        models = new ModelManager(provider);
         l10n = new L10n();
         structures = new StructureManager(BBS.getConfigPath("structures"));
 
-        setupForms(forms);
         setupL10n(l10n);
         setupConfigs(configFolder);
     }
@@ -285,36 +266,6 @@ public class BBS {
         configs.modules.put(settings.getId(), settings);
     }
 
-    private static void setupForms(FormArchitect forms) {
-        FormCategory extra = new FormCategory(UIKeys.FORMS_CATEGORIES_EXTRA);
-        BillboardForm billboard = new BillboardForm();
-        LabelForm label = new LabelForm();
-        BlockForm block = new BlockForm();
-        StructureForm structure = new StructureForm();
-        LightForm light = new LightForm();
-        ExtrudedForm extruded = new ExtrudedForm();
-        CameraForm camera = new CameraForm();
-
-        billboard.texture.set(Link.assets("textures/error.png"));
-        extruded.texture.set(Link.assets("textures/error.png"));
-
-        extra.forms.add(billboard);
-        extra.forms.add(label);
-        extra.forms.add(block);
-        extra.forms.add(structure);
-        extra.forms.add(light);
-        extra.forms.add(extruded);
-        extra.forms.add(camera);
-
-        forms.categories.add(new RecentFormCategory());
-        forms.readUserCategories();
-        forms.categories.add(new ModelFormCategory());
-        forms.categories.add(new ParticleFormCategory());
-        forms.categories.add(extra);
-
-        events.post(new RegisterFormsEvent(forms));
-    }
-
     private static void setupL10n(L10n l10n) {
         l10n.registerOne((lang) -> Link.assets("strings/" + lang + ".json"));
 
@@ -326,21 +277,7 @@ public class BBS {
      */
     public static void registerFactories() {
         /* Register world objects */
-        factoryWorldObjects = new MapFactory<WorldObject, Class<? extends UIWorldObject>>()
-            .register(Link.bbs("prop"), PropObject.class, UIPropWorldObject.class);
-
-        /* Register forms */
-        forms = new FormArchitect();
-        forms
-            .register(Link.bbs("billboard"), BillboardForm.class, (f) -> new UIBillboardForm())
-            .register(Link.bbs("label"), LabelForm.class, (f) -> new UILabelForm())
-            .register(Link.bbs("model"), ModelForm.class, (f) -> new UIModelForm())
-            .register(Link.bbs("particle"), ParticleForm.class, (f) -> new UIParticleForm())
-            .register(Link.bbs("block"), BlockForm.class, (f) -> new UIBlockForm())
-            .register(Link.bbs("structure"), StructureForm.class, (f) -> new UIStructureForm())
-            .register(Link.bbs("light"), LightForm.class, (f) -> new UILightForm())
-            .register(Link.bbs("extruded"), ExtrudedForm.class, (f) -> new UIExtrudedForm())
-            .register(Link.bbs("camera"), CameraForm.class, (f) -> new UICameraForm());
+        factoryWorldObjects = new MapFactory<>();
 
         /* Register block models */
         factoryBlockModels = new MapFactory<BlockModelFactory, BlockModelFactoryData>()
@@ -350,8 +287,7 @@ public class BBS {
             .register(Link.bbs("plant"), BlockModelPlant.class, new BlockModelFactoryData(Icons.TREE, UIModelBlockWithCollision::new))
             .register(Link.bbs("crop"), BlockModelCrop.class, new BlockModelFactoryData(Icons.CROPS, UIModelBlockWithCollision::new))
             .register(Link.bbs("slab"), BlockModelSlab.class, new BlockModelFactoryData(Icons.SLAB, UIModelBlockFactory::new))
-            .register(Link.bbs("stair"), BlockModelStair.class, new BlockModelFactoryData(Icons.STAIR, UIModelBlockFactory::new))
-            .register(Link.bbs("combined"), BlockModelCombined.class, new BlockModelFactoryData(Icons.MINIMIZE, UIModelBlockCombined::new));
+            .register(Link.bbs("stair"), BlockModelStair.class, new BlockModelFactoryData(Icons.STAIR, UIModelBlockFactory::new));
 
         /* Register world generators */
         factoryGenerators = new MapFactory<Generator, Void>()
@@ -362,8 +298,7 @@ public class BBS {
         /* Register entity components */
         factoryEntityComponents = new MapFactory<Component, Class<? extends UIEntityComponent>>()
             .register(Link.bbs("basic"), BasicComponent.class, UIBasicEntityComponent.class)
-            .register(Link.bbs("collision"), CollisionComponent.class, null)
-            .register(Link.bbs("form"), FormComponent.class, UIFormEntityComponent.class);
+            .register(Link.bbs("collision"), CollisionComponent.class, null);
 
         /* Register entity components */
         factoryFontFormats = new MapFactory<IFontFormat, Class<? extends UIBaseFontFormat>>()
@@ -385,15 +320,12 @@ public class BBS {
     }
 
     public static void terminate() {
-        forms.writeUserCategories();
-
         vaos.delete();
         shaders.delete();
         textures.delete();
         sounds.delete();
         framebuffers.delete();
 
-        models.delete();
         structures.delete();
     }
 }

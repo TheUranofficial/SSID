@@ -24,9 +24,9 @@ import mchorse.bbs.l10n.L10nUtils;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.resources.packs.ExternalAssetsSourcePack;
 import mchorse.bbs.resources.packs.InternalAssetsSourcePack;
-import mchorse.bbs.settings.values.ValueBoolean;
-import mchorse.bbs.settings.values.ValueInt;
-import mchorse.bbs.settings.values.ValueLanguage;
+import mchorse.bbs.settings.values.numeric.ValueBoolean;
+import mchorse.bbs.settings.values.numeric.ValueInt;
+import mchorse.bbs.settings.values.ui.ValueLanguage;
 import mchorse.bbs.ui.framework.UIBaseMenu;
 import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
 import mchorse.bbs.ui.utils.icons.Icons;
@@ -92,7 +92,6 @@ public class TestEngine extends Engine implements IBridge, IFileDropListener {
 
         this.watchDog = new WatchDog(BBS.getAssetsFolder());
         this.watchDog.register(BBS.getTextures());
-        this.watchDog.register(BBS.getModels());
         this.watchDog.register(BBS.getSounds());
         this.watchDog.register(BBS.getFonts());
         this.watchDog.start();
@@ -243,15 +242,15 @@ public class TestEngine extends Engine implements IBridge, IFileDropListener {
     }
 
     private void registerSettingsCallbacks() {
-        TestSettings.renderFrameRate.postCallback((v) -> this.frameRate = ((ValueInt) v).get());
-        TestSettings.renderVsync.postCallback((v) -> Window.setVSync(((ValueBoolean) v).get()));
-        TestSettings.renderQuality.postCallback((v) -> BBS.getEngine().needsResize());
+        TestSettings.renderFrameRate.postCallback((v, _) -> this.frameRate = ((ValueInt) v).get());
+        TestSettings.renderVsync.postCallback((v, _) -> Window.setVSync(((ValueBoolean) v).get()));
+        TestSettings.renderQuality.postCallback((_, _) -> BBS.getEngine().needsResize());
 
-        BBSSettings.language.postCallback((v) -> {
+        BBSSettings.language.postCallback((value, _) -> {
             this.reloadSupportedLanguages();
-            BBS.getL10n().reload(((ValueLanguage) v).get(), BBS.getProvider());
+            BBS.getL10n().reload(((ValueLanguage) value).get(), BBS.getProvider());
         });
-        BBSSettings.userIntefaceScale.postCallback((ignored) -> BBS.getEngine().needsResize());
+        BBSSettings.userIntefaceScale.postCallback((ignored, _) -> BBS.getEngine().needsResize());
     }
 
     private void reloadSupportedLanguages() {

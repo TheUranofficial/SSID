@@ -5,7 +5,7 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.tooltips.styles.TooltipStyle;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.utils.Direction;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 import java.util.List;
 

@@ -4,43 +4,17 @@ import mchorse.bbs.BBSSettings;
 import mchorse.bbs.game.utils.ContentType;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.UIContext;
-import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
-import mchorse.bbs.ui.framework.elements.overlay.UIStringOverlayPanel;
 import mchorse.bbs.ui.utils.renderers.InputRenderer;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.Interpolation;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public class UIDataUtils {
-    public static void requestNames(ContentType type, Consumer<List<String>> consumer) {
-        consumer.accept(new ArrayList<>(type.getManager().getKeys()));
-    }
-
-    public static void openPicker(UIContext context, ContentType type, String value, Consumer<String> callback) {
-        requestNames(type, (names) ->
-        {
-            clearEmptyFolders(names);
-
-            UIStringOverlayPanel overlay = new UIStringOverlayPanel(type.getPickLabel(), names, callback);
-
-            overlay.set(value);
-            UIOverlay.addOverlay(context, overlay, 0.5F, 0.7F);
-        });
-    }
-
-    private static void clearEmptyFolders(List<String> names) {
-        Iterator<String> it = names.iterator();
-
-        while (it.hasNext()) {
-            if (it.next().endsWith("/")) {
-                it.remove();
-            }
-        }
+    public static void requestNames(ContentType type, Consumer<Collection<String>> consumer) {
+        type.getRepository().requestKeys(consumer);
     }
 
     public static void renderRightClickHere(UIContext context, Area area) {
@@ -48,11 +22,11 @@ public class UIDataUtils {
         double ticks = context.getTickTransition() % 80D;
         double factor = Math.abs(ticks / 80D * 2 - 1F);
 
-        factor = Interpolation.EXP_INOUT.interpolate(0, 1, factor);
+        factor = Interpolations.EXP_INOUT.interpolate(0, 1, factor);
 
-        double factor2 = Interpolations.envelope(ticks, 37, 40, 40, 43);
+        double factor2 = Lerps.envelope(ticks, 37, 40, 40, 43);
 
-        factor2 = Interpolation.CUBIC_OUT.interpolate(0, 1, factor2);
+        factor2 = Interpolations.CUBIC_OUT.interpolate(0, 1, factor2);
 
         int offset = (int) (factor * 70 + factor2 * 2);
 

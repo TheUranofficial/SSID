@@ -3,8 +3,8 @@ package mchorse.bbs.ui.utils;
 import mchorse.bbs.BBSSettings;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.utils.Batcher2D;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 
 /**
  * Scrollable area

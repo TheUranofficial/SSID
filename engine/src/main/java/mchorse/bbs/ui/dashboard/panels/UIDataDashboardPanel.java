@@ -1,26 +1,32 @@
 package mchorse.bbs.ui.dashboard.panels;
 
+import mchorse.bbs.BBSSettings;
 import mchorse.bbs.game.utils.ContentType;
-import mchorse.bbs.settings.values.ValueGroup;
+import mchorse.bbs.settings.values.core.ValueGroup;
 import mchorse.bbs.ui.Keys;
+import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.dashboard.UIDashboard;
 import mchorse.bbs.ui.dashboard.panels.overlay.UICRUDOverlayPanel;
 import mchorse.bbs.ui.dashboard.panels.overlay.UIDataOverlayPanel;
 import mchorse.bbs.ui.framework.UIContext;
-import mchorse.bbs.ui.framework.elements.UIScrollView;
+import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
-import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.UIDataUtils;
 import mchorse.bbs.ui.utils.icons.Icons;
-import mchorse.bbs.utils.math.Interpolation;
+import mchorse.bbs.utils.Timer;
+import mchorse.bbs.utils.interps.Interpolations;
 
-import java.util.List;
+import java.util.Collection;
 
 public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDDashboardPanel {
     public UIIcon saveIcon;
 
     protected T data;
     protected boolean save;
+
+    private boolean openedBefore;
+
+    private Timer savingTimer = new Timer(0);
 
     public UIDataDashboardPanel(UIDashboard dashboard) {
         super(dashboard);
@@ -29,7 +35,12 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
 
         this.iconBar.add(this.saveIcon);
 
-        this.keys().register(Keys.SAVE, this.saveIcon::clickItself).active(() -> this.data != null);
+        /* A separate element is needed to make save keybind a more priority than other keybinds, because
+         * the keybinds are processed afterwards. */
+        UIElement savePlease = new UIElement().noCulling();
+
+        savePlease.keys().register(Keys.SAVE, this.saveIcon::clickItself).active(() -> this.data != null);
+        this.add(savePlease);
     }
 
     public T getData() {
@@ -53,7 +64,7 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
     }
 
     public void requestData(String id) {
-        this.fill((T) this.getType().getManager().load(id));
+        this.getType().getRepository().load(id, data -> this.fill((T) data));
     }
 
     /* Data population */
@@ -66,39 +77,32 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
         this.overlay.dupe.setEnabled(data != null);
         this.overlay.rename.setEnabled(data != null);
         this.overlay.remove.setEnabled(data != null);
+
+        this.fillData(data);
+
+        this.savingTimer.mark(BBSSettings.editorPeriodicSave.get());
     }
+
+    protected abstract void fillData(T data);
 
     public void fillDefaultData(T data) {
     }
 
-    public void fillNames(List<String> names) {
+    public void fillNames(Collection<String> names) {
         String value = this.data == null ? null : this.data.getId();
 
         this.overlay.namesList.fill(names);
         this.overlay.namesList.setCurrentFile(value);
     }
 
-    protected UIScrollView createScrollEditor() {
-        UIScrollView scrollEditor = UI.scrollView(5, 10);
-
-        scrollEditor.relative(this.editor).full();
-
-        return scrollEditor;
-    }
-
     @Override
-    public void open() {
-        super.open();
+    public void resize() {
+        super.resize();
 
-        this.save = true;
-    }
+        if (!this.openedBefore) {
+            this.openOverlay.resize();
 
-    @Override
-    public void appear() {
-        super.appear();
-
-        if (this.data != null) {
-            this.requestData(this.data.getId());
+            this.openedBefore = true;
         }
     }
 
@@ -108,11 +112,13 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
     }
 
     @Override
-    public void disappear() {
-        super.disappear();
+    public void open() {
+        super.open();
 
-        if (this.save) {
-            this.save();
+        int seconds = BBSSettings.editorPeriodicSave.get();
+
+        if (seconds > 0) {
+            this.savingTimer.mark(seconds * 1000L);
         }
     }
 
@@ -120,9 +126,7 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
     public void close() {
         super.close();
 
-        if (this.save) {
-            this.save();
-        }
+        this.save();
     }
 
     public void save() {
@@ -133,7 +137,7 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
 
     public void forceSave() {
         this.preSave();
-        this.getType().getManager().save(this.data.getId(), this.data.toData().asMap());
+        this.getType().getRepository().save(this.data.getId(), this.data.toData().asMap());
     }
 
     protected void preSave() {
@@ -145,7 +149,7 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
             double ticks = context.getTickTransition() % 15D;
             double factor = Math.abs(ticks / 15D * 2 - 1F);
 
-            int x = this.openOverlay.area.x - 10 + (int) Interpolation.SINE_INOUT.interpolate(-10, 0, factor);
+            int x = this.openOverlay.area.x - 10 + (int) Interpolations.SINE_INOUT.interpolate(-10, 0, factor);
             int y = this.openOverlay.area.my();
 
             context.batcher.icon(Icons.ARROW_RIGHT, x, y, 0.5F, 0.5F);
@@ -155,6 +159,25 @@ public abstract class UIDataDashboardPanel<T extends ValueGroup> extends UICRUDD
 
         if (!this.editor.isEnabled() && this.data != null) {
             this.renderLockedArea(context);
+        }
+
+        this.checkPeriodicSave(context);
+    }
+
+    private void checkPeriodicSave(UIContext context) {
+        if (this.data == null) {
+            return;
+        }
+
+        int seconds = BBSSettings.editorPeriodicSave.get();
+
+        if (seconds > 0) {
+            if (this.savingTimer.check()) {
+                this.savingTimer.mark(seconds * 1000L);
+
+                this.save();
+                context.notifySuccess(UIKeys.PANELS_SAVED_NOTIFICATION.format(this.data.getId()));
+            }
         }
     }
 }

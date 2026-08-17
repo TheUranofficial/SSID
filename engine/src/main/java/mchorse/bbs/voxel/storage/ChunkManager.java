@@ -2,7 +2,7 @@ package mchorse.bbs.voxel.storage;
 
 import mchorse.bbs.core.IDisposable;
 import mchorse.bbs.graphics.RenderingContext;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.voxel.IBlockAccessor;
 import mchorse.bbs.voxel.blocks.IBlockVariant;

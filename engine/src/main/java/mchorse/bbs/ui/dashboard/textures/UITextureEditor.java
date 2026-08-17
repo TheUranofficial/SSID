@@ -13,7 +13,6 @@ import mchorse.bbs.ui.framework.elements.overlay.UIPromptOverlayPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.PNGEncoder;
-import mchorse.bbs.utils.colors.Colors;
 import mchorse.bbs.utils.resources.Pixels;
 
 import java.io.File;
@@ -76,7 +75,7 @@ public class UITextureEditor extends UIPixelsEditor {
         Link link = Link.create(path);
 
         if (!link.source.equals("assets") || !link.path.endsWith(".png")) {
-            this.getContext().notify(UIKeys.TEXTURES_SAVE_WRONG_PATH, Colors.RED | Colors.A100);
+            this.getContext().notifyError(UIKeys.TEXTURES_SAVE_WRONG_PATH);
 
             return;
         }
@@ -105,7 +104,7 @@ public class UITextureEditor extends UIPixelsEditor {
         } catch (Exception e) {
             e.printStackTrace();
 
-            this.getContext().notify(UIKeys.TEXTURES_EXPORT_OVERLAY_ERROR.format(file.getName()), Colors.RED | Colors.A100);
+            this.getContext().notifyError(UIKeys.TEXTURES_EXPORT_OVERLAY_ERROR.format(file.getName()));
         }
     }
 

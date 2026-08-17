@@ -9,7 +9,7 @@ import mchorse.bbs.math.molang.expressions.MolangExpression;
 import mchorse.bbs.math.molang.expressions.MolangValue;
 import mchorse.bbs.particles.ParticleParser;
 import mchorse.bbs.particles.emitter.Particle;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;

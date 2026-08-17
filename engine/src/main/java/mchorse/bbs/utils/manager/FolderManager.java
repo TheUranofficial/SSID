@@ -1,6 +1,6 @@
 package mchorse.bbs.utils.manager;
 
-import mchorse.bbs.settings.values.ValueGroup;
+import mchorse.bbs.settings.values.core.ValueGroup;
 
 import java.io.File;
 import java.util.Collection;

@@ -12,7 +12,7 @@ import mchorse.bbs.ui.framework.elements.overlay.UIConfirmOverlayPanel;
 import mchorse.bbs.ui.framework.elements.overlay.UIOverlay;
 import mchorse.bbs.ui.framework.elements.overlay.UIOverlayPanel;
 import mchorse.bbs.ui.utils.icons.Icons;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.tilesets.BlockSet;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
 import mchorse.bbs.voxel.tilesets.factory.BlockModelFactoryData;

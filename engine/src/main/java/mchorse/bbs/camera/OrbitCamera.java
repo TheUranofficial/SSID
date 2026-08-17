@@ -5,8 +5,8 @@ import mchorse.bbs.graphics.window.Window;
 import mchorse.bbs.ui.Keys;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.keys.KeyCombo;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.joml.Matrices;
-import mchorse.bbs.utils.math.MathUtils;
 import org.joml.*;
 import org.lwjgl.glfw.GLFW;
 

@@ -2,8 +2,6 @@ package mchorse.bbs.ui.world.settings;
 
 import mchorse.bbs.bridge.IBridgeCamera;
 import mchorse.bbs.ui.UIKeys;
-import mchorse.bbs.ui.forms.UIFormPalette;
-import mchorse.bbs.ui.forms.UINestedEdit;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UIColor;
@@ -21,7 +19,6 @@ public class UIWorldSettings extends UIElement {
     public UIToggle terrain;
     public UIToggle sky;
     public UIToggle fog;
-    public UINestedEdit pickSkyForm;
     public UIColor lightmap00;
     public UIColor lightmap10;
     public UITrackpad dayCycle;
@@ -53,16 +50,6 @@ public class UIWorldSettings extends UIElement {
         this.sky.setValue(settings.sky);
         this.fog = new UIToggle(UIKeys.WORLD_SETTINGS_FOG, (b) -> this.settings.fog = b.getValue());
         this.fog.setValue(settings.fog);
-
-        this.pickSkyForm = new UINestedEdit((editing) ->
-        {
-            UIFormPalette.open(this.getParentContainer(), editing, this.settings.skyForm, (form) ->
-            {
-                this.settings.skyForm = form;
-                this.pickSkyForm.setForm(form);
-            });
-        });
-        this.pickSkyForm.setForm(settings.skyForm);
 
         this.lightmap00 = new UIColor((c) -> this.settings.lightmap00.set(c, false));
         this.lightmap00.tooltip(UIKeys.WORLD_SETTINGS_LIGHTMAP0);
@@ -103,17 +90,14 @@ public class UIWorldSettings extends UIElement {
         this.shadingDirection = new UIVector3d((v) -> this.settings.shadingDirection.set(v));
         this.shadingDirection.fill(this.settings.shadingDirection);
         this.shadingDirection.context((menu) ->
-        {
-            menu.action(Icons.FRUSTUM, UIKeys.WORLD_SETTINGS_CONTEXT_SHADING_FROM_CAMERA, () ->
-            {
+            menu.action(Icons.FRUSTUM, UIKeys.WORLD_SETTINGS_CONTEXT_SHADING_FROM_CAMERA, () -> {
                 Vector3f direction = this.getContext().menu.bridge.get(IBridgeCamera.class).getCamera().getLookDirection();
 
                 this.settings.shadingDirection.set(direction.normalize());
                 this.shadingDirection.fill(direction);
-            });
-        });
+            })
+        );
 
-        this.add(UI.label(UIKeys.WORLD_SETTINGS_PICK_SKYBOX).background(), this.pickSkyForm);
         this.add(this.terrain.marginTop(8), this.sky, this.fog, UI.row(this.lightmap00, this.lightmap10));
         this.add(UI.label(UIKeys.WORLD_SETTINGS_DAY_CYCLE_YAW).marginTop(8), this.dayCycle, this.dayYaw);
         this.add(

@@ -1,8 +1,8 @@
 package mchorse.bbs.voxel.generation;
 
 import mchorse.bbs.settings.values.ValueBlockLink;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.voxel.storage.ChunkManager;
 import mchorse.bbs.voxel.storage.data.ChunkDisplay;
@@ -58,9 +58,9 @@ public class GeneratorDefault extends GeneratorFlat {
                 double a01 = this.random(random, this.seed + (fx) * 40 - (fz + 1) * 100);
                 double a11 = this.random(random, this.seed + (fx + 1) * 40 - (fz + 1) * 100);
 
-                double amplitude = Interpolations.bilerp((x + (xx - fx * 32)) / 32F, (z + (zz - fz * 32)) / 32F, a00, a10, a01, a11) * 48;
+                double amplitude = Lerps.bilerp((x + (xx - fx * 32)) / 32F, (z + (zz - fz * 32)) / 32F, a00, a10, a01, a11) * 48;
 
-                int y = (int) (Interpolations.bilerp(x / (float) s, z / (float) s, c00, c10, c01, c11) * amplitude) - 30;
+                int y = (int) (Lerps.bilerp(x / (float) s, z / (float) s, c00, c10, c01, c11) * amplitude) - 30;
                 int diff = y - yy;
 
                 for (int i = 0; i < s && i < diff; i++) {

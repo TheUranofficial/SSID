@@ -12,8 +12,8 @@ import mchorse.bbs.ui.framework.elements.utils.UICanvasEditor;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.UI;
 import mchorse.bbs.ui.utils.icons.Icons;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector2i;
 
 public class UIUVEditor extends UICanvasEditor {

@@ -4,8 +4,8 @@ import mchorse.bbs.camera.Camera;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.interps.Lerps;
 
 public class Position implements IMapSerializable {
     public static final Position ZERO = new Position();
@@ -57,13 +57,13 @@ public class Position implements IMapSerializable {
     }
 
     public void interpolate(Position position, float factor) {
-        this.point.x = Interpolations.lerp(this.point.x, position.point.x, factor);
-        this.point.y = Interpolations.lerp(this.point.y, position.point.y, factor);
-        this.point.z = Interpolations.lerp(this.point.z, position.point.z, factor);
-        this.angle.yaw = Interpolations.lerp(this.angle.yaw, position.angle.yaw, factor);
-        this.angle.pitch = Interpolations.lerp(this.angle.pitch, position.angle.pitch, factor);
-        this.angle.roll = Interpolations.lerp(this.angle.roll, position.angle.roll, factor);
-        this.angle.fov = Interpolations.lerp(this.angle.fov, position.angle.fov, factor);
+        this.point.x = Lerps.lerp(this.point.x, position.point.x, factor);
+        this.point.y = Lerps.lerp(this.point.y, position.point.y, factor);
+        this.point.z = Lerps.lerp(this.point.z, position.point.z, factor);
+        this.angle.yaw = Lerps.lerp(this.angle.yaw, position.angle.yaw, factor);
+        this.angle.pitch = Lerps.lerp(this.angle.pitch, position.angle.pitch, factor);
+        this.angle.roll = Lerps.lerp(this.angle.roll, position.angle.roll, factor);
+        this.angle.fov = Lerps.lerp(this.angle.fov, position.angle.fov, factor);
     }
 
     public Position copy() {

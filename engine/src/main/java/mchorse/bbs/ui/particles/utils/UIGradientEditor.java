@@ -11,9 +11,9 @@ import mchorse.bbs.ui.framework.elements.input.UIColor;
 import mchorse.bbs.ui.particles.sections.UIParticleSchemeSection;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.icons.Icons;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Color;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 
 public class UIGradientEditor extends UIElement {
     private UIParticleSchemeSection section;
@@ -35,8 +35,7 @@ public class UIGradientEditor extends UIElement {
         this.section = section;
         this.color = color;
 
-        this.context((menu) ->
-        {
+        this.context((menu) -> {
             menu.action(Icons.ADD, UIKeys.SNOWSTORM_LIGHTING_CONTEXT_ADD_STOP, this::addColorStop);
 
             if (this.gradient.stops.size() > 1) {
@@ -85,7 +84,7 @@ public class UIGradientEditor extends UIElement {
             this.gradient.stops.add(new Gradient.ColorStop(0, new Solid()));
         }
 
-        this.fillStop(this.gradient.stops.get(0));
+        this.fillStop(this.gradient.stops.getFirst());
         this.color.setColor(this.fillColor(this.current.color).getARGBColor());
     }
 
@@ -173,7 +172,7 @@ public class UIGradientEditor extends UIElement {
 
         context.batcher.iconArea(Icons.CHECKBOARD, this.a.x, this.a.y, this.a.w, this.a.h);
 
-        Gradient.ColorStop first = this.gradient.stops.get(0);
+        Gradient.ColorStop first = this.gradient.stops.getFirst();
 
         if (first.stop > 0) {
             int x1 = this.a.x(first.stop / this.gradient.range);

@@ -6,6 +6,20 @@ import org.joml.Vector4d;
 import org.joml.Vector4f;
 
 public class StringUtils {
+    public static boolean isInteger(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (Character.isDigit(c) || (i == 0 && c == '-')) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
     public static String combinePaths(String a, String b) {
         return combinePaths(a, b, "/");
     }

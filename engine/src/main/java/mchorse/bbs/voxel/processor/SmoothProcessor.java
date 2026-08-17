@@ -1,6 +1,6 @@
 package mchorse.bbs.voxel.processor;
 
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.voxel.undo.ChunkProxy;
 import org.joml.Vector3i;

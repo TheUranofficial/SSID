@@ -11,7 +11,7 @@ import mchorse.bbs.particles.components.IComponentParticleRender;
 import mchorse.bbs.particles.components.ParticleComponentBase;
 import mchorse.bbs.particles.emitter.Particle;
 import mchorse.bbs.particles.emitter.ParticleEmitter;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 import org.joml.*;
 
 import java.lang.Math;
@@ -50,7 +50,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
 
     private Matrix4f transform = new Matrix4f();
     private Matrix4f rotation = new Matrix4f();
-    private Vector4f[] vertices = new Vector4f[]{
+    private Vector4f[] vertices = new Vector4f[] {
         new Vector4f(0, 0, 0, 1),
         new Vector4f(0, 0, 0, 1),
         new Vector4f(0, 0, 0, 1),
@@ -236,10 +236,10 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.calculateUVs(particle, emitter, transition);
 
         /* Render the particle */
-        double px = Interpolations.lerp(particle.prevPosition.x, particle.position.x, transition);
-        double py = Interpolations.lerp(particle.prevPosition.y, particle.position.y, transition);
-        double pz = Interpolations.lerp(particle.prevPosition.z, particle.position.z, transition);
-        float angle = Interpolations.lerp(particle.prevRotation, particle.rotation, transition);
+        double px = Lerps.lerp(particle.prevPosition.x, particle.position.x, transition);
+        double py = Lerps.lerp(particle.prevPosition.y, particle.position.y, transition);
+        double pz = Lerps.lerp(particle.prevPosition.z, particle.position.z, transition);
+        float angle = Lerps.lerp(particle.prevRotation, particle.rotation, transition);
 
         if (particle.relativePosition && particle.relativeRotation) {
             this.vector.set((float) px, (float) py, (float) pz);
@@ -335,7 +335,7 @@ public class ParticleComponentAppearanceBillboard extends ParticleComponentBase 
         this.calculateUVs(particle, null, transition);
 
         this.w = this.h = 0.5F;
-        float angle = Interpolations.lerp(particle.prevRotation, particle.rotation, transition);
+        float angle = Lerps.lerp(particle.prevRotation, particle.rotation, transition);
 
         /* Calculate the geometry for billboards using cool matrix math */
         this.vertices[0].set(-this.w / 2, -this.h / 2, 0, 1);

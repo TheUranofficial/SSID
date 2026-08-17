@@ -7,7 +7,7 @@ import mchorse.bbs.math.molang.MolangParser;
 import mchorse.bbs.particles.components.*;
 import mchorse.bbs.particles.components.motion.ParticleComponentInitialSpeed;
 import mchorse.bbs.resources.Link;
-import mchorse.bbs.settings.values.ValueGroup;
+import mchorse.bbs.settings.values.core.ValueGroup;
 
 import java.util.*;
 

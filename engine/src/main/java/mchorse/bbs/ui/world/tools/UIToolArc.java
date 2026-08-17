@@ -7,7 +7,7 @@ import mchorse.bbs.ui.framework.elements.buttons.UIIcon;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.world.UIWorldEditorPanel;
 import mchorse.bbs.utils.Direction;
-import mchorse.bbs.utils.math.rasterizers.QuadraticBezierRasterizer;
+import mchorse.bbs.utils.interps.rasterizers.QuadraticBezierRasterizer;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import org.joml.Vector2d;
 import org.joml.Vector2i;

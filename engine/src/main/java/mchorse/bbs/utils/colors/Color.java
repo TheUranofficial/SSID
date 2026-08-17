@@ -1,7 +1,7 @@
 package mchorse.bbs.utils.colors;
 
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.StringUtils;
-import mchorse.bbs.utils.math.MathUtils;
 
 public class Color {
     public float r;

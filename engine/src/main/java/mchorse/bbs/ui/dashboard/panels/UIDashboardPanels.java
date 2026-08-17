@@ -42,8 +42,7 @@ public class UIDashboardPanels extends UIElement {
         this.panelButtons.relative(this.pinned).x(1F, 5).h(20).wTo(this.taskBar.area, 1F).column(0).scroll();
         this.panelButtons.scroll.cancelScrolling().noScrollbar();
         this.panelButtons.scroll.scrollSpeed = 5;
-        this.panelButtons.preRender((context) ->
-        {
+        this.panelButtons.preRender((context) -> {
             for (int i = 0, c = this.panels.size(); i < c; i++) {
                 if (this.panel == this.panels.get(i)) {
                     renderHighlight(context.batcher, ((UIIcon) this.panelButtons.getChildren().get(i)).area);
@@ -96,9 +95,9 @@ public class UIDashboardPanels extends UIElement {
         if (this.panel != null) {
             this.setPanelPlacement(panel);
 
+            this.prepend(this.panel);
             this.panel.appear();
             this.panel.resize();
-            this.prepend(this.panel);
         }
     }
 

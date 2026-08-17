@@ -1,7 +1,7 @@
 package mchorse.bbs.ui.framework.elements.input.text.utils;
 
 import mchorse.bbs.graphics.text.FontRenderer;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;

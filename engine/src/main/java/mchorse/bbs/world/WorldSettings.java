@@ -3,8 +3,6 @@ package mchorse.bbs.world;
 import mchorse.bbs.data.DataStorageUtils;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.forms.FormUtils;
-import mchorse.bbs.forms.forms.Form;
 import mchorse.bbs.utils.colors.Color;
 import org.joml.Matrix3f;
 import org.joml.Vector3d;
@@ -15,7 +13,6 @@ public class WorldSettings implements IMapSerializable {
     public boolean sky = true;
     public boolean fog = true;
 
-    public Form skyForm;
     public Color lightmap00 = new Color(1F, 1F, 1F);
     public Color lightmap10 = new Color(1F, 0F, 0F);
     public final Vector3f shadingDirection = new Vector3f(0, -1, 0);
@@ -35,10 +32,6 @@ public class WorldSettings implements IMapSerializable {
         this.terrain = data.getBool("terrain", this.terrain);
         this.sky = data.getBool("sky", this.sky);
         this.fog = data.getBool("fog", this.fog);
-
-        if (data.has("skyForm")) {
-            this.skyForm = FormUtils.fromData(data.getMap("skyForm"));
-        }
 
         this.lightmap00.set(data.getInt("lightmap00", this.lightmap00.getRGBColor()), false);
         this.lightmap10.set(data.getInt("lightmap10", this.lightmap10.getRGBColor()), false);
@@ -60,10 +53,6 @@ public class WorldSettings implements IMapSerializable {
         data.putBool("terrain", this.terrain);
         data.putBool("sky", this.sky);
         data.putBool("fog", this.fog);
-
-        if (this.skyForm != null) {
-            data.put("skyForm", FormUtils.toData(this.skyForm));
-        }
 
         data.putInt("lightmap00", this.lightmap00.getRGBColor());
         data.putInt("lightmap10", this.lightmap10.getRGBColor());

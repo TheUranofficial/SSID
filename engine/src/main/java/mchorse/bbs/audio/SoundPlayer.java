@@ -1,7 +1,7 @@
 package mchorse.bbs.audio;
 
 import mchorse.bbs.core.IDisposable;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import org.joml.Vector3f;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;

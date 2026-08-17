@@ -1,7 +1,7 @@
 package mchorse.bbs.voxel.generation;
 
 import mchorse.bbs.settings.values.ValueBlockLink;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.voxel.storage.ChunkManager;
 import mchorse.bbs.voxel.storage.data.ChunkDisplay;

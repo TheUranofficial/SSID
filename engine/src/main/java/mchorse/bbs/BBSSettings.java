@@ -1,10 +1,16 @@
 package mchorse.bbs;
 
 import mchorse.bbs.settings.SettingsBuilder;
-import mchorse.bbs.settings.values.*;
+import mchorse.bbs.settings.values.core.ValueLink;
+import mchorse.bbs.settings.values.core.ValueString;
+import mchorse.bbs.settings.values.numeric.ValueBoolean;
+import mchorse.bbs.settings.values.numeric.ValueFloat;
+import mchorse.bbs.settings.values.numeric.ValueInt;
+import mchorse.bbs.settings.values.ui.ValueColors;
+import mchorse.bbs.settings.values.ui.ValueLanguage;
 import mchorse.bbs.ui.UIKeys;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 
 public class BBSSettings {
     public static ValueColors favoriteColors;
@@ -17,7 +23,6 @@ public class BBSSettings {
     public static ValueBoolean hsvColorPicker;
     public static ValueBoolean forceQwerty;
 
-    /* TODO: hide system cursor */
     public static ValueBoolean enableCursorRendering;
     public static ValueBoolean enableMouseButtonRendering;
     public static ValueBoolean enableKeystrokeRendering;
@@ -47,6 +52,8 @@ public class BBSSettings {
     public static ValueBoolean editorCenterLines;
     public static ValueBoolean editorCrosshair;
     public static ValueBoolean editorSeconds;
+    public static ValueInt editorPeriodicSave;
+    public static ValueBoolean editorMinutesBackup;
 
     public static ValueInt nodePulseBackgroundColor;
     public static ValueBoolean nodePulseBackgroundPrimaryColor;
@@ -65,8 +72,6 @@ public class BBSSettings {
     public static ValueBoolean audioWaveformFilename;
     public static ValueBoolean audioWaveformTime;
 
-    public static ValueString elevenLabsToken;
-
     public static int primaryColor() {
         return primaryColor(Colors.A50);
     }
@@ -83,10 +88,6 @@ public class BBSSettings {
         }
 
         return scale;
-    }
-
-    public static int getDefaultDuration() {
-        return duration == null ? 30 : duration.get();
     }
 
     public static int transform(int value) {
@@ -151,6 +152,8 @@ public class BBSSettings {
         editorCenterLines = builder.getBoolean("center_lines", false);
         editorCrosshair = builder.getBoolean("crosshair", false);
         editorSeconds = builder.getBoolean("seconds", false);
+        editorPeriodicSave = builder.getInt("periodic_save", 60, 0, 3600);
+        editorMinutesBackup = builder.getBoolean("minutes_backup", true);
 
         nodePulseBackgroundColor = builder.category("gui").getInt("pulse_background_color", 0).color();
         nodePulseBackgroundPrimaryColor = builder.getBoolean("pulse_background_primary_color", false);

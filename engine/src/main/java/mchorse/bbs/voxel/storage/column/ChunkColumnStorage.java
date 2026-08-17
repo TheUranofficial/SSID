@@ -1,6 +1,6 @@
 package mchorse.bbs.voxel.storage.column;
 
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.storage.ChunkManager;
 import mchorse.bbs.voxel.storage.ChunkStorage;
 import mchorse.bbs.voxel.storage.data.ChunkCell;

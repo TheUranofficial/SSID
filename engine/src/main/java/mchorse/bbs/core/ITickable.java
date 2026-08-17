@@ -8,5 +8,5 @@ public interface ITickable {
      * This method should be responsible for updating some state from
      * the main logic loop
      */
-    public void update();
+    void update();
 }

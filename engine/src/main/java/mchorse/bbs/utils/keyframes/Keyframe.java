@@ -3,163 +3,165 @@ package mchorse.bbs.utils.keyframes;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.settings.values.base.BaseValue;
+import mchorse.bbs.utils.colors.Color;
+import mchorse.bbs.utils.interps.Interpolation;
+import mchorse.bbs.utils.interps.Interpolations;
+import mchorse.bbs.utils.keyframes.factories.IKeyframeFactory;
 
-public class Keyframe extends BaseValue {
-    public Keyframe prev;
-    public Keyframe next;
+import java.util.Objects;
 
-    private long tick;
-    private double value;
+public class Keyframe<T> extends BaseValue {
+    private float tick;
+    private T value;
 
-    private KeyframeInterpolation interp = KeyframeInterpolation.LINEAR;
-    private KeyframeEasing easing = KeyframeEasing.IN;
+    public float lx = 5;
+    public float ly;
+    public float rx = 5;
+    public float ry;
 
-    private float rx = 5;
-    private float ry;
-    private float lx = 5;
-    private float ly;
+    private KeyframeShape shape = KeyframeShape.SQUARE;
+    private Color color;
 
-    public Keyframe(String id, long tick, double value) {
-        this(id);
+    /**
+     * Forced duration that would be used instead of the difference
+     * between two keyframes, if not 0
+     */
+    private float duration;
+    private final Interpolation interp = new Interpolation("interp", Interpolations.MAP);
+
+    private final IKeyframeFactory<T> factory;
+
+    public Keyframe(String id, IKeyframeFactory<T> factory, float tick, T value) {
+        this(id, factory);
 
         this.tick = tick;
         this.value = value;
     }
 
-    public Keyframe(String id) {
+    public Keyframe(String id, IKeyframeFactory<T> factory) {
         super(id);
 
-        this.prev = this;
-        this.next = this;
+        this.factory = factory;
     }
 
-    public long getTick() {
+    public IKeyframeFactory<T> getFactory() {
+        return this.factory;
+    }
+
+    public float getTick() {
         return this.tick;
     }
 
-    public void setTick(long tick) {
-        this.preNotifyParent();
-        this.tick = tick;
-        this.postNotifyParent();
+    public void setTick(float tick) {
+        this.setTick(tick, false);
     }
 
-    public double getValue() {
+    public void setTick(float tick, boolean dirty) {
+        if (dirty) this.preNotify();
+
+        this.tick = tick;
+
+        if (dirty) this.postNotify();
+    }
+
+    public float getDuration() {
+        return this.duration;
+    }
+
+    public void setDuration(float duration) {
+        this.preNotify();
+        this.duration = Math.max(0, duration);
+        this.postNotify();
+    }
+
+    public T getValue() {
         return this.value;
     }
 
-    public void setValue(double value) {
-        this.preNotifyParent();
-        this.value = value;
-        this.postNotifyParent();
+    public double getY(int index) {
+        return this.factory.getY(this.value);
     }
 
-    public KeyframeInterpolation getInterpolation() {
+    public void setValue(T value) {
+        this.setValue(value, false);
+    }
+
+    public void setValue(T value, boolean dirty) {
+        if (dirty) this.preNotify();
+
+        this.value = value;
+
+        if (dirty) this.postNotify();
+    }
+
+    public Interpolation getInterpolation() {
         return this.interp;
     }
 
-    public void setInterpolation(KeyframeInterpolation interp) {
-        this.preNotifyParent();
-        this.interp = interp;
-        this.postNotifyParent();
+    public KeyframeShape getShape() {
+        return this.shape;
     }
 
-    public void setInterpolation(KeyframeInterpolation interp, KeyframeEasing easing) {
-        this.preNotifyParent();
-        this.interp = interp;
-        this.easing = easing;
-        this.postNotifyParent();
+    public void setShape(KeyframeShape shape) {
+        this.preNotify();
+        this.shape = shape;
+        this.postNotify();
     }
 
-    public KeyframeEasing getEasing() {
-        return this.easing;
+    public Color getColor() {
+        return this.color;
     }
 
-    public void setEasing(KeyframeEasing easing) {
-        this.preNotifyParent();
-        this.easing = easing;
-        this.postNotifyParent();
+    public void setColor(Color color) {
+        this.preNotify();
+        this.color = color;
+        this.postNotify();
     }
 
-    public float getRx() {
-        return this.rx;
-    }
-
-    public void setRx(float rx) {
-        this.preNotifyParent();
-        this.rx = rx;
-        this.postNotifyParent();
-    }
-
-    public float getRy() {
-        return this.ry;
-    }
-
-    public void setRy(float ry) {
-        this.preNotifyParent();
-        this.ry = ry;
-        this.postNotifyParent();
-    }
-
-    public float getLx() {
-        return this.lx;
-    }
-
-    public void setLx(float lx) {
-        this.preNotifyParent();
-        this.lx = lx;
-        this.postNotifyParent();
-    }
-
-    public float getLy() {
-        return this.ly;
-    }
-
-    public void setLy(float ly) {
-        this.preNotifyParent();
-        this.ly = ly;
-        this.postNotifyParent();
-    }
-
-    public double interpolateTicks(Keyframe frame, double ticks) {
-        return this.interp.interpolate(this, frame, (ticks - this.tick) / (frame.tick - this.tick));
-    }
-
-    public double interpolate(Keyframe frame, double x) {
-        return this.interp.interpolate(this, frame, x);
-    }
-
-    public Keyframe copy() {
-        Keyframe frame = new Keyframe("", this.tick, this.value);
-
-        frame.copy(this);
-
-        return frame;
-    }
-
-    public void copy(Keyframe keyframe) {
+    public void copy(Keyframe<T> keyframe) {
         this.tick = keyframe.tick;
-        this.value = keyframe.value;
-        this.interp = keyframe.interp;
-        this.easing = keyframe.easing;
-        this.lx = keyframe.lx;
-        this.ly = keyframe.ly;
-        this.rx = keyframe.rx;
-        this.ry = keyframe.ry;
+        this.duration = keyframe.duration;
+        this.value = this.factory.copy(keyframe.value);
+        this.interp.copy(keyframe.interp);
+        this.shape = keyframe.shape;
+        this.color = keyframe.color;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+
+        if (obj instanceof Keyframe<?> kf) {
+            return this.tick == kf.tick
+                && Objects.equals(this.value, kf.value)
+                && this.lx == kf.lx
+                && this.ly == kf.ly
+                && this.rx == kf.rx
+                && this.ry == kf.ry
+                && this.duration == kf.duration
+                && Objects.equals(this.interp, kf.interp);
+        }
+
+        return false;
     }
 
     @Override
     public BaseType toData() {
         MapType data = new MapType();
 
-        data.putLong("tick", this.tick);
-        data.putDouble("value", this.value);
+        data.putFloat("tick", this.tick);
+        data.put("value", this.factory.toData(this.value));
 
-        if (this.interp != KeyframeInterpolation.LINEAR) data.putInt("interp", this.interp.ordinal());
-        if (this.easing != KeyframeEasing.IN) data.putInt("easing", this.easing.ordinal());
-        if (this.rx != 5) data.putFloat("rx", this.rx);
-        if (this.ry != 0) data.putFloat("ry", this.ry);
-        if (this.lx != 5) data.putFloat("lx", this.lx);
-        if (this.ly != 0) data.putFloat("ly", this.ly);
+        if (this.duration != 0F) data.putFloat("duration", this.duration);
+        if (this.interp.getInterp() != Interpolations.LINEAR) data.put("interp", this.interp.toData());
+        if (this.lx != 5F) data.putFloat("lx", this.lx);
+        if (this.ly != 0F) data.putFloat("ly", this.ly);
+        if (this.rx != 5F) data.putFloat("rx", this.rx);
+        if (this.ry != 0F) data.putFloat("ry", this.ry);
+        if (this.color != null) data.putInt("color", this.color.getRGBColor());
+        if (this.shape != KeyframeShape.SQUARE) data.putString("shape", this.shape.toString().toUpperCase());
 
         return data;
     }
@@ -172,13 +174,24 @@ public class Keyframe extends BaseValue {
 
         MapType map = data.asMap();
 
-        if (map.has("tick")) this.tick = map.getLong("tick");
-        if (map.has("value")) this.value = map.getDouble("value");
-        if (map.has("interp")) this.interp = KeyframeInterpolation.values()[map.getInt("interp")];
-        if (map.has("easing")) this.easing = KeyframeEasing.values()[map.getInt("easing")];
-        if (map.has("rx")) this.rx = map.getFloat("rx");
-        if (map.has("ry")) this.ry = map.getFloat("ry");
+        this.shape = KeyframeShape.SQUARE;
+        this.color = null;
+
+        if (map.has("tick")) this.tick = map.getFloat("tick");
+        if (map.has("duration")) this.duration = map.getFloat("duration");
+        if (map.has("value")) this.value = this.factory.fromData(map.get("value"));
+        if (map.has("interp")) this.interp.fromData(map.get("interp"));
         if (map.has("lx")) this.lx = map.getFloat("lx");
         if (map.has("ly")) this.ly = map.getFloat("ly");
+        if (map.has("rx")) this.rx = map.getFloat("rx");
+        if (map.has("ry")) this.ry = map.getFloat("ry");
+        if (map.has("shape")) this.shape = KeyframeShape.fromString(map.getString("shape"));
+        if (map.has("color")) this.color = Color.rgb(map.getInt("color"));
+    }
+
+    public void copyOverExtra(Keyframe<T> a) {
+        this.getInterpolation().copy(a.getInterpolation());
+        this.setShape(a.getShape());
+        this.setColor(a.getColor());
     }
 }

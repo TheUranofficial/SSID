@@ -1,8 +1,14 @@
 package mchorse.bbs.settings;
 
 import mchorse.bbs.data.DataToString;
-import mchorse.bbs.settings.values.*;
 import mchorse.bbs.settings.values.base.BaseValue;
+import mchorse.bbs.settings.values.core.ValueLink;
+import mchorse.bbs.settings.values.core.ValueString;
+import mchorse.bbs.settings.values.numeric.ValueBoolean;
+import mchorse.bbs.settings.values.numeric.ValueDouble;
+import mchorse.bbs.settings.values.numeric.ValueFloat;
+import mchorse.bbs.settings.values.numeric.ValueInt;
+import mchorse.bbs.settings.values.ui.ValueColors;
 
 import java.io.File;
 import java.util.HashMap;

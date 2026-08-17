@@ -30,9 +30,9 @@ public class ValueExpression extends BaseValue {
     }
 
     public void setExpression(String string) {
-        this.preNotifyParent();
+        this.preNotify();
         this.setExpressionPrivate(string);
-        this.postNotifyParent();
+        this.postNotify();
     }
 
     private void setExpressionPrivate(String string) {

@@ -29,6 +29,20 @@ public class L10n {
         this.reloadSupportedLanguages(Collections.emptyList());
     }
 
+    public static IKey lang(String key) {
+        return BBS.getL10n().getKey(key);
+    }
+
+    public static IKey lang(String key, String content, IKey reference) {
+        LangKey langKey = BBS.getL10n().getKey(key, content);
+
+        if (reference instanceof LangKey) {
+            langKey.reference = (LangKey) reference;
+        }
+
+        return langKey;
+    }
+
     public void reloadSupportedLanguages(List<Pair<String, String>> additionalLanguages) {
         this.supportedLanguages = new ArrayList<>();
         this.supportedLanguages.addAll(Arrays.asList(
@@ -79,7 +93,7 @@ public class L10n {
     public void register(Link link) {
         System.err.println("L10n.register(Link) is deprecated in favor of Link.register(Function<String, Link>) for multi-language support!");
 
-        this.register((lang) -> Collections.singletonList(link));
+        this.register((_) -> Collections.singletonList(link));
     }
 
     public void registerOne(Function<String, Link> function) {

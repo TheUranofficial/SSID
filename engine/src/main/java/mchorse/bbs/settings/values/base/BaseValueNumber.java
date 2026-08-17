@@ -1,11 +1,13 @@
 package mchorse.bbs.settings.values.base;
 
-public abstract class BaseValueNumber<T extends Number> extends BaseValueBasic<T> {
+import mchorse.bbs.utils.keyframes.factories.IKeyframeFactory;
+
+public abstract class BaseValueNumber<T extends Number> extends BaseKeyframeFactoryValue<T> {
     protected T min;
     protected T max;
 
-    public BaseValueNumber(String id, T defaultValue, T min, T max) {
-        super(id, defaultValue);
+    public BaseValueNumber(String id, IKeyframeFactory<T> factory, T defaultValue, T min, T max) {
+        super(id, factory, defaultValue);
 
         this.min = min;
         this.max = max;
@@ -20,12 +22,12 @@ public abstract class BaseValueNumber<T extends Number> extends BaseValueBasic<T
     }
 
     @Override
-    public void set(T value) {
+    public void set(T value, int flag) {
         if (this.min != null && this.max != null) {
             value = this.clamp(value);
         }
 
-        super.set(value);
+        super.set(value, flag);
     }
 
     protected abstract T clamp(T value);

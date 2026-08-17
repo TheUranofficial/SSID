@@ -10,7 +10,7 @@ import mchorse.bbs.ui.framework.elements.utils.Batcher2D;
 import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.utils.keys.KeyCodes;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.Interpolation;
+import mchorse.bbs.utils.interps.Interpolations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -173,7 +173,6 @@ public class InputRenderer {
         int mx = offset + (int) (qx * (menu.width - offset * 2));
         int my = offset + (int) (qy * (menu.height - 20 - offset * 2));
 
-        FontRenderer font = menu.context.font;
         Iterator<PressedKey> it = this.pressedKeys.iterator();
 
         while (it.hasNext()) {
@@ -183,7 +182,7 @@ public class InputRenderer {
                 it.remove();
             } else {
                 int x = mx + (qx < 0.5F ? key.x : -(key.x + key.width + 16));
-                int y = my + (int) (Interpolation.EXP_INOUT.interpolate(0, 1, key.getFactor()) * 50 * fy);
+                int y = my + (int) (Interpolations.EXP_INOUT.interpolate(0, 1, key.getFactor()) * 50 * fy);
                 int fw = 16 + key.width;
 
                 Batcher2D batcher = menu.context.batcher;

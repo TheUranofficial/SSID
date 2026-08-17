@@ -11,9 +11,9 @@ import mchorse.bbs.graphics.vao.VAOBuilder;
 import mchorse.bbs.graphics.vao.VBOAttributes;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.utils.AABB;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.utils.joml.Vectors;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
 import mchorse.bbs.world.IWorldObject;
 import mchorse.bbs.world.World;
 import mchorse.bbs.world.entities.components.BasicComponent;
@@ -216,7 +216,7 @@ public final class Entity implements IMapSerializable, IWorldObject {
 
     public Matrix4f getMatrixForRenderWithRotation(Camera camera, float transition) {
         BasicComponent component = this.basic;
-        float yaw = (float) Math.PI - Interpolations.lerp(component.prevRotation.z, component.rotation.z, transition);
+        float yaw = (float) Math.PI - Lerps.lerp(component.prevRotation.z, component.rotation.z, transition);
 
         return this.getMatrixForRender(camera, transition).rotateY(yaw);
     }

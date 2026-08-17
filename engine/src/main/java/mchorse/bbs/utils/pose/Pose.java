@@ -1,7 +1,5 @@
 package mchorse.bbs.utils.pose;
 
-import mchorse.bbs.cubic.data.model.Model;
-import mchorse.bbs.cubic.data.model.ModelGroup;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
 
@@ -29,47 +27,13 @@ public class Pose implements IMapSerializable {
         return transform;
     }
 
-    public void apply(Model model) {
-        if (this.transforms.isEmpty()) {
-            return;
-        }
-
-        for (Map.Entry<String, PoseTransform> entry : this.transforms.entrySet()) {
-            PoseTransform transform = entry.getValue();
-            ModelGroup group = model.getGroup(entry.getKey());
-
-            if (this.staticPose) {
-                group.current.copy(group.initial);
-            } else if (transform.fix > 0F) {
-                group.current.lerp(group.initial, transform.fix);
-            }
-
-            if (group != null) {
-                group.current.translate.add(transform.translate);
-                group.current.scale.add(transform.scale).sub(1, 1, 1);
-                group.current.rotate.add(
-                    (float) Math.toDegrees(transform.rotate.x),
-                    (float) Math.toDegrees(transform.rotate.y),
-                    (float) Math.toDegrees(transform.rotate.z)
-                );
-                group.current.rotate2.add(
-                    (float) Math.toDegrees(transform.rotate2.x),
-                    (float) Math.toDegrees(transform.rotate2.y),
-                    (float) Math.toDegrees(transform.rotate2.z)
-                );
-            }
-        }
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof Pose) {
-            Pose pose = (Pose) obj;
-
+        if (obj instanceof Pose pose) {
             keys.clear();
             keys.addAll(this.transforms.keySet());
             keys.addAll(pose.transforms.keySet());

@@ -11,9 +11,9 @@ import mchorse.bbs.graphics.window.Window;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.icons.Icon;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Color;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;

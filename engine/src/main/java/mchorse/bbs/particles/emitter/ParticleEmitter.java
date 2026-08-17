@@ -13,7 +13,7 @@ import mchorse.bbs.particles.ParticleScheme;
 import mchorse.bbs.particles.components.*;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.ui.framework.UIRenderingContext;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.world.World;
 import mchorse.bbs.world.entities.Entity;
 import org.joml.Matrix3f;

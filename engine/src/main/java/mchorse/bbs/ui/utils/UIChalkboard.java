@@ -8,7 +8,7 @@ import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.input.UIColor;
 import mchorse.bbs.utils.Direction;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.utils.resources.Pixels;
 import org.joml.Vector2d;
 import org.lwjgl.opengl.GL11;
@@ -104,8 +104,8 @@ public class UIChalkboard extends UIElement {
                 double distance = new Vector2d(x, y).distance(this.lastX, this.lastY);
 
                 for (int i = 0; i < distance; i++) {
-                    int xx = (int) (Interpolations.lerp(x * scale, this.lastX * scale, i / distance));
-                    int yy = (int) (Interpolations.lerp(y * scale, this.lastY * scale, i / distance));
+                    int xx = (int) (Lerps.lerp(x * scale, this.lastX * scale, i / distance));
+                    int yy = (int) (Lerps.lerp(y * scale, this.lastY * scale, i / distance));
 
                     this.pixels.drawRect(xx - 1, yy - 2, 2, 4, this.color);
                     this.pixels.drawRect(xx - 2, yy - 1, 1, 2, this.color);

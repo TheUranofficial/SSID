@@ -66,14 +66,6 @@ public class UIUtilityOverlayPanel extends UIOverlayPanel {
 
         language.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_LANG);
 
-        UIIcon models = new UIIcon(Icons.POSE, ignored -> {
-            this.print("Reloading models");
-            BBS.getModels().reload();
-            this.close();
-        });
-
-        models.w(0).tooltip(UIKeysApp.UTILITY_RELOAD_MODELS);
-
         UIIcon sounds = new UIIcon(Icons.SOUND, ignored -> {
             this.print("Reloading sounds");
             BBS.getSounds().deleteSounds();
@@ -101,7 +93,7 @@ public class UIUtilityOverlayPanel extends UIOverlayPanel {
         UIButton langEditor = new UIButton(UIKeysApp.UTILITY_LANG_EDITOR, ignored -> this.openLangEditor());
 
         this.view.add(UI.label(UIKeysApp.UTILITY_OPEN_FOLDER), UI.row(openGameDirectory, openModelsDirectory, openAudioDirectory).marginBottom(8));
-        this.view.add(UI.label(UIKeysApp.UTILITY_RELOAD_LABEL), UI.row(shaders, textures, language, models, sounds, terrain).marginBottom(8));
+        this.view.add(UI.label(UIKeysApp.UTILITY_RELOAD_LABEL), UI.row(shaders, textures, language, sounds, terrain).marginBottom(8));
         this.view.add(UI.column(UI.label(UIKeysApp.UTILITY_RESIZE_WINDOW), UI.row(this.width, this.height)).marginBottom(8));
         this.view.add(UI.label(UIKeysApp.UTILITY_LANG_LABEL), UI.row(analyze, compile), langEditor);
 

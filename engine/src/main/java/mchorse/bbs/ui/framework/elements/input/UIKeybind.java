@@ -17,6 +17,11 @@ public class UIKeybind extends UIElement {
     public boolean reading;
     public Consumer<KeyCombo> callback;
 
+    private boolean mouse;
+    private boolean escape;
+
+    private boolean first;
+
     public UIKeybind(Consumer<KeyCombo> callback) {
         super();
 
@@ -25,6 +30,18 @@ public class UIKeybind extends UIElement {
 
         this.callback = callback;
         this.h(20);
+    }
+
+    public UIKeybind mouse() {
+        this.mouse = true;
+
+        return this;
+    }
+
+    public UIKeybind escape() {
+        this.escape = true;
+
+        return this;
     }
 
     public void setKeyCodes(int... keys) {
@@ -44,21 +61,41 @@ public class UIKeybind extends UIElement {
         if (this.area.isInside(context) && context.mouseButton == 0) {
             context.unfocus();
 
+            this.first = true;
             this.reading = true;
             this.combo.keys.clear();
+        } else if (this.reading && this.mouse) {
+            int key = -context.mouseButton;
+
+            if (!this.combo.keys.contains(key)) {
+                this.combo.keys.addFirst(key);
+            }
+
+            return true;
         }
 
         return this.area.isInside(context);
     }
 
     @Override
+    protected boolean subMouseReleased(UIContext context) {
+        if (this.first) {
+            this.first = false;
+        } else if (this.reading && this.mouse) {
+            this.finish();
+
+            return true;
+        }
+
+        return super.subMouseReleased(context);
+    }
+
+    @Override
     public boolean subKeyPressed(UIContext context) {
         if (this.reading) {
-            if (context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            if (!this.escape && context.isPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 this.combo.keys.clear();
-                this.reading = false;
-
-                this.callback();
+                this.finish();
 
                 return true;
             }
@@ -67,7 +104,7 @@ public class UIKeybind extends UIElement {
                 int key = context.getKeyCode();
 
                 if (!this.combo.keys.contains(key)) {
-                    this.combo.keys.add(0, key);
+                    this.combo.keys.addFirst(key);
                 }
             }
 
@@ -81,14 +118,18 @@ public class UIKeybind extends UIElement {
                 }
             }
 
-            this.reading = false;
-
-            this.callback();
+            this.finish();
 
             return true;
         }
 
         return super.subKeyPressed(context);
+    }
+
+    private void finish() {
+        this.reading = false;
+
+        this.callback();
     }
 
     private void callback() {
@@ -115,7 +156,7 @@ public class UIKeybind extends UIElement {
             this.area.render(context.batcher, Colors.A100);
         }
 
-        context.batcher.textShadow(label, this.area.mx(w), this.area.my() - context.font.getHeight() / 2);
+        context.batcher.textShadow(label, this.area.mx(w), this.area.my() - (float) context.font.getHeight() / 2);
 
         super.render(context);
     }

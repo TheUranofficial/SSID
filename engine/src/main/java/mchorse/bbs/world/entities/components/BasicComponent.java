@@ -3,9 +3,9 @@ package mchorse.bbs.world.entities.components;
 import mchorse.bbs.data.DataStorageUtils;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.utils.AABB;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.utils.joml.Matrices;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -22,13 +22,11 @@ public class BasicComponent extends Component {
     public float speed = 0.5F;
 
     /* Hitbox */
-    public AABB hitbox = new AABB(0, 0, 0, 0.5F, 1.8F, 0.5F);
-    public float hitboxWidth = 0.5F;
-    public float hitboxHeight = 1.8F;
-    public float sneakMultiplier = 0.9F;
-    public float eyeHeight = 0.9F;
-
-    public int hitTimer;
+    public AABB hitbox = new AABB(0, 0, 0, 0.5, 1.8, 0.5);
+    public float hitboxWidth = 0.5f;
+    public float hitboxHeight = 1.8f;
+    public float sneakMultiplier = 0.9f;
+    public float eyeHeight = 0.9f;
 
     public String name = "";
 
@@ -156,9 +154,9 @@ public class BasicComponent extends Component {
                 v2 -= Math.copySign(MathUtils.PI * 2, v2 - z);
             }
 
-            this.rotation.z = Interpolations.lerp(this.rotation.z, v2, 0.5F);
+            this.rotation.z = Lerps.lerp(this.rotation.z, v2, 0.5F);
         } else {
-            this.rotation.z = Interpolations.lerp(z, this.rotation.y, 0.5F);
+            this.rotation.z = Lerps.lerp(z, this.rotation.y, 0.5F);
         }
 
         float bodyYawDiff = this.rotation.z - this.rotation.y;

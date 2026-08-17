@@ -10,12 +10,11 @@ import mchorse.bbs.data.DataToString;
 import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.ListType;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.events.base.EventBus;
 import mchorse.bbs.events.register.RegisterArchitectBlueprintsEvent;
 import mchorse.bbs.resources.Link;
 import mchorse.bbs.utils.AABB;
 import mchorse.bbs.utils.IOUtils;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 import mchorse.bbs.voxel.generation.Generator;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.raytracing.RayTraceType;
@@ -361,10 +360,10 @@ public class World implements ITickable, IDisposable {
         int l011 = this.chunks.getLighting(minX, maxY, maxZ);
         int l111 = this.chunks.getLighting(maxX, maxY, maxZ);
 
-        double top = Interpolations.bilerp(ax, az, l000, l100, l001, l101);
-        double bottom = Interpolations.bilerp(ax, az, l010, l110, l011, l111);
+        double top = Lerps.bilerp(ax, az, l000, l100, l001, l101);
+        double bottom = Lerps.bilerp(ax, az, l010, l110, l011, l111);
 
-        result.x = (float) Interpolations.lerp(top, bottom, ay) / 15F;
+        result.x = (float) Lerps.lerp(top, bottom, ay) / 15F;
 
         return result;
     }

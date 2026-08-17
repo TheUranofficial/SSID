@@ -4,7 +4,7 @@ import mchorse.bbs.utils.recording.ScreenshotRecorder;
 import mchorse.bbs.utils.recording.VideoRecorder;
 
 public interface IBridgeVideoScreenshot {
-    public ScreenshotRecorder getScreenshotRecorder();
+    ScreenshotRecorder getScreenshotRecorder();
 
-    public VideoRecorder getVideoRecorder();
+    VideoRecorder getVideoRecorder();
 }

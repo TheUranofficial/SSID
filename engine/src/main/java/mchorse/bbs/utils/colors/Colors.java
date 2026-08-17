@@ -1,7 +1,7 @@
 package mchorse.bbs.utils.colors;
 
 import mchorse.bbs.utils.StringUtils;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 
 public class Colors {
     public static final int RGB = 0xffffff;
@@ -37,19 +37,6 @@ public class Colors {
     public static final int INACTIVE = 0xffbb00;
     public static final int HIGHLIGHT = 0xddddff;
     public static final int CURSOR = 0xff57f52a;
-
-    /* Data element colors */
-    public static final int CANCEL = 0xeeeeee;
-    public static final int CONDITION = 0xff1493;
-    public static final int CRAFTING = 0xff6600;
-    public static final int DIALOGUE = 0x11ff33;
-    public static final int ENTITY = 0x2d4163;
-    public static final int FACTION = 0xb3ff00;
-    public static final int QUEST = 0xffaa00;
-    public static final int REPLY = 0x00a0ff;
-    public static final int STATE = Colors.NEGATIVE;
-    public static final int TIME = 0x0088ff;
-    public static final int FORM = 0x4f00e0;
 
     public static final Color COLOR = new Color();
 
@@ -88,12 +75,12 @@ public class Colors {
         target.set(a, alpha);
         COLOR.set(b, alpha);
 
-        target.r = Interpolations.lerp(target.r, COLOR.r, x);
-        target.g = Interpolations.lerp(target.g, COLOR.g, x);
-        target.b = Interpolations.lerp(target.b, COLOR.b, x);
+        target.r = Lerps.lerp(target.r, COLOR.r, x);
+        target.g = Lerps.lerp(target.g, COLOR.g, x);
+        target.b = Lerps.lerp(target.b, COLOR.b, x);
 
         if (alpha) {
-            target.a = Interpolations.lerp(target.a, COLOR.a, x);
+            target.a = Lerps.lerp(target.a, COLOR.a, x);
         }
     }
 

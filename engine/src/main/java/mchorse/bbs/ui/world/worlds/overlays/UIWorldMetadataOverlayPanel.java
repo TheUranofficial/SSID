@@ -6,8 +6,8 @@ import mchorse.bbs.data.types.BaseType;
 import mchorse.bbs.data.types.MapType;
 import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.resources.Link;
+import mchorse.bbs.settings.ui.UIValueMap;
 import mchorse.bbs.settings.values.base.BaseValue;
-import mchorse.bbs.settings.values.base.IValueUIProvider;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.UIScrollView;
@@ -82,8 +82,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel {
         this.name = new UITextbox((s) -> this.metadata.name = s);
 
         this.seed = new UITrackpad((v) -> this.metadata.seed = v.longValue());
-        this.generator = new UICirculate((b) ->
-        {
+        this.generator = new UICirculate((b) -> {
             this.metadata.generator = this.getGenerator(b.getValue());
 
             this.rebuildGeneratorSpecificOptions();
@@ -99,8 +98,7 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel {
         this.chunks = new UITrackpad((v) -> this.metadata.chunks = v.intValue()).limit(1, 256, true);
         this.chunkSize = new UITrackpad((v) -> this.metadata.chunkSize = v.intValue()).limit(2, 128, true);
         this.compress = new UIToggle(UIKeys.WORLDS_OPTIONS_COMPRESS, (b) -> this.metadata.compress = b.getValue());
-        this.column = new UIToggle(UIKeys.WORLDS_OPTIONS_STORAGE, (b) ->
-        {
+        this.column = new UIToggle(UIKeys.WORLDS_OPTIONS_STORAGE, (b) -> {
             this.metadata.column = b.getValue();
 
             this.rebuild();
@@ -223,10 +221,8 @@ public class UIWorldMetadataOverlayPanel extends UIOverlayPanel {
             this.generatorOptions.add(UI.label(UIKeys.WORLDS_OPTIONS_GENERATOR_OPTIONS).background(color));
 
             for (BaseValue value : generatorOptions) {
-                if (value instanceof IValueUIProvider) {
-                    for (UIElement element : ((IValueUIProvider) value).getFields(this)) {
-                        this.generatorOptions.add(element);
-                    }
+                for (UIElement element : UIValueMap.create(value, this)) {
+                    this.generatorOptions.add(element);
                 }
             }
         }

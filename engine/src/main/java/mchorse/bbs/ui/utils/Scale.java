@@ -1,8 +1,8 @@
 package mchorse.bbs.ui.utils;
 
 import mchorse.bbs.ui.framework.UIContext;
-import mchorse.bbs.utils.math.Interpolations;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.interps.Lerps;
 
 /**
  * This class represents a scale of an axis
@@ -242,7 +242,7 @@ public class Scale {
     }
 
     public void shift(double min, double max) {
-        this.shift = Interpolations.lerp(min, max, this.inverse ? 1 - this.anchor : this.anchor);
+        this.shift = Lerps.lerp(min, max, this.inverse ? 1 - this.anchor : this.anchor);
     }
 
     public void shiftInto(double value) {

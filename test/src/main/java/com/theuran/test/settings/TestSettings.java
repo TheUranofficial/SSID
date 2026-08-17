@@ -1,9 +1,9 @@
 package com.theuran.test.settings;
 
 import mchorse.bbs.settings.SettingsBuilder;
-import mchorse.bbs.settings.values.ValueBoolean;
-import mchorse.bbs.settings.values.ValueFloat;
-import mchorse.bbs.settings.values.ValueInt;
+import mchorse.bbs.settings.values.numeric.ValueBoolean;
+import mchorse.bbs.settings.values.numeric.ValueFloat;
+import mchorse.bbs.settings.values.numeric.ValueInt;
 
 public class TestSettings {
     public static ValueBoolean firstRun;

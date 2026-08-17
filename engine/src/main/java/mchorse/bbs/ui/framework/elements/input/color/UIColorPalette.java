@@ -3,8 +3,8 @@ package mchorse.bbs.ui.framework.elements.input.color;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.utils.icons.Icons;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.colors.Color;
-import mchorse.bbs.utils.math.MathUtils;
 
 import java.util.List;
 import java.util.function.Consumer;

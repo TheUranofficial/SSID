@@ -1,8 +1,12 @@
 package mchorse.bbs.settings.ui;
 
 import mchorse.bbs.l10n.keys.IKey;
-import mchorse.bbs.settings.values.*;
 import mchorse.bbs.settings.values.base.BaseValue;
+import mchorse.bbs.settings.values.core.ValueString;
+import mchorse.bbs.settings.values.numeric.ValueBoolean;
+import mchorse.bbs.settings.values.numeric.ValueDouble;
+import mchorse.bbs.settings.values.numeric.ValueFloat;
+import mchorse.bbs.settings.values.numeric.ValueInt;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs.ui.framework.elements.input.UIColor;
@@ -31,14 +35,14 @@ public class UIValueFactory {
 
     public static String getValueLabelKey(BaseValue value) {
         List<String> segments = value.getPathSegments();
-        String prefix = segments.remove(0);
+        String prefix = segments.removeFirst();
 
         return prefix + ".config." + String.join(".", segments);
     }
 
     public static String getValueCommentKey(BaseValue value) {
         List<String> segments = value.getPathSegments();
-        String prefix = segments.remove(0);
+        String prefix = segments.removeFirst();
 
         return prefix + ".config." + String.join(".", segments) + "-comment";
     }
@@ -46,8 +50,7 @@ public class UIValueFactory {
     /* UI element factories */
 
     public static UIToggle booleanUI(ValueBoolean value, Consumer<UIToggle> callback) {
-        UIToggle booleanToogle = new UIToggle(IKey.lang(getValueLabelKey(value)), value.get(), callback == null ? (toggle) -> value.set(toggle.getValue()) : (toggle) ->
-        {
+        UIToggle booleanToogle = new UIToggle(IKey.lang(getValueLabelKey(value)), value.get(), callback == null ? (toggle) -> value.set(toggle.getValue()) : (toggle) -> {
             value.set(toggle.getValue());
             callback.accept(toggle);
         });
@@ -58,8 +61,7 @@ public class UIValueFactory {
     }
 
     public static UITrackpad intUI(ValueInt value, Consumer<Double> callback) {
-        UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.intValue()) : (v) ->
-        {
+        UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.intValue()) : (v) -> {
             value.set(v.intValue());
             callback.accept(v);
         });
@@ -87,20 +89,6 @@ public class UIValueFactory {
         color.setColor(value.get());
 
         return color;
-    }
-
-    public static UITrackpad longUI(ValueLong value, Consumer<Double> callback) {
-        UITrackpad trackpad = new UITrackpad(callback == null ? (v) -> value.set(v.longValue()) : (v) ->
-        {
-            value.set(v.longValue());
-            callback.accept(v);
-        });
-
-        trackpad.limit(value.getMin(), value.getMax(), true).delayedInput();
-        trackpad.setValue(value.get());
-        trackpad.tooltip(IKey.lang(getValueCommentKey(value)));
-
-        return trackpad;
     }
 
     public static UITrackpad floatUI(ValueFloat value, Consumer<Double> callback) {

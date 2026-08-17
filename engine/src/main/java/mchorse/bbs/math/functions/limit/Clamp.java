@@ -2,7 +2,7 @@ package mchorse.bbs.math.functions.limit;
 
 import mchorse.bbs.math.IExpression;
 import mchorse.bbs.math.functions.NNFunction;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 public class Clamp extends NNFunction {
     public Clamp(IExpression[] expressions, String name) throws Exception {

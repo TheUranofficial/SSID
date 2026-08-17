@@ -1,7 +1,7 @@
 package mchorse.bbs.utils.pose;
 
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 
 public class PoseTransform extends Transform {
     private static PoseTransform DEFAULT = new PoseTransform();
@@ -18,7 +18,7 @@ public class PoseTransform extends Transform {
     @Override
     public void lerp(Transform transform, float a) {
         if (transform instanceof PoseTransform) {
-            this.fix = Interpolations.lerp(this.fix, ((PoseTransform) transform).fix, a);
+            this.fix = Lerps.lerp(this.fix, ((PoseTransform) transform).fix, a);
         }
 
         super.lerp(transform, a);

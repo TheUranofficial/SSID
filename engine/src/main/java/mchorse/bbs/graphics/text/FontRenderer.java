@@ -93,8 +93,8 @@ public class FontRenderer {
         return this.buildVAO(stack, x, y, label, builder, textBuilder.color(c), index);
     }
 
-    public int buildVAO(int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder) {
-        return this.buildVAO(null, lx, ly, text, builder, textBuilder, 0);
+    public void buildVAO(int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder) {
+        this.buildVAO(null, lx, ly, text, builder, textBuilder, 0);
     }
 
     public int buildVAO(MatrixStack stack, int lx, int ly, String text, VAOBuilder builder, ITextBuilder textBuilder, int j) {

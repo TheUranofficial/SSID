@@ -10,7 +10,7 @@ import mchorse.bbs.core.Engine;
  * game engine.
  */
 public interface IBridge {
-    public Engine getEngine();
+    Engine getEngine();
 
-    public <T> T get(Class<T> apiInterface);
+    <T> T get(Class<T> apiInterface);
 }

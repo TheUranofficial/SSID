@@ -4,11 +4,11 @@ import mchorse.bbs.voxel.ChunkBuilder;
 import mchorse.bbs.world.World;
 
 public interface IBridgeWorld {
-    public World getWorld();
+    World getWorld();
 
-    public default ChunkBuilder getChunkBuilder() {
+    default ChunkBuilder getChunkBuilder() {
         return this.getWorld().chunks.builder;
     }
 
-    public boolean loadWorld(String world);
+    boolean loadWorld(String world);
 }

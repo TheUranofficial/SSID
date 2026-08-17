@@ -1,7 +1,5 @@
 package mchorse.bbs.utils;
 
-import mchorse.bbs.utils.math.MathUtils;
-
 public class Range {
     public boolean enabled;
     public int min;

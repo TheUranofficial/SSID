@@ -4,7 +4,7 @@ import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
 import mchorse.bbs.ui.framework.elements.utils.Batcher2D;
 import mchorse.bbs.ui.utils.resizers.IResizer;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 /**
  * Utility class for boxes

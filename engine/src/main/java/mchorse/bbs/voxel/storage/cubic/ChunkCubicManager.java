@@ -1,6 +1,6 @@
 package mchorse.bbs.voxel.storage.cubic;
 
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.storage.ChunkArrayManager;
 import mchorse.bbs.voxel.storage.data.ChunkCell;
 import mchorse.bbs.voxel.tilesets.BlockSet;

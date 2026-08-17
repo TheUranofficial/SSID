@@ -3,7 +3,7 @@ package mchorse.bbs.camera.data;
 import mchorse.bbs.camera.Camera;
 import mchorse.bbs.data.IMapSerializable;
 import mchorse.bbs.data.types.MapType;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 public class Angle implements IMapSerializable {
     public float yaw;

@@ -71,6 +71,10 @@ public class UITexturePicker extends UIElement implements IFileDropListener {
     private Timer lastChecked = new Timer(1000);
     private String typed = "";
 
+    public static UITexturePicker open(UIContext context, Link current, Consumer<Link> callback) {
+        return open(context.menu.overlay, current, callback);
+    }
+
     public static UITexturePicker open(UIElement parent, Link current, Consumer<Link> callback) {
         if (!parent.getChildren(UITexturePicker.class).isEmpty()) {
             return null;
@@ -92,8 +96,7 @@ public class UITexturePicker extends UIElement implements IFileDropListener {
 
         this.right = new UIElement();
         this.text = new UITextbox(1000, (str) -> this.selectCurrent(str.isEmpty() ? null : LinkUtils.create(str)));
-        this.text.delayedInput().context((menu) ->
-        {
+        this.text.delayedInput().context((menu) -> {
             Link location = this.parseLink();
 
             menu.action(Icons.COPY, UIKeys.TEXTURE_EDITOR_CONTEXT_COPY, this::copyLink);

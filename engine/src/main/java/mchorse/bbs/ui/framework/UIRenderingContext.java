@@ -6,7 +6,6 @@ import mchorse.bbs.graphics.text.FontRenderer;
 import mchorse.bbs.graphics.texture.TextureManager;
 import mchorse.bbs.graphics.vao.VAOBuilder;
 import mchorse.bbs.ui.framework.elements.utils.Batcher2D;
-import mchorse.bbs.ui.framework.elements.utils.StencilMap;
 import mchorse.bbs.world.World;
 import org.joml.Matrix4f;
 
@@ -20,7 +19,6 @@ public class UIRenderingContext extends RenderingContext {
 
     private RenderingContext render;
     private ShaderRepository pickingShaders = new ShaderRepository();
-    private StencilMap stencil = new StencilMap();
 
     public UIRenderingContext(RenderingContext render, Matrix4f projection) {
         this.render = render;
@@ -30,10 +28,6 @@ public class UIRenderingContext extends RenderingContext {
 
     public ShaderRepository getPickingShaders() {
         return this.pickingShaders;
-    }
-
-    public StencilMap getStencil() {
-        return this.stencil;
     }
 
     /* Rendering context implementations */

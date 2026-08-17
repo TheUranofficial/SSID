@@ -1,5 +1,9 @@
 package mchorse.bbs.settings.values.base;
 
+import mchorse.bbs.settings.values.IValueListener;
+
+import java.util.Objects;
+
 public abstract class BaseValueBasic<T> extends BaseValue {
     protected T value;
 
@@ -14,10 +18,27 @@ public abstract class BaseValueBasic<T> extends BaseValue {
     }
 
     public void set(T value) {
-        this.preNotifyParent(this);
+        this.set(value, IValueListener.FLAG_DEFAULT);
+    }
+
+    public void set(T value, int flag) {
+        this.preNotify(flag);
 
         this.value = value;
 
-        this.postNotifyParent(this);
+        this.postNotify(flag);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+
+        if (obj instanceof BaseValueBasic<?> value) {
+            return Objects.equals(this.value, value.value);
+        }
+
+        return false;
     }
 }

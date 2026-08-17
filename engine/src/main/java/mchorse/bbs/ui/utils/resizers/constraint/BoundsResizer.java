@@ -5,7 +5,7 @@ import mchorse.bbs.ui.framework.elements.utils.UIViewportStack;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.resizers.DecoratedResizer;
 import mchorse.bbs.ui.utils.resizers.IResizer;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 
 /**
  * Bounds resizer

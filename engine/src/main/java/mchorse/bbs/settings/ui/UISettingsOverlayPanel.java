@@ -4,9 +4,8 @@ import mchorse.bbs.BBS;
 import mchorse.bbs.BBSSettings;
 import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.settings.Settings;
-import mchorse.bbs.settings.values.ValueGroup;
 import mchorse.bbs.settings.values.base.BaseValue;
-import mchorse.bbs.settings.values.base.IValueUIProvider;
+import mchorse.bbs.settings.values.core.ValueGroup;
 import mchorse.bbs.ui.UIKeys;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.framework.elements.UIElement;
@@ -26,7 +25,6 @@ public class UISettingsOverlayPanel extends UIOverlayPanel {
     public UIScrollView options;
 
     private Settings settings;
-    private IKey title = UIKeys.CONFIG_TITLE;
     private UIIcon currentButton;
 
     public UISettingsOverlayPanel() {
@@ -84,16 +82,14 @@ public class UISettingsOverlayPanel extends UIOverlayPanel {
             this.options.add(label);
 
             for (BaseValue value : category.getAll()) {
-                if (!value.isVisible() || !(value instanceof IValueUIProvider)) {
+                if (!value.isVisible()) {
                     continue;
                 }
 
-                for (UIElement element : ((IValueUIProvider) value).getFields(this)) {
-                    options.add(element);
-                }
+                options.addAll(UIValueMap.create(value, this));
             }
 
-            UIElement firstContainer = UI.column(5, 0, 20, label, options.remove(0)).marginTop(first ? 0 : 24);
+            UIElement firstContainer = UI.column(5, 0, 20, label, options.removeFirst()).marginTop(first ? 0 : 24);
 
             this.options.add(firstContainer);
 

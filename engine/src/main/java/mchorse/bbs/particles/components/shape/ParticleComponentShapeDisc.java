@@ -81,6 +81,7 @@ public class ParticleComponentShapeDisc extends ParticleComponentShapeSphere {
 
         Matrix4f rotation = new Matrix4f(Matrices.direction(forward));
         Vector4f position = new Vector4f((float) Math.random() - 0.5F, 0, (float) Math.random() - 0.5F, 0);
+
         position.normalize();
         rotation.transform(position);
 

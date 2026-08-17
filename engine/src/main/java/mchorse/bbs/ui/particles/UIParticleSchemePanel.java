@@ -58,7 +58,7 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme> 
         this.prepend(this.renderer);
         this.editor.add(this.textEditor, this.sectionsView);
 
-        UIIcon close = new UIIcon(Icons.CLOSE, (b) -> this.editMoLang(null, null, null));
+        UIIcon close = new UIIcon(Icons.CLOSE, ignored -> this.editMoLang(null, null, null));
 
         close.relative(this.textEditor).x(1F, -20);
         this.textEditor.add(close);
@@ -115,9 +115,7 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme> 
     }
 
     @Override
-    public void fill(ParticleScheme data) {
-        super.fill(data);
-
+    protected void fillData(ParticleScheme data) {
         this.editMoLang(null, null, null);
 
         if (this.data != null) {
@@ -131,6 +129,7 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme> 
         }
     }
 
+
     @Override
     public void fillDefaultData(ParticleScheme data) {
         super.fillDefaultData(data);
@@ -140,7 +139,7 @@ public class UIParticleSchemePanel extends UIDataDashboardPanel<ParticleScheme> 
             MapType map = DataToString.mapFromString(IOUtils.readText(asset));
 
             ParticleScheme.PARSER.fromData(data, map);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

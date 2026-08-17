@@ -16,7 +16,7 @@ import mchorse.bbs.ui.utils.icons.Icons;
 import mchorse.bbs.ui.world.UICommonWorldEditor;
 import mchorse.bbs.ui.world.objects.objects.UIWorldObject;
 import mchorse.bbs.utils.AABB;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.voxel.raytracing.RayTraceResult;
 import mchorse.bbs.voxel.raytracing.RayTraceType;
 import mchorse.bbs.voxel.raytracing.RayTracer;

@@ -1,92 +1,113 @@
 package mchorse.bbs.utils.keyframes;
 
 import mchorse.bbs.data.types.BaseType;
-import mchorse.bbs.settings.values.ValueList;
-import mchorse.bbs.utils.Pair;
+import mchorse.bbs.data.types.MapType;
+import mchorse.bbs.settings.values.base.BaseValue;
+import mchorse.bbs.settings.values.core.ValueList;
+import mchorse.bbs.utils.CollectionUtils;
+import mchorse.bbs.utils.interps.Interpolations;
+import mchorse.bbs.utils.keyframes.factories.IKeyframeFactory;
+import mchorse.bbs.utils.keyframes.factories.KeyframeFactories;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Keyframe channel
- *
- * <p>This class is responsible for storing individual keyframes and also
- * interpolating between them.</p>
+ * <p>
+ * This class is responsible for storing individual keyframes and also
+ * interpolating between them.
  */
-public class KeyframeChannel extends ValueList<Keyframe> {
-    private static final Pair<Keyframe, Keyframe> segment = new Pair<>();
+public class KeyframeChannel<T> extends ValueList<Keyframe<T>> {
+    private IKeyframeFactory<T> factory;
 
-    public KeyframeChannel() {
-        super("");
+    public KeyframeChannel(String id, IKeyframeFactory<T> factory) {
+        super(id);
+
+        this.factory = factory;
     }
 
-    public KeyframeChannel(String id) {
-        super(id);
+    public IKeyframeFactory<T> getFactory() {
+        return this.factory;
     }
 
     /* Read only */
 
-    public int getLength() {
-        return this.list.isEmpty() ? 0 : (int) this.list.get(this.list.size() - 1).getTick();
+    public double getLength() {
+        return this.list.isEmpty() ? 0 : (int) this.list.getLast().getTick();
     }
 
     public boolean isEmpty() {
         return this.list.isEmpty();
     }
 
-    public List<Keyframe> getKeyframes() {
-        return this.list;
+    public List<Keyframe<T>> getKeyframes() {
+        return Collections.unmodifiableList(this.list);
     }
 
     public boolean has(int index) {
         return index >= 0 && index < this.list.size();
     }
 
-    public Keyframe get(int index) {
+    public Keyframe<T> get(int index) {
         return this.has(index) ? this.list.get(index) : null;
     }
 
-    /**
-     * Calculate the value at given tick
-     */
-    public double interpolate(float ticks) {
-        Pair<Keyframe, Keyframe> segment = this.findSegment(ticks);
+    public KeyframeSegment<T> find(float ticks) {
+        KeyframeSegment<T> segment = this.findSegment(ticks);
 
         if (segment == null) {
-            return 0;
+            return null;
         }
 
-        if (segment.a == segment.b) {
-            return segment.a.getValue();
+        segment.setup(ticks);
+
+        return segment;
+    }
+
+    public T interpolate(float ticks) {
+        T orDefault = null;
+
+        if (this.factory == KeyframeFactories.FLOAT) orDefault = (T) Float.valueOf(0F);
+        else if (this.factory == KeyframeFactories.DOUBLE) orDefault = (T) Double.valueOf(0D);
+        else if (this.factory == KeyframeFactories.INTEGER) orDefault = (T) Integer.valueOf(0);
+
+        return this.interpolate(ticks, orDefault);
+    }
+
+    public T interpolate(float ticks, T orDefault) {
+        KeyframeSegment<T> segment = this.findSegment(ticks);
+
+        if (segment == null) {
+            return orDefault;
         }
 
-        return segment.a.interpolateTicks(segment.b, ticks);
+        segment.setup(ticks);
+
+        return segment.createInterpolated();
     }
 
     /**
      * Find a keyframe segment at given ticks
      */
-    public Pair<Keyframe, Keyframe> findSegment(float ticks) {
+    public KeyframeSegment<T> findSegment(float ticks) {
         /* No keyframes, no values */
         if (this.list.isEmpty()) {
             return null;
         }
 
         /* Check whether given ticks are outside keyframe channel's range */
-        Keyframe prev = this.list.get(0);
+        Keyframe<T> prev = this.list.getFirst();
+        int size = this.list.size();
 
-        if (ticks <= prev.getTick()) {
-            segment.set(prev, prev);
-
-            return segment;
+        if (size == 1 || ticks < prev.getTick()) {
+            return new KeyframeSegment<>(prev, prev);
         }
 
-        int size = this.list.size();
-        Keyframe last = this.list.get(size - 1);
+        Keyframe<T> last = this.list.get(size - 1);
 
         if (ticks >= last.getTick()) {
-            segment.set(last, last);
-
-            return segment;
+            return new KeyframeSegment<>(last, last);
         }
 
         /* Use binary search to find the proper segment */
@@ -103,54 +124,91 @@ public class KeyframeChannel extends ValueList<Keyframe> {
             }
         }
 
-        Keyframe b = this.list.get(low);
-        Keyframe a = low - 1 >= 0 ? this.list.get(low - 1) : b;
+        Keyframe<T> b = this.list.get(low);
 
-        segment.set(a, b);
+        if (b.getTick() == Math.floor(ticks) && low < size - 1) {
+            low += 1;
+            b = this.list.get(low);
+        }
+
+        Keyframe<T> a = low - 1 >= 0 ? this.list.get(low - 1) : b;
+        KeyframeSegment<T> segment = new KeyframeSegment<>(a, b);
+
+        segment.setup(ticks);
 
         return segment;
     }
 
     /* Write only */
 
+    public void removeAll() {
+        this.preNotify();
+        this.list.clear();
+        this.postNotify();
+    }
+
     public void remove(int index) {
         if (index < 0 || index > this.list.size() - 1) {
             return;
         }
 
-        this.preNotifyParent();
-
-        Keyframe frame = this.list.remove(index);
-
-        frame.prev.next = frame.next;
-        frame.next.prev = frame.prev;
-
+        this.preNotify();
+        this.list.remove(index);
         this.sync();
+        this.postNotify();
+    }
 
-        this.postNotifyParent();
+    public void insertSpace(int where, int ticks) {
+        KeyframeSegment<T> segment = this.findSegment(where);
+
+        if (segment == null || where > segment.b.getTick()) {
+            return;
+        }
+
+        if (where < segment.a.getTick()) {
+            this.moveX(ticks);
+        } else {
+            BaseValue.edit(this, _ -> {
+                T copy = this.factory.copy(segment.createInterpolated());
+                List<Keyframe<T>> keyframes = this.getKeyframes();
+
+                for (int i = keyframes.indexOf(segment.b); i < keyframes.size(); i++) {
+                    Keyframe<T> kf = keyframes.get(i);
+
+                    kf.setTick(kf.getTick() + ticks);
+                }
+
+                Keyframe<T> kfA = keyframes.get(this.insert(where, copy));
+                Keyframe<T> kfB = keyframes.get(this.insert(where + ticks, this.factory.copy(copy)));
+
+                kfA.getInterpolation().setInterp(Interpolations.CONST);
+                kfB.getInterpolation().copy(segment.a.getInterpolation());
+            });
+        }
     }
 
     /**
      * Insert a keyframe at given tick with given value
-     *
-     * <p>This method is useful as it's not creating keyframes every time you
+     * <p>
+     * This method is useful as it's not creating keyframes every time you
      * need to add some value, but rather inserts in correct order or
-     * overwrites existing keyframe.</p>
-     *
-     * <p>Also, it returns index at which it was inserted.</p>
+     * overwrites existing keyframe.
+     * <p>
+     * Also, it returns index at which it was inserted.
      */
-    public int insert(long tick, double value) {
-        this.preNotifyParent();
+    public int insert(float tick, T value) {
+        this.preNotify();
 
-        Keyframe prev;
+        Keyframe<T> prev;
 
         if (!this.list.isEmpty()) {
-            prev = this.list.get(0);
+            prev = this.list.getFirst();
 
             if (tick < prev.getTick()) {
-                this.add(0, new Keyframe("", tick, value));
+                this.add(0, new Keyframe<>("", this.factory, tick, value));
                 this.sort();
-                this.postNotifyParent();
+
+                this.postNotify();
 
                 return 0;
             }
@@ -159,10 +217,10 @@ public class KeyframeChannel extends ValueList<Keyframe> {
         prev = null;
         int index = 0;
 
-        for (Keyframe frame : this.list) {
+        for (Keyframe<T> frame : this.list) {
             if (frame.getTick() == tick) {
                 frame.setValue(value);
-                this.postNotifyParent();
+                this.postNotify();
 
                 return index;
             }
@@ -175,51 +233,15 @@ public class KeyframeChannel extends ValueList<Keyframe> {
             prev = frame;
         }
 
-        Keyframe frame = new Keyframe("", tick, value);
-        this.add(index, frame);
-
-        if (this.list.size() > 1) {
-            frame.prev = this.list.get(Math.max(index - 1, 0));
-            frame.next = this.list.get(Math.min(index + 1, this.list.size() - 1));
-        }
-
-        this.sync();
-        this.postNotifyParent();
+        this.add(index, new Keyframe<>("", this.factory, tick, value));
+        this.sort();
+        this.postNotify();
 
         return index;
     }
 
-    public void moveX(long offset) {
-        this.preNotifyParent();
-
-        for (Keyframe keyframe : this.list) {
-            keyframe.setTick(keyframe.getTick() + offset);
-        }
-
-        this.postNotifyParent();
-    }
-
-    /**
-     * Sorts keyframes based on their ticks. This method should be used
-     * when you modify individual tick values of keyframes.
-     * {@link #interpolate(float)} and other methods assume the order of
-     * the keyframes to be chronologically correct.
-     */
     public void sort() {
         this.list.sort((a, b) -> (int) (a.getTick() - b.getTick()));
-
-        if (!this.list.isEmpty()) {
-            Keyframe prev = this.list.get(0);
-
-            for (Keyframe frame : this.list) {
-                frame.prev = prev;
-                prev.next = frame;
-
-                prev = frame;
-            }
-
-            prev.next = prev;
-        }
 
         this.sync();
     }
@@ -229,37 +251,104 @@ public class KeyframeChannel extends ValueList<Keyframe> {
             return;
         }
 
-        this.preNotifyParent();
+        this.preNotify();
 
-        for (int i = 1; i < this.list.size(); i++) {
-            if (i >= this.list.size() - 1) {
-                continue;
-            }
+        for (int i = 1; i < this.list.size() - 1; i++) {
+            Keyframe<T> prev = this.list.get(i - 1);
+            Keyframe<T> current = this.list.get(i);
+            Keyframe<T> next = this.list.get(i + 1);
 
-            Keyframe prev = this.list.get(i - 1);
-            Keyframe current = this.list.get(i);
-            Keyframe next = this.list.get(i + 1);
-
-            if (current.getValue() == prev.getValue() && current.getValue() == next.getValue()) {
+            if (this.factory.compare(current.getValue(), prev.getValue()) && this.factory.compare(current.getValue(), next.getValue())) {
                 this.list.remove(i);
 
                 i -= 1;
             }
         }
 
+        int size = this.list.size();
+
+        if (this.factory.compare(this.list.get(size - 1).getValue(), this.list.get(size - 2).getValue())) {
+            this.list.remove(size - 1);
+        }
+
         this.sync();
-        this.postNotifyParent();
+        this.postNotify();
+    }
+
+    public void moveX(float offset) {
+        this.preNotify();
+
+        for (Keyframe<T> keyframe : this.list) {
+            keyframe.setTick(keyframe.getTick() + offset);
+        }
+
+        this.postNotify();
     }
 
     @Override
-    protected Keyframe create(String id) {
-        return new Keyframe(id);
+    protected Keyframe<T> create(String id) {
+        return new Keyframe<>(id, this.factory);
+    }
+
+    @Override
+    public BaseType toData() {
+        MapType data = new MapType();
+
+        data.put("keyframes", super.toData());
+        data.putString("type", CollectionUtils.getKey(KeyframeFactories.FACTORIES, this.factory));
+
+        return data;
     }
 
     @Override
     public void fromData(BaseType data) {
-        super.fromData(data);
+        if (!data.isMap()) {
+            return;
+        }
+
+        MapType map = data.asMap();
+
+        this.factory = (IKeyframeFactory<T>) KeyframeFactories.FACTORIES.get(map.getString("type"));
+
+        super.fromData(map.getList("keyframes"));
 
         this.sort();
+    }
+
+    public void copyKeyframes(KeyframeChannel<T> channel) {
+        this.list.clear();
+
+        for (Keyframe<T> keyframe : channel.getKeyframes()) {
+            Keyframe<T> value = new Keyframe<>(keyframe.getId(), keyframe.getFactory());
+
+            value.copy(keyframe);
+            this.add(value);
+        }
+
+        this.sort();
+    }
+
+    public void copyOver(KeyframeChannel<T> channel, int tick) {
+        if (this.factory != channel.factory || channel.isEmpty()) {
+            return;
+        }
+
+        this.preNotify();
+
+        double start = tick + channel.getKeyframes().getFirst().getTick();
+
+        this.list.removeIf((next) -> next.getTick() >= start);
+
+        for (Keyframe<T> keyframe : channel.getKeyframes()) {
+            Keyframe<T> value = new Keyframe<>(keyframe.getId(), keyframe.getFactory());
+
+            value.fromData(keyframe.toData());
+            value.setTick(tick + value.getTick());
+
+            this.list.add(value);
+        }
+
+        this.sync();
+        this.postNotify();
     }
 }

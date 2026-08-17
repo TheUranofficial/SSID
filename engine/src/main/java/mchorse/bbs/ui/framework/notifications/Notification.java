@@ -1,8 +1,9 @@
 package mchorse.bbs.ui.framework.notifications;
 
 import mchorse.bbs.l10n.keys.IKey;
-import mchorse.bbs.utils.math.Interpolation;
-import mchorse.bbs.utils.math.Interpolations;
+import mchorse.bbs.utils.colors.Colors;
+import mchorse.bbs.utils.interps.Interpolations;
+import mchorse.bbs.utils.interps.Lerps;
 
 public class Notification {
     public final IKey message;
@@ -13,8 +14,8 @@ public class Notification {
 
     public Notification(IKey message, int background, int color) {
         this.message = message;
-        this.background = background;
-        this.color = color;
+        this.background = background | Colors.A100;
+        this.color = color | Colors.A100;
 
         this.tick = 80;
     }
@@ -24,9 +25,9 @@ public class Notification {
     }
 
     public float getFactor(float transition) {
-        float envelope = Interpolations.envelope(this.tick - transition, 0F, 20F, 70F, 80F);
+        float envelope = Lerps.envelope(this.tick - transition, 0F, 20F, 70F, 80F);
 
-        return Interpolation.QUAD_INOUT.interpolate(0F, 1F, envelope);
+        return Interpolations.QUAD_INOUT.interpolate(0F, 1F, envelope);
     }
 
     public void update() {

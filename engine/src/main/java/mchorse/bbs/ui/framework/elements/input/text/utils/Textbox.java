@@ -7,9 +7,9 @@ import mchorse.bbs.l10n.keys.IKey;
 import mchorse.bbs.ui.framework.UIContext;
 import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.StringGroupMatcher;
+import mchorse.bbs.utils.MathUtils;
 import mchorse.bbs.utils.Pair;
 import mchorse.bbs.utils.colors.Colors;
-import mchorse.bbs.utils.math.MathUtils;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;

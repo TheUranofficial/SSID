@@ -47,8 +47,8 @@ public class UICurveEditor extends UIElement {
         }
 
         this.curve = new UICurve(section);
-        this.input = new UIButton(UIKeys.SNOWSTORM_CURVES_INPUT, (b) -> this.section.editMoLang("curve." + this.particleCurve.variable.getName() + ".input", (str) -> this.particleCurve.input = this.section.parse(str, this.particleCurve.input), this.particleCurve.input));
-        this.range = new UIButton(UIKeys.SNOWSTORM_CURVES_RANGE, (b) -> this.section.editMoLang("curve." + this.particleCurve.variable.getName() + ".range", (str) -> this.particleCurve.range = this.section.parse(str, this.particleCurve.range), this.particleCurve.range));
+        this.input = new UIButton(UIKeys.SNOWSTORM_CURVES_INPUT, ignored -> this.section.editMoLang("curve." + this.particleCurve.variable.getName() + ".input", (str) -> this.particleCurve.input = this.section.parse(str, this.particleCurve.input), this.particleCurve.input));
+        this.range = new UIButton(UIKeys.SNOWSTORM_CURVES_RANGE, ignored -> this.section.editMoLang("curve." + this.particleCurve.variable.getName() + ".range", (str) -> this.particleCurve.range = this.section.parse(str, this.particleCurve.range), this.particleCurve.range));
 
         this.curve.h(100);
 
@@ -63,8 +63,7 @@ public class UICurveEditor extends UIElement {
         UIPromptOverlayPanel panel = new UIPromptOverlayPanel(
             UIKeys.GENERAL_RENAME,
             UIKeys.SNOWSTORM_CURVES_RENAME_OVERLAY,
-            (newName) ->
-            {
+            (newName) -> {
                 if (newName.isEmpty() || newName.contains(" ")) {
                     return;
                 }

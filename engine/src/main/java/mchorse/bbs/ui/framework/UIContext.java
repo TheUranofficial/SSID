@@ -16,7 +16,8 @@ import mchorse.bbs.ui.utils.Area;
 import mchorse.bbs.ui.utils.ScrollDirection;
 import mchorse.bbs.ui.utils.context.ContextMenuManager;
 import mchorse.bbs.ui.utils.keys.KeyAction;
-import mchorse.bbs.utils.math.MathUtils;
+import mchorse.bbs.utils.MathUtils;
+import mchorse.bbs.utils.colors.Colors;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -161,6 +162,18 @@ public class UIContext implements IViewportStack {
     }
 
     /* Tooltip */
+
+    public void notifyInfo(IKey message) {
+        this.notify(message, Colors.BLUE);
+    }
+
+    public void notifySuccess(IKey message) {
+        this.notify(message, Colors.mulRGB(Colors.GREEN, 0.75F));
+    }
+
+    public void notifyError(IKey message) {
+        this.notify(message, Colors.RED);
+    }
 
     public void notify(IKey message, int background) {
         this.notifications.post(message, background);

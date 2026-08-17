@@ -38,22 +38,9 @@ public class Keys {
     public static final KeyCombo TOGGLE_VISIBILITY = new KeyCombo("toggle", UIKeys.DASHBOARD_CONTEXT_TOGGLE_VISIBILITY, GLFW.GLFW_KEY_F1).categoryKey("dashboard");
     public static final KeyCombo DASHBOARD_WORLD_EDITOR = new KeyCombo("world_editor", UIKeys.PANELS_KEYS_WORLD_EDITOR, GLFW.GLFW_KEY_B, GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_LEFT_SHIFT).categoryKey("dashboard");
 
-    /* Forms */
-    public static final KeyCombo FORMS_FOCUS = new KeyCombo("focus", UIKeys.FORMS_LIST_CONTEXT_FOCUS, GLFW.GLFW_KEY_F, GLFW.GLFW_KEY_LEFT_CONTROL).categoryKey("forms");
-    public static final KeyCombo FORMS_PICK = new KeyCombo("pick", UIKeys.GENERAL_PICK, GLFW.GLFW_KEY_P).categoryKey("forms");
-    public static final KeyCombo FORMS_EDIT = new KeyCombo("edit", UIKeys.GENERAL_EDIT, GLFW.GLFW_KEY_E).categoryKey("forms");
-    public static final KeyCombo FORMS_PICK_ALT = new KeyCombo("pick_alt", UIKeys.GENERAL_PICK, GLFW.GLFW_KEY_P, GLFW.GLFW_KEY_LEFT_SHIFT).categoryKey("forms");
-    public static final KeyCombo FORMS_EDIT_ALT = new KeyCombo("edit_alt", UIKeys.GENERAL_EDIT, GLFW.GLFW_KEY_E, GLFW.GLFW_KEY_LEFT_SHIFT).categoryKey("forms");
-
     /* Pixel editor */
     public static final KeyCombo PIXEL_SWAP = new KeyCombo("swap", UIKeys.TEXTURES_KEYS_SWAP, GLFW.GLFW_KEY_X).categoryKey("pixels");
     public static final KeyCombo PIXEL_PICK = new KeyCombo("pick", UIKeys.TEXTURES_KEYS_PICK, GLFW.GLFW_KEY_R).categoryKey("pixels");
-
-    /* Keyframes */
-    public static final KeyCombo KEYFRAMES_MAXIMIZE = new KeyCombo("maximize", UIKeys.KEYFRAMES_CONTEXT_MAXIMIZE, GLFW.GLFW_KEY_HOME).categoryKey("keyframes");
-    public static final KeyCombo KEYFRAMES_SELECT_ALL = new KeyCombo("select_all", UIKeys.KEYFRAMES_CONTEXT_SELECT_ALL, GLFW.GLFW_KEY_A, GLFW.GLFW_KEY_LEFT_CONTROL).categoryKey("keyframes");
-    public static final KeyCombo KEYFRAMES_INTERP = new KeyCombo("interp", UIKeys.KEYFRAMES_KEYS_TOGGLE_INTERP, GLFW.GLFW_KEY_T, GLFW.GLFW_KEY_LEFT_SHIFT).categoryKey("keyframes");
-    public static final KeyCombo KEYFRAMES_EASING = new KeyCombo("easing", UIKeys.KEYFRAMES_KEYS_TOGGLE_EASING, GLFW.GLFW_KEY_E, GLFW.GLFW_KEY_LEFT_CONTROL).categoryKey("keyframes");
 
     /* Chalkboard */
     public static final KeyCombo CHALKBOARD_TOGGLE = new KeyCombo("toggle", UIKeys.CHALKBOARD_KEYS_TOGGLE, GLFW.GLFW_KEY_F8).categoryKey("chalkboard");
