@@ -130,7 +130,7 @@ public abstract class Engine implements IEngine, IJoystickHandler {
      * Start the game loop
      *
      * @param id Window's ID
-     * @link http://gameprogrammingpatterns.com/game-loop.html
+     * @link <a href="http://gameprogrammingpatterns.com/game-loop.html">...</a>
      */
     public void start(long id) throws InterruptedException {
         final long MS_PER_UPDATE = 1000 / 20;

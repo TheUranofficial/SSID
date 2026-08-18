@@ -15,7 +15,6 @@ import mchorse.bbs.voxel.Chunk;
 import mchorse.bbs.voxel.blocks.IBlockVariant;
 import mchorse.bbs.voxel.storage.data.ChunkDisplay;
 import mchorse.bbs.voxel.tilesets.BlockSet;
-import net.querz.nbt.tag.CompoundTag;
 import org.joml.Vector3i;
 
 import java.util.HashMap;
@@ -34,12 +33,12 @@ public class UISchematicOverlayPanel extends UIOverlayPanel {
     private boolean first = true;
     private Map<Integer, UIBlockVariant> blockVariants = new HashMap<>();
 
-    public UISchematicOverlayPanel(BlockSet blockSet, CompoundTag schematic, Consumer<Chunk> callback) {
+    public UISchematicOverlayPanel(BlockSet blockSet, Consumer<Chunk> callback) {
         super(UIKeys.WORLD_EDITOR_SCHEMATIC_TITLE);
 
         this.blockSet = blockSet;
         this.callback = callback;
-        this.schematic = Schematic.fromSchematic(schematic, blockSet);
+        this.schematic = null;
 
         this.display = new ChunkDisplay(null, this.schematic.getChunk(), 0, 0, 0);
         this.renderer = new UISchematicRenderer(this.display, this::handleRenderCallback);

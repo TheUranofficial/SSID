@@ -47,8 +47,6 @@ import mchorse.bbs.voxel.tilesets.factory.BlockModelFactory;
 import mchorse.bbs.voxel.undo.ChunkProxy;
 import mchorse.bbs.voxel.utils.BlockSelection;
 import mchorse.bbs.world.World;
-import net.querz.nbt.io.NBTUtil;
-import net.querz.nbt.tag.CompoundTag;
 import org.joml.Matrix3f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -735,25 +733,6 @@ public class UIWorldEditorPanel extends UIWorldPanel implements IFileDropListene
         File file = new File(paths[0]);
         BlockSet models = this.getBridge().get(IBridgeWorld.class).getChunkBuilder().models;
 
-        /* If the path is to a .schematic file, then we show a special overlay panel that
-         * lets us edit the block palette before inserting it into the copy-paste buffer
-         * of the world editor! */
-        if (!file.getName().toLowerCase().endsWith(StructureManager.SCHEMATIC)) {
-            return;
-        }
-
-        try {
-            CompoundTag tag = (CompoundTag) NBTUtil.read(file).getTag();
-            UISchematicOverlayPanel schematic = new UISchematicOverlayPanel(models, tag, (c) ->
-            {
-                if (c != null) {
-                    this.setBuffer(c);
-                }
-            });
-
-            UIOverlay.addOverlay(this.getContext(), schematic, 0.8F, 0.8F);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        /* Maybe realize later */
     }
 }

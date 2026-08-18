@@ -89,8 +89,6 @@ public class Window {
 
     /**
      * Initialize the window
-     *
-     * @link https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/
      */
     public static void initialize(String title, int w, int h, boolean openGLDebug) {
         /* Initialize GLFW */
@@ -99,8 +97,6 @@ public class Window {
         if (!GLFW.glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
-
-        boolean retina = false;
 
         _width = w;
         _height = h;
@@ -113,7 +109,7 @@ public class Window {
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
-        GLFW.glfwWindowHint(GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER, retina ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW.GLFW_FALSE);
 
         if (openGLDebug) {
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
@@ -137,15 +133,13 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
         }
 
-        GLFW.glfwSetFramebufferSizeCallback(WINDOW, (window, width, height) ->
-        {
+        GLFW.glfwSetFramebufferSizeCallback(WINDOW, (_, width, height) -> {
             Window.width = width / _pixelDensity;
             Window.height = height / _pixelDensity;
             Window.resized = true;
         });
 
-        GLFW.glfwSetDropCallback(WINDOW, (window, count, names) ->
-        {
+        GLFW.glfwSetDropCallback(WINDOW, (_, count, names) -> {
             String[] paths = new String[count];
 
             for (int i = 0; i < count; i++) {
@@ -171,15 +165,63 @@ public class Window {
             GLUtil.setupDebugMessageCallback(System.out);
         }
 
-        if (retina) {
-            int[] fw = new int[1];
-            int[] fh = new int[1];
-            GLFW.glfwGetFramebufferSize(WINDOW, fw, fh);
+        _pixelDensity = 1;
+    }
 
-            _pixelDensity = fw[0] / _width;
-        } else {
-            _pixelDensity = 1;
+    public static void initializeVulkan(String title, int w, int h) {
+        if (!GLFW.glfwInit()) {
+            throw new IllegalStateException("Unable to initialize GLFW");
         }
+
+        if (!GLFWVulkan.glfwVulkanSupported()) {
+            throw new IllegalStateException("Cannot find a compatible Vulkan installable client driver (ICD)");
+        }
+
+        _width = w;
+        _height = h;
+        _title = title;
+
+        GLFW.glfwDefaultWindowHints();
+        GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_NO_API);
+        GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_FALSE);
+
+        long primary = GLFW.glfwGetPrimaryMonitor();
+        GLFWVidMode mode = GLFW.glfwGetVideoMode(primary);
+
+        GLFW.glfwWindowHint(GLFW.GLFW_RED_BITS, mode.redBits());
+        GLFW.glfwWindowHint(GLFW.GLFW_GREEN_BITS, mode.greenBits());
+        GLFW.glfwWindowHint(GLFW.GLFW_BLUE_BITS, mode.blueBits());
+        GLFW.glfwWindowHint(GLFW.GLFW_REFRESH_RATE, mode.refreshRate());
+
+        _lastMonitor = primary;
+        width = w;
+        height = h;
+
+        WINDOW = GLFW.glfwCreateWindow(w, h, title, 0, 0);
+
+        if (WINDOW == 0) {
+            throw new RuntimeException("Failed to create the GLFW window");
+        }
+
+        GLFW.glfwSetFramebufferSizeCallback(WINDOW, (_, width, height) -> {
+            Window.width = width / _pixelDensity;
+            Window.height = height / _pixelDensity;
+            Window.resized = true;
+        });
+
+        GLFW.glfwSetDropCallback(WINDOW, (_, count, names) -> {
+            String[] paths = new String[count];
+
+            for (int i = 0; i < count; i++) {
+                paths[i] = GLFWDropCallback.getName(names, i);
+            }
+
+            for (IFileDropListener listener : fileListeners) {
+                listener.acceptFilePaths(paths);
+            }
+        });
+
+        _pixelDensity = 1;
     }
 
     /**
