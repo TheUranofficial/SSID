@@ -71,7 +71,7 @@ public abstract class Engine implements IEngine, IJoystickHandler {
         this.mouse = new MouseInput(this);
         this.keys = new KeyboardInput(this);
         this.joystick = new JoystickInput(this);
-        this.frameRate = 60;
+        this.frameRate = 120;
     }
 
     /**
@@ -148,6 +148,7 @@ public abstract class Engine implements IEngine, IJoystickHandler {
 
             if (currentTime - lastTime >= 1) {
                 this.lastFPS = frames;
+                GLFW.glfwSetWindowTitle(Window.getWindow(), String.valueOf(this.lastFPS));
 
                 frames = 0;
                 lastTime++;
@@ -174,7 +175,7 @@ public abstract class Engine implements IEngine, IJoystickHandler {
 
             this.render(lag / MS_PER_UPDATE);
 
-            GLFW.glfwSwapBuffers(id);
+            //GLFW.glfwSwapBuffers(id);
             GLFW.glfwPollEvents();
 
             long sleep = current + (long) (1000 / (float) this.frameRate) - System.currentTimeMillis();

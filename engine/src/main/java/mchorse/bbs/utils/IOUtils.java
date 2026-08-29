@@ -51,7 +51,7 @@ public class IOUtils {
      * Read all lines from a file (needs a text file)
      */
     public static List<String> readLines(String fileName) throws Exception {
-        return readLines(IOUtils.class.getClass().getResourceAsStream(fileName));
+        return readLines(IOUtils.class.getResourceAsStream(fileName));
     }
 
     /**
@@ -83,6 +83,10 @@ public class IOUtils {
         buffer.flip();
 
         return buffer;
+    }
+
+    public static byte[] readBytes(String path) throws IOException {
+        return readBytes(IOUtils.class.getResourceAsStream(path));
     }
 
     public static byte[] readBytes(InputStream stream) throws IOException {

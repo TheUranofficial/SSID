@@ -14,19 +14,19 @@ public class MathUtils {
     }
 
     public static int clamp(int x, int min, int max) {
-        return x < min ? min : (x > max ? max : x);
+        return x < min ? min : (Math.min(x, max));
     }
 
     public static float clamp(float x, float min, float max) {
-        return x < min ? min : (x > max ? max : x);
+        return x < min ? min : (Math.min(x, max));
     }
 
     public static double clamp(double x, double min, double max) {
-        return x < min ? min : (x > max ? max : x);
+        return x < min ? min : (Math.min(x, max));
     }
 
     public static long clamp(long x, long min, long max) {
-        return x < min ? min : (x > max ? max : x);
+        return x < min ? min : (Math.min(x, max));
     }
 
     public static int cycler(int x, int min, int max) {

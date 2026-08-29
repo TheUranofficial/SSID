@@ -11,5 +11,5 @@ public interface IResource extends IDisposable {
      * This method will initialize some state that could be destroyed
      * later
      */
-    public void init() throws Exception;
+    void init() throws Exception;
 }

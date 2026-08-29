@@ -14,7 +14,8 @@ public class TimePrintStream extends PrintStream {
 
     @Override
     public void println(Object x) {
-        super.println(this.getPrefix() + x);
+        super.print(this.getPrefix() + x);
+        super.println();
     }
 
     @Override

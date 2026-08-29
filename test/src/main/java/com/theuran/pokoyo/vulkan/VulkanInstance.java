@@ -1,4 +1,4 @@
-package com.theuran.pokoyo;
+package com.theuran.pokoyo.vulkan;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVulkan;
@@ -29,7 +29,7 @@ public class VulkanInstance {
 
     private VkDebugUtilsMessengerCreateInfoEXT debugUtils;
     private final long debugMessenger;
-    private final VkInstance instance;
+    public final VkInstance instance;
 
     public VulkanInstance(boolean validation) {
         IO.println("Creating Vulkan instance");
@@ -148,7 +148,7 @@ public class VulkanInstance {
 
         PointerBuffer instance = stack.mallocPointer(1);
 
-        this.checkError(VK10.vkCreateInstance(instanceInfo, null, instance), "Error creating instance");
+        VulkanUtils.checkError(VK10.vkCreateInstance(instanceInfo, null, instance), "Error creating instance");
 
         return new VkInstance(instance.get(0), instanceInfo);
     }
@@ -156,7 +156,7 @@ public class VulkanInstance {
     private long createDebugMessenger(MemoryStack stack, VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT debugUtils) {
         LongBuffer buffer = stack.mallocLong(1);
 
-        this.checkError(EXTDebugUtils.vkCreateDebugUtilsMessengerEXT(instance, debugUtils, null, buffer), "Error creating debug utils");
+        VulkanUtils.checkError(EXTDebugUtils.vkCreateDebugUtilsMessengerEXT(instance, debugUtils, null, buffer), "Error creating debug utils");
 
         return buffer.get(0);
     }
@@ -228,12 +228,6 @@ public class VulkanInstance {
             }
 
             return Set.of();
-        }
-    }
-
-    private void checkError(int result, String message) {
-        if (result != VK10.VK_SUCCESS) {
-            throw new RuntimeException("%s [%d]".formatted(message, result));
         }
     }
 }

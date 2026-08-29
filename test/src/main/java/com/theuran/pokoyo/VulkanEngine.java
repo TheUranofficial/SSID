@@ -3,20 +3,27 @@ package com.theuran.pokoyo;
 import mchorse.bbs.core.Engine;
 
 public class VulkanEngine extends Engine {
-    public VulkanInstance vulkan;
+    public VulkanRenderer renderer;
 
     @Override
     public void init() throws Exception {
         super.init();
 
-        this.vulkan = new VulkanInstance(true);
+        this.renderer = new VulkanRenderer();
+    }
+
+    @Override
+    public void render(float transition) {
+        super.render(transition);
+
+        this.renderer.render();
     }
 
     @Override
     public void delete() {
         super.delete();
 
-        this.vulkan.delete();
+        this.renderer.delete();
     }
 
     @Override
