@@ -13,9 +13,9 @@ import org.lwjgl.vulkan.*;
 
 public class VulkanRenderer {
     private final CommandBuffer[] commandBuffers;
-    private final CommandPool[] commandPools;
+    public final CommandPool[] commandPools;
     private final Fence[] fences;
-    private final Queue.GraphicsQueue graphicsQueue;
+    public final Queue.GraphicsQueue graphicsQueue;
     private final Semaphore[] presentSemaphores;
     private final Queue.PresentQueue presentQueue;
     private final Semaphore[] renderSemaphores;
@@ -23,7 +23,7 @@ public class VulkanRenderer {
     private final VulkanContext context;
     private int currentFrame;
 
-    private UploadContext upload;
+    public UploadContext upload;
 
     public VulkanRenderer() {
         this.context = new VulkanContext();
@@ -51,14 +51,14 @@ public class VulkanRenderer {
             this.renderSemaphores[i] = new Semaphore(this.context.device);
         }
 
-        this.render = new Render(this.context);
         this.upload = new UploadContext();
+        this.render = new Render(this.context, this);
     }
 
     public void delete() {
         this.context.device.waitIdle();
 
-        this.upload.delete();
+        this.upload.delete(this.context.allocator);
         this.render.delete();
 
         for (Semaphore semaphore : this.renderSemaphores) {
@@ -104,7 +104,7 @@ public class VulkanRenderer {
             return;
         }
 
-        this.render.render(this.context, buffer, imageIndex);
+        this.render.render(buffer, imageIndex);
 
         this.writingStop(buffer);
 

@@ -30,7 +30,7 @@ public class BufferBuilder {
 
     public BufferBuilder(int capacity) {
         this.vertexCapacity = capacity;
-        this.buffer = MemoryUtil.memAlloc(this.vertexCapacity * 36);
+        this.buffer = MemoryUtil.memAlloc(this.vertexCapacity * 12);
     }
 
     public Buffer upload(UploadContext context, Allocator allocator, CommandBuffer buffer) {
@@ -78,45 +78,27 @@ public class BufferBuilder {
         this.checkBuilding();
         this.computeCapacity(this.vertexCount + 1);
 
-        int base = this.vertexCount * 36;
+        int base = this.vertexCount * 12;
 
         this.buffer.putFloat(base, this.pos.x);
         this.buffer.putFloat(base + 4, this.pos.y);
         this.buffer.putFloat(base + 8, this.pos.z);
 
-        this.buffer.put(base + 12, this.compressColor(this.color.x));
-        this.buffer.put(base + 13, this.compressColor(this.color.y));
-        this.buffer.put(base + 14, this.compressColor(this.color.z));
-        this.buffer.put(base + 15, this.compressColor(this.color.w));
-
-        this.buffer.putFloat(base + 16, this.tex.x);
-        this.buffer.putFloat(base + 20, this.tex.y);
-
-        this.buffer.putFloat(base + 24, this.normal.x);
-        this.buffer.putFloat(base + 28, this.normal.y);
-        this.buffer.putFloat(base + 32, this.normal.z);
+//        this.buffer.put(base + 12, this.compressColor(this.color.x));
+//        this.buffer.put(base + 13, this.compressColor(this.color.y));
+//        this.buffer.put(base + 14, this.compressColor(this.color.z));
+//        this.buffer.put(base + 15, this.compressColor(this.color.w));
+//
+//        this.buffer.putFloat(base + 16, this.tex.x);
+//        this.buffer.putFloat(base + 20, this.tex.y);
+//
+//        this.buffer.putFloat(base + 24, this.normal.x);
+//        this.buffer.putFloat(base + 28, this.normal.y);
+//        this.buffer.putFloat(base + 32, this.normal.z);
 
         this.vertexCount++;
 
         return this;
-    }
-
-    public VertexData end() {
-        this.checkBuilding();
-        this.building = false;
-
-        int size = this.vertexCount * 36;
-        ByteBuffer result = MemoryUtil.memAlloc(size);
-        ByteBuffer view = this.buffer.duplicate();
-
-        view.position(0);
-        view.limit(size);
-        result.put(view);
-        result.flip();
-
-        this.free();
-
-        return new VertexData(result, this.vertexCount);
     }
 
     public void free() {
@@ -138,7 +120,7 @@ public class BufferBuilder {
             capacity *= 2;
         }
 
-        this.buffer = MemoryUtil.memRealloc(this.buffer, capacity * 36);
+        this.buffer = MemoryUtil.memRealloc(this.buffer, capacity * 12);
         this.vertexCapacity = capacity;
     }
 

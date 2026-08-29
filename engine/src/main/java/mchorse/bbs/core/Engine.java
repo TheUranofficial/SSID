@@ -71,7 +71,7 @@ public abstract class Engine implements IEngine, IJoystickHandler {
         this.mouse = new MouseInput(this);
         this.keys = new KeyboardInput(this);
         this.joystick = new JoystickInput(this);
-        this.frameRate = 120;
+        this.frameRate = 9999;
     }
 
     /**

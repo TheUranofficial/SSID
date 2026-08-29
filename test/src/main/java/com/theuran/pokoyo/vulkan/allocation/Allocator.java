@@ -16,7 +16,8 @@ public class Allocator {
 
     public Allocator(VulkanInstance instance, PhysicalDevice physicalDevice, Device device) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VmaVulkanFunctions functions = VmaVulkanFunctions.calloc(stack);
+            VmaVulkanFunctions functions = VmaVulkanFunctions.calloc(stack)
+                .set(instance.instance, device.device);
 
             VmaAllocatorCreateInfo info = VmaAllocatorCreateInfo.calloc(stack)
                 .vulkanApiVersion(VK13.VK_API_VERSION_1_3)
