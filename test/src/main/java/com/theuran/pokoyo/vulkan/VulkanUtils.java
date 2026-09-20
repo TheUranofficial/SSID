@@ -1,6 +1,5 @@
 package com.theuran.pokoyo.vulkan;
 
-import com.theuran.pokoyo.vulkan.device.Device;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 

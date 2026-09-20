@@ -26,6 +26,13 @@ public class VulkanContext {
         this.pipelineCache = new PipelineCache(this.device);
     }
 
+    public void resize() {
+        this.swapChain.delete(this.device);
+        this.surface.delete(this.instance);
+        this.surface = new Surface(this.instance, this.physicalDevice);
+        this.swapChain = new SwapChain(this.device, this.surface, 3, false);
+    }
+
     public void delete() {
         this.pipelineCache.delete(this.device);
         this.allocator.delete();

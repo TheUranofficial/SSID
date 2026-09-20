@@ -8,10 +8,12 @@ import com.theuran.pokoyo.vulkan.command.CommandPool;
 import com.theuran.pokoyo.vulkan.command.Queue;
 import com.theuran.pokoyo.vulkan.synchronization.Fence;
 import com.theuran.pokoyo.vulkan.synchronization.Semaphore;
+import mchorse.bbs.core.IDisposable;
+import mchorse.bbs.graphics.window.Window;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-public class VulkanRenderer {
+public class VulkanRenderer implements IDisposable {
     private final CommandBuffer[] commandBuffers;
     public final CommandPool[] commandPools;
     private final Fence[] fences;
@@ -20,15 +22,14 @@ public class VulkanRenderer {
     private final Queue.PresentQueue presentQueue;
     private final Semaphore[] renderSemaphores;
     private final Render render;
-    private final VulkanContext context;
-    private int currentFrame;
+    private final VulkanContext context = new VulkanContext();
+    private int currentFrame = 0;
+    private boolean resize = false;
 
-    public UploadContext upload;
+    public UploadContext upload = new UploadContext();
+    public Projection projection = new Projection(90, 1, 100, Window.getWidth(), Window.getHeight());
 
     public VulkanRenderer() {
-        this.context = new VulkanContext();
-        this.currentFrame = 0;
-
         this.graphicsQueue = new Queue.GraphicsQueue(this.context, 0);
         this.presentQueue = new Queue.PresentQueue(this.context, 0);
 
@@ -51,10 +52,10 @@ public class VulkanRenderer {
             this.renderSemaphores[i] = new Semaphore(this.context.device);
         }
 
-        this.upload = new UploadContext();
         this.render = new Render(this.context, this);
     }
 
+    @Override
     public void delete() {
         this.context.device.waitIdle();
 
@@ -100,7 +101,9 @@ public class VulkanRenderer {
 
         int imageIndex = this.context.swapChain.acquireNextImage(this.context.device, this.presentSemaphores[this.currentFrame]);
 
-        if (imageIndex == -1) {
+        if (this.resize || imageIndex == -1) {
+            this.resize();
+
             return;
         }
 
@@ -110,9 +113,41 @@ public class VulkanRenderer {
 
         this.submit(buffer, imageIndex);
 
-        this.context.swapChain.presentImage(this.presentQueue, this.renderSemaphores[imageIndex], imageIndex);
+        this.resize = this.context.swapChain.presentImage(this.presentQueue, this.renderSemaphores[imageIndex], imageIndex);
 
         this.currentFrame = (this.currentFrame + 1) % VulkanUtils.MAX_IN_FLIGHT;
+    }
+
+    private void resize() {
+        if (Window.getWidth() == 0 && Window.getHeight() == 0) {
+            return;
+        }
+
+        this.resize = true;
+        this.context.device.waitIdle();
+        this.context.resize();
+
+        for (Semaphore semaphore : this.renderSemaphores) {
+            semaphore.delete(this.context.device);
+        }
+
+        for (Semaphore semaphore : this.presentSemaphores) {
+            semaphore.delete(this.context.device);
+        }
+
+        for (int i = 0; i < VulkanUtils.MAX_IN_FLIGHT; i++) {
+            this.presentSemaphores[i] = new Semaphore(this.context.device);
+        }
+
+        for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
+            this.renderSemaphores[i] = new Semaphore(this.context.device);
+        }
+
+        VkExtent2D extent = this.context.swapChain.extent;
+
+        this.projection.resize(extent.width(), extent.height());
+
+        this.render.resize();
     }
 
     private void submit(CommandBuffer buffer, int imageIndex) {

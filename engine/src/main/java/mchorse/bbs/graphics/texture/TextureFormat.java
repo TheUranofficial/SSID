@@ -24,7 +24,7 @@ public enum TextureFormat {
         return RGBA_U8;
     }
 
-    private TextureFormat(int internal, int format, int type, int attachment) {
+    TextureFormat(int internal, int format, int type, int attachment) {
         this.internal = internal;
         this.format = format;
         this.type = type;

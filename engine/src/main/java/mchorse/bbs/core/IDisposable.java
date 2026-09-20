@@ -8,5 +8,5 @@ public interface IDisposable {
     /**
      * This method should be responsible for cleaning up resources
      */
-    public void delete();
+    void delete();
 }
