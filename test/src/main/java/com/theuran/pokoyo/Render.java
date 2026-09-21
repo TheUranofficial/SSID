@@ -91,17 +91,19 @@ public class Render implements IDisposable {
     private VkRenderingInfo[] createRenderInfo() {
         VkRenderingInfo[] infos = new VkRenderingInfo[this.context.swapChain.imageViews.length];
 
-        VkRect2D renderArea = VkRect2D.calloc().extent(this.context.swapChain.extent);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkRect2D renderArea = VkRect2D.calloc(stack).extent(this.context.swapChain.extent);
 
-        for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
-            VkRenderingInfo renderingInfo = VkRenderingInfo.calloc()
-                .sType$Default()
-                .renderArea(renderArea)
-                .layerCount(1)
-                .pColorAttachments(this.attachmentInfo[i])
-                .pDepthAttachment(this.attachmentInfoDepth[i]);
+            for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
+                VkRenderingInfo renderingInfo = VkRenderingInfo.calloc()
+                    .sType$Default()
+                    .renderArea(renderArea)
+                    .layerCount(1)
+                    .pColorAttachments(this.attachmentInfo[i])
+                    .pDepthAttachment(this.attachmentInfoDepth[i]);
 
-            infos[i] = renderingInfo;
+                infos[i] = renderingInfo;
+            }
         }
 
         return infos;
@@ -168,6 +170,7 @@ public class Render implements IDisposable {
             long swapChainImage = this.context.swapChain.imageViews[imageIndex].image;
 
             VulkanUtils.imageBarrier(stack, buffer.buffer, swapChainImage, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_ACCESS_2_NONE, VK13.VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_COLOR_BIT);
+            VulkanUtils.imageBarrier(stack, buffer.buffer, this.attachmentDepth[imageIndex].imageView.image, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK12.VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_DEPTH_BIT);
 
             VK13.vkCmdBeginRendering(buffer.buffer, this.renderInfo[imageIndex]);
             VK10.vkCmdBindPipeline(buffer.buffer, VK10.VK_PIPELINE_BIND_POINT_GRAPHICS, this.pipeline.pipeline);
@@ -221,6 +224,7 @@ public class Render implements IDisposable {
         }
 
         this.attachmentDepth = this.createDepthAttachments();
+        this.attachmentInfo = this.createAttachmentsInfos();
         this.attachmentInfoColor = this.createAttachmentsInfos();
         this.attachmentInfoDepth = this.createDepthAttachmentsInfo();
         this.renderInfo = this.createRenderInfo();

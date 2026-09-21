@@ -104,9 +104,6 @@ public class Pipeline {
 
             this.layout = buffer.get(0);
 
-            IO.println(info.info.address());
-            IO.println();
-
             VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.calloc(1, stack)
                 .sType$Default()
                 .renderPass(VK10.VK_NULL_HANDLE)
