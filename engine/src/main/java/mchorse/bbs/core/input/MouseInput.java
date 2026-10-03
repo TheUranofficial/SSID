@@ -34,26 +34,20 @@ public class MouseInput {
         this.x = (int) x[0];
         this.y = (int) y[0];
 
-        GLFW.glfwSetCursorPosCallback(win, (windowHandle, xpos, ypos) ->
-        {
+        GLFW.glfwSetCursorPosCallback(win, (_, xpos, ypos) -> {
             this.x = (int) xpos;
             this.y = (int) ypos;
         });
 
-        GLFW.glfwSetCursorEnterCallback(win, (windowHandle, entered) ->
-        {
-            this.inWindow = entered;
-        });
+        GLFW.glfwSetCursorEnterCallback(win, (_, entered) -> this.inWindow = entered);
 
-        GLFW.glfwSetMouseButtonCallback(win, (windowHandle, button, action, mode) ->
-        {
+        GLFW.glfwSetMouseButtonCallback(win, (_, button, action, mode) -> {
             if (this.handler != null) {
                 this.handler.handleMouse(button, action, mode);
             }
         });
 
-        GLFW.glfwSetScrollCallback(win, (windowHandle, scrollX, scrollY) ->
-        {
+        GLFW.glfwSetScrollCallback(win, (_, scrollX, scrollY) -> {
             this.lastScrollX = (int) scrollX;
             this.lastScrollY = (int) scrollY;
             this.lastScrollTime = System.currentTimeMillis();

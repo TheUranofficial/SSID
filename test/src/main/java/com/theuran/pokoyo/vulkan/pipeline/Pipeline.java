@@ -1,21 +1,19 @@
 package com.theuran.pokoyo.vulkan.pipeline;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.device.Device;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.LongBuffer;
 
-public class Pipeline {
+public class Pipeline implements IVulkanDisposable {
     public final long pipeline;
     public final long layout;
 
-    public Pipeline(Device device, PipelineCache cache, PipelineInfo info) {
+    public Pipeline(VulkanContext context, PipelineInfo info) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            LongBuffer buffer = stack.mallocLong(1);
             ByteBuffer main = stack.UTF8("main");
             VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(info.shaders.length, stack);
 
@@ -100,9 +98,7 @@ public class Pipeline {
                 .sType$Default()
                 .pPushConstantRanges(pushConstantBuffer);
 
-            VulkanUtils.checkError(VK10.vkCreatePipelineLayout(device.device, layoutInfo, null, buffer), "Failed to create pipeline layout");
-
-            this.layout = buffer.get(0);
+            this.layout = context.createPipelineLayout(layoutInfo);
 
             VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.calloc(1, stack)
                 .sType$Default()
@@ -122,14 +118,13 @@ public class Pipeline {
                 pipelineInfo.pDepthStencilState(depthStencil);
             }
 
-            VulkanUtils.checkError(VK10.vkCreateGraphicsPipelines(device.device, cache.cache, pipelineInfo, null, buffer), "Error creating graphics pipeline");
-
-            this.pipeline = buffer.get(0);
+            this.pipeline = context.createPipeline(pipelineInfo);
         }
     }
 
-    public void delete(Device device) {
-        VK10.vkDestroyPipelineLayout(device.device, this.layout, null);
-        VK10.vkDestroyPipeline(device.device, this.pipeline, null);
+    @Override
+    public void delete(VulkanContext context) {
+        VK10.vkDestroyPipelineLayout(context.device.device, this.layout, null);
+        VK10.vkDestroyPipeline(context.device.device, this.pipeline, null);
     }
 }

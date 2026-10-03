@@ -1,5 +1,7 @@
 package com.theuran.pokoyo.vulkan;
 
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
+import mchorse.bbs.core.IDisposable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVulkan;
 import org.lwjgl.system.MemoryStack;
@@ -14,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class VulkanInstance {
+public class VulkanInstance implements IDisposable {
     private static final String VALIDATION_LAYER = "VK_LAYER_KHRONOS_validation";
     private static final String PORTABILITY_EXTENSION = "VK_KHR_portability_enumeration";
 
@@ -32,8 +34,6 @@ public class VulkanInstance {
     public final VkInstance instance;
 
     public VulkanInstance(boolean validation) {
-        IO.println("Creating Vulkan instance");
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
             List<String> validationLayers = this.getValidationLayers();
             boolean supportsValidation = validation && !validationLayers.isEmpty();
@@ -56,10 +56,24 @@ public class VulkanInstance {
             PointerBuffer extensionsBuffer = this.createExtensionsBuffer(stack, supportsValidation, usePortability);
 
             this.instance = this.createInstance(stack, appInfo, layersBuffer, extensionsBuffer, usePortability);
-            this.debugMessenger = supportsValidation ? this.createDebugMessenger(stack, this.instance, this.debugUtils) : 0;
+            this.debugMessenger = supportsValidation ? this.createDebug(this.debugUtils) : 0;
         }
     }
 
+    public long createDebug(VkDebugUtilsMessengerCreateInfoEXT debugUtils) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            LongBuffer buffer = stack.mallocLong(1);
+            int error = EXTDebugUtils.vkCreateDebugUtilsMessengerEXT(this.instance, debugUtils, null, buffer);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Error creating debug utils", error);
+            }
+
+            return buffer.get(0);
+        }
+    }
+
+    @Override
     public void delete() {
         if (this.debugMessenger != 0) {
             EXTDebugUtils.vkDestroyDebugUtilsMessengerEXT(this.instance, this.debugMessenger, null);
@@ -79,12 +93,13 @@ public class VulkanInstance {
 
     private VkApplicationInfo createAppInfo(MemoryStack stack) {
         ByteBuffer name = stack.UTF8("Okak");
+        ByteBuffer engineName = stack.UTF8("SSID");
 
         return VkApplicationInfo.malloc(stack)
             .sType$Default()
             .pApplicationName(name)
             .applicationVersion(1)
-            .pEngineName(name)
+            .pEngineName(engineName)
             .engineVersion(0)
             .apiVersion(VK13.VK_API_VERSION_1_3);
     }
@@ -135,7 +150,7 @@ public class VulkanInstance {
     }
 
     private VkInstance createInstance(MemoryStack stack, VkApplicationInfo appInfo, PointerBuffer layers, PointerBuffer extensions, boolean usePortability) {
-        VkInstanceCreateInfo instanceInfo = VkInstanceCreateInfo.calloc(stack)
+        VkInstanceCreateInfo info = VkInstanceCreateInfo.calloc(stack)
             .sType$Default()
             .pNext(this.debugUtils != null ? this.debugUtils.address() : 0)
             .pApplicationInfo(appInfo)
@@ -143,22 +158,10 @@ public class VulkanInstance {
             .ppEnabledExtensionNames(extensions);
 
         if (usePortability) {
-            instanceInfo.flags(KHRPortabilityEnumeration.VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR);
+            info.flags(KHRPortabilityEnumeration.VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR);
         }
 
-        PointerBuffer instance = stack.mallocPointer(1);
-
-        VulkanUtils.checkError(VK10.vkCreateInstance(instanceInfo, null, instance), "Error creating instance");
-
-        return new VkInstance(instance.get(0), instanceInfo);
-    }
-
-    private long createDebugMessenger(MemoryStack stack, VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT debugUtils) {
-        LongBuffer buffer = stack.mallocLong(1);
-
-        VulkanUtils.checkError(EXTDebugUtils.vkCreateDebugUtilsMessengerEXT(instance, debugUtils, null, buffer), "Error creating debug utils");
-
-        return buffer.get(0);
+        return VulkanUtils.createInstance(info);
     }
 
     private VkDebugUtilsMessengerCreateInfoEXT createDebugCallback() {

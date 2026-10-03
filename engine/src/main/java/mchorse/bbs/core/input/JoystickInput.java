@@ -59,8 +59,7 @@ public class JoystickInput implements IDisposable {
     }
 
     public void init() {
-        GLFW.glfwSetJoystickCallback((jid, event) ->
-        {
+        GLFW.glfwSetJoystickCallback((jid, event) -> {
             if (jid == GLFW.GLFW_JOYSTICK_1) {
                 if (event == GLFW.GLFW_CONNECTED) {
                     this.present = true;

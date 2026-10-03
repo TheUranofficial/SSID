@@ -1,31 +1,24 @@
 package com.theuran.pokoyo.vulkan.pipeline;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.device.Device;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkPipelineCacheCreateInfo;
 
-import java.nio.LongBuffer;
-
-public class PipelineCache {
+public class PipelineCache implements IVulkanDisposable {
     public final long cache;
 
-    public PipelineCache(Device device) {
-        IO.println("Creating cache for pipelines for device");
-
+    public PipelineCache(VulkanContext context) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkPipelineCacheCreateInfo info = VkPipelineCacheCreateInfo.calloc(stack).sType$Default();
 
-            LongBuffer buffer = stack.mallocLong(1);
-
-            VulkanUtils.checkError(VK10.vkCreatePipelineCache(device.device, info, null, buffer), "Error creating pipeline cache");
-
-            this.cache = buffer.get(0);
+            this.cache = context.createPipelineCache(info);
         }
     }
 
-    public void delete(Device device) {
-        VK10.vkDestroyPipelineCache(device.device, this.cache, null);
+    @Override
+    public void delete(VulkanContext context) {
+        VK10.vkDestroyPipelineCache(context.device.device, this.cache, null);
     }
 }

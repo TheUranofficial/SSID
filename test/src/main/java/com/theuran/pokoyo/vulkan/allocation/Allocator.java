@@ -1,39 +1,33 @@
 package com.theuran.pokoyo.vulkan.allocation;
 
-import com.theuran.pokoyo.vulkan.VulkanInstance;
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.device.Device;
-import com.theuran.pokoyo.vulkan.device.PhysicalDevice;
-import org.lwjgl.PointerBuffer;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import mchorse.bbs.core.IDisposable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.util.vma.VmaAllocatorCreateInfo;
 import org.lwjgl.util.vma.VmaVulkanFunctions;
 import org.lwjgl.vulkan.VK13;
 
-public class Allocator {
+public class Allocator implements IDisposable {
     public long allocator;
 
-    public Allocator(VulkanInstance instance, PhysicalDevice physicalDevice, Device device) {
+    public Allocator(VulkanContext context) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VmaVulkanFunctions functions = VmaVulkanFunctions.calloc(stack)
-                .set(instance.instance, device.device);
+                .set(context.instance.instance, context.device.device);
 
             VmaAllocatorCreateInfo info = VmaAllocatorCreateInfo.calloc(stack)
                 .vulkanApiVersion(VK13.VK_API_VERSION_1_3)
-                .physicalDevice(physicalDevice.device)
-                .device(device.device)
-                .instance(instance.instance)
+                .physicalDevice(context.physicalDevice.device)
+                .device(context.device.device)
+                .instance(context.instance.instance)
                 .pVulkanFunctions(functions);
 
-            PointerBuffer allocator = stack.mallocPointer(1);
-
-            VulkanUtils.checkError(Vma.vmaCreateAllocator(info, allocator), "Failed to create Vulkan Memory Allocator");
-
-            this.allocator = allocator.get(0);
+            this.allocator = context.createAllocator(info);
         }
     }
 
+    @Override
     public void delete() {
         Vma.vmaDestroyAllocator(this.allocator);
     }

@@ -3,53 +3,42 @@ package com.theuran.pokoyo;
 import com.theuran.pokoyo.vulkan.VulkanContext;
 import com.theuran.pokoyo.vulkan.VulkanUtils;
 import com.theuran.pokoyo.vulkan.allocation.UploadContext;
-import com.theuran.pokoyo.vulkan.command.CommandBuffer;
-import com.theuran.pokoyo.vulkan.command.CommandPool;
 import com.theuran.pokoyo.vulkan.command.Queue;
-import com.theuran.pokoyo.vulkan.synchronization.Fence;
+import com.theuran.pokoyo.vulkan.frame.Framebuffer;
 import com.theuran.pokoyo.vulkan.synchronization.Semaphore;
 import mchorse.bbs.core.IDisposable;
-import mchorse.bbs.graphics.window.Window;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.*;
+import org.lwjgl.vulkan.VK13;
+import org.lwjgl.vulkan.VkCommandBufferSubmitInfo;
+import org.lwjgl.vulkan.VkExtent2D;
+import org.lwjgl.vulkan.VkSemaphoreSubmitInfo;
 
 public class VulkanRenderer implements IDisposable {
-    private final CommandBuffer[] commandBuffers;
-    public final CommandPool[] commandPools;
-    private final Fence[] fences;
     public final Queue.GraphicsQueue graphicsQueue;
-    private final Semaphore[] presentSemaphores;
     private final Queue.PresentQueue presentQueue;
-    private final Semaphore[] renderSemaphores;
+
+    private final Framebuffer[] frames;
+
     private final Render render;
     private final VulkanContext context = new VulkanContext();
     private int currentFrame = 0;
     private boolean resize = false;
 
-    public UploadContext upload = new UploadContext();
-    public Projection projection = new Projection(90, 1, 100, Window.getWidth(), Window.getHeight());
+    public UploadContext upload;
+    public VulkanEngine engine;
 
-    public VulkanRenderer() {
+    public VulkanRenderer(VulkanEngine engine) {
+        this.engine = engine;
+
         this.graphicsQueue = new Queue.GraphicsQueue(this.context, 0);
         this.presentQueue = new Queue.PresentQueue(this.context, 0);
 
-        this.commandPools = new CommandPool[VulkanUtils.MAX_IN_FLIGHT];
-        this.commandBuffers = new CommandBuffer[VulkanUtils.MAX_IN_FLIGHT];
+        this.upload = new UploadContext(this.context, this.graphicsQueue.index);
 
-        this.fences = new Fence[VulkanUtils.MAX_IN_FLIGHT];
-        this.presentSemaphores = new Semaphore[VulkanUtils.MAX_IN_FLIGHT];
-        this.renderSemaphores = new Semaphore[this.context.swapChain.imageViews.length];
+        this.frames = new Framebuffer[VulkanUtils.MAX_IN_FLIGHT];
 
         for (int i = 0; i < VulkanUtils.MAX_IN_FLIGHT; i++) {
-            this.commandPools[i] = new CommandPool(this.context.device, this.graphicsQueue.index, false);
-            this.commandBuffers[i] = new CommandBuffer(this.context.device, this.commandPools[i], true, true);
-
-            this.presentSemaphores[i] = new Semaphore(this.context.device);
-            this.fences[i] = new Fence(this.context.device, true);
-        }
-
-        for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
-            this.renderSemaphores[i] = new Semaphore(this.context.device);
+            this.frames[i] = new Framebuffer(this.context, this.graphicsQueue.index);
         }
 
         this.render = new Render(this.context, this);
@@ -57,49 +46,27 @@ public class VulkanRenderer implements IDisposable {
 
     @Override
     public void delete() {
-        this.context.device.waitIdle();
+        this.context.device.waitForIdle();
 
-        this.upload.delete(this.context.allocator);
+        this.upload.delete(this.context);
         this.render.delete();
 
-        for (Semaphore semaphore : this.renderSemaphores) {
-            semaphore.delete(this.context.device);
-        }
-
-        for (Semaphore semaphore : this.presentSemaphores) {
-            semaphore.delete(this.context.device);
-        }
-
-        for (Fence fence : this.fences) {
-            fence.delete(this.context.device);
-        }
-
-        for (int i = 0; i < this.commandPools.length; i++) {
-            this.commandBuffers[i].delete(this.context.device, this.commandPools[i]);
-            this.commandPools[i].delete(this.context.device);
+        for (Framebuffer frame : this.frames) {
+            frame.presentSemaphore.delete(this.context);
+            frame.fence.delete(this.context);
+            frame.commandBuffer.delete(this.context, frame.commandPool);
+            frame.commandPool.delete(this.context);
         }
 
         this.context.delete();
     }
 
-    private void writingStart(CommandPool pool, CommandBuffer buffer) {
-        pool.reset(this.context.device);
-        buffer.beginWriting();
-    }
-
-    private void writingStop(CommandBuffer buffer) {
-        buffer.endWriting();
-    }
-
     public void render() {
-        this.fences[this.currentFrame].fenceWait(this.context.device);
+        Framebuffer frame = this.frames[this.currentFrame];
 
-        CommandPool pool = this.commandPools[this.currentFrame];
-        CommandBuffer buffer = this.commandBuffers[this.currentFrame];
+        frame.waitForFence(this.context);
 
-        this.writingStart(pool, buffer);
-
-        int imageIndex = this.context.swapChain.acquireNextImage(this.context.device, this.presentSemaphores[this.currentFrame]);
+        int imageIndex = this.context.swapChain.acquireNextImage(this.context.device, frame.presentSemaphore);
 
         if (this.resize || imageIndex == -1) {
             this.resize();
@@ -107,68 +74,52 @@ public class VulkanRenderer implements IDisposable {
             return;
         }
 
-        this.render.render(buffer, imageIndex);
+        frame.startWriting(this.context);
 
-        this.writingStop(buffer);
+        this.render.render(frame.commandBuffer, imageIndex);
 
-        this.submit(buffer, imageIndex);
+        frame.stopWriting();
 
-        this.resize = this.context.swapChain.presentImage(this.presentQueue, this.renderSemaphores[imageIndex], imageIndex);
+        this.submit(frame, imageIndex);
 
+        this.resize = this.context.swapChain.presentImage(this.presentQueue, this.context.swapChain.renderSemaphores[imageIndex], imageIndex);
         this.currentFrame = (this.currentFrame + 1) % VulkanUtils.MAX_IN_FLIGHT;
     }
 
-    private void resize() {
-        if (Window.getWidth() == 0 && Window.getHeight() == 0) {
-            return;
-        }
-
+    public void resize() {
         this.resize = true;
-        this.context.device.waitIdle();
+        this.context.device.waitForIdle();
         this.context.resize();
 
-        for (Semaphore semaphore : this.renderSemaphores) {
-            semaphore.delete(this.context.device);
-        }
-
-        for (Semaphore semaphore : this.presentSemaphores) {
-            semaphore.delete(this.context.device);
-        }
-
-        for (int i = 0; i < VulkanUtils.MAX_IN_FLIGHT; i++) {
-            this.presentSemaphores[i] = new Semaphore(this.context.device);
-        }
-
-        for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
-            this.renderSemaphores[i] = new Semaphore(this.context.device);
+        for (Framebuffer frame : this.frames) {
+            frame.presentSemaphore.delete(this.context);
+            frame.presentSemaphore = new Semaphore(this.context);
         }
 
         VkExtent2D extent = this.context.swapChain.extent;
 
-        this.projection.resize(extent.width(), extent.height());
+        this.engine.cameraController.resize(extent.width(), extent.height());
 
         this.render.resize();
     }
 
-    private void submit(CommandBuffer buffer, int imageIndex) {
+    private void submit(Framebuffer frame, int imageIndex) {
+        frame.resetFence(this.context);
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            Fence fence = this.fences[this.currentFrame];
-
-            fence.reset(this.context.device);
-
             VkCommandBufferSubmitInfo.Buffer commands = VkCommandBufferSubmitInfo.calloc(1, stack)
                 .sType$Default()
-                .commandBuffer(buffer.buffer);
+                .commandBuffer(frame.commandBuffer.buffer);
             VkSemaphoreSubmitInfo.Buffer waitSemaphores = VkSemaphoreSubmitInfo.calloc(1, stack)
                 .sType$Default()
                 .stageMask(VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT)
-                .semaphore(this.presentSemaphores[this.currentFrame].semaphore);
+                .semaphore(frame.presentSemaphore.semaphore);
             VkSemaphoreSubmitInfo.Buffer signalSemaphores = VkSemaphoreSubmitInfo.calloc(1, stack)
                 .sType$Default()
                 .stageMask(VK13.VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT)
-                .semaphore(this.renderSemaphores[imageIndex].semaphore);
+                .semaphore(this.context.swapChain.renderSemaphores[imageIndex].semaphore);
 
-            this.graphicsQueue.submit(commands, waitSemaphores, signalSemaphores, this.fences[this.currentFrame]);
+            this.graphicsQueue.submit(commands, waitSemaphores, signalSemaphores, frame.fence);
         }
     }
 }

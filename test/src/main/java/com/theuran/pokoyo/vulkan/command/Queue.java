@@ -1,10 +1,10 @@
 package com.theuran.pokoyo.vulkan.command;
 
 import com.theuran.pokoyo.vulkan.VulkanContext;
-import com.theuran.pokoyo.vulkan.VulkanUtils;
 import com.theuran.pokoyo.vulkan.device.Device;
 import com.theuran.pokoyo.vulkan.device.PhysicalDevice;
 import com.theuran.pokoyo.vulkan.synchronization.Fence;
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -16,8 +16,6 @@ public class Queue {
     public final VkQueue queue;
 
     public Queue(Device device, int index, int queueIndex) {
-        IO.println("Creating queue");
-
         this.index = index;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -31,10 +29,6 @@ public class Queue {
         }
     }
 
-    public void waitIdle() {
-        VK10.vkQueueWaitIdle(this.queue);
-    }
-
     public void submit(VkCommandBufferSubmitInfo.Buffer buffers, VkSemaphoreSubmitInfo.Buffer waitSemaphores, VkSemaphoreSubmitInfo.Buffer signalSemaphores, Fence fence) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkSubmitInfo2.Buffer info = VkSubmitInfo2.calloc(1, stack)
@@ -46,7 +40,11 @@ public class Queue {
                 info.pWaitSemaphoreInfos(waitSemaphores);
             }
 
-            VulkanUtils.checkError(VK13.vkQueueSubmit2(this.queue, info, fence != null ? fence.fence : 0), "Failed to submit command to queue");
+            int error = VK13.vkQueueSubmit2(this.queue, info, fence != null ? fence.fence : 0);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Failed to submit command to queue", error);
+            }
         }
     }
 

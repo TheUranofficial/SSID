@@ -1,9 +1,8 @@
 package com.theuran.pokoyo.vulkan.command;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.device.Device;
+import com.theuran.pokoyo.vulkan.VulkanContext;
 import com.theuran.pokoyo.vulkan.synchronization.Fence;
-import org.lwjgl.PointerBuffer;
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -14,9 +13,7 @@ public class CommandBuffer {
     private final boolean primary;
     public final VkCommandBuffer buffer;
 
-    public CommandBuffer(Device device, CommandPool pool, boolean primary, boolean oneTimeSubmit) {
-        IO.println("Creating command buffer");
-
+    public CommandBuffer(VulkanContext context, CommandPool pool, boolean primary, boolean oneTimeSubmit) {
         this.primary = primary;
         this.oneTimeSubmit = oneTimeSubmit;
 
@@ -27,18 +24,14 @@ public class CommandBuffer {
                 .level(primary ? VK10.VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK10.VK_COMMAND_BUFFER_LEVEL_SECONDARY)
                 .commandBufferCount(1);
 
-            PointerBuffer buffer = stack.mallocPointer(1);
-
-            VulkanUtils.checkError(VK10.vkAllocateCommandBuffers(device.device, info, buffer), "Failed to allocate render command buffer");
-
-            this.buffer = new VkCommandBuffer(buffer.get(0), device.device);
+            this.buffer = new VkCommandBuffer(context.allocateCommandBuffer(info), context.device.device);
         }
     }
 
-    public void submitAndWait(Device device, Queue queue) {
-        Fence fence = new Fence(device, true);
+    public void submitAndWait(VulkanContext context, Queue queue) {
+        Fence fence = new Fence(context, true);
 
-        fence.reset(device);
+        fence.reset(context);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferSubmitInfo.Buffer info = VkCommandBufferSubmitInfo.calloc(1, stack)
@@ -48,12 +41,12 @@ public class CommandBuffer {
             queue.submit(info, null, null, fence);
         }
 
-        fence.fenceWait(device);
-        fence.delete(device);
+        fence.await(context);
+        fence.delete(context);
     }
 
-    public void delete(Device device, CommandPool pool) {
-        VK10.vkFreeCommandBuffers(device.device, pool.pool, this.buffer);
+    public void delete(VulkanContext context, CommandPool pool) {
+        VK10.vkFreeCommandBuffers(context.device.device, pool.pool, this.buffer);
     }
 
     public void reset() {
@@ -96,12 +89,20 @@ public class CommandBuffer {
                 info.pInheritanceInfo(inheritanceInfo);
             }
 
-            VulkanUtils.checkError(VK10.vkBeginCommandBuffer(this.buffer, info), "Failed to begin command buffer");
+            int error = VK10.vkBeginCommandBuffer(this.buffer, info);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Failed to begin write into command buffer", error);
+            }
         }
     }
 
     public void endWriting() {
-        VulkanUtils.checkError(VK10.vkEndCommandBuffer(this.buffer), "Failed to end command buffer");
+        int error = VK10.vkEndCommandBuffer(this.buffer);
+
+        if (error != VK10.VK_SUCCESS) {
+            throw new VulkanException("Failed to end write into command buffer", error);
+        }
     }
 
     public static class InheritanceInfo {

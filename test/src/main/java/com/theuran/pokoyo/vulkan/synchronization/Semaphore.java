@@ -1,29 +1,24 @@
 package com.theuran.pokoyo.vulkan.synchronization;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.device.Device;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 
-import java.nio.LongBuffer;
-
-public class Semaphore {
+public class Semaphore implements IVulkanDisposable {
     public final long semaphore;
 
-    public Semaphore(Device device) {
+    public Semaphore(VulkanContext context) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkSemaphoreCreateInfo info = VkSemaphoreCreateInfo.calloc(stack).sType$Default();
 
-            LongBuffer buffer = stack.mallocLong(1);
-
-            VulkanUtils.checkError(VK10.vkCreateSemaphore(device.device, info, null, buffer), "Failed to create semaphore");
-
-            this.semaphore = buffer.get(0);
+            this.semaphore = context.createSemaphore(info);
         }
     }
 
-    public void delete(Device device) {
-        VK10.vkDestroySemaphore(device.device, this.semaphore, null);
+    @Override
+    public void delete(VulkanContext context) {
+        VK10.vkDestroySemaphore(context.device.device, this.semaphore, null);
     }
 }

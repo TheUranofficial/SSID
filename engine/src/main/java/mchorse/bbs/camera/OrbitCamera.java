@@ -187,6 +187,7 @@ public class OrbitCamera {
 
         int pitch = this.getFactor(context, Keys.FLIGHT_TILT_UP, Keys.FLIGHT_TILT_DOWN, this.velocityAngle.x);
         int yaw = this.getFactor(context, Keys.FLIGHT_PAN_LEFT, Keys.FLIGHT_PAN_RIGHT, this.velocityAngle.y);
+
         same = same && this.velocityAngle.x == pitch && this.velocityAngle.y == yaw;
 
         this.velocityPosition.set(x, y, z);

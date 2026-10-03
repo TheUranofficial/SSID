@@ -11,6 +11,7 @@ import com.theuran.pokoyo.vulkan.shader.PushConstantRange;
 import com.theuran.pokoyo.vulkan.shader.Shader;
 import com.theuran.pokoyo.vulkan.vertex.BufferBuilder;
 import com.theuran.pokoyo.vulkan.vertex.VertexBufferFormat;
+import mchorse.bbs.camera.Camera;
 import mchorse.bbs.core.IDisposable;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
@@ -31,6 +32,8 @@ public class Render implements IDisposable {
     private Shader[] shaders;
     private Pipeline pipeline;
     private Buffer vertexBuffer;
+    private Buffer indexBuffer;
+    private int indexCount;
     private ByteBuffer pushConstant;
     private Attachment[] attachmentDepth;
     private VkRenderingAttachmentInfo.Buffer[] attachmentInfoColor;
@@ -50,14 +53,15 @@ public class Render implements IDisposable {
         this.shaders = this.createShaders();
         this.pushConstant = MemoryUtil.memAlloc(Matrix4f.BYTES * 2);
         this.pipeline = this.createPipeline();
-        this.vertexBuffer = this.createVertexBuffer();
+
+        this.createVertexBuffer();
     }
 
     private Attachment[] createDepthAttachments() {
         Attachment[] depthAttachment = new Attachment[this.context.swapChain.imageViews.length];
 
         for (int i = 0; i < this.context.swapChain.imageViews.length; i++) {
-            depthAttachment[i] = new Attachment(this.context.allocator, this.context.device, this.context.swapChain.extent.width(), this.context.swapChain.extent.height(), VK10.VK_FORMAT_D16_UNORM, VK10.VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+            depthAttachment[i] = new Attachment(this.context, this.context.swapChain.extent.width(), this.context.swapChain.extent.height(), VK10.VK_FORMAT_D16_UNORM, VK10.VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
         }
 
         return depthAttachment;
@@ -85,7 +89,7 @@ public class Render implements IDisposable {
         info.depthFormat = VK10.VK_FORMAT_D16_UNORM;
         info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Matrix4f.BYTES * 2)};
 
-        return new Pipeline(this.context.device, this.context.pipelineCache, info);
+        return new Pipeline(this.context, info);
     }
 
     private VkRenderingInfo[] createRenderInfo() {
@@ -116,7 +120,7 @@ public class Render implements IDisposable {
             VkRenderingAttachmentInfo.Buffer attachments = VkRenderingAttachmentInfo.calloc(1)
                 .sType$Default()
                 .imageView(this.context.swapChain.imageViews[i].imageView)
-                .imageLayout(KHRSynchronization2.VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR)
+                .imageLayout(VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
                 .loadOp(VK10.VK_ATTACHMENT_LOAD_OP_CLEAR)
                 .storeOp(VK10.VK_ATTACHMENT_STORE_OP_STORE)
                 .clearValue(this.clearColor);
@@ -129,40 +133,30 @@ public class Render implements IDisposable {
 
     private Shader[] createShaders() {
         return new Shader[] {
-            new Shader(this.context.device, VK10.VK_SHADER_STAGE_VERTEX_BIT, "/pokoyo/shaders/vertex/shader.spv"),
-            new Shader(this.context.device, VK10.VK_SHADER_STAGE_FRAGMENT_BIT, "/pokoyo/shaders/fragment/shader.spv"),
+            new Shader(this.context, VK10.VK_SHADER_STAGE_VERTEX_BIT, "/pokoyo/shaders/vertex/shader.spv"),
+            new Shader(this.context, VK10.VK_SHADER_STAGE_FRAGMENT_BIT, "/pokoyo/shaders/fragment/shader.spv"),
         };
     }
 
-    private Buffer createVertexBuffer() {
+    private void createVertexBuffer() {
         BufferBuilder builder = new BufferBuilder();
 
-        builder.begin();
+        builder.beginQuads();
 
-        builder.pos(-0.5f, -0.5f, 0).color(1, 0, 0, 1);
-        builder.pos(-0.5f, 0.5f, 0).color(0, 1, 0, 1);
-        builder.pos(0.5f, 0.5f, 0).color(0, 0, 1, 1);
+        builder.pos(0.5f, 0.5f, 0.5f).color(1, 0, 1, 1).endVertex();
+        builder.pos(-0.5f, 0.5f, 0.5f).color(1, 1, 1, 1).endVertex();
+        builder.pos(0.5f, -0.5f, 0.5f).color(1, 1, 0, 1).endVertex();
+        builder.pos(-0.5f, -0.5f, 0.5f).color(1, 0, 1, 1).endVertex();
 
-        builder.pos(-0.5f, -0.5f, 0).color(1, 0, 0, 1);
-        builder.pos(0.5f, 0.5f, 0).color(0, 0, 1, 1);
-        builder.pos(0.5f, -0.5f, 0).color(0, 1, 0, 1);
+        this.renderer.upload.begin(this.context);
 
-        CommandBuffer buffer = new CommandBuffer(this.context.device, this.renderer.commandPools[0], true, true);
+        this.vertexBuffer = builder.upload(this.context, this.renderer.upload);
+        this.indexBuffer = builder.uploadIndices(this.context, this.renderer.upload);
+        this.indexCount = builder.getIndexCount();
 
-        buffer.beginWriting();
-
-        Buffer vertexBuffer = builder.upload(this.renderer.upload, this.context.allocator, buffer);
-
-        buffer.endWriting();
-
-        buffer.submitAndWait(this.context.device, this.renderer.graphicsQueue);
+        this.renderer.upload.end(context, this.renderer.graphicsQueue);
 
         builder.free();
-        this.renderer.upload.delete(this.context.allocator);
-
-        buffer.delete(this.context.device, this.renderer.commandPools[0]);
-
-        return vertexBuffer;
     }
 
     public void render(CommandBuffer buffer, int imageIndex) {
@@ -170,18 +164,17 @@ public class Render implements IDisposable {
             long swapChainImage = this.context.swapChain.imageViews[imageIndex].image;
 
             VulkanUtils.imageBarrier(stack, buffer.buffer, swapChainImage, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_ACCESS_2_NONE, VK13.VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_COLOR_BIT);
-            VulkanUtils.imageBarrier(stack, buffer.buffer, this.attachmentDepth[imageIndex].imageView.image, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK12.VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_DEPTH_BIT);
+            VulkanUtils.imageBarrier(stack, buffer.buffer, this.attachmentDepth[imageIndex].imageView.image, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK10.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_DEPTH_BIT);
 
             VK13.vkCmdBeginRendering(buffer.buffer, this.renderInfo[imageIndex]);
             VK10.vkCmdBindPipeline(buffer.buffer, VK10.VK_PIPELINE_BIND_POINT_GRAPHICS, this.pipeline.pipeline);
 
             VkExtent2D extent = this.context.swapChain.extent;
-
             VkViewport.Buffer viewport = VkViewport.calloc(1, stack)
                 .x(0)
-                .y(0)
+                .y(extent.height())
                 .width(extent.width())
-                .height(extent.height())
+                .height(-extent.height())
                 .minDepth(0)
                 .maxDepth(1);
             VkRect2D.Buffer scissor = VkRect2D.calloc(1, stack).extent(extent);
@@ -189,20 +182,21 @@ public class Render implements IDisposable {
             VK10.vkCmdSetViewport(buffer.buffer, 0, viewport);
             VK10.vkCmdSetScissor(buffer.buffer, 0, scissor);
 
-            this.setPushConstants(buffer.buffer, this.renderer.projection.projectionMatrix, new Matrix4f());
+            this.setPushConstants(buffer.buffer, this.renderer.engine.cameraController.camera);
 
             VK10.vkCmdBindVertexBuffers(buffer.buffer, 0, stack.longs(this.vertexBuffer.buffer), stack.longs(0));
-            VK10.vkCmdDraw(buffer.buffer, 6, 1, 0, 0);
+            VK10.vkCmdBindIndexBuffer(buffer.buffer, this.indexBuffer.buffer, 0, VK10.VK_INDEX_TYPE_UINT16);
+            VK10.vkCmdDrawIndexed(buffer.buffer, this.indexCount, 1, 0, 0, 0);
 
             VK13.vkCmdEndRendering(buffer.buffer);
 
-            VulkanUtils.imageBarrier(stack, buffer.buffer, swapChainImage, VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT, VK13.VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK13.VK_PIPELINE_STAGE_2_NONE, VK10.VK_IMAGE_ASPECT_COLOR_BIT);
+            VulkanUtils.imageBarrier(stack, buffer.buffer, swapChainImage, VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT, VK13.VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK13.VK_ACCESS_2_NONE, VK10.VK_IMAGE_ASPECT_COLOR_BIT);
         }
     }
 
-    private void setPushConstants(VkCommandBuffer buffer, Matrix4f projMatrix, Matrix4f modelMatrix) {
-        projMatrix.get(this.pushConstant);
-        modelMatrix.get(Matrix4f.BYTES, this.pushConstant);
+    private void setPushConstants(VkCommandBuffer buffer, Camera camera) {
+        camera.projection.get(this.pushConstant);
+        camera.view.get(Matrix4f.BYTES, this.pushConstant);
         VK10.vkCmdPushConstants(buffer, this.pipeline.layout, VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, this.pushConstant);
     }
 
@@ -220,7 +214,7 @@ public class Render implements IDisposable {
         }
 
         for (Attachment attachment : this.attachmentDepth) {
-            attachment.delete(this.context.allocator, this.context.device);
+            attachment.delete(this.context);
         }
 
         this.attachmentDepth = this.createDepthAttachments();
@@ -249,7 +243,7 @@ public class Render implements IDisposable {
         }
 
         for (Attachment attachment : this.attachmentDepth) {
-            attachment.delete(this.context.allocator, this.context.device);
+            attachment.delete(this.context);
         }
 
         MemoryUtil.memFree(this.pushConstant);
@@ -257,11 +251,12 @@ public class Render implements IDisposable {
         this.clearColor.free();
         this.clearDepth.free();
 
-        this.vertexBuffer.delete(this.context.allocator);
-        this.pipeline.delete(this.context.device);
+        this.vertexBuffer.delete(this.context);
+        this.indexBuffer.delete(this.context);
+        this.pipeline.delete(this.context);
 
         for (Shader shader : this.shaders) {
-            shader.delete(this.context.device);
+            shader.delete(this.context);
         }
 
         this.vertexFormat.delete();

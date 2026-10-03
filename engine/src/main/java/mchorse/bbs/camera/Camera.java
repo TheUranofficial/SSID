@@ -17,7 +17,6 @@ public class Camera {
 
     public Vector3d position = new Vector3d();
     public Vector3f rotation = new Vector3f();
-
     private Vector3f relative = new Vector3f();
 
     public Camera() {

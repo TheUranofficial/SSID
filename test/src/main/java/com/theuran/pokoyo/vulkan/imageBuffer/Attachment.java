@@ -1,17 +1,17 @@
 package com.theuran.pokoyo.vulkan.imageBuffer;
 
-import com.theuran.pokoyo.vulkan.allocation.Allocator;
-import com.theuran.pokoyo.vulkan.device.Device;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.vulkan.VK10;
 
-public class Attachment {
+public class Attachment implements IVulkanDisposable {
     private final Image image;
     public final ImageView imageView;
     private boolean depth;
 
-    public Attachment(Allocator allocator, Device device, int width, int height, int format, int usage) {
-        this.image = new Image(allocator, new Image.Data().width(width).height(height).usage(usage | VK10.VK_IMAGE_USAGE_SAMPLED_BIT).format(format).memoryUsage(Vma.VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT));
+    public Attachment(VulkanContext context, int width, int height, int format, int usage) {
+        this.image = new Image(context, new Image.Data().width(width).height(height).usage(usage | VK10.VK_IMAGE_USAGE_SAMPLED_BIT).format(format).memoryUsage(Vma.VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT));
 
         int aspectMask = 0;
 
@@ -25,11 +25,12 @@ public class Attachment {
             this.depth = true;
         }
 
-        this.imageView = new ImageView(device, this.image.image, new ImageView.Data().format(this.image.format).aspectMask(aspectMask));
+        this.imageView = new ImageView(context, this.image.image, new ImageView.Data().format(this.image.format).aspectMask(aspectMask));
     }
 
-    public void delete(Allocator allocator, Device device) {
-        this.image.delete(allocator);
-        this.imageView.delete(device);
+    @Override
+    public void delete(VulkanContext context) {
+        this.image.delete(context);
+        this.imageView.delete(context);
     }
 }

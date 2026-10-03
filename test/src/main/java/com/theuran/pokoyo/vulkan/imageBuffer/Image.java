@@ -1,7 +1,7 @@
 package com.theuran.pokoyo.vulkan.imageBuffer;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
-import com.theuran.pokoyo.vulkan.allocation.Allocator;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.vma.Vma;
@@ -11,13 +11,13 @@ import org.lwjgl.vulkan.VkImageCreateInfo;
 
 import java.nio.LongBuffer;
 
-public class Image {
+public class Image implements IVulkanDisposable {
     private final int mipLevels;
     public final int format;
     public final long image;
     private final long allocation;
 
-    public Image(Allocator allocator, Data data) {
+    public Image(VulkanContext context, Data data) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             this.format = data.format;
             this.mipLevels = data.mipLevels;
@@ -48,15 +48,16 @@ public class Image {
             PointerBuffer allocation = stack.callocPointer(1);
             LongBuffer buffer = stack.mallocLong(1);
 
-            VulkanUtils.checkError(Vma.vmaCreateImage(allocator.allocator, info, allocationInfo, buffer, allocation, null), "Failed to create image");
+            context.createImage(info, allocationInfo, buffer, allocation);
 
             this.image = buffer.get(0);
             this.allocation = allocation.get(0);
         }
     }
 
-    public void delete(Allocator allocator) {
-        Vma.vmaDestroyImage(allocator.allocator, this.image, this.allocation);
+    @Override
+    public void delete(VulkanContext context) {
+        Vma.vmaDestroyImage(context.allocator.allocator, this.image, this.allocation);
     }
 
     public static class Data {

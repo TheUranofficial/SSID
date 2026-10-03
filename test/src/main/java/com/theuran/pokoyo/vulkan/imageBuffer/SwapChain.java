@@ -1,9 +1,11 @@
 package com.theuran.pokoyo.vulkan.imageBuffer;
 
+import com.theuran.pokoyo.vulkan.VulkanContext;
 import com.theuran.pokoyo.vulkan.command.Queue;
 import com.theuran.pokoyo.vulkan.device.Device;
-import com.theuran.pokoyo.vulkan.VulkanUtils;
 import com.theuran.pokoyo.vulkan.synchronization.Semaphore;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
 import mchorse.bbs.graphics.window.Window;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -11,27 +13,25 @@ import org.lwjgl.vulkan.*;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 
-public class SwapChain {
+public class SwapChain implements IVulkanDisposable {
     public final ImageView[] imageViews;
     public final VkExtent2D extent;
     private final long swapChain;
+    public Semaphore[] renderSemaphores;
 
-    public SwapChain(Device device, Surface surface, int requestedImages, boolean vsync) {
-        IO.println("Creating Vulkan SwapChain");
-
+    public SwapChain(VulkanContext context, int requestedImages, boolean vsync) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkSurfaceCapabilitiesKHR surfaceCapabilities = surface.capabilities;
-
+            VkSurfaceCapabilitiesKHR surfaceCapabilities = context.surface.capabilities;
             int images = this.calculateCountChain(surfaceCapabilities, requestedImages);
 
             this.extent = this.calculateSwapChainExtent(surfaceCapabilities);
 
             VkSwapchainCreateInfoKHR info = VkSwapchainCreateInfoKHR.calloc(stack)
                 .sType$Default()
-                .surface(surface.surface)
+                .surface(context.surface.surface)
                 .minImageCount(images)
-                .imageFormat(surface.format.imageFormat)
-                .imageColorSpace(surface.format.colorSpace)
+                .imageFormat(context.surface.format.imageFormat)
+                .imageColorSpace(context.surface.format.colorSpace)
                 .imageExtent(this.extent)
                 .imageArrayLayers(1)
                 .imageUsage(VK10.VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
@@ -45,41 +45,38 @@ public class SwapChain {
                 info.presentMode(KHRSurface.VK_PRESENT_MODE_IMMEDIATE_KHR);
             }
 
-            LongBuffer buffer = stack.mallocLong(1);
+            this.swapChain = context.createSwapChain(info);
+            this.imageViews = this.createImageViews(context);
+            this.renderSemaphores = new Semaphore[this.imageViews.length];
 
-            VulkanUtils.checkError(KHRSwapchain.vkCreateSwapchainKHR(device.device, info, null, buffer), "Failed to create swap chain");
-
-            this.swapChain = buffer.get(0);
-            this.imageViews = this.createImageViews(stack, device, surface.format.imageFormat);
+            for (int i = 0; i < this.imageViews.length; i++) {
+                this.renderSemaphores[i] = new Semaphore(context);
+            }
         }
     }
 
-    public void delete(Device device) {
+    @Override
+    public void delete(VulkanContext context) {
+        for (Semaphore semaphore : this.renderSemaphores) {
+            semaphore.delete(context);
+        }
+
         this.extent.free();
 
         for (ImageView view : this.imageViews) {
-            view.delete(device);
+            view.delete(context);
         }
 
-        KHRSwapchain.vkDestroySwapchainKHR(device.device, this.swapChain, null);
+        KHRSwapchain.vkDestroySwapchainKHR(context.device.device, this.swapChain, null);
     }
 
-    private ImageView[] createImageViews(MemoryStack stack, Device device, int imageFormat) {
-        IntBuffer buffer = stack.mallocInt(1);
+    private ImageView[] createImageViews(VulkanContext context) {
+        long[] images = this.getImages(context);
+        ImageView[] views = new ImageView[images.length];
+        ImageView.Data data = new ImageView.Data().format(context.surface.format.imageFormat).aspectMask(VK10.VK_IMAGE_ASPECT_COLOR_BIT);
 
-        VulkanUtils.checkError(KHRSwapchain.vkGetSwapchainImagesKHR(device.device, this.swapChain, buffer, null), "Failed to get number of surface images");
-
-        int count = buffer.get(0);
-
-        LongBuffer images = stack.mallocLong(count);
-
-        VulkanUtils.checkError(KHRSwapchain.vkGetSwapchainImagesKHR(device.device, swapChain, buffer, images), "Failed to get surface images");
-
-        ImageView[] views = new ImageView[count];
-        ImageView.Data data = new ImageView.Data().format(imageFormat).aspectMask(VK10.VK_IMAGE_ASPECT_COLOR_BIT);
-
-        for (int i = 0; i < count; i++) {
-            views[i] = new ImageView(device, images.get(i), data);
+        for (int i = 0; i < images.length; i++) {
+            views[i] = new ImageView(context, images[i], data);
         }
 
         return views;
@@ -155,5 +152,32 @@ public class SwapChain {
         }
 
         return false;
+    }
+
+    private long[] getImages(VulkanContext context) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buffer = stack.mallocInt(1);
+            int error = KHRSwapchain.vkGetSwapchainImagesKHR(context.device.device, this.swapChain, buffer, null);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Failed to get number of surface images", error);
+            }
+
+            LongBuffer images = stack.mallocLong(buffer.get(0));
+
+            buffer.rewind();
+
+            error = KHRSwapchain.vkGetSwapchainImagesKHR(context.device.device, this.swapChain, buffer, images);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Failed to get surface images", error);
+            }
+
+            long[] result = new long[buffer.get(0)];
+
+            images.get(result);
+
+            return result;
+        }
     }
 }

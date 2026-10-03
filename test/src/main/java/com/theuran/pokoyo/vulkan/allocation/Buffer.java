@@ -1,6 +1,8 @@
 package com.theuran.pokoyo.vulkan.allocation;
 
-import com.theuran.pokoyo.vulkan.VulkanUtils;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -11,14 +13,14 @@ import org.lwjgl.vulkan.VkBufferCreateInfo;
 
 import java.nio.LongBuffer;
 
-public class Buffer {
+public class Buffer implements IVulkanDisposable {
     private final long allocation;
     public final long buffer;
     private final PointerBuffer pointer;
     public final long requestedSize;
     private long mappedMemory;
 
-    public Buffer(Allocator allocator, long size, int usage, int vmaUsage, int vmaFlags, int requestedFlags) {
+    public Buffer(VulkanContext context, long size, int usage, int vmaUsage, int vmaFlags, int requestedFlags) {
         this.requestedSize = size;
         this.mappedMemory = 0;
 
@@ -37,7 +39,7 @@ public class Buffer {
             PointerBuffer allocation = stack.callocPointer(1);
             LongBuffer buffer = stack.mallocLong(1);
 
-            VulkanUtils.checkError(Vma.vmaCreateBuffer(allocator.allocator, info, allocationInfo, buffer, allocation, null), "Failed to create buffer");
+            context.createBuffer(info, allocationInfo, buffer, allocation);
 
             this.buffer = buffer.get(0);
             this.allocation = allocation.get(0);
@@ -45,28 +47,34 @@ public class Buffer {
         }
     }
 
-    public void delete(Allocator allocator) {
-        this.unMap(allocator);
+    @Override
+    public void delete(VulkanContext context) {
+        this.unMap(context);
         MemoryUtil.memFree(this.pointer);
-        Vma.vmaDestroyBuffer(allocator.allocator, this.buffer, this.allocation);
+        Vma.vmaDestroyBuffer(context.allocator.allocator, this.buffer, this.allocation);
     }
 
-    public void flush(Allocator allocator) {
-        Vma.vmaFlushAllocation(allocator.allocator, this.allocation, 0, VK10.VK_WHOLE_SIZE);
+    public void flush(VulkanContext context) {
+        Vma.vmaFlushAllocation(context.allocator.allocator, this.allocation, 0, VK10.VK_WHOLE_SIZE);
     }
 
-    public long map(Allocator allocator) {
+    public long map(VulkanContext context) {
         if (this.mappedMemory == 0) {
-            VulkanUtils.checkError(Vma.vmaMapMemory(allocator.allocator, this.allocation, this.pointer), "Failed to map buffer");
+            int error = Vma.vmaMapMemory(context.allocator.allocator, this.allocation, this.pointer);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Failed to map buffer", error);
+            }
+
             this.mappedMemory = this.pointer.get(0);
         }
 
         return this.mappedMemory;
     }
 
-    public void unMap(Allocator allocator) {
+    public void unMap(VulkanContext context) {
         if (this.mappedMemory != 0) {
-            Vma.vmaUnmapMemory(allocator.allocator, this.allocation);
+            Vma.vmaUnmapMemory(context.allocator.allocator, this.allocation);
             this.mappedMemory = 0;
         }
     }

@@ -1,26 +1,23 @@
 package com.theuran.pokoyo.vulkan.imageBuffer;
 
-import com.theuran.pokoyo.vulkan.device.Device;
-import com.theuran.pokoyo.vulkan.VulkanUtils;
+import com.theuran.pokoyo.vulkan.VulkanContext;
+import com.theuran.pokoyo.vulkan.utils.IVulkanDisposable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkImageViewCreateInfo;
 
-import java.nio.LongBuffer;
-
-public class ImageView {
+public class ImageView implements IVulkanDisposable {
     private final int aspectMask;
     private final int mipLevels;
     public final long image;
     public final long imageView;
 
-    public ImageView(Device device, long image, Data data) {
+    public ImageView(VulkanContext context, long image, Data data) {
         this.aspectMask = data.aspectMask;
         this.mipLevels = data.mipLevels;
         this.image = image;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            LongBuffer buffer = stack.mallocLong(1);
             VkImageViewCreateInfo info = VkImageViewCreateInfo.calloc(stack)
                 .sType$Default()
                 .image(this.image)
@@ -34,14 +31,13 @@ public class ImageView {
                     .layerCount(data.layerCount)
                 );
 
-            VulkanUtils.checkError(VK10.vkCreateImageView(device.device, info, null, buffer), "Failed to create image view");
-
-            this.imageView = buffer.get(0);
+            this.imageView = context.createImageView(info);
         }
     }
 
-    public void delete(Device device) {
-        VK10.vkDestroyImageView(device.device, this.imageView, null);
+    @Override
+    public void delete(VulkanContext context) {
+        VK10.vkDestroyImageView(context.device.device, this.imageView, null);
     }
 
     public static class Data {

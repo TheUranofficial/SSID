@@ -1,14 +1,23 @@
 package com.theuran.pokoyo.vulkan;
 
+import com.theuran.pokoyo.vulkan.utils.VulkanException;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 public class VulkanUtils {
     public static final int MAX_IN_FLIGHT = 2;
 
-    public static void checkError(int result, String message) {
-        if (result != VK10.VK_SUCCESS) {
-            throw new RuntimeException("[Vulkan] %s [%d]".formatted(message, result));
+    public static VkInstance createInstance(VkInstanceCreateInfo info) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer instance = stack.mallocPointer(1);
+            int error = VK10.vkCreateInstance(info, null, instance);
+
+            if (error != VK10.VK_SUCCESS) {
+                throw new VulkanException("Error creating instance", error);
+            }
+
+            return new VkInstance(instance.get(0), info);
         }
     }
 
@@ -19,6 +28,8 @@ public class VulkanUtils {
             .newLayout(newLayout)
             .srcStageMask(sourceStage)
             .dstStageMask(distanceStage)
+            .srcAccessMask(sourceAccess)
+            .dstAccessMask(distanceAccess)
             .srcQueueFamilyIndex(VK10.VK_QUEUE_FAMILY_IGNORED)
             .dstQueueFamilyIndex(VK10.VK_QUEUE_FAMILY_IGNORED)
             .subresourceRange(range -> range

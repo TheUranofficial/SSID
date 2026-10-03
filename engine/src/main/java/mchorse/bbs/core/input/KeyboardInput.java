@@ -25,15 +25,13 @@ public class KeyboardInput {
     public void init() {
         long win = Window.getWindow();
 
-        GLFW.glfwSetKeyCallback(win, (window, key, scancode, action, mods) ->
-        {
+        GLFW.glfwSetKeyCallback(win, (_, key, scancode, action, mods) -> {
             if (this.handler != null) {
                 this.handler.handleKey(key, scancode, action, mods);
             }
         });
 
-        GLFW.glfwSetCharCallback(win, (window, key) ->
-        {
+        GLFW.glfwSetCharCallback(win, (_, key) -> {
             if (this.handler != null) {
                 this.handler.handleTextInput(key);
             }
