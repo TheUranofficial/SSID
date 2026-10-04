@@ -17,7 +17,6 @@ public class VulkanEngine extends Engine {
         this.cameraController.camera.position.set(0, 0.5, 0);
 
         Window.focus();
-        Window.toggleMousePointer(true);
     }
 
     @Override

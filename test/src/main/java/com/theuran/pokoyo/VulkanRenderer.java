@@ -87,7 +87,7 @@ public class VulkanRenderer implements IDisposable {
     }
 
     public void resize() {
-        this.resize = true;
+        this.resize = false;
         this.context.device.waitForIdle();
         this.context.resize();
 

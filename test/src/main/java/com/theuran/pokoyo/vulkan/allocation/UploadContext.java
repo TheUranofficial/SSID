@@ -9,6 +9,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.vulkan.VK10;
+import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkBufferCopy;
 
 import java.nio.ByteBuffer;
@@ -62,7 +63,7 @@ public class UploadContext implements IVulkanDisposable {
     }
 
     public Buffer uploadVertexBuffer(VulkanContext context, ByteBuffer data) {
-        return this.upload(context, data, VK10.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+        return this.upload(context, data, VK10.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK12.VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT);
     }
 
     public Buffer uploadIndexBuffer(VulkanContext context, ByteBuffer data) {

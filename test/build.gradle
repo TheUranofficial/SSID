@@ -1,12 +1,8 @@
 version = ""
 
-base {
-    archivesName = "launcher"
-}
-
 jar {
     manifest {
-        attributes "Main-Class": "mchorse.Launcher", "Class-Path": "dependencies/bbs-engine-0.1.jar"
+        attributes "Main-Class": "com.theuran.pokoyo.Okak", "Class-Path": "dependencies/bbs-engine-0.1.jar"
     }
 }
 

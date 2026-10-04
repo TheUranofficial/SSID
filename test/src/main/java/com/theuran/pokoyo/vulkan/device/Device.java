@@ -21,13 +21,17 @@ public class Device implements IDisposable {
             PointerBuffer requiredExtensions = this.createRequiredExtensions(context, stack);
             VkDeviceQueueCreateInfo.Buffer queueInfo = this.createQueueInfo(context, stack);
 
-            VkPhysicalDeviceVulkan13Features features = VkPhysicalDeviceVulkan13Features.calloc(stack)
+            VkPhysicalDeviceVulkan13Features features13 = VkPhysicalDeviceVulkan13Features.calloc(stack)
                 .sType$Default()
                 .dynamicRendering(true)
                 .synchronization2(true);
+            VkPhysicalDeviceVulkan12Features features12 = VkPhysicalDeviceVulkan12Features.calloc(stack)
+                .sType$Default()
+                .bufferDeviceAddress(true)
+                .pNext(features13.address());
             VkPhysicalDeviceFeatures2 features2 = VkPhysicalDeviceFeatures2.calloc(stack)
                 .sType$Default()
-                .pNext(features.address());
+                .pNext(features12.address());
 
             VkDeviceCreateInfo info = VkDeviceCreateInfo.calloc(stack)
                 .sType$Default()

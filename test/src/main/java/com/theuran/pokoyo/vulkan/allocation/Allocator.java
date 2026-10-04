@@ -21,7 +21,8 @@ public class Allocator implements IDisposable {
                 .physicalDevice(context.physicalDevice.device)
                 .device(context.device.device)
                 .instance(context.instance.instance)
-                .pVulkanFunctions(functions);
+                .pVulkanFunctions(functions)
+                .flags(Vma.VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT);
 
             this.allocator = context.createAllocator(info);
         }

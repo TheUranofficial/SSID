@@ -36,7 +36,6 @@ public class Render implements IDisposable {
     private int indexCount;
     private ByteBuffer pushConstant;
     private Attachment[] attachmentDepth;
-    private VkRenderingAttachmentInfo.Buffer[] attachmentInfoColor;
     private VkRenderingAttachmentInfo[] attachmentInfoDepth;
 
     public Render(VulkanContext context, VulkanRenderer renderer) {
@@ -46,12 +45,11 @@ public class Render implements IDisposable {
         this.clearDepth = VkClearValue.calloc().color(value -> value.float32(0, 1));
         this.attachmentInfo = this.createAttachmentsInfos();
         this.attachmentDepth = this.createDepthAttachments();
-        this.attachmentInfoColor = this.createAttachmentsInfos();
         this.attachmentInfoDepth = this.createDepthAttachmentsInfo();
         this.renderInfo = this.createRenderInfo();
         this.vertexFormat = new VertexBufferFormat(true, false);
         this.shaders = this.createShaders();
-        this.pushConstant = MemoryUtil.memAlloc(Matrix4f.BYTES * 2);
+        this.pushConstant = MemoryUtil.memAlloc(Long.BYTES);
         this.pipeline = this.createPipeline();
 
         this.createVertexBuffer();
@@ -87,7 +85,7 @@ public class Render implements IDisposable {
         PipelineInfo info = new PipelineInfo(this.shaders, this.vertexFormat.info, this.context.surface.format.imageFormat);
 
         info.depthFormat = VK10.VK_FORMAT_D16_UNORM;
-        info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Matrix4f.BYTES * 2)};
+        info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Long.BYTES)};
 
         return new Pipeline(this.context, info);
     }
@@ -184,7 +182,6 @@ public class Render implements IDisposable {
 
             this.setPushConstants(buffer.buffer, this.renderer.engine.cameraController.camera);
 
-            VK10.vkCmdBindVertexBuffers(buffer.buffer, 0, stack.longs(this.vertexBuffer.buffer), stack.longs(0));
             VK10.vkCmdBindIndexBuffer(buffer.buffer, this.indexBuffer.buffer, 0, VK10.VK_INDEX_TYPE_UINT16);
             VK10.vkCmdDrawIndexed(buffer.buffer, this.indexCount, 1, 0, 0, 0);
 
@@ -195,8 +192,8 @@ public class Render implements IDisposable {
     }
 
     private void setPushConstants(VkCommandBuffer buffer, Camera camera) {
-        camera.projection.get(this.pushConstant);
-        camera.view.get(Matrix4f.BYTES, this.pushConstant);
+        MemoryUtil.memPutLong(MemoryUtil.memAddress(this.pushConstant), this.vertexBuffer.getDeviceAddress(this.context));
+
         VK10.vkCmdPushConstants(buffer, this.pipeline.layout, VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, this.pushConstant);
     }
 
@@ -209,17 +206,12 @@ public class Render implements IDisposable {
             info.free();
         }
 
-        for (VkRenderingAttachmentInfo.Buffer info : this.attachmentInfoColor) {
-            info.free();
-        }
-
         for (Attachment attachment : this.attachmentDepth) {
             attachment.delete(this.context);
         }
 
         this.attachmentDepth = this.createDepthAttachments();
         this.attachmentInfo = this.createAttachmentsInfos();
-        this.attachmentInfoColor = this.createAttachmentsInfos();
         this.attachmentInfoDepth = this.createDepthAttachmentsInfo();
         this.renderInfo = this.createRenderInfo();
     }
@@ -231,10 +223,6 @@ public class Render implements IDisposable {
         }
 
         for (VkRenderingAttachmentInfo.Buffer info : this.attachmentInfo) {
-            info.free();
-        }
-
-        for (VkRenderingAttachmentInfo.Buffer info : this.attachmentInfoColor) {
             info.free();
         }
 

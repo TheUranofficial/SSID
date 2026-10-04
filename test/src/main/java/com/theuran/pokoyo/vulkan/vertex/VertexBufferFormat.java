@@ -1,11 +1,12 @@
 package com.theuran.pokoyo.vulkan.vertex;
 
+import mchorse.bbs.core.IDisposable;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkPipelineVertexInputStateCreateInfo;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
-public class VertexBufferFormat {
+public class VertexBufferFormat implements IDisposable {
     public final VkPipelineVertexInputStateCreateInfo info;
     private final VkVertexInputAttributeDescription.Buffer attributes;
     private final VkVertexInputBindingDescription.Buffer bindings;
@@ -73,6 +74,7 @@ public class VertexBufferFormat {
             .pVertexAttributeDescriptions(this.attributes);
     }
 
+    @Override
     public void delete() {
         this.attributes.free();
         this.bindings.free();

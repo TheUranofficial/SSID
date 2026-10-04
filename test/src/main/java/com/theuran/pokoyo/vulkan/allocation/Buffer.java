@@ -8,8 +8,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.util.vma.VmaAllocationCreateInfo;
-import org.lwjgl.vulkan.VK10;
-import org.lwjgl.vulkan.VkBufferCreateInfo;
+import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
 
@@ -31,9 +30,15 @@ public class Buffer implements IVulkanDisposable {
                 .usage(usage)
                 .sharingMode(VK10.VK_SHARING_MODE_EXCLUSIVE);
 
+            int flags = vmaFlags;
+
+            if ((usage & VK12.VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) != 0) {
+                flags |= Vma.VMA_ALLOCATION_CREATE_DONT_BIND_BIT;
+            }
+
             VmaAllocationCreateInfo allocationInfo = VmaAllocationCreateInfo.calloc(stack)
                 .usage(vmaUsage)
-                .flags(vmaFlags)
+                .flags(flags)
                 .requiredFlags(requestedFlags);
 
             PointerBuffer allocation = stack.callocPointer(1);
@@ -47,11 +52,14 @@ public class Buffer implements IVulkanDisposable {
         }
     }
 
-    @Override
-    public void delete(VulkanContext context) {
-        this.unMap(context);
-        MemoryUtil.memFree(this.pointer);
-        Vma.vmaDestroyBuffer(context.allocator.allocator, this.buffer, this.allocation);
+    public long getDeviceAddress(VulkanContext context) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkBufferDeviceAddressInfo buffer = VkBufferDeviceAddressInfo.calloc(stack)
+                .sType$Default()
+                .buffer(this.buffer);
+
+            return VK12.vkGetBufferDeviceAddress(context.device.device, buffer);
+        }
     }
 
     public void flush(VulkanContext context) {
@@ -77,5 +85,12 @@ public class Buffer implements IVulkanDisposable {
             Vma.vmaUnmapMemory(context.allocator.allocator, this.allocation);
             this.mappedMemory = 0;
         }
+    }
+
+    @Override
+    public void delete(VulkanContext context) {
+        this.unMap(context);
+        MemoryUtil.memFree(this.pointer);
+        Vma.vmaDestroyBuffer(context.allocator.allocator, this.buffer, this.allocation);
     }
 }
