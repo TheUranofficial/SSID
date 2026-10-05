@@ -25,6 +25,8 @@ public class Pipeline implements IVulkanDisposable {
                     .pName(main);
             }
 
+            VkPipelineVertexInputStateCreateInfo vertexInput = VkPipelineVertexInputStateCreateInfo.calloc(stack).sType$Default();
+
             VkPipelineInputAssemblyStateCreateInfo assemblyInfo = VkPipelineInputAssemblyStateCreateInfo.calloc(stack)
                 .sType$Default()
                 .topology(VK10.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
@@ -104,7 +106,7 @@ public class Pipeline implements IVulkanDisposable {
                 .sType$Default()
                 .renderPass(VK10.VK_NULL_HANDLE)
                 .pStages(stages)
-                .pVertexInputState(info.info)
+                .pVertexInputState(vertexInput)
                 .pInputAssemblyState(assemblyInfo)
                 .pViewportState(viewportInfo)
                 .pRasterizationState(rasterizationInfo)

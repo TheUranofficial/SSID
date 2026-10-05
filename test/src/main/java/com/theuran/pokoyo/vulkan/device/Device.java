@@ -29,9 +29,15 @@ public class Device implements IDisposable {
                 .sType$Default()
                 .bufferDeviceAddress(true)
                 .pNext(features13.address());
+            VkPhysicalDeviceVulkan11Features features11 = VkPhysicalDeviceVulkan11Features.calloc(stack)
+                .sType$Default()
+                .shaderDrawParameters(true)
+                .pNext(features12.address());
             VkPhysicalDeviceFeatures2 features2 = VkPhysicalDeviceFeatures2.calloc(stack)
                 .sType$Default()
-                .pNext(features12.address());
+                .pNext(features11.address());
+
+            features2.features().shaderInt64(true);
 
             VkDeviceCreateInfo info = VkDeviceCreateInfo.calloc(stack)
                 .sType$Default()

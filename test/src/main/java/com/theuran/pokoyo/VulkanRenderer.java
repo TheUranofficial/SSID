@@ -17,7 +17,7 @@ public class VulkanRenderer implements IDisposable {
     public final Queue.GraphicsQueue graphicsQueue;
     private final Queue.PresentQueue presentQueue;
 
-    private final Framebuffer[] frames;
+    public final Framebuffer[] frames;
 
     private final Render render;
     private final VulkanContext context = new VulkanContext();
@@ -76,7 +76,7 @@ public class VulkanRenderer implements IDisposable {
 
         frame.startWriting(this.context);
 
-        this.render.render(frame.commandBuffer, imageIndex);
+        this.render.render(frame.commandBuffer, imageIndex, this.currentFrame);
 
         frame.stopWriting();
 

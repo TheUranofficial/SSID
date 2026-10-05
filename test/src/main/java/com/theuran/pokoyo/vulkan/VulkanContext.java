@@ -159,14 +159,17 @@ public class VulkanContext implements IDisposable {
 
     public long createPipeline(VkGraphicsPipelineCreateInfo.Buffer info) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            LongBuffer buffer = stack.mallocLong(1);
+            LongBuffer buffer = stack.callocLong(1);
             int error = VK10.vkCreateGraphicsPipelines(this.device.device, this.pipelineCache.cache, info, null, buffer);
+            long handle = buffer.get(0);
 
-            if (error != VK10.VK_SUCCESS) {
+            IO.println("vkCreateGraphicsPipelines: result=" + error + ", handle=0x" + Long.toHexString(handle));
+
+            if (error != VK10.VK_SUCCESS || handle == VK10.VK_NULL_HANDLE) {
                 throw new VulkanException("Failed to create pipeline", error);
             }
 
-            return buffer.get(0);
+            return handle;
         }
     }
 

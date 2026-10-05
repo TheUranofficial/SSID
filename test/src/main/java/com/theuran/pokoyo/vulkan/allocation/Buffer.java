@@ -8,6 +8,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.util.vma.VmaAllocationCreateInfo;
+import org.lwjgl.util.vma.VmaAllocationInfo;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
@@ -17,11 +18,13 @@ public class Buffer implements IVulkanDisposable {
     public final long buffer;
     private final PointerBuffer pointer;
     public final long requestedSize;
+    private final boolean persistent;
     private long mappedMemory;
 
     public Buffer(VulkanContext context, long size, int usage, int vmaUsage, int vmaFlags, int requestedFlags) {
         this.requestedSize = size;
         this.mappedMemory = 0;
+        this.persistent = (vmaFlags & Vma.VMA_ALLOCATION_CREATE_MAPPED_BIT) != 0;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkBufferCreateInfo info = VkBufferCreateInfo.calloc(stack)
@@ -29,16 +32,9 @@ public class Buffer implements IVulkanDisposable {
                 .size(this.requestedSize)
                 .usage(usage)
                 .sharingMode(VK10.VK_SHARING_MODE_EXCLUSIVE);
-
-            int flags = vmaFlags;
-
-            if ((usage & VK12.VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) != 0) {
-                flags |= Vma.VMA_ALLOCATION_CREATE_DONT_BIND_BIT;
-            }
-
             VmaAllocationCreateInfo allocationInfo = VmaAllocationCreateInfo.calloc(stack)
                 .usage(vmaUsage)
-                .flags(flags)
+                .flags(vmaFlags)
                 .requiredFlags(requestedFlags);
 
             PointerBuffer allocation = stack.callocPointer(1);
@@ -49,6 +45,18 @@ public class Buffer implements IVulkanDisposable {
             this.buffer = buffer.get(0);
             this.allocation = allocation.get(0);
             this.pointer = MemoryUtil.memAllocPointer(1);
+
+            if (this.persistent) {
+                VmaAllocationInfo allocInfo = VmaAllocationInfo.calloc(stack);
+
+                Vma.vmaGetAllocationInfo(context.allocator.allocator, this.allocation, allocInfo);
+
+                this.mappedMemory = allocInfo.pMappedData();
+
+                if (this.mappedMemory == 0) {
+                    throw new VulkanException("Persistent mapping requested but memory is not host visible", VK10.VK_ERROR_MEMORY_MAP_FAILED);
+                }
+            }
         }
     }
 
@@ -81,7 +89,7 @@ public class Buffer implements IVulkanDisposable {
     }
 
     public void unMap(VulkanContext context) {
-        if (this.mappedMemory != 0) {
+        if (!this.persistent && this.mappedMemory != 0) {
             Vma.vmaUnmapMemory(context.allocator.allocator, this.allocation);
             this.mappedMemory = 0;
         }

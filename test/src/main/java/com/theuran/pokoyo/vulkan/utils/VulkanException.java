@@ -30,7 +30,7 @@ public class VulkanException extends RuntimeException {
             case VK10.VK_ERROR_FORMAT_NOT_SUPPORTED -> "VK_ERROR_FORMAT_NOT_SUPPORTED";
             case VK10.VK_ERROR_FRAGMENTED_POOL -> "VK_ERROR_FRAGMENTED_POOL";
             case VK10.VK_ERROR_UNKNOWN -> "VK_ERROR_UNKNOWN";
-            default -> "Don't known error";
+            default -> String.valueOf(error);
         };
     }
 }

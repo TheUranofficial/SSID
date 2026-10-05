@@ -3,6 +3,7 @@ package com.theuran.pokoyo;
 import com.theuran.pokoyo.vulkan.VulkanContext;
 import com.theuran.pokoyo.vulkan.VulkanUtils;
 import com.theuran.pokoyo.vulkan.allocation.Buffer;
+import com.theuran.pokoyo.vulkan.allocation.FrameArena;
 import com.theuran.pokoyo.vulkan.command.CommandBuffer;
 import com.theuran.pokoyo.vulkan.imageBuffer.Attachment;
 import com.theuran.pokoyo.vulkan.pipeline.Pipeline;
@@ -10,8 +11,6 @@ import com.theuran.pokoyo.vulkan.pipeline.PipelineInfo;
 import com.theuran.pokoyo.vulkan.shader.PushConstantRange;
 import com.theuran.pokoyo.vulkan.shader.Shader;
 import com.theuran.pokoyo.vulkan.vertex.BufferBuilder;
-import com.theuran.pokoyo.vulkan.vertex.VertexBufferFormat;
-import mchorse.bbs.camera.Camera;
 import mchorse.bbs.core.IDisposable;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
@@ -21,6 +20,8 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 
 public class Render implements IDisposable {
+    private static final int SHADER_DATA_SIZE = 64 + 64 + 8;
+
     private final VkClearValue clearColor;
     private final VkClearValue clearDepth;
     private final VulkanContext context;
@@ -28,11 +29,11 @@ public class Render implements IDisposable {
     private VkRenderingAttachmentInfo.Buffer[] attachmentInfo;
     private VkRenderingInfo[] renderInfo;
 
-    private VertexBufferFormat vertexFormat;
     private Shader[] shaders;
     private Pipeline pipeline;
     private Buffer vertexBuffer;
     private Buffer indexBuffer;
+    private long vertexAddress;
     private int indexCount;
     private ByteBuffer pushConstant;
     private Attachment[] attachmentDepth;
@@ -47,7 +48,6 @@ public class Render implements IDisposable {
         this.attachmentDepth = this.createDepthAttachments();
         this.attachmentInfoDepth = this.createDepthAttachmentsInfo();
         this.renderInfo = this.createRenderInfo();
-        this.vertexFormat = new VertexBufferFormat(true, false);
         this.shaders = this.createShaders();
         this.pushConstant = MemoryUtil.memAlloc(Long.BYTES);
         this.pipeline = this.createPipeline();
@@ -82,7 +82,7 @@ public class Render implements IDisposable {
     }
 
     private Pipeline createPipeline() {
-        PipelineInfo info = new PipelineInfo(this.shaders, this.vertexFormat.info, this.context.surface.format.imageFormat);
+        PipelineInfo info = new PipelineInfo(this.shaders, this.context.surface.format.imageFormat);
 
         info.depthFormat = VK10.VK_FORMAT_D16_UNORM;
         info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Long.BYTES)};
@@ -154,15 +154,23 @@ public class Render implements IDisposable {
 
         this.renderer.upload.end(context, this.renderer.graphicsQueue);
 
+        this.vertexAddress = this.vertexBuffer.getDeviceAddress(context);
+
         builder.free();
     }
 
-    public void render(CommandBuffer buffer, int imageIndex) {
+    public void render(CommandBuffer buffer, int imageIndex, int frame) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long swapChainImage = this.context.swapChain.imageViews[imageIndex].image;
 
             VulkanUtils.imageBarrier(stack, buffer.buffer, swapChainImage, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK13.VK_ACCESS_2_NONE, VK13.VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_COLOR_BIT);
             VulkanUtils.imageBarrier(stack, buffer.buffer, this.attachmentDepth[imageIndex].imageView.image, VK10.VK_IMAGE_LAYOUT_UNDEFINED, VK10.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK13.VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK13.VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK10.VK_IMAGE_ASPECT_DEPTH_BIT);
+
+            FrameArena arena = this.renderer.frames[frame].arena;
+
+            arena.offset = 0;
+
+            long shaderDataAddress = this.writeShaderData(stack, arena);
 
             VK13.vkCmdBeginRendering(buffer.buffer, this.renderInfo[imageIndex]);
             VK10.vkCmdBindPipeline(buffer.buffer, VK10.VK_PIPELINE_BIND_POINT_GRAPHICS, this.pipeline.pipeline);
@@ -180,7 +188,8 @@ public class Render implements IDisposable {
             VK10.vkCmdSetViewport(buffer.buffer, 0, viewport);
             VK10.vkCmdSetScissor(buffer.buffer, 0, scissor);
 
-            this.setPushConstants(buffer.buffer, this.renderer.engine.cameraController.camera);
+            this.pushConstant.putLong(0, shaderDataAddress);
+            VK10.vkCmdPushConstants(buffer.buffer, this.pipeline.layout, VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, this.pushConstant);
 
             VK10.vkCmdBindIndexBuffer(buffer.buffer, this.indexBuffer.buffer, 0, VK10.VK_INDEX_TYPE_UINT16);
             VK10.vkCmdDrawIndexed(buffer.buffer, this.indexCount, 1, 0, 0, 0);
@@ -191,10 +200,19 @@ public class Render implements IDisposable {
         }
     }
 
-    private void setPushConstants(VkCommandBuffer buffer, Camera camera) {
-        MemoryUtil.memPutLong(MemoryUtil.memAddress(this.pushConstant), this.vertexBuffer.getDeviceAddress(this.context));
+    private long writeShaderData(MemoryStack stack, FrameArena arena) {
+        VkExtent2D extent = this.context.swapChain.extent;
+        float aspect = (float) extent.width() / extent.height();
 
-        VK10.vkCmdPushConstants(buffer, this.pipeline.layout, VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, this.pushConstant);
+        this.renderer.engine.cameraController.camera.projection.setPerspective((float) Math.toRadians(70), aspect, 0.05f, 100f, true);
+
+        ByteBuffer data = stack.malloc(16, SHADER_DATA_SIZE);
+
+        this.renderer.engine.cameraController.camera.projection.get(0, data);
+        new Matrix4f().get(64, data);
+        data.putLong(128, this.vertexAddress);
+
+        return arena.pushData(data, FrameArena.MIN_ALIGNMENT);
     }
 
     public void resize() {
@@ -246,7 +264,5 @@ public class Render implements IDisposable {
         for (Shader shader : this.shaders) {
             shader.delete(this.context);
         }
-
-        this.vertexFormat.delete();
     }
 }
