@@ -8,7 +8,6 @@ import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class Okak {
     static void main() {
@@ -19,7 +18,9 @@ public class Okak {
         long id = 0;
 
         try {
-            Window.initializeVulkan("Okak", 1280, 720);
+            Steam.initialize();
+
+            Window.initializeVulkan("VulkanTest", 1280, 720);
 
             id = Window.getWindow();
 
@@ -36,6 +37,7 @@ public class Okak {
 
         engine.delete();
 
+        Steam.delete();
         Callbacks.glfwFreeCallbacks(id);
         GLFW.glfwDestroyWindow(id);
         GLFW.glfwTerminate();

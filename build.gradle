@@ -23,7 +23,9 @@ subprojects {
         implementation "org.lwjgl:lwjgl-opengl::$lwjglNatives"
         implementation "org.lwjgl:lwjgl-stb::$lwjglNatives"
         implementation "org.lwjgl:lwjgl-vma::$lwjglNatives"
-        implementation "org.joml:joml:1.10.9"
+        implementation "org.joml:joml:$joml"
+        implementation "com.code-disaster.steamworks4j:steamworks4j:$steamworks"
+        implementation "com.code-disaster.steamworks4j:steamworks4j-lwjgl3:$steamworks"
     }
 
     processResources {

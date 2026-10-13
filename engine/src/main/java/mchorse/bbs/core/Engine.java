@@ -148,7 +148,6 @@ public abstract class Engine implements IEngine, IJoystickHandler {
 
             if (currentTime - lastTime >= 1) {
                 this.lastFPS = frames;
-                GLFW.glfwSetWindowTitle(Window.getWindow(), String.valueOf(this.lastFPS));
 
                 frames = 0;
                 lastTime++;

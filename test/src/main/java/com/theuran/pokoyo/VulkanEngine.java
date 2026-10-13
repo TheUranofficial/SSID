@@ -45,6 +45,8 @@ public class VulkanEngine extends Engine {
         super.update();
 
         this.cameraController.tick();
+
+        Steam.update();
     }
 
     @Override
