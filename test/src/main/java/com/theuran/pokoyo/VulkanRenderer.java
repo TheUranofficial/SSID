@@ -52,10 +52,7 @@ public class VulkanRenderer implements IDisposable {
         this.render.delete();
 
         for (Framebuffer frame : this.frames) {
-            frame.presentSemaphore.delete(this.context);
-            frame.fence.delete(this.context);
-            frame.commandBuffer.delete(this.context, frame.commandPool);
-            frame.commandPool.delete(this.context);
+            frame.delete(this.context);
         }
 
         this.context.delete();

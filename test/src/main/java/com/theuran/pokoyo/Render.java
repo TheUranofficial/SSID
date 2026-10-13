@@ -20,7 +20,7 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 
 public class Render implements IDisposable {
-    private static final int SHADER_DATA_SIZE = 64 + 64 + 8;
+    private static final int SHADER_DATA_SIZE = 64 + 64;
 
     private final VkClearValue clearColor;
     private final VkClearValue clearDepth;
@@ -49,7 +49,7 @@ public class Render implements IDisposable {
         this.attachmentInfoDepth = this.createDepthAttachmentsInfo();
         this.renderInfo = this.createRenderInfo();
         this.shaders = this.createShaders();
-        this.pushConstant = MemoryUtil.memAlloc(Long.BYTES);
+        this.pushConstant = MemoryUtil.memAlloc(Long.BYTES * 2);
         this.pipeline = this.createPipeline();
 
         this.createVertexBuffer();
@@ -85,7 +85,7 @@ public class Render implements IDisposable {
         PipelineInfo info = new PipelineInfo(this.shaders, this.context.surface.format.imageFormat);
 
         info.depthFormat = VK10.VK_FORMAT_D16_UNORM;
-        info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Long.BYTES)};
+        info.ranges = new PushConstantRange[] {new PushConstantRange(VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, Long.BYTES * 2)};
 
         return new Pipeline(this.context, info);
     }
@@ -189,6 +189,7 @@ public class Render implements IDisposable {
             VK10.vkCmdSetScissor(buffer.buffer, 0, scissor);
 
             this.pushConstant.putLong(0, shaderDataAddress);
+            this.pushConstant.putLong(8, this.vertexAddress);
             VK10.vkCmdPushConstants(buffer.buffer, this.pipeline.layout, VK10.VK_SHADER_STAGE_VERTEX_BIT, 0, this.pushConstant);
 
             VK10.vkCmdBindIndexBuffer(buffer.buffer, this.indexBuffer.buffer, 0, VK10.VK_INDEX_TYPE_UINT16);
@@ -209,8 +210,7 @@ public class Render implements IDisposable {
         ByteBuffer data = stack.malloc(16, SHADER_DATA_SIZE);
 
         this.renderer.engine.cameraController.camera.projection.get(0, data);
-        new Matrix4f().get(64, data);
-        data.putLong(128, this.vertexAddress);
+        new Matrix4f().translation(0, 0, -2).get(64, data);
 
         return arena.pushData(data, FrameArena.MIN_ALIGNMENT);
     }
